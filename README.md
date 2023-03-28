@@ -36,7 +36,7 @@ This repo is official **[PyTorch](https://pytorch.org)** implementation of [One-
 ## 3. Quick demo  
 
 * Slightly change `torchgeometry` kernel code following [here](https://github.com/mks0601/I2L-MeshNet_RELEASE/issues/6#issuecomment-675152527).
-* Download the pre-trained OSX from [here]([pretrained_models](https://mailstsinghuaeducn-my.sharepoint.com/:f:/g/personal/lin-j21_mails_tsinghua_edu_cn/EobfeMHtt01Mh6ZQV3OhgI4BB1Pne9qQxWaUJVPUgkpImQ?e=lNiDDS)).
+* Download the pre-trained OSX from [here](https://mailstsinghuaeducn-my.sharepoint.com/:f:/g/personal/lin-j21_mails_tsinghua_edu_cn/EobfeMHtt01Mh6ZQV3OhgI4BB1Pne9qQxWaUJVPUgkpImQ?e=lNiDDS).
 * Prepare `input.png` and pre-trained snapshot at `demo` folder.
 * Prepare `human_model_files` folder following below `Directory` part and place it at `common/utils/human_model_files`.
 * Go to any of `main` folders and edit `bbox` of `demo.py` .
@@ -159,7 +159,7 @@ ${ROOT}
 ## 5. Training OSX
 #### (1) Download Pretrained Encoder
 
-Download pretrained encoder `osx_vit_l.pth` and `osx_vit_b.pth` from [here]([pretrained_models](https://mailstsinghuaeducn-my.sharepoint.com/:f:/g/personal/lin-j21_mails_tsinghua_edu_cn/EobfeMHtt01Mh6ZQV3OhgI4BB1Pne9qQxWaUJVPUgkpImQ?e=lNiDDS)) and place the pretrained model to `pretrained_models/`.
+Download pretrained encoder `osx_vit_l.pth` and `osx_vit_b.pth` from [here](https://mailstsinghuaeducn-my.sharepoint.com/:f:/g/personal/lin-j21_mails_tsinghua_edu_cn/EobfeMHtt01Mh6ZQV3OhgI4BB1Pne9qQxWaUJVPUgkpImQ?e=lNiDDS) and place the pretrained model to `pretrained_models/`.
 
 #### (2) Train on MSCOCO, Human3.6m, MPII and Test on EHF and AGORA-val
 
@@ -179,7 +179,7 @@ python train.py --gpu 0,1,2,3 --lr 1e-4 --exp_name output/train_setting1 --end_e
 
 #### (1) Download Pretrained Encoder
 
-Download pretrained models `osx_l.pth.tar` and `osx_l_agora.pth.tar` from [here]([pretrained_models](https://mailstsinghuaeducn-my.sharepoint.com/:f:/g/personal/lin-j21_mails_tsinghua_edu_cn/EobfeMHtt01Mh6ZQV3OhgI4BB1Pne9qQxWaUJVPUgkpImQ?e=lNiDDS)) and place the pretrained model to `pretrained_models/`.
+Download pretrained models `osx_l.pth.tar` and `osx_l_agora.pth.tar` from [here](https://mailstsinghuaeducn-my.sharepoint.com/:f:/g/personal/lin-j21_mails_tsinghua_edu_cn/EobfeMHtt01Mh6ZQV3OhgI4BB1Pne9qQxWaUJVPUgkpImQ?e=lNiDDS) and place the pretrained model to `pretrained_models/`.
 
 #### (2) Test on EHF and AGORA-val
 
