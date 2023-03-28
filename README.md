@@ -1,7 +1,5 @@
 # **One-Stage 3D Whole-Body Mesh Recovery with Component Aware Transformer**
 
-[![jiedu](https://img.shields.io/badge/State of the Art-AGORA-179bd3)](https://agora-evaluation.is.tuebingen.mpg.de/)![visitors](https://visitor-badge.glitch.me/badge?page_id=IDEA-Research/OSX)
-
 #### Authors
 
 [Jing Lin](https://scholar.google.com.hk/citations?user=SvaU2GMAAAAJ&hl=zh-CN), [Ailing Zeng](https://ailingzeng.site/), [Haoqian Wang](https://www.sigs.tsinghua.edu.cn/whq_en/main.htm), [Lei Zhang](https://www.leizhang.org/), [Yu Li](https://yu-li.github.io/)
