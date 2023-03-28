@@ -6,7 +6,7 @@
 
 <p align="middle">
 <img src="assets/demo_video.gif" width="866" height="240">
-<em>The proposed UBody dataset</em>
+<em> The proposed UBody dataset </em>
 </p>
 
 
