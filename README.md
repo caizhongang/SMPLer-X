@@ -206,7 +206,7 @@ You can zip the `predictions` folder into `predictions.zip` and submit it to the
 
 ### (1) AGORA test set
 
-<img src="./assets/agora_test.png" alt="image-20230327202353903" style="zoom: 33%;" />
+<img src="https://github.com/IDEA-Research/OSX/blob/main/assets/agora_test.png" alt="image-20230327202353903" style="zoom: 33%;" />
 
 ### (2) AGORA-val, EHF, 3DPW
 
