@@ -177,7 +177,7 @@ python test.py --gpu 0,1,2,3 --exp_name output/train_setting1/ --pretrained_mode
 # test on AGORA-val
 python test.py --gpu 0,1,2,3 --exp_name output/train_setting1/ --pretrained_model_path ../output/train_setting1/model_dump/snapshot_13.pth --testset AGORA
 ```
-
+You can use a light-weight version OSX by adding `--model_type osx_b`.
 #### (3) Train on AGORA and Test on AGORA-test
 
 In the `main` folder, run  
@@ -186,15 +186,17 @@ In the `main` folder, run
 python train.py --gpu 0,1,2,3 --lr 1e-4 --exp_name output/train_setting2 --end_epoch 140 --train_batch_size 32  --agora_benchmark
 ```
 
-After training, run the following command to evaluate your pretrained model on AGORA-teset:
+After training, run the following command to evaluate your pretrained model on AGORA-test:
 
 ```bash  
-python test.py --gpu 0,1,2,3 --exp_name output/train_setting1/ --pretrained_model_path ../output/train_setting2/model_dump/snapshot_139.pth --testset AGORA --agora_benchmark --test_batch_size 64
+python test.py --gpu 0,1,2,3 --exp_name output/train_setting2/ --pretrained_model_path ../output/train_setting2/model_dump/snapshot_139.pth --testset AGORA --agora_benchmark --test_batch_size 64
 ```
 
 The reconstruction result will be saved at `output/train_setting2/result/`.
 
-You can zip the `predictions` folder into `predictions.zip` and submit it to the [AGORA benchmark](https://agora-evaluation.is.tuebingen.mpg.de/) to obtain the evaluation metrics.
+You can zip the `predictions` folder into `predictions.zip` and submit it to the [AGORA benchmark](https://agora-evaluation.is.tuebingen.mpg.de/) to obtain the evaluation metrics. 
+
+You can use a light-weight version OSX by adding `--model_type osx_b`.
 
 ## 6. Testing OSX
 
@@ -228,7 +230,7 @@ python test.py --gpu 0,1,2,3 --exp_name output/test_setting2  --pretrained_model
 
 The reconstruction result will be saved at `output/test_setting2/result/`.
 
-You can zip the `predictions` folder into `predictions.zip` and submit it to the [AGORA benchmark](https://agora-evaluation.is.tuebingen.mpg.de/) to obtain the evaluation metrics.
+You can zip the `predictions` folder into `predictions.zip` and submit it to the [AGORA benchmark](https://agora-evaluation.is.tuebingen.mpg.de/) to obtain the evaluation metrics. 
 ## 7. Results
 
 ### (1) AGORA test set
