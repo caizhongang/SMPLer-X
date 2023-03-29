@@ -1,5 +1,5 @@
 # **One-Stage 3D Whole-Body Mesh Recovery with Component Aware Transformer**
-### [Project Page](https://osx-ubody.github.io/) | [Video](https://osx-ubody.github.io/) | [Paper](https://osx-ubody.github.io/) | [Data](https://osx-ubody.github.io/)
+### [Project Page](https://osx-ubody.github.io/) | [Video](https://osx-ubody.github.io/) | [Paper](http://arxiv.org/abs/2303.16160) | [Data](https://osx-ubody.github.io/)
 #### Authors
 
 [Jing Lin](https://scholar.google.com.hk/citations?user=SvaU2GMAAAAJ&hl=zh-CN), [Ailing Zeng](https://ailingzeng.site/), [Haoqian Wang](https://www.sigs.tsinghua.edu.cn/whq_en/main.htm), [Lei Zhang](https://www.leizhang.org/), [Yu Li](https://yu-li.github.io/)
