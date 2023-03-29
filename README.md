@@ -186,7 +186,7 @@ In the `main` folder, run
 python train.py --gpu 0,1,2,3 --lr 1e-4 --exp_name output/train_setting2 --end_epoch 140 --train_batch_size 32  --agora_benchmark
 ```
 
-After training, run the following command to evaluate your pretrained model on AGORA-teset:
+After training, run the following command to evaluate your pretrained model on AGORA-test:
 
 ```bash  
 python test.py --gpu 0,1,2,3 --exp_name output/train_setting1/ --pretrained_model_path ../output/train_setting2/model_dump/snapshot_139.pth --testset AGORA --agora_benchmark --test_batch_size 64
