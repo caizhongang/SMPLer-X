@@ -13,8 +13,6 @@ from mmcv.runner import BaseModule
 from mmcv.utils import ext_loader
 from mmcv.ops.multi_scale_deform_attn import ext_module
 
-
-
 class MultiScaleDeformableAttnFunction(Function):
 
     @staticmethod

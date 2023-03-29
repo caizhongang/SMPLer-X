@@ -18,8 +18,7 @@ for i in range(len(cfg.trainset_3d)):
     exec('from ' + cfg.trainset_3d[i] + ' import ' + cfg.trainset_3d[i])
 for i in range(len(cfg.trainset_2d)):
     exec('from ' + cfg.trainset_2d[i] + ' import ' + cfg.trainset_2d[i])
-for i in range(len(cfg.testset)):
-    exec('from ' + cfg.testset[i] + ' import ' + cfg.testset[i])
+exec('from ' + cfg.testset + ' import ' + cfg.testset)
 
 class Base(object):
     __metaclass__ = abc.ABCMeta
@@ -155,13 +154,10 @@ class Tester(Base):
             self.test_epoch = int(test_epoch)
         super(Tester, self).__init__(log_name='test_logs.txt')
 
-    def _make_batch_generator(self, testset_name=None):
+    def _make_batch_generator(self):
         # data load and construct batch generator
         self.logger.info("Creating dataset...")
-        if testset_name is not None:
-            testset_loader = eval(testset_name)(transforms.ToTensor(), "test")
-        else:
-            testset_loader = eval(cfg.testset[0])(transforms.ToTensor(), "test")
+        testset_loader = eval(cfg.testset)(transforms.ToTensor(), "test")
         batch_generator = DataLoader(dataset=testset_loader, batch_size=cfg.num_gpus * cfg.test_batch_size,
                                      shuffle=False, num_workers=cfg.num_thread, pin_memory=True)
 
@@ -176,18 +172,21 @@ class Tester(Base):
         model = get_model('test')
         model = DataParallel(model).cuda()
         ckpt = torch.load(cfg.pretrained_model_path)
-        model.load_state_dict(ckpt['network'], strict=False)
+
+        from collections import OrderedDict
+        new_state_dict = OrderedDict()
+        for k, v in ckpt['network'].items():
+            k = k.replace('backbone', 'encoder').replace('body_rotation_net', 'body_regressor').replace(
+                'hand_rotation_net', 'hand_regressor')
+            new_state_dict[k] = v
+        model.load_state_dict(new_state_dict, strict=False)
         model.eval()
 
         self.model = model
 
-    def _evaluate(self, outs, cur_sample_idx, epoch=None, mpvpe_dict=None):
-        if mpvpe_dict is not None:
-            static_results = self.testset.evaluate(outs, cur_sample_idx, epoch, mpvpe_dict)
-            return static_results
-        else:
-            eval_result = self.testset.evaluate(outs, cur_sample_idx, epoch)
-            return eval_result
+    def _evaluate(self, outs, cur_sample_idx):
+        eval_result = self.testset.evaluate(outs, cur_sample_idx)
+        return eval_result
 
     def _print_eval_result(self, eval_result):
         self.testset.print_eval_result(eval_result)

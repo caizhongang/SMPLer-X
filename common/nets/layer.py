@@ -1,7 +1,4 @@
-import torch
 import torch.nn as nn
-from torch.nn import functional as F
-from config import cfg
 
 def make_linear_layers(feat_dims, relu_final=True, use_bn=False):
     layers = []

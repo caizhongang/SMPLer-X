@@ -132,7 +132,7 @@ class EHF(torch.utils.data.Dataset):
                      'face_bbox_valid': float(True)}
         return inputs, targets, meta_info
 
-    def evaluate(self, outs, cur_sample_idx, epoch=0):
+    def evaluate(self, outs, cur_sample_idx):
         annots = self.datalist
         sample_num = len(outs)
         eval_result = {'pa_mpvpe_all': [], 'pa_mpvpe_hand': [], 'pa_mpvpe_face': [], 'mpvpe_all': [], 'mpvpe_hand': [],
@@ -210,12 +210,12 @@ class EHF(torch.utils.data.Dataset):
                 np.sum((joint_out_rhand_align - joint_gt_rhand) ** 2, 1)).mean() * 1000) / 2.)
 
             vis = cfg.vis
-            save_folder = cfg.vis_dir
-            kpt_save_folder = os.path.join(save_folder, 'KPT', str(epoch))
-            os.makedirs(kpt_save_folder, exist_ok=True)
-            mesh_save_folder = os.path.join(save_folder, 'mesh_origin', str(epoch))
-            os.makedirs(mesh_save_folder, exist_ok=True)
             if vis:
+                save_folder = cfg.vis_dir
+                kpt_save_folder = os.path.join(save_folder, 'KPT')
+                os.makedirs(kpt_save_folder, exist_ok=True)
+                mesh_save_folder = os.path.join(save_folder, 'mesh_origin')
+                os.makedirs(mesh_save_folder, exist_ok=True)
                 # from utils.vis import vis_keypoints, render_mesh, save_obj
                 img = (out['img'].transpose(1, 2, 0)[:, :, ::-1] * 255).copy()
                 joint_img = out['joint_img'].copy()
@@ -245,7 +245,7 @@ class EHF(torch.utils.data.Dataset):
                 # cv2.imwrite(os.path.join(mesh_save_folder, f'{ann_id}_render.jpg'), rendered_img)
                 # # cv2.imwrite(os.path.join(mesh_save_folder, f'{ann_id}_render_gt.jpg'), rendered_img_gt)
                 # cv2.imwrite(os.path.join(mesh_save_folder, f'{ann_id}.jpg'), vis_img)
-            np.save(os.path.join(mesh_save_folder, f'{ann_id}.npy'), mesh_out)
+                np.save(os.path.join(mesh_save_folder, f'{ann_id}.npy'), mesh_out)
 
             # save_obj(out['smplx_mesh_cam'], smpl_x.face, str(cur_sample_idx + n) + '.obj')
 

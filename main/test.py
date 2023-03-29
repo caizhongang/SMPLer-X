@@ -1,8 +1,8 @@
 import argparse
 from config import cfg
-
+from tqdm import tqdm
+import torch
 import torch.backends.cudnn as cudnn
-import numpy as np
 
 def parse_args():
     parser = argparse.ArgumentParser()
@@ -10,6 +10,7 @@ def parse_args():
     parser.add_argument('--exp_name', type=str, default='output/test')
     parser.add_argument('--test_batch_size', type=int, default=32)
     parser.add_argument('--model_type', type=str, default='osx_l', choices=['osx_b', 'osx_l'])
+    parser.add_argument('--testset', type=str, default='EHF')
     parser.add_argument('--agora_benchmark', action='store_true')
     parser.add_argument('--pretrained_model_path', type=str, default='../pretrained_models/osx_l.pth.tar')
     args = parser.parse_args()
@@ -33,26 +34,38 @@ def main():
                             test_batch_size=args.test_batch_size,
                             model_type=args.model_type,
                             pretrained_model_path=args.pretrained_model_path,
-                            agora_benchmark=args.agora_benchmark
+                            agora_benchmark=args.agora_benchmark,
+                            testset=args.testset,
                             )
     cudnn.benchmark = True
     from base import Tester
-    from evaluate import evaluate
     tester = Tester()
     tester._make_batch_generator()
     tester._make_model()
 
-    print('### Start testing ###')
-    tester.model.eval()
-    eval_result = evaluate(tester.model, testset_name='EHF')
-    print('EHF dataset:')
-    for key in eval_result.keys():
-        print(f'{key.upper()}: {np.mean(eval_result[key]):.2f} mm')
-    eval_result = evaluate(tester.model, testset_name='AGORA')
-    print('AGORA dataset:')
-    for key in eval_result.keys():
-        print(f'{key.upper()}: {np.mean(eval_result[key]):.2f} mm')
-    tester.model.train()
+    eval_result = {}
+    cur_sample_idx = 0
+    for itr, (inputs, targets, meta_info) in enumerate(tqdm(tester.batch_generator)):
+
+        # forward
+        with torch.no_grad():
+            out = tester.model(inputs, targets, meta_info, 'test')
+
+        # save output
+        out = {k: v.cpu().numpy() for k, v in out.items()}
+        for k, v in out.items(): batch_size = out[k].shape[0]
+        out = [{k: v[bid] for k, v in out.items()} for bid in range(batch_size)]
+
+        # evaluate
+        cur_eval_result = tester._evaluate(out, cur_sample_idx)
+        for k, v in cur_eval_result.items():
+            if k in eval_result:
+                eval_result[k] += v
+            else:
+                eval_result[k] = v
+        cur_sample_idx += len(out)
+
+    tester._print_eval_result(eval_result)
 
 if __name__ == "__main__":
     main()

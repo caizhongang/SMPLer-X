@@ -2,7 +2,6 @@ import argparse
 from config import cfg
 
 import torch.backends.cudnn as cudnn
-import numpy as np
 
 def parse_args():
     parser = argparse.ArgumentParser()
@@ -13,7 +12,6 @@ def parse_args():
     parser.add_argument('--num_thread', type=int, default=16)
     parser.add_argument('--end_epoch', type=int, default=14)
     parser.add_argument('--train_batch_size', type=int, default=32)
-    parser.add_argument('--test_batch_size', type=int, default=32)
     parser.add_argument('--model_type', type=str, default='osx_l', choices=['osx_b', 'osx_l'])
     parser.add_argument('--agora_benchmark', action='store_true')
     parser.add_argument('--pretrained_model_path', type=str, default='../pretrained_models/osx_l.pth.tar')
@@ -39,7 +37,6 @@ def main():
     cfg.set_args(args.gpu_ids, args.lr, args.continue_train)
     cfg.set_additional_args(exp_name=args.exp_name,
                             num_thread=args.num_thread, train_batch_size=args.train_batch_size,
-                            test_batch_size=args.test_batch_size,
                             model_type=args.model_type,
                             end_epoch=args.end_epoch,
                             pretrained_model_path=args.pretrained_model_path,
@@ -47,7 +44,6 @@ def main():
                             )
     cudnn.benchmark = True
     from base import Trainer
-    from evaluate import evaluate
     trainer = Trainer()
     trainer._make_batch_generator()
     trainer._make_model()
@@ -90,24 +86,13 @@ def main():
             trainer.tot_timer.tic()
             trainer.read_timer.tic()
 
-        # evaluate
+        # save model
         if epoch % 10 == 0 or epoch == (cfg.end_epoch-1):
             trainer.save_model({
                 'epoch': epoch,
                 'network': trainer.model.state_dict(),
                 'optimizer': trainer.optimizer.state_dict(),
             }, epoch)
-            trainer.model.eval()
-            eval_result = evaluate(trainer.model, testset_name='EHF', epoch=epoch)
-            trainer.logger.info('EHF dataset:')
-            for key in eval_result.keys():
-                trainer.logger.info(f'{key.upper()}: {np.mean(eval_result[key]):.2f} mm')
-
-            eval_result = evaluate(trainer.model, testset_name='AGORA')
-            trainer.logger.info('AGORA dataset:')
-            for key in eval_result.keys():
-                trainer.logger.info(f'{key.upper()}: {np.mean(eval_result[key]):.2f} mm')
-            trainer.model.train()
 
 if __name__ == "__main__":
     main()

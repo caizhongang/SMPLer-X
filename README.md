@@ -1,13 +1,13 @@
 # **One-Stage 3D Whole-Body Mesh Recovery with Component Aware Transformer**
-
-[![jiedu](https://img.shields.io/badge/State of the Art-AGORA-179bd3)](https://agora-evaluation.is.tuebingen.mpg.de/)![visitors](https://visitor-badge.glitch.me/badge?page_id=IDEA-Research/OSX)
-
+### [Project Page](https://osx-ubody.github.io/) | [Video](https://osx-ubody.github.io/) | [Paper](http://arxiv.org/abs/2303.16160) | [Data](https://osx-ubody.github.io/)
 #### Authors
 
-[Jing Lin](https://scholar.google.com.hk/citations?user=SvaU2GMAAAAJ&hl=zh-CN), [Ailing Zeng](https://ailingzeng.site/), [Haoqian Wang](https://www.sigs.tsinghua.edu.cn/whq_en/main.htm), [Lei Zhang](https://www.leizhang.org/), [Yu Li](https://yu-li.github.io/)
+[Jing Lin](https://github.com/linjing7), [Ailing Zeng](https://ailingzeng.site/), [Haoqian Wang](https://www.sigs.tsinghua.edu.cn/whq_en/main.htm), [Lei Zhang](https://www.leizhang.org/), [Yu Li](https://yu-li.github.io/)
 
 <p align="middle">
 <img src="assets/demo_video.gif" width="866" height="240">
+<br>
+<em>The proposed UBody dataset</em>
 </p>
 
 
@@ -38,7 +38,7 @@ This repo is official **[PyTorch](https://pytorch.org)** implementation of [One-
 ## 3. Quick demo  
 
 * Slightly change `torchgeometry` kernel code following [here](https://github.com/mks0601/I2L-MeshNet_RELEASE/issues/6#issuecomment-675152527).
-* Download the pre-trained OSX from [here]([pretrained_models](https://mailstsinghuaeducn-my.sharepoint.com/:f:/g/personal/lin-j21_mails_tsinghua_edu_cn/EobfeMHtt01Mh6ZQV3OhgI4BB1Pne9qQxWaUJVPUgkpImQ?e=lNiDDS)).
+* Download the pre-trained OSX from [here](https://mailstsinghuaeducn-my.sharepoint.com/:f:/g/personal/lin-j21_mails_tsinghua_edu_cn/EobfeMHtt01Mh6ZQV3OhgI4BB1Pne9qQxWaUJVPUgkpImQ?e=lNiDDS).
 * Prepare `input.png` and pre-trained snapshot at `demo` folder.
 * Prepare `human_model_files` folder following below `Directory` part and place it at `common/utils/human_model_files`.
 * Go to any of `main` folders and edit `bbox` of `demo.py` .
@@ -161,7 +161,7 @@ ${ROOT}
 ## 5. Training OSX
 #### (1) Download Pretrained Encoder
 
-Download pretrained encoder `osx_vit_l.pth` and `osx_vit_b.pth` from [here]([pretrained_models](https://mailstsinghuaeducn-my.sharepoint.com/:f:/g/personal/lin-j21_mails_tsinghua_edu_cn/EobfeMHtt01Mh6ZQV3OhgI4BB1Pne9qQxWaUJVPUgkpImQ?e=lNiDDS)) and place the pretrained model to `pretrained_models/`.
+Download pretrained encoder `osx_vit_l.pth` and `osx_vit_b.pth` from [here](https://mailstsinghuaeducn-my.sharepoint.com/:f:/g/personal/lin-j21_mails_tsinghua_edu_cn/EobfeMHtt01Mh6ZQV3OhgI4BB1Pne9qQxWaUJVPUgkpImQ?e=lNiDDS) and place the pretrained model to `pretrained_models/`.
 
 #### (2) Train on MSCOCO, Human3.6m, MPII and Test on EHF and AGORA-val
 
@@ -169,34 +169,61 @@ In the `main` folder, run
 ```bash  
 python train.py --gpu 0,1,2,3 --lr 1e-4 --exp_name output/train_setting1 --end_epoch 14 --train_batch_size 32
 ```
+After training, run the following command to evaluate your pretrained model on EHF and AGORA-val:
+
+```bash  
+# test on EHF
+python test.py --gpu 0,1,2,3 --exp_name output/train_setting1/ --pretrained_model_path ../output/train_setting1/model_dump/snapshot_13.pth --testset EHF
+# test on AGORA-val
+python test.py --gpu 0,1,2,3 --exp_name output/train_setting1/ --pretrained_model_path ../output/train_setting1/model_dump/snapshot_13.pth --testset AGORA
+```
+
 #### (3) Train on AGORA and Test on AGORA-test
 
 In the `main` folder, run  
 
 ```bash  
-python train.py --gpu 0,1,2,3 --lr 1e-4 --exp_name output/train_setting1 --end_epoch 140 --train_batch_size 32  --agora_benchmark
+python train.py --gpu 0,1,2,3 --lr 1e-4 --exp_name output/train_setting2 --end_epoch 140 --train_batch_size 32  --agora_benchmark
 ```
+
+After training, run the following command to evaluate your pretrained model on AGORA-teset:
+
+```bash  
+python test.py --gpu 0,1,2,3 --exp_name output/train_setting1/ --pretrained_model_path ../output/train_setting2/model_dump/snapshot_139.pth --testset AGORA --agora_benchmark --test_batch_size 64
+```
+
+The reconstruction result will be saved at `output/train_setting2/result/`.
+
+You can zip the `predictions` folder into `predictions.zip` and submit it to the [AGORA benchmark](https://agora-evaluation.is.tuebingen.mpg.de/) to obtain the evaluation metrics.
 
 ## 6. Testing OSX
 
 #### (1) Download Pretrained Encoder
 
-Download pretrained models `osx_l.pth.tar` and `osx_l_agora.pth.tar` from [here]([pretrained_models](https://mailstsinghuaeducn-my.sharepoint.com/:f:/g/personal/lin-j21_mails_tsinghua_edu_cn/EobfeMHtt01Mh6ZQV3OhgI4BB1Pne9qQxWaUJVPUgkpImQ?e=lNiDDS)) and place the pretrained model to `pretrained_models/`.
+Download pretrained models `osx_l.pth.tar` and `osx_l_agora.pth.tar` from [here](https://mailstsinghuaeducn-my.sharepoint.com/:f:/g/personal/lin-j21_mails_tsinghua_edu_cn/EobfeMHtt01Mh6ZQV3OhgI4BB1Pne9qQxWaUJVPUgkpImQ?e=lNiDDS) and place the pretrained model to `pretrained_models/`.
 
-#### (2) Test on EHF and AGORA-val
+#### (2) Test on EHF
 
 In the `main` folder, run  
 
 ```bash  
-python test.py --gpu 0,1,2,3 --exp_name output/test_setting1 --pretrained_model_path ../pretrained_models/osx_l.pth.tar
+python test.py --gpu 0,1,2,3 --exp_name output/test_setting1 --pretrained_model_path ../pretrained_models/osx_l.pth.tar --testset EHF
 ```
 
-#### (3) Test on AGORA-test
+#### (3) Test on AGORA-val
 
 In the `main` folder, run  
 
 ```bash  
-python test.py --gpu 0,1,2,3 --exp_name output/test_setting2  --pretrained_model_path ../pretrained_models/osx_l_agora.pth.tar --agora_benchmark
+python test.py --gpu 0,1,2,3 --exp_name output/test_setting1 --pretrained_model_path ../pretrained_models/osx_l.pth.tar --testset AGORA
+```
+
+#### (4) Test on AGORA-test
+
+In the `main` folder, run  
+
+```bash  
+python test.py --gpu 0,1,2,3 --exp_name output/test_setting2  --pretrained_model_path ../pretrained_models/osx_l_agora.pth.tar --testset AGORA --agora_benchmark --test_batch_size 64
 ```
 
 The reconstruction result will be saved at `output/test_setting2/result/`.
@@ -206,7 +233,7 @@ You can zip the `predictions` folder into `predictions.zip` and submit it to the
 
 ### (1) AGORA test set
 
-<img src="./assets/agora_test.png" alt="image-20230327202353903" style="zoom: 33%;" />
+<img src="https://github.com/IDEA-Research/OSX/blob/main/assets/agora_test.png" alt="image-20230327202353903" style="zoom: 33%;" />
 
 ### (2) AGORA-val, EHF, 3DPW
 

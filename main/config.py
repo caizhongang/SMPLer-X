@@ -5,8 +5,8 @@ import sys
 class Config:
 
     # dataset setting
-    trainset_3d = []; trainset_2d = ['MPII']; testset = ['EHF', 'AGORA']
-    # trainset_3d = ['Human36M']; trainset_2d = ['MSCOCO', 'MPII']; testset = ['EHF', 'AGORA']
+    dataset_list = ['Human36M', 'MSCOCO', 'MPII', 'AGORA', 'EHF']
+    trainset_3d = ['Human36M']; trainset_2d = ['MSCOCO', 'MPII']; testset = 'EHF'
 
     ## model setting
     pretrained_model_path = None
@@ -19,7 +19,6 @@ class Config:
     feat_dim = 768
     encoder_config_file = 'transformer_utils/configs/osx/encoder/body_encoder_large.py'
     num_noise_sample = 0
-    agora_benchmark = False
 
     ## UBody setting
     train_sample_interval = 10
@@ -47,6 +46,7 @@ class Config:
     print_iters = 100
     lr_mult = 1
     smplx_loss_weight = 1
+    agora_benchmark = False
 
     ## testing config
     test_batch_size = 16
@@ -61,7 +61,6 @@ class Config:
     ## directory
     cur_dir = osp.dirname(os.path.abspath(__file__))
     root_dir = osp.join(cur_dir, '..')
-    # data_dir = osp.join(root_dir, 'data')
     data_dir = osp.join(root_dir, 'dataset')
 
     output_dir, model_dir, vis_dir, log_dir, result_dir, code_dir = None, None, None, None, None, None
@@ -89,9 +88,13 @@ class Config:
             self.encoder_config_file = 'transformer_utils/configs/osx/encoder/body_encoder_large.py'
             self.encoder_pretrained_model_path = '../pretrained_models/osx_vit_l.pth'
             self.feat_dim = 1024
+        if 'AGORA' in self.testset:
+            self.testset = 'AGORA'
         if self.agora_benchmark:
             self.smplx_loss_weight = 2
-            # self.trainset_3d = ['AGORA']; self.trainset_2d = []; self.testset = ['AGORA']
+            self.trainset_3d = ['AGORA']
+            self.trainset_2d = []
+            self.testset = 'AGORA'
 
     def prepare_dirs(self, exp_name):
         self.output_dir = osp.join(self.root_dir, exp_name)
@@ -118,11 +121,7 @@ cfg = Config()
 sys.path.insert(0, osp.join(cfg.root_dir, 'common'))
 from utils.dir import add_pypath, make_folder
 add_pypath(osp.join(cfg.data_dir))
-for i in range(len(cfg.trainset_3d)):
-    add_pypath(osp.join(cfg.root_dir, 'data', cfg.trainset_3d[i]))
-for i in range(len(cfg.trainset_2d)):
-    add_pypath(osp.join(cfg.root_dir, 'data', cfg.trainset_2d[i]))
-for i in range(len(cfg.testset)):
-    add_pypath(osp.join(cfg.root_dir, 'data', cfg.testset[i]))
+for i in range(len(cfg.dataset_list)):
+    add_pypath(osp.join(cfg.root_dir, 'data', cfg.dataset_list[i]))
 add_pypath(osp.join(cfg.root_dir, 'data'))
 add_pypath(cfg.data_dir)

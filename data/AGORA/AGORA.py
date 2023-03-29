@@ -477,7 +477,7 @@ class AGORA(torch.utils.data.Dataset):
 
             return inputs, targets, meta_info
 
-    def evaluate(self, outs, cur_sample_idx, epoch=0):
+    def evaluate(self, outs, cur_sample_idx):
         annots = self.datalist
         sample_num = len(outs)
         eval_result = {'pa_mpvpe_all': [], 'pa_mpvpe_hand': [], 'pa_mpvpe_face': [], 'mpvpe_all': [], 'mpvpe_hand': [],
@@ -541,7 +541,8 @@ class AGORA(torch.utils.data.Dataset):
 
                 img_path = annot['img_path']
                 img_id = img_path.split('/')[-1][:-4]
-                ann_id = annot['ann_id']
+                ann_id = 0
+                # ann_id = annot['ann_id']
                 img = load_img(img_path)[:, :, ::-1]
                 bbox = annot['bbox']
                 focal = list(cfg.focal)
