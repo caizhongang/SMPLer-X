@@ -200,7 +200,7 @@ You can use a light-weight version OSX by adding `--model_type osx_b`.
 
 ## 6. Testing OSX
 
-#### (1) Download Pretrained Encoder
+#### (1) Download Pretrained Models
 
 Download pretrained models `osx_l.pth.tar` and `osx_l_agora.pth.tar` from [here](https://mailstsinghuaeducn-my.sharepoint.com/:f:/g/personal/lin-j21_mails_tsinghua_edu_cn/EobfeMHtt01Mh6ZQV3OhgI4BB1Pne9qQxWaUJVPUgkpImQ?e=lNiDDS) and place the pretrained model to `pretrained_models/`.
 
