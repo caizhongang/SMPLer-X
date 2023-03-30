@@ -1,0 +1,5 @@
+__pycache__/
+common/utils/human_model_files
+pretrained_models/
+dataset
+output

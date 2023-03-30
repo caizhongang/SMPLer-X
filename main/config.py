@@ -6,7 +6,8 @@ class Config:
 
     # dataset setting
     dataset_list = ['Human36M', 'MSCOCO', 'MPII', 'AGORA', 'EHF']
-    trainset_3d = ['Human36M']; trainset_2d = ['MSCOCO', 'MPII']; testset = 'EHF'
+    # trainset_3d = ['Human36M']; trainset_2d = ['MSCOCO', 'MPII']; testset = 'EHF'
+    trainset_3d = []; trainset_2d = ['MPII']; testset = 'EHF'
 
     ## model setting
     pretrained_model_path = None

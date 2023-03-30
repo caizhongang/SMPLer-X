@@ -1,3 +1,16 @@
+# Train on 1988
+
+## Set up (run once)
+```bash
+source setup.sh
+```
+
+## Training
+```bash
+cd main
+source slurm_train.sh
+```
+
 # **One-Stage 3D Whole-Body Mesh Recovery with Component Aware Transformer**
 ### [Project Page](https://osx-ubody.github.io/) | [Video](https://osx-ubody.github.io/) | [Paper](http://arxiv.org/abs/2303.16160) | [Data](https://osx-ubody.github.io/)
 #### Authors
