@@ -24,4 +24,5 @@ requests
 easydict
 pycocotools
 plyfile
-mmcv-full==1.5.0
+timm
+pyglet

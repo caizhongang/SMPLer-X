@@ -28,7 +28,14 @@ This repo is official **[PyTorch](https://pytorch.org)** implementation of [One-
   pip install -r requirements.txt
   ```
 
-- MMPOSE:
+- mmcv-full:
+
+  ```shell
+  pip install openmim
+  mim install mmcv-full==1.7.1
+  ```
+
+- mmpose:
 
   ```shell
   cd main/transformer_utils
