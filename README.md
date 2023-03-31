@@ -8,7 +8,7 @@ source setup.sh
 ## Training
 ```bash
 cd main
-source slurm_train.sh
+SRUN_ARGS="--exclusive" sh slurm_train.sh Zoetrope osx 2
 ```
 
 # **One-Stage 3D Whole-Body Mesh Recovery with Component Aware Transformer**
