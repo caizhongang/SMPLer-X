@@ -68,13 +68,14 @@ class Config:
     human_model_path = osp.join(root_dir, 'common', 'utils', 'human_model_files')
     exp_name = 'output/exp1/pre_analysis'
 
-    def set_args(self, gpu_ids, lr=1e-4, continue_train=False):
-        self.gpu_ids = gpu_ids
-        self.num_gpus = len(self.gpu_ids.split(','))
+    def set_args(self, gpu_num, lr=1e-4, continue_train=False):
+        # self.gpu_ids = gpu_ids
+        # self.num_gpus = len(self.gpu_ids.split(','))
+        self.num_gpus = gpu_num
         self.lr = float(lr)
         self.continue_train = continue_train
         # os.environ["CUDA_VISIBLE_DEVICES"] = self.gpu_ids
-        print('>>> Using GPU: {}'.format(self.gpu_ids))
+        # print('>>> Using GPU: {}'.format(self.gpu_ids))
 
     def set_additional_args(self, **kwargs):
         names = self.__dict__
