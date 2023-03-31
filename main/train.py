@@ -3,6 +3,12 @@ from config import cfg
 
 import torch.backends.cudnn as cudnn
 
+# ddp
+from utils.distribute_utils import (
+    init_distributed_mode, is_main_process, cleanup
+)
+import torch.distributed as dist
+
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--gpu', type=str, dest='gpu_ids')
@@ -15,6 +21,22 @@ def parse_args():
     parser.add_argument('--model_type', type=str, default='osx_l', choices=['osx_b', 'osx_l'])
     parser.add_argument('--agora_benchmark', action='store_true')
     parser.add_argument('--pretrained_model_path', type=str, default='../pretrained_models/osx_l.pth.tar')
+    
+    # ddp
+    parser.add_argument(
+        '--device',
+        default='cuda',
+        help='device to use for training / testing')
+    parser.add_argument(
+        '--world_size',
+        default=1,
+        type=int,
+        help='number of distributed processes')
+    parser.add_argument(
+        '--dist_url',
+        default='env://',
+        help='url used to set up distributed training')
+
     args = parser.parse_args()
 
     if not args.gpu_ids:
@@ -34,6 +56,8 @@ def parse_args():
 def main():
     print('### Argument parse and create log ###')
     args = parse_args()
+    import pdb; pdb.set_trace()
+    dist.init_process_group(backend='nccl', init_method='env://')
     cfg.set_args(args.gpu_ids, args.lr, args.continue_train)
     cfg.set_additional_args(exp_name=args.exp_name,
                             num_thread=args.num_thread, train_batch_size=args.train_batch_size,
@@ -44,7 +68,13 @@ def main():
                             )
     cudnn.benchmark = True
     from base import Trainer
-    trainer = Trainer()
+    import pdb; pdb.set_trace()
+    logger = None
+    distributed, gpu_idx = \
+        init_distributed_mode(args.world_size,
+                              args.dist_url, logger)
+    import pdb; pdb.set_trace()
+    trainer = Trainer(distributed, gpu_idx, args.device)
     trainer._make_batch_generator()
     trainer._make_model()
 
@@ -69,6 +99,11 @@ def main():
             sum(loss[k] for k in loss).backward()
             trainer.optimizer.step()
             trainer.scheduler.step()
+            
+            # ddp
+            if distributed:
+                cleanup()
+            
             trainer.gpu_timer.toc()
             if (itr + 1) % cfg.print_iters == 0:
                 screen = [

@@ -13,6 +13,15 @@ if not cfg.agora_benchmark:
 else:
     from OSX_WoDecoder import get_model
 from dataset import MultipleDatasets
+# ddp
+import torch.distributed as dist
+from torch.utils.data import DistributedSampler
+import torch.utils.data.distributed
+from utils.distribute_utils import (
+    get_rank, is_main_process, time_synchronized,
+)
+from mmcv.runner import get_dist_info
+
 # dynamic dataset import
 for i in range(len(cfg.trainset_3d)):
     exec('from ' + cfg.trainset_3d[i] + ' import ' + cfg.trainset_3d[i])
@@ -44,8 +53,11 @@ class Base(object):
 
 
 class Trainer(Base):
-    def __init__(self):
+    def __init__(self, distributed=False, gpu_idx=None, device='cuda'):
         super(Trainer, self).__init__(log_name='train_logs.txt')
+        self.distributed = distributed
+        self.gpu_idx = gpu_idx
+        self.device = device
 
     def get_optimizer(self, model):
         normal_param = []
@@ -126,22 +138,39 @@ class Trainer(Base):
             trainset_loader = MultipleDatasets(trainset3d_loader + trainset2d_loader, make_same_len=False)
 
         self.itr_per_epoch = math.ceil(len(trainset_loader) / cfg.num_gpus / cfg.train_batch_size)
+
+        if self.distributed:
+            rank, world_size = get_dist_info()
+            sampler_train = DistributedSampler(trainset_loader)
         self.batch_generator = DataLoader(dataset=trainset_loader, batch_size=cfg.num_gpus * cfg.train_batch_size,
-                                          shuffle=True, num_workers=cfg.num_thread, pin_memory=True, drop_last=True)
+                                          shuffle=True, num_workers=cfg.num_thread, sampler=sampler_train,
+                                          pin_memory=True, drop_last=True)
 
     def _make_model(self):
         # prepare network
         self.logger.info("Creating graph and optimizer...")
         model = get_model('train')
-        model = DataParallel(model).cuda()
+        model.to(self.device)
+        # ddp
+        if self.distributed:
+            model = torch.nn.parallel.DistributedDataParallel(
+                model, device_ids=[self.gpu_idx], find_unused_parameters=True)
+        else:
+        # dp
+            model = DataParallel(model).cuda()
+
         optimizer = self.get_optimizer(model)
         scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, cfg.end_epoch * self.itr_per_epoch,
                                                                eta_min=1e-6)
         if cfg.continue_train:
-            start_epoch, model, optimizer = self.load_model(model, optimizer)
+            if self.distributed:
+                start_epoch, model.module, optimizer = self.load_model(model.module, optimizer)
+            else:
+                start_epoch, model, optimizer = self.load_model(model, optimizer)
         else:
             start_epoch = 0
         model.train()
+
         self.scheduler = scheduler
         self.start_epoch = start_epoch
         self.model = model

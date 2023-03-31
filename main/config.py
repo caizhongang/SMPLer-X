@@ -73,7 +73,7 @@ class Config:
         self.num_gpus = len(self.gpu_ids.split(','))
         self.lr = float(lr)
         self.continue_train = continue_train
-        os.environ["CUDA_VISIBLE_DEVICES"] = self.gpu_ids
+        # os.environ["CUDA_VISIBLE_DEVICES"] = self.gpu_ids
         print('>>> Using GPU: {}'.format(self.gpu_ids))
 
     def set_additional_args(self, **kwargs):
