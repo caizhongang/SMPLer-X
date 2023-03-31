@@ -5,6 +5,8 @@
 source setup.sh
 ```
 
+Then fix torchgeometry following this [link](https://github.com/mks0601/I2L-MeshNet_RELEASE/issues/6#issuecomment-675152527).
+
 ## Training
 ```bash
 cd main
