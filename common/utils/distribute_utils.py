@@ -29,10 +29,10 @@ def setup_for_distributed(is_master):
     __builtin__.print = print
 
 
-def init_distributed_mode(world_size, dist_url, logger):
+def init_distributed_mode(world_size, dist_url):
     """This function initiate the distributed training setup, and return the
     current gpu index."""
-    logger = get_logger(logger)
+    # logger = get_logger(logger)
     if 'RANK' in os.environ and 'WORLD_SIZE' in os.environ:
         rank = int(os.environ['RANK'])
         world_size = int(os.environ['WORLD_SIZE'])
@@ -48,7 +48,7 @@ def init_distributed_mode(world_size, dist_url, logger):
 
     torch.cuda.set_device(gpu_idx)
     dist_backend = 'nccl'
-    logger.info(f'| distributed init (rank {rank}):' f'{dist_url}')
+    # logger.info(f'| distributed init (rank {rank}):' f'{dist_url}')
     torch.distributed.init_process_group(
         backend=dist_backend,
         init_method=dist_url,

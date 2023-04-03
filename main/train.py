@@ -1,6 +1,6 @@
 import argparse
 from config import cfg
-
+import torch
 import torch.backends.cudnn as cudnn
 
 # ddp
@@ -26,33 +26,10 @@ def parse_args():
     parser.add_argument('--pretrained_model_path', type=str, default='../pretrained_models/osx_l.pth.tar')
     
     # ddp
-    parser.add_argument(
-        '--device',
-        default='cuda',
-        help='device to use for training / testing')
-    parser.add_argument(
-        '--world_size',
-        default=1,
-        type=int,
-        help='number of distributed processes')
-    parser.add_argument(
-        '--dist_url',
-        default='env://',
-        help='url used to set up distributed training')
+    parser.add_argument('--world_size', default=-1, type=int, help='number of distributed processes')
+    parser.add_argument('--dist_url', default='env://', help='url used to set up distributed training')
 
     args = parser.parse_args()
-
-    # if not args.gpu_ids:
-    #     assert 0, "Please set propoer gpu ids"
-
-    # if not args.lr:
-    #     assert 0, "Please set learning rate"
-
-    # if '-' in args.gpu_ids:
-    #     gpus = args.gpu_ids.split('-')
-    #     gpus[0] = int(gpus[0])
-    #     gpus[1] = int(gpus[1]) + 1
-    #     args.gpu_ids = ','.join(map(lambda x: str(x), list(range(*gpus))))
 
     return args
 
@@ -68,14 +45,19 @@ def main():
                             )
 
     cudnn.benchmark = True
+
+    # ddp by default in this branch
     distributed, gpu_idx = \
         init_distributed_mode(args.world_size, args.dist_url)
-    trainer = Trainer(distributed, gpu_idx, args.device)
+    trainer = Trainer(distributed, gpu_idx)
     
     # ddp
     if distributed:
         trainer.logger_info('### Set DDP ###')
         trainer.logger.info(f'Distributed: {distributed}, init done {gpu_idx}')
+    else:
+        raise Exception("DDP not setup properly")
+    
     trainer.logger_info(f"Using {cfg.num_gpus} GPUs, batch size {cfg.train_batch_size} per GPU.")
     
     trainer._make_batch_generator()
@@ -89,6 +71,10 @@ def main():
     for epoch in range(trainer.start_epoch, cfg.end_epoch):
         trainer.tot_timer.tic()
         trainer.read_timer.tic()
+        
+        # ddp, align random seed between devices
+        trainer.batch_generator.sampler.set_epoch(epoch)
+
         for itr, (inputs, targets, meta_info) in enumerate(trainer.batch_generator):
             trainer.read_timer.toc()
             trainer.gpu_timer.tic()
@@ -120,11 +106,11 @@ def main():
             trainer.tot_timer.tic()
             trainer.read_timer.tic()
 
-        # save model
+        # save model ddp, save model.module on rank 0 only
         if (epoch % 10 == 0 or epoch == (cfg.end_epoch-1)) and is_main_process():
             trainer.save_model({
                 'epoch': epoch,
-                'network': trainer.model.state_dict(),
+                'network': trainer.model.module.state_dict(),
                 'optimizer': trainer.optimizer.state_dict(),
             }, epoch)
 

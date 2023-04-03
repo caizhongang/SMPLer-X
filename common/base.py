@@ -20,7 +20,6 @@ import torch.utils.data.distributed
 from utils.distribute_utils import (
     get_rank, is_main_process, time_synchronized,
 )
-from mmcv.runner import get_dist_info
 
 # dynamic dataset import
 for i in range(len(cfg.trainset_3d)):
@@ -53,11 +52,10 @@ class Base(object):
 
 
 class Trainer(Base):
-    def __init__(self, distributed=False, gpu_idx=None, device='cuda'):
+    def __init__(self, distributed=False, gpu_idx=None):
         super(Trainer, self).__init__(log_name='train_logs.txt')
         self.distributed = distributed
         self.gpu_idx = gpu_idx
-        self.device = device
 
     def get_optimizer(self, model):
         normal_param = []
@@ -113,7 +111,7 @@ class Trainer(Base):
 
     def _make_batch_generator(self):
         # data load and construct batch generator
-        self.logger.info("Creating dataset...")
+        self.logger_info("Creating dataset...")
         trainset3d_loader = []
         for i in range(len(cfg.trainset_3d)):
             trainset3d_loader.append(eval(cfg.trainset_3d[i])(transforms.ToTensor(), "train"))
@@ -140,19 +138,25 @@ class Trainer(Base):
         self.itr_per_epoch = math.ceil(len(trainset_loader) / cfg.num_gpus / cfg.train_batch_size)
 
         if self.distributed:
-            rank, world_size = get_dist_info()
+            self.logger_info("Using distributed.")
+            # rank, world_size = get_dist_info()
             sampler_train = DistributedSampler(trainset_loader)
-        self.batch_generator = DataLoader(dataset=trainset_loader, batch_size=cfg.num_gpus * cfg.train_batch_size,
-                                          shuffle=True, num_workers=cfg.num_thread, sampler=sampler_train,
+            self.batch_generator = DataLoader(dataset=trainset_loader, batch_size=cfg.train_batch_size,
+                                          shuffle=False, num_workers=cfg.num_thread, sampler=sampler_train,
+                                          pin_memory=True, drop_last=True) 
+        else:
+            self.batch_generator = DataLoader(dataset=trainset_loader, batch_size=cfg.num_gpus * cfg.train_batch_size,
+                                          shuffle=True, num_workers=cfg.num_thread,
                                           pin_memory=True, drop_last=True)
 
     def _make_model(self):
         # prepare network
-        self.logger.info("Creating graph and optimizer...")
+        self.logger_info("Creating graph and optimizer...")
         model = get_model('train')
-        model.to(self.device)
+        
         # ddp
         if self.distributed:
+            model.to(self.gpu_idx)
             model = torch.nn.parallel.DistributedDataParallel(
                 model, device_ids=[self.gpu_idx], find_unused_parameters=True)
         else:
@@ -176,6 +180,14 @@ class Trainer(Base):
         self.model = model
         self.optimizer = optimizer
 
+    def logger_info(self, info):
+        if self.distributed:
+            if is_main_process():
+                self.logger.info(info)
+        else:
+            self.logger.info(info)
+
+
 
 class Tester(Base):
     def __init__(self, test_epoch=None):
@@ -185,7 +197,7 @@ class Tester(Base):
 
     def _make_batch_generator(self):
         # data load and construct batch generator
-        self.logger.info("Creating dataset...")
+        self.logger_info("Creating dataset...")
         testset_loader = eval(cfg.testset)(transforms.ToTensor(), "test")
         batch_generator = DataLoader(dataset=testset_loader, batch_size=cfg.num_gpus * cfg.test_batch_size,
                                      shuffle=False, num_workers=cfg.num_thread, pin_memory=True)
@@ -197,7 +209,7 @@ class Tester(Base):
         self.logger.info('Load checkpoint from {}'.format(cfg.pretrained_model_path))
 
         # prepare network
-        self.logger.info("Creating graph...")
+        self.logger_info("Creating graph...")
         model = get_model('test')
         model = DataParallel(model).cuda()
         ckpt = torch.load(cfg.pretrained_model_path)
