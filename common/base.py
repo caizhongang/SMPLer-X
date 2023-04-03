@@ -197,7 +197,7 @@ class Tester(Base):
 
     def _make_batch_generator(self):
         # data load and construct batch generator
-        self.logger_info("Creating dataset...")
+        self.logger.info("Creating dataset...")
         testset_loader = eval(cfg.testset)(transforms.ToTensor(), "test")
         batch_generator = DataLoader(dataset=testset_loader, batch_size=cfg.num_gpus * cfg.test_batch_size,
                                      shuffle=False, num_workers=cfg.num_thread, pin_memory=True)
@@ -209,7 +209,7 @@ class Tester(Base):
         self.logger.info('Load checkpoint from {}'.format(cfg.pretrained_model_path))
 
         # prepare network
-        self.logger_info("Creating graph...")
+        self.logger.info("Creating graph...")
         model = get_model('test')
         model = DataParallel(model).cuda()
         ckpt = torch.load(cfg.pretrained_model_path)
