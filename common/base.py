@@ -20,6 +20,7 @@ import torch.utils.data.distributed
 from utils.distribute_utils import (
     get_rank, is_main_process, time_synchronized,
 )
+from mmcv.runner import get_dist_info
 
 # dynamic dataset import
 for i in range(len(cfg.trainset_3d)):
@@ -65,6 +66,8 @@ class Trainer(Base):
             # print(module)
         for module in model.module.trainable_modules:
             normal_param += list(module.parameters())
+        # self.logger.info(f"N-{self.gpu_idx}, {normal_param}")
+        # self.logger.info("S", special_param)
         optim_params = [
             {  # add normal params first
                 'params': normal_param,
@@ -95,7 +98,7 @@ class Trainer(Base):
     def load_model(self, model, optimizer):
         if cfg.pretrained_model_path is not None:
             ckpt_path = cfg.pretrained_model_path
-            ckpt = torch.load(ckpt_path)
+            ckpt = torch.load(ckpt_path, map_location=torch.device('cpu')) # solve CUDA OOM error in DDP
             start_epoch = 0
             model.load_state_dict(ckpt['network'], strict=False)
             self.logger.info('Load checkpoint from {}'.format(ckpt_path))
@@ -138,9 +141,10 @@ class Trainer(Base):
         self.itr_per_epoch = math.ceil(len(trainset_loader) / cfg.num_gpus / cfg.train_batch_size)
 
         if self.distributed:
-            self.logger_info("Using distributed.")
-            # rank, world_size = get_dist_info()
-            sampler_train = DistributedSampler(trainset_loader)
+            rank, world_size = get_dist_info()
+            self.logger.info("Using distributed data sampler. --{rank}/{world_size}")
+            
+            sampler_train = DistributedSampler(trainset_loader, rank=rank, num_replicas=world_size, shuffle=True)
             self.batch_generator = DataLoader(dataset=trainset_loader, batch_size=cfg.train_batch_size,
                                           shuffle=False, num_workers=cfg.num_thread, sampler=sampler_train,
                                           pin_memory=True, drop_last=True) 
@@ -156,9 +160,11 @@ class Trainer(Base):
         
         # ddp
         if self.distributed:
-            model.to(self.gpu_idx)
+            self.logger.info(f"Wrapping distributed model. --{self.gpu_idx}")
+            model.cuda()
             model = torch.nn.parallel.DistributedDataParallel(
-                model, device_ids=[self.gpu_idx], find_unused_parameters=True)
+                model, device_ids=[self.gpu_idx], output_device=self.gpu_idx,
+                find_unused_parameters=True)
         else:
         # dp
             model = DataParallel(model).cuda()

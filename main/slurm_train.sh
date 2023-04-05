@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+    #!/usr/bin/env bash
 
 set -x
 
@@ -18,9 +18,12 @@ srun -p ${PARTITION} \
     --ntasks-per-node=1 \
     --cpus-per-task=${CPUS_PER_TASK} \
     --kill-on-bad-exit=1 \
-    torchrun --nproc_per_node=${GPUS_PER_NODE} train.py \
+    torchrun --nproc_per_node=${GPUS_PER_NODE} \
+        --master_port 44146 train.py \
         --gpu_num ${GPUS_PER_NODE}\
         --lr 1e-4 \
-        --exp_name output/${WORK_DIR} \
+        --exp_name output/${JOB_NAME} \
         --end_epoch 14 \
-        --train_batch_size ${PER_GPU_BS}
+        --train_batch_size ${PER_GPU_BS} \
+        # --continue \
+        # --pretrained_model_path ../output/model_dump/snapshot_0.pth.tar

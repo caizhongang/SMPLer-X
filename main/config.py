@@ -1,12 +1,14 @@
 import os
 import os.path as osp
 import sys
+import datetime
 
 class Config:
 
     # dataset setting
     dataset_list = ['Human36M', 'MSCOCO', 'MPII', 'AGORA', 'EHF']
     trainset_3d = ['Human36M']; trainset_2d = ['MSCOCO', 'MPII']; testset = 'EHF'
+    # trainset_3d = []; trainset_2d = ['MSCOCO']; testset = 'EHF'
     # trainset_3d = []; trainset_2d = ['MPII']; testset = 'EHF'
 
     ## model setting
@@ -99,7 +101,8 @@ class Config:
             self.testset = 'AGORA'
 
     def prepare_dirs(self, exp_name):
-        self.output_dir = osp.join(self.root_dir, exp_name)
+        time_str = datetime.datetime.now().strftime('%Y%m%d_%H%M%S')
+        self.output_dir = osp.join(self.root_dir, f'{exp_name}_{time_str}')
         self.model_dir = osp.join(self.output_dir, 'model_dump')
         self.vis_dir = osp.join(self.output_dir, 'vis')
         self.log_dir = osp.join(self.output_dir, 'log')

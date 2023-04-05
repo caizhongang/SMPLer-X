@@ -9,6 +9,15 @@ import torch
 import torch.distributed as dist
 from mmcv.runner import get_dist_info
 from xrprimer.utils.log_utils import get_logger
+import random
+import numpy as np
+
+def set_seed(seed):
+    random.seed(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    torch.cuda.manual_seed_all(seed)
+    # torch.set_deterministic(True)
 
 
 def time_synchronized():

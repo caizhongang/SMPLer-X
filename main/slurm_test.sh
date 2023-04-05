@@ -20,5 +20,5 @@ srun -p ${PARTITION} \
     python test.py \
         --gpu_num ${GPUS_PER_NODE} \
         --exp_name output/test_setting1 \
-        --pretrained_model_path ../output/model_dump/snapshot_0.pth.tar \
+        --pretrained_model_path ../output/ddp_1gpu_lr_1e-4_20230404_170314/model_dump/snapshot_0.pth.tar \
         --testset EHF
