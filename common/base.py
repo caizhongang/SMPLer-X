@@ -142,7 +142,7 @@ class Trainer(Base):
 
         if self.distributed:
             rank, world_size = get_dist_info()
-            self.logger.info("Using distributed data sampler. --{rank}/{world_size}")
+            self.logger_info("Using distributed data sampler.")
             
             sampler_train = DistributedSampler(trainset_loader, rank=rank, num_replicas=world_size, shuffle=True)
             self.batch_generator = DataLoader(dataset=trainset_loader, batch_size=cfg.train_batch_size,
@@ -160,7 +160,7 @@ class Trainer(Base):
         
         # ddp
         if self.distributed:
-            self.logger.info(f"Wrapping distributed model. --{self.gpu_idx}")
+            self.logger_info("Using distributed data parallel.")
             model.cuda()
             model = torch.nn.parallel.DistributedDataParallel(
                 model, device_ids=[self.gpu_idx], output_device=self.gpu_idx,
@@ -194,7 +194,6 @@ class Trainer(Base):
             self.logger.info(info)
 
 
-
 class Tester(Base):
     def __init__(self, test_epoch=None):
         if test_epoch is not None:
@@ -223,6 +222,8 @@ class Tester(Base):
         from collections import OrderedDict
         new_state_dict = OrderedDict()
         for k, v in ckpt['network'].items():
+            if 'module' not in k:
+                k = 'module.' + k
             k = k.replace('backbone', 'encoder').replace('body_rotation_net', 'body_regressor').replace(
                 'hand_rotation_net', 'hand_regressor')
             new_state_dict[k] = v

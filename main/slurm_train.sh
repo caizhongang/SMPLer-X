@@ -9,7 +9,7 @@ PER_GPU_BS=32
 
 GPUS_PER_NODE=$((${GPUS}<8?${GPUS}:8))
 CPUS_PER_TASK=${CPUS_PER_TASK:-2}
-# SRUN_ARGS=${SRUN_ARGS:-""}
+SRUN_ARGS=${SRUN_ARGS:-""}
 
 PYTHONPATH="$(dirname $0)/..":$PYTHONPATH \
 srun -p ${PARTITION} \
@@ -18,12 +18,11 @@ srun -p ${PARTITION} \
     --ntasks-per-node=1 \
     --cpus-per-task=${CPUS_PER_TASK} \
     --kill-on-bad-exit=1 \
+    ${SRUN_ARGS} \
     torchrun --nproc_per_node=${GPUS_PER_NODE} \
-        --master_port 44146 train.py \
+        --master_port 44141 train.py \
         --gpu_num ${GPUS_PER_NODE}\
         --lr 1e-4 \
-        --exp_name output/${JOB_NAME} \
+        --exp_name output/train_${JOB_NAME} \
         --end_epoch 14 \
         --train_batch_size ${PER_GPU_BS} \
-        # --continue \
-        # --pretrained_model_path ../output/model_dump/snapshot_0.pth.tar

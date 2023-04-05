@@ -6,10 +6,9 @@ import torch.backends.cudnn as cudnn
 # ddp
 import torch.distributed as dist
 from common.utils.distribute_utils import (
-    init_distributed_mode, is_main_process, cleanup, set_seed
+    init_distributed_mode, is_main_process, set_seed
 )
 import torch.distributed as dist
-from xrprimer.utils.log_utils import get_logger
 from base import Trainer
 from mmcv.runner import get_dist_info
 
@@ -72,14 +71,6 @@ def main():
 
     trainer.logger_info('### Start training ###')
 
-    # save model ddp, save model.module on rank 0 only
-    # if is_main_process():
-    #     trainer.save_model({
-    #         'epoch': -1,
-    #         'network': trainer.model.module.state_dict(),
-    #         'optimizer': trainer.optimizer.state_dict(),
-    #     }, -1)
-
     for epoch in range(trainer.start_epoch, cfg.end_epoch):
         trainer.tot_timer.tic()
         trainer.read_timer.tic()
@@ -88,22 +79,17 @@ def main():
         trainer.batch_generator.sampler.set_epoch(epoch)
 
         for itr, (inputs, targets, meta_info) in enumerate(trainer.batch_generator):
-            # if is_main_process():
-            #     import pdb; pdb.set_trace()
-            # dist.barrier()
             trainer.read_timer.toc()
             trainer.gpu_timer.tic()
 
             # forward
             trainer.optimizer.zero_grad()
-            loss = trainer.model(inputs, targets, meta_info, 'train')
-
-            loss = {k: loss[k].mean() for k in loss}
+            loss= trainer.model(inputs, targets, meta_info, 'train')
+            loss_mean = {k: loss[k].mean() for k in loss}
+            loss_sum = sum(loss_mean[k] for k in loss_mean)
+            
             # backward
-            loss_mean = sum(loss[k] for k in loss)
-            loss_mean.backward()
-            if is_main_process():
-                import pdb; pdb.set_trace()
+            loss_sum.backward()
             trainer.optimizer.step()
             trainer.scheduler.step()
             
@@ -111,15 +97,15 @@ def main():
             if (itr + 1) % cfg.print_iters == 0:
                 # loss of all ranks
                 rank, world_size = get_dist_info()
-
-                for k in loss:
-                    dist.all_reduce(loss[k]) 
+                loss_print = loss_mean.copy()
+                for k in loss_print:
+                    dist.all_reduce(loss_print[k]) 
                 
                 total_loss = 0
-                for k in loss:
-                    loss[k] = loss[k] / world_size
-                    total_loss += loss[k]
-                loss['total'] = total_loss
+                for k in loss_print:
+                    loss_print[k] = loss_print[k] / world_size
+                    total_loss += loss_print[k]
+                loss_print['total'] = total_loss
                     
                 screen = [
                     'Epoch %d/%d itr %d/%d:' % (epoch, cfg.end_epoch, itr, trainer.itr_per_epoch),
@@ -129,7 +115,7 @@ def main():
                         trainer.read_timer.average_time),
                     '%.2fh/epoch' % (trainer.tot_timer.average_time / 3600. * trainer.itr_per_epoch),
                 ]
-                screen += ['%s: %.4f' % ('loss_' + k, v.detach()) for k, v in loss.items()]
+                screen += ['%s: %.4f' % ('loss_' + k, v.detach()) for k, v in loss_print.items()]
                 trainer.logger_info(' '.join(screen))
 
             trainer.tot_timer.toc()
@@ -140,7 +126,7 @@ def main():
         if is_main_process():
             trainer.save_model({
                 'epoch': epoch,
-                'network': trainer.model.module.state_dict(),
+                'network': trainer.model.state_dict(),
                 'optimizer': trainer.optimizer.state_dict(),
             }, epoch)
 

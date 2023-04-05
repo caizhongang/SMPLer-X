@@ -373,11 +373,7 @@ def get_model(mode):
 
     if mode == 'train':
         # body
-        from mmcv.runner import get_dist_info
-        rank, world_size = get_dist_info()
-        map_location = {"cuda:0": f"cuda:{rank}"}
-        encoder_pretrained_model = torch.load(cfg.encoder_pretrained_model_path, 
-                                              map_location=map_location)['state_dict']
+        encoder_pretrained_model = torch.load(cfg.encoder_pretrained_model_path)['state_dict']
         vit.load_state_dict(encoder_pretrained_model, strict=False)
         print(f"Initialize encoder from {cfg.encoder_pretrained_model_path}")
 

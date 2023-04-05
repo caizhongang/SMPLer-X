@@ -8,7 +8,7 @@ GPUS=$3
 
 GPUS_PER_NODE=$((${GPUS}<8?${GPUS}:8))
 CPUS_PER_TASK=${CPUS_PER_TASK:-2}
-# SRUN_ARGS=${SRUN_ARGS:-""}
+SRUN_ARGS=${SRUN_ARGS:-""}
 
 PYTHONPATH="$(dirname $0)/..":$PYTHONPATH \
 srun -p ${PARTITION} \
@@ -17,8 +17,9 @@ srun -p ${PARTITION} \
     --ntasks-per-node=1 \
     --cpus-per-task=${CPUS_PER_TASK} \
     --kill-on-bad-exit=1 \
+    ${SRUN_ARGS} \
     python test.py \
         --gpu_num ${GPUS_PER_NODE} \
-        --exp_name output/test_setting1 \
-        --pretrained_model_path ../output/ddp_1gpu_lr_1e-4_20230404_170314/model_dump/snapshot_0.pth.tar \
+        --exp_name output/test_${JOB_NAME} \
+        --pretrained_model_path ../output/osx_ddp/model_dump/snapshot_0.pth.tar \
         --testset EHF
