@@ -227,6 +227,7 @@ class Tester(Base):
             k = k.replace('backbone', 'encoder').replace('body_rotation_net', 'body_regressor').replace(
                 'hand_rotation_net', 'hand_regressor')
             new_state_dict[k] = v
+        self.logger.warning("Attention: Strict=False is set for checkpoint loading. Please check manually.")
         model.load_state_dict(new_state_dict, strict=False)
         model.eval()
 
