@@ -73,7 +73,7 @@ class MSCOCO(torch.utils.data.Dataset):
     def load_data(self):
         if self.data_split == 'train':
             db = COCO(osp.join(self.annot_path, 'coco_wholebody_train_v1.0.json'))
-            smplx_json_path = osp.join(self.annot_path, 'MSCOCO_train_SMPLX.json')
+            smplx_json_path = osp.join(self.annot_path, 'MSCOCO_train_SMPLX_all_NeuralAnnot.json')
             with open(smplx_json_path) as f:
                 print(f'load SMPLX parameters from {smplx_json_path}')
                 smplx_params = json.load(f)
