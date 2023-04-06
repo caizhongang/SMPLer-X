@@ -9,7 +9,6 @@ from common.utils.distribute_utils import (
     init_distributed_mode, is_main_process, set_seed
 )
 import torch.distributed as dist
-from base import Trainer
 from mmcv.runner import get_dist_info
 
 def parse_args():
@@ -44,13 +43,15 @@ def main():
                             pretrained_model_path=args.pretrained_model_path,
                             agora_benchmark=args.agora_benchmark
                             )
-
+    # save cfg
+    
     cudnn.benchmark = True
     set_seed(2023)
 
     # ddp by default in this branch
     distributed, gpu_idx = \
         init_distributed_mode(args.world_size, args.dist_url)
+    from base import Trainer
     trainer = Trainer(distributed, gpu_idx)
     
     # ddp

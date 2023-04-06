@@ -21,5 +21,5 @@ srun -p ${PARTITION} \
     python test.py \
         --gpu_num ${GPUS_PER_NODE} \
         --exp_name output/test_${JOB_NAME} \
-        --pretrained_model_path ../output/osx_ddp/model_dump/snapshot_0.pth.tar \
-        --testset EHF
+        --pretrained_model_path ../output/train_osx_ddp_8_32_20230405_162819/model_dump/snapshot_13.pth.tar \
+        --testset AGORA

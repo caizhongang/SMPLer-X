@@ -135,8 +135,9 @@ class EHF(torch.utils.data.Dataset):
     def evaluate(self, outs, cur_sample_idx):
         annots = self.datalist
         sample_num = len(outs)
-        eval_result = {'pa_mpvpe_all': [], 'pa_mpvpe_hand': [], 'pa_mpvpe_face': [], 'mpvpe_all': [], 'mpvpe_hand': [],
-                       'mpvpe_face': [], 'pa_mpjpe_body': [], 'pa_mpjpe_hand': []}
+        eval_result = {'pa_mpvpe_all': [], 'pa_mpvpe_l_hand': [], 'pa_mpvpe_r_hand': [], 'pa_mpvpe_hand': [], 'pa_mpvpe_face': [], 
+                       'mpvpe_all': [], 'mpvpe_l_hand': [], 'mpvpe_r_hand': [], 'mpvpe_hand': [], 'mpvpe_face': [], 
+                       'pa_mpjpe_body': [], 'pa_mpjpe_l_hand': [], 'pa_mpjpe_r_hand': [], 'pa_mpjpe_hand': []}
         for n in range(sample_num):
             annot = annots[cur_sample_idx + n]
             ann_id = annot['img_path'].split('/')[-1].split('_')[0]
@@ -165,6 +166,10 @@ class EHF(torch.utils.data.Dataset):
             mesh_gt_rhand = mesh_gt[smpl_x.hand_vertex_idx['right_hand'], :]
             mesh_out_rhand = mesh_out[smpl_x.hand_vertex_idx['right_hand'], :]
             mesh_out_rhand_align = rigid_align(mesh_out_rhand, mesh_gt_rhand)
+            eval_result['pa_mpvpe_l_hand'].append(np.sqrt(
+                np.sum((mesh_out_lhand_align - mesh_gt_lhand) ** 2, 1)).mean() * 1000)
+            eval_result['pa_mpvpe_r_hand'].append(np.sqrt(
+                np.sum((mesh_out_rhand_align - mesh_gt_rhand) ** 2, 1)).mean() * 1000)
             eval_result['pa_mpvpe_hand'].append((np.sqrt(
                 np.sum((mesh_out_lhand_align - mesh_gt_lhand) ** 2, 1)).mean() * 1000 + np.sqrt(
                 np.sum((mesh_out_rhand_align - mesh_gt_rhand) ** 2, 1)).mean() * 1000) / 2.)
@@ -175,6 +180,11 @@ class EHF(torch.utils.data.Dataset):
             mesh_out_rhand_align = mesh_out_rhand - np.dot(smpl_x.J_regressor, mesh_out)[
                                                     smpl_x.J_regressor_idx['rwrist'], None, :] + np.dot(
                 smpl_x.J_regressor, mesh_gt)[smpl_x.J_regressor_idx['rwrist'], None, :]
+            
+            eval_result['mpvpe_l_hand'].append(np.sqrt(
+                np.sum((mesh_out_lhand_align - mesh_gt_lhand) ** 2, 1)).mean() * 1000)
+            eval_result['mpvpe_r_hand'].append(np.sqrt(
+                np.sum((mesh_out_rhand_align - mesh_gt_rhand) ** 2, 1)).mean() * 1000)
             eval_result['mpvpe_hand'].append((np.sqrt(
                 np.sum((mesh_out_lhand_align - mesh_gt_lhand) ** 2, 1)).mean() * 1000 + np.sqrt(
                 np.sum((mesh_out_rhand_align - mesh_gt_rhand) ** 2, 1)).mean() * 1000) / 2.)
@@ -205,6 +215,10 @@ class EHF(torch.utils.data.Dataset):
             joint_gt_rhand = np.dot(smpl_x.orig_hand_regressor['right'], mesh_gt)
             joint_out_rhand = np.dot(smpl_x.orig_hand_regressor['right'], mesh_out)
             joint_out_rhand_align = rigid_align(joint_out_rhand, joint_gt_rhand)
+            eval_result['pa_mpjpe_l_hand'].append(np.sqrt(
+                np.sum((joint_out_lhand_align - joint_gt_lhand) ** 2, 1)).mean() * 1000)
+            eval_result['pa_mpjpe_r_hand'].append(np.sqrt(
+                np.sum((joint_out_rhand_align - joint_gt_rhand) ** 2, 1)).mean() * 1000)
             eval_result['pa_mpjpe_hand'].append((np.sqrt(
                 np.sum((joint_out_lhand_align - joint_gt_lhand) ** 2, 1)).mean() * 1000 + np.sqrt(
                 np.sum((joint_out_rhand_align - joint_gt_rhand) ** 2, 1)).mean() * 1000) / 2.)
@@ -253,28 +267,41 @@ class EHF(torch.utils.data.Dataset):
 
     def print_eval_result(self, eval_result):
         print('PA MPVPE (All): %.2f mm' % np.mean(eval_result['pa_mpvpe_all']))
+        print('PA MPVPE (L-Hands): %.2f mm' % np.mean(eval_result['pa_mpvpe_l_hand']))
+        print('PA MPVPE (R-Hands): %.2f mm' % np.mean(eval_result['pa_mpvpe_r_hand']))
         print('PA MPVPE (Hands): %.2f mm' % np.mean(eval_result['pa_mpvpe_hand']))
         print('PA MPVPE (Face): %.2f mm' % np.mean(eval_result['pa_mpvpe_face']))
         print()
 
         print('MPVPE (All): %.2f mm' % np.mean(eval_result['mpvpe_all']))
-        print('MPVPE (Handsls): %.2f mm' % np.mean(eval_result['mpvpe_hand']))
+        print('MPVPE (L-Hands): %.2f mm' % np.mean(eval_result['mpvpe_l_hand']))
+        print('MPVPE (R-Hands): %.2f mm' % np.mean(eval_result['mpvpe_r_hand']))
+        print('MPVPE (Hands): %.2f mm' % np.mean(eval_result['mpvpe_hand']))
         print('MPVPE (Face): %.2f mm' % np.mean(eval_result['mpvpe_face']))
         print()
 
         print('PA MPJPE (Body): %.2f mm' % np.mean(eval_result['pa_mpjpe_body']))
+        print('PA MPJPE (L-Hands): %.2f mm' % np.mean(eval_result['pa_mpjpe_l_hand']))
+        print('PA MPJPE (R-Hands): %.2f mm' % np.mean(eval_result['pa_mpjpe_r_hand']))
         print('PA MPJPE (Hands): %.2f mm' % np.mean(eval_result['pa_mpjpe_hand']))
 
         f = open(os.path.join(cfg.result_dir, 'result.txt'), 'w')
         f.write(f'EHF dataset: \n')
         f.write('PA MPVPE (All): %.2f mm\n' % np.mean(eval_result['pa_mpvpe_all']))
+        f.write('PA MPVPE (L-Hands): %.2f mm' % np.mean(eval_result['pa_mpvpe_l_hand']))
+        f.write('PA MPVPE (R-Hands): %.2f mm' % np.mean(eval_result['pa_mpvpe_r_hand']))
         f.write('PA MPVPE (Hands): %.2f mm\n' % np.mean(eval_result['pa_mpvpe_hand']))
         f.write('PA MPVPE (Face): %.2f mm\n' % np.mean(eval_result['pa_mpvpe_face']))
         f.write('MPVPE (All): %.2f mm\n' % np.mean(eval_result['mpvpe_all']))
-        f.write('MPVPE (Handsls): %.2f mm\n' % np.mean(eval_result['mpvpe_hand']))
+        f.write('MPVPE (L-Hands): %.2f mm' % np.mean(eval_result['mpvpe_l_hand']))
+        f.write('MPVPE (R-Hands): %.2f mm' % np.mean(eval_result['mpvpe_r_hand']))
+        f.write('MPVPE (Hands): %.2f mm' % np.mean(eval_result['mpvpe_hand']))
         f.write('MPVPE (Face): %.2f mm\n' % np.mean(eval_result['mpvpe_face']))
         f.write('PA MPJPE (Body): %.2f mm\n' % np.mean(eval_result['pa_mpjpe_body']))
+        f.write('PA MPJPE (L-Hands): %.2f mm' % np.mean(eval_result['pa_mpjpe_l_hand']))
+        f.write('PA MPJPE (R-Hands): %.2f mm' % np.mean(eval_result['pa_mpjpe_r_hand']))
         f.write('PA MPJPE (Hands): %.2f mm\n' % np.mean(eval_result['pa_mpjpe_hand']))
+        
         # for i in range(len(eval_result['pa_mpvpe_all'])):
         #     f.write(f'{i+1:02d}.jpg\n')
         #     f.write('PA MPVPE (All): %.2f mm\n' % eval_result['pa_mpvpe_all'][i])

@@ -480,8 +480,8 @@ class AGORA(torch.utils.data.Dataset):
     def evaluate(self, outs, cur_sample_idx):
         annots = self.datalist
         sample_num = len(outs)
-        eval_result = {'pa_mpvpe_all': [], 'pa_mpvpe_hand': [], 'pa_mpvpe_face': [], 'mpvpe_all': [], 'mpvpe_hand': [],
-                       'mpvpe_face': []}
+        eval_result = {'pa_mpvpe_all': [], 'pa_mpvpe_l_hand': [], 'pa_mpvpe_r_hand': [], 'pa_mpvpe_hand': [], 'pa_mpvpe_face': [], 
+                       'mpvpe_all': [], 'mpvpe_l_hand': [], 'mpvpe_r_hand': [], 'mpvpe_hand': [], 'mpvpe_face': []}
         for n in range(sample_num):
             annot = annots[cur_sample_idx + n]
             out = outs[n]
@@ -507,11 +507,19 @@ class AGORA(torch.utils.data.Dataset):
             mesh_out_rhand_align = mesh_out_rhand - np.dot(smpl_x.J_regressor, mesh_out)[
                                                     smpl_x.J_regressor_idx['rwrist'], None, :] + np.dot(
                 smpl_x.J_regressor, mesh_gt)[smpl_x.J_regressor_idx['rwrist'], None, :]
+            eval_result['mpvpe_l_hand'].append(np.sqrt(
+                np.sum((mesh_out_lhand_align - mesh_gt_lhand) ** 2, 1)).mean() * 1000)
+            eval_result['mpvpe_r_hand'].append(np.sqrt(
+                np.sum((mesh_out_rhand_align - mesh_gt_rhand) ** 2, 1)).mean() * 1000)
             eval_result['mpvpe_hand'].append((np.sqrt(
                 np.sum((mesh_out_lhand_align - mesh_gt_lhand) ** 2, 1)).mean() * 1000 + np.sqrt(
                 np.sum((mesh_out_rhand_align - mesh_gt_rhand) ** 2, 1)).mean() * 1000) / 2.)
             mesh_out_lhand_align = rigid_align(mesh_out_lhand, mesh_gt_lhand)
             mesh_out_rhand_align = rigid_align(mesh_out_rhand, mesh_gt_rhand)
+            eval_result['pa_mpvpe_l_hand'].append(np.sqrt(
+                np.sum((mesh_out_lhand_align - mesh_gt_lhand) ** 2, 1)).mean() * 1000)
+            eval_result['pa_mpvpe_r_hand'].append(np.sqrt(
+                np.sum((mesh_out_rhand_align - mesh_gt_rhand) ** 2, 1)).mean() * 1000)
             eval_result['pa_mpvpe_hand'].append((np.sqrt(
                 np.sum((mesh_out_lhand_align - mesh_gt_lhand) ** 2, 1)).mean() * 1000 + np.sqrt(
                 np.sum((mesh_out_rhand_align - mesh_gt_rhand) ** 2, 1)).mean() * 1000) / 2.)
@@ -617,7 +625,6 @@ class AGORA(torch.utils.data.Dataset):
             img = vis_keypoints(img.copy(), joint_proj)
             cv2.imwrite(img_path.split('/')[-1], img)
             """
-
         return eval_result
 
     def print_eval_result(self, eval_result):
@@ -626,11 +633,27 @@ class AGORA(torch.utils.data.Dataset):
 
         if self.data_split == 'test' and self.test_set == 'test':  # do not print. just submit the results to the official evaluation server
             return
-
         print('PA MPVPE (All): %.2f mm' % np.mean(eval_result['pa_mpvpe_all']))
+        print('PA MPVPE (L-Hands): %.2f mm' % np.mean(eval_result['pa_mpvpe_l_hand']))
+        print('PA MPVPE (R-Hands): %.2f mm' % np.mean(eval_result['pa_mpvpe_r_hand']))
         print('PA MPVPE (Hands): %.2f mm' % np.mean(eval_result['pa_mpvpe_hand']))
         print('PA MPVPE (Face): %.2f mm' % np.mean(eval_result['pa_mpvpe_face']))
 
         print('MPVPE (All): %.2f mm' % np.mean(eval_result['mpvpe_all']))
+        print('MPVPE (L-Hands): %.2f mm' % np.mean(eval_result['mpvpe_l_hand']))
+        print('MPVPE (R-Hands): %.2f mm' % np.mean(eval_result['mpvpe_r_hand']))
         print('MPVPE (Hands): %.2f mm' % np.mean(eval_result['mpvpe_hand']))
         print('MPVPE (Face): %.2f mm' % np.mean(eval_result['mpvpe_face']))
+
+        f = open(os.path.join(cfg.result_dir, 'result.txt'), 'w')
+        f.write(f'AGORA dataset: \n')
+        f.write('PA MPVPE (All): %.2f mm\n' % np.mean(eval_result['pa_mpvpe_all']))
+        f.write('PA MPVPE (L-Hands): %.2f mm' % np.mean(eval_result['pa_mpvpe_l_hand']))
+        f.write('PA MPVPE (R-Hands): %.2f mm' % np.mean(eval_result['pa_mpvpe_r_hand']))
+        f.write('PA MPVPE (Hands): %.2f mm\n' % np.mean(eval_result['pa_mpvpe_hand']))
+        f.write('PA MPVPE (Face): %.2f mm\n' % np.mean(eval_result['pa_mpvpe_face']))
+        f.write('MPVPE (All): %.2f mm\n' % np.mean(eval_result['mpvpe_all']))
+        f.write('MPVPE (L-Hands): %.2f mm' % np.mean(eval_result['mpvpe_l_hand']))
+        f.write('MPVPE (R-Hands): %.2f mm' % np.mean(eval_result['mpvpe_r_hand']))
+        f.write('MPVPE (Hands): %.2f mm' % np.mean(eval_result['mpvpe_hand']))
+        f.write('MPVPE (Face): %.2f mm\n' % np.mean(eval_result['mpvpe_face']))
