@@ -6,10 +6,9 @@ import datetime
 class Config:
 
     # dataset setting
-    dataset_list = ['Human36M', 'MSCOCO', 'MPII', 'AGORA', 'EHF']
-    trainset_3d = ['Human36M']; trainset_2d = ['MSCOCO', 'MPII']; testset = 'EHF'
-    # trainset_3d = []; trainset_2d = ['MSCOCO']; testset = 'EHF'
-    # trainset_3d = []; trainset_2d = ['MPII']; testset = 'EHF'
+    dataset_list = ['Human36M', 'MSCOCO', 'MPII', 'AGORA', 'EHF', 'SynBody', 'GTA_Human2']
+    # trainset_3d = ['Human36M']; trainset_2d = ['MSCOCO', 'MPII']; trainset_humandata = ['SynBody']; testset = 'EHF'
+    trainset_3d = []; trainset_2d = []; trainset_humandata = ['SynBody']; testset = 'EHF'
 
     ## model setting
     pretrained_model_path = None

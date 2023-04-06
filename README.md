@@ -8,18 +8,12 @@ source setup.sh
 ## Training
 ```bash
 cd main
-source slurm_train.sh 
-
-# train with DDP
-# checkout ddp_dev branch
-cd main
 sh slurm_train.sh {PARTITION} {JOB_NAME} {NUM_GPU}
 # logs and ckpts will be saved to ../output/train_{JOB_NAME}_{DATE_TIME}
 ```
 
 ## Testing
 ```bash
-# checkout ddp_dev branch
 cd main
 sh slurm_test.sh {PARTITION} {JOB_NAME} {NUM_GPU}
 # logs and results  will be saved to ../output/test_{JOB_NAME}_{DATE_TIME}

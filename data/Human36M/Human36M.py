@@ -29,7 +29,7 @@ class Human36M(torch.utils.data.Dataset):
 
 
         self.datalist = self.load_data()
-        
+
     def get_subsampling_ratio(self):
         if self.data_split == 'train':
             return 5

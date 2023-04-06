@@ -27,6 +27,8 @@ for i in range(len(cfg.trainset_3d)):
     exec('from ' + cfg.trainset_3d[i] + ' import ' + cfg.trainset_3d[i])
 for i in range(len(cfg.trainset_2d)):
     exec('from ' + cfg.trainset_2d[i] + ' import ' + cfg.trainset_2d[i])
+for i in range(len(cfg.trainset_humandata)):
+    exec('from ' + cfg.trainset_humandata[i] + ' import ' + cfg.trainset_humandata[i])
 exec('from ' + cfg.testset + ' import ' + cfg.testset)
 
 class Base(object):
@@ -121,6 +123,10 @@ class Trainer(Base):
         trainset2d_loader = []
         for i in range(len(cfg.trainset_2d)):
             trainset2d_loader.append(eval(cfg.trainset_2d[i])(transforms.ToTensor(), "train"))
+        trainset_humandata_loader = []
+        for i in range(len(cfg.trainset_humandata)):
+            trainset_humandata_loader.append(eval(cfg.trainset_humandata[i])(transforms.ToTensor(), "train"))
+
         valid_loader_num = 0
         if len(trainset3d_loader) > 0:
             trainset3d_loader = [MultipleDatasets(trainset3d_loader, make_same_len=False)]
@@ -132,11 +138,14 @@ class Trainer(Base):
             valid_loader_num += 1
         else:
             trainset2d_loader = []
+        if len(trainset_humandata_loader) > 0:
+            trainset_humandata_loader = [MultipleDatasets(trainset_humandata_loader, make_same_len=False)]
+            valid_loader_num += 1
 
         if valid_loader_num > 1:
-            trainset_loader = MultipleDatasets(trainset3d_loader + trainset2d_loader, make_same_len=True)
+            trainset_loader = MultipleDatasets(trainset3d_loader + trainset2d_loader + trainset_humandata_loader, make_same_len=True)
         else:
-            trainset_loader = MultipleDatasets(trainset3d_loader + trainset2d_loader, make_same_len=False)
+            trainset_loader = MultipleDatasets(trainset3d_loader + trainset2d_loader + trainset_humandata_loader, make_same_len=False)
 
         self.itr_per_epoch = math.ceil(len(trainset_loader) / cfg.num_gpus / cfg.train_batch_size)
 

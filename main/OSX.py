@@ -337,7 +337,6 @@ class Model(nn.Module):
             joint_proj = torch.cat((joint_proj[:, :smpl_x.joint_part['face'][0], :], coord,
                                     joint_proj[:, smpl_x.joint_part['face'][-1] + 1:, :]), 1)
 
-
             loss['joint_proj'] = self.coord_loss(joint_proj, targets['joint_img'][:, :, :2], meta_info['joint_trunc'])
             loss['joint_img'] = self.coord_loss(joint_img, smpl_x.reduce_joint_set(targets['joint_img']),
                                                 smpl_x.reduce_joint_set(meta_info['joint_trunc']), meta_info['is_3D'])
