@@ -15,7 +15,7 @@ from humandata import HumanDataset
 
 
 class GTA_Human2(HumanDataset):
-    def __init__(self, transform, data_split, filename='gta_human2multiple_230228_04000_refined.npz'):
+    def __init__(self, transform, data_split, filename='gta_human2multiple_230406_04000_0.npz'):
         super(GTA_Human2, self).__init__(transform, data_split)
 
         self.img_dir = osp.join(cfg.data_dir, 'GTA_Human2')

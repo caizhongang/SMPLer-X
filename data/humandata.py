@@ -52,7 +52,7 @@ class HumanDataset(torch.utils.data.Dataset):
         lhand_bbox_xywh = content['lhand_bbox_xywh']
         rhand_bbox_xywh = content['rhand_bbox_xywh']
         face_bbox_xywh = content['face_bbox_xywh']
-        keypoints3d = content['keypoints3d'][:, self.SMPLX_137_MAPPING, :3]
+        keypoints3d = content['keypoints3d_cam'][:, self.SMPLX_137_MAPPING, :3]
         keypoints3d_mask = content['keypoints3d_mask'][self.SMPLX_137_MAPPING]
         keypoints2d = content['keypoints2d'][:, self.SMPLX_137_MAPPING, :2]
         keypoints2d_mask = content['keypoints2d_mask'][self.SMPLX_137_MAPPING]
