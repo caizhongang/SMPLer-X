@@ -26,3 +26,5 @@ srun -p ${PARTITION} \
         --exp_name output/train_${JOB_NAME} \
         --end_epoch 14 \
         --train_batch_size ${PER_GPU_BS} \
+        --continue \
+        --pretrained_model_path ../output/train_osx_ddp_8_32_20230405_162819/model_dump/snapshot_13.pth.tar

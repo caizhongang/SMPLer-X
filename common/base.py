@@ -174,7 +174,7 @@ class Trainer(Base):
                                                                eta_min=1e-6)
         if cfg.continue_train:
             if self.distributed:
-                start_epoch, model.module, optimizer = self.load_model(model.module, optimizer)
+                start_epoch, model, optimizer = self.load_model(model, optimizer)
             else:
                 start_epoch, model, optimizer = self.load_model(model, optimizer)
         else:
