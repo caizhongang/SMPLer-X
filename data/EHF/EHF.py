@@ -266,6 +266,7 @@ class EHF(torch.utils.data.Dataset):
         return eval_result
 
     def print_eval_result(self, eval_result):
+        print('======EHF======')
         print('PA MPVPE (All): %.2f mm' % np.mean(eval_result['pa_mpvpe_all']))
         print('PA MPVPE (L-Hands): %.2f mm' % np.mean(eval_result['pa_mpvpe_l_hand']))
         print('PA MPVPE (R-Hands): %.2f mm' % np.mean(eval_result['pa_mpvpe_r_hand']))

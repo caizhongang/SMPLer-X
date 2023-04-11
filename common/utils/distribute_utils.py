@@ -11,6 +11,7 @@ from mmcv.runner import get_dist_info
 from xrprimer.utils.log_utils import get_logger
 import random
 import numpy as np
+import subprocess
 
 def set_seed(seed):
     random.seed(seed)
@@ -38,33 +39,43 @@ def setup_for_distributed(is_master):
     __builtin__.print = print
 
 
-def init_distributed_mode(world_size, dist_url):
-    """This function initiate the distributed training setup, and return the
-    current gpu index."""
-    # logger = get_logger(logger)
-    if 'RANK' in os.environ and 'WORLD_SIZE' in os.environ:
-        rank = int(os.environ['RANK'])
-        world_size = int(os.environ['WORLD_SIZE'])
-        gpu_idx = int(os.environ['LOCAL_RANK'])
-    elif 'SLURM_PROCID' in os.environ:
-        rank = int(os.environ['SLURM_PROCID'])
-        gpu_idx = rank % torch.cuda.device_count()
+def init_distributed_mode(port = None, master_port=29500):
+    """Initialize slurm distributed training environment.
+
+    If argument ``port`` is not specified, then the master port will be system
+    environment variable ``MASTER_PORT``. If ``MASTER_PORT`` is not in system
+    environment variable, then a default port ``29500`` will be used.
+
+    Args:
+        backend (str): Backend of torch.distributed.
+        port (int, optional): Master port. Defaults to None.
+    """
+    dist_backend = 'nccl'
+    proc_id = int(os.environ['SLURM_PROCID'])
+    ntasks = int(os.environ['SLURM_NTASKS'])
+    node_list = os.environ['SLURM_NODELIST']
+    num_gpus = torch.cuda.device_count()
+    torch.cuda.set_device(proc_id % num_gpus)
+    addr = subprocess.getoutput(
+        f'scontrol show hostname {node_list} | head -n1')
+    # specify master port
+    if port is not None:
+        os.environ['MASTER_PORT'] = str(port)
+    elif 'MASTER_PORT' in os.environ:
+        pass  # use MASTER_PORT in the environment variable
     else:
-        distributed = False
-        return distributed
+        # 29500 is torch.distributed default port
+        os.environ['MASTER_PORT'] = str(master_port)
+    # use MASTER_ADDR in the environment variable if it already exists
+    if 'MASTER_ADDR' not in os.environ:
+        os.environ['MASTER_ADDR'] = addr
+    os.environ['WORLD_SIZE'] = str(ntasks)
+    os.environ['LOCAL_RANK'] = str(proc_id % num_gpus)
+    os.environ['RANK'] = str(proc_id)
+    dist.init_process_group(backend=dist_backend)
 
     distributed = True
-
-    torch.cuda.set_device(gpu_idx)
-    dist_backend = 'nccl'
-    # logger.info(f'| distributed init (rank {rank}):' f'{dist_url}')
-    torch.distributed.init_process_group(
-        backend=dist_backend,
-        init_method=dist_url,
-        world_size=world_size,
-        rank=rank)
-    torch.distributed.barrier()
-    setup_for_distributed(rank == 0)
+    gpu_idx = proc_id % num_gpus
 
     return distributed, gpu_idx
 

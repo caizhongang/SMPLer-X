@@ -8,10 +8,10 @@ from timer import Timer
 from logger import colorlogger
 from torch.nn.parallel.data_parallel import DataParallel
 from config import cfg
-if not cfg.agora_benchmark:
-    from OSX import get_model
+if cfg.agora_benchmark == 'agora_model':
+    from OSX_WoDecoder import get_model # agora
 else:
-    from OSX_WoDecoder import get_model
+    from OSX import get_model
 from dataset import MultipleDatasets
 # ddp
 import torch.distributed as dist
@@ -153,7 +153,7 @@ class Trainer(Base):
             rank, world_size = get_dist_info()
             self.logger_info("Using distributed data sampler.")
             
-            sampler_train = DistributedSampler(trainset_loader, rank=rank, num_replicas=world_size, shuffle=True)
+            sampler_train = DistributedSampler(trainset_loader, world_size, rank, shuffle=True)
             self.batch_generator = DataLoader(dataset=trainset_loader, batch_size=cfg.train_batch_size,
                                           shuffle=False, num_workers=cfg.num_thread, sampler=sampler_train,
                                           pin_memory=True, drop_last=True) 
@@ -172,7 +172,7 @@ class Trainer(Base):
             self.logger_info("Using distributed data parallel.")
             model.cuda()
             model = torch.nn.parallel.DistributedDataParallel(
-                model, device_ids=[self.gpu_idx], output_device=self.gpu_idx,
+                model, device_ids=[self.gpu_idx],
                 find_unused_parameters=True)
         else:
         # dp

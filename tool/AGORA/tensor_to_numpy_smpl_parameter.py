@@ -14,6 +14,7 @@ def parse_args():
         assert 0, "Please set dataset_path"
     return args
 
+args = parse_args()
 root_path = osp.join(args.dataset_path, 'smpl_gt')
 folder_path_list = glob(osp.join(root_path, '*'))
 for folder_path in folder_path_list:

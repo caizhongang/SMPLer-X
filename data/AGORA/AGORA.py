@@ -20,7 +20,10 @@ class AGORA(torch.utils.data.Dataset):
         self.data_split = data_split
         self.data_path = osp.join(cfg.data_dir, 'AGORA', 'data')
         self.resolution = (2160, 3840)  # height, width. one of (720, 1280) and (2160, 3840)
-        self.test_set = 'test' if cfg.agora_benchmark else 'val'  # val, test
+        if cfg.agora_benchmark == 'agora_model' or cfg.agora_benchmark == 'test_only':  
+            self.test_set = 'test' 
+        else:
+            self.test_set = 'val'  # val, test
 
         # AGORA joint set
         self.joint_set = {
@@ -633,12 +636,15 @@ class AGORA(torch.utils.data.Dataset):
 
         if self.data_split == 'test' and self.test_set == 'test':  # do not print. just submit the results to the official evaluation server
             return
+        
+        print('======AGORA-val======')
         print('PA MPVPE (All): %.2f mm' % np.mean(eval_result['pa_mpvpe_all']))
         print('PA MPVPE (L-Hands): %.2f mm' % np.mean(eval_result['pa_mpvpe_l_hand']))
         print('PA MPVPE (R-Hands): %.2f mm' % np.mean(eval_result['pa_mpvpe_r_hand']))
         print('PA MPVPE (Hands): %.2f mm' % np.mean(eval_result['pa_mpvpe_hand']))
         print('PA MPVPE (Face): %.2f mm' % np.mean(eval_result['pa_mpvpe_face']))
-
+        print()
+        
         print('MPVPE (All): %.2f mm' % np.mean(eval_result['mpvpe_all']))
         print('MPVPE (L-Hands): %.2f mm' % np.mean(eval_result['mpvpe_l_hand']))
         print('MPVPE (R-Hands): %.2f mm' % np.mean(eval_result['mpvpe_r_hand']))
@@ -646,7 +652,7 @@ class AGORA(torch.utils.data.Dataset):
         print('MPVPE (Face): %.2f mm' % np.mean(eval_result['mpvpe_face']))
 
         f = open(os.path.join(cfg.result_dir, 'result.txt'), 'w')
-        f.write(f'AGORA dataset: \n')
+        f.write(f'AGORA-val dataset: \n')
         f.write('PA MPVPE (All): %.2f mm\n' % np.mean(eval_result['pa_mpvpe_all']))
         f.write('PA MPVPE (L-Hands): %.2f mm' % np.mean(eval_result['pa_mpvpe_l_hand']))
         f.write('PA MPVPE (R-Hands): %.2f mm' % np.mean(eval_result['pa_mpvpe_r_hand']))

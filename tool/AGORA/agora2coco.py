@@ -47,11 +47,11 @@ def save_obj(v, f, file_name='output.obj'):
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--dataset_path', type=str, dest='dataset_path')
+    parser.add_argument('--root_path', type=str, dest='root_path')
     parser.add_argument('--human_model_path', type=str, dest='human_model_path')
     args = parser.parse_args()
 
-    if not args.dataset_path:
+    if not args.root_path:
         assert 0, "Please set dataset_path"
     if not args.human_model_path:
         assert 0, "Please set human_model_path"
