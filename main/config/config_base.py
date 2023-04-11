@@ -25,7 +25,7 @@ testset = 'EHF'
 
 # model
 smplx_loss_weight = 1 #2 for agora_model
-agora_benchmark = 'na'
+agora_benchmark = 'na' # 'agora_model', 'test_only'
 
 # model_type = 'osx_b'
 # encoder_config_file = 'transformer_utils/configs/osx/encoder/body_encoder_base.py'
