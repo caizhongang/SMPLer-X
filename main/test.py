@@ -23,7 +23,9 @@ def main():
 
     config_path = osp.join('../output',args.result_path, 'code', 'config_base.py')
     ckpt_path = osp.join('../output', args.result_path, 'model_dump', f'snapshot_{int(args.ckpt_idx)}.pth.tar')
-    
+    # config_path = '/mnt/cache/yinwanqi/01-project/osx/main/config/config_base.py'
+    # ckpt_path = '/mnt/cache/yinwanqi/01-project/osx/pretrained_models/osx_l_agora.pth.tar'
+
     cfg.get_config_fromfile(config_path)
     cfg.update_test_config(args.testset, args.agora_benchmark, ckpt_path)
     cfg.update_config(args.num_gpus, args.exp_name)

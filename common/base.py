@@ -8,7 +8,7 @@ from timer import Timer
 from logger import colorlogger
 from torch.nn.parallel.data_parallel import DataParallel
 from config import cfg
-if cfg.agora_benchmark == 'agora_model':
+if 'agora_model' in cfg.agora_benchmark:
     from OSX_WoDecoder import get_model # agora
 else:
     from OSX import get_model

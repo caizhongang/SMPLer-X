@@ -20,7 +20,7 @@ class AGORA(torch.utils.data.Dataset):
         self.data_split = data_split
         self.data_path = osp.join(cfg.data_dir, 'AGORA', 'data')
         self.resolution = (2160, 3840)  # height, width. one of (720, 1280) and (2160, 3840)
-        if cfg.agora_benchmark == 'agora_model' or cfg.agora_benchmark == 'test_only':  
+        if cfg.agora_benchmark == 'agora_model_test' or cfg.agora_benchmark == 'test_only':  
             self.test_set = 'test' 
         else:
             self.test_set = 'val'  # val, test

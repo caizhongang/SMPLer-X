@@ -9,7 +9,7 @@ exp_name = 'output/exp1/pre_analysis'
 
 # quick access
 lr = 1e-4
-end_epoch = 14
+end_epoch = 50
 train_batch_size = 32
 
 # continue
@@ -18,9 +18,9 @@ pretrained_model_path = None
 
 # dataset setting
 dataset_list = ['Human36M', 'MSCOCO', 'MPII', 'AGORA', 'EHF', 'SynBody', 'GTA_Human2']
-trainset_3d = ['Human36M']
+trainset_3d = ['Human36M','AGORA']
 trainset_2d = ['MSCOCO', 'MPII']
-trainset_humandata = []
+trainset_humandata = ['SynBody', 'GTA_Human2']
 testset = 'EHF'
 
 # model
