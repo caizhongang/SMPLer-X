@@ -8,7 +8,6 @@ import time
 import torch
 import torch.distributed as dist
 from mmcv.runner import get_dist_info
-from xrprimer.utils.log_utils import get_logger
 import random
 import numpy as np
 import subprocess
