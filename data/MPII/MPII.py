@@ -39,7 +39,7 @@ class MPII(torch.utils.data.Dataset):
             img_path = osp.join(self.img_path, imgname)
             
             # bbox
-            bbox = process_bbox(ann['bbox'], img['width'], img['height']) 
+            bbox = process_bbox(ann['bbox'], img['width'], img['height'], ratio=1.2) 
             if bbox is None: continue
             
             # joint coordinates

@@ -34,17 +34,20 @@ class EHF(torch.utils.data.Dataset):
             img_path = osp.join(self.data_path, img['file_name'])
 
             bbox = ann['body_bbox']
-            bbox = process_bbox(bbox, img['width'], img['height'])
+            bbox = process_bbox(bbox, img['width'], img['height'], ratio=1.2)
             if bbox is None:
                 continue
 
             lhand_bbox = np.array(ann['lefthand_bbox']).reshape(4)
+            lhand_bbox = process_bbox(lhand_bbox, img['width'], img['height'], ratio=1.2)
             lhand_bbox[2:] += lhand_bbox[:2]  # xywh -> xyxy
 
             rhand_bbox = np.array(ann['righthand_bbox']).reshape(4)
+            rhand_bbox = process_bbox(rhand_bbox, img['width'], img['height'], ratio=1.2)
             rhand_bbox[2:] += rhand_bbox[:2]  # xywh -> xyxy
 
             face_bbox = np.array(ann['face_bbox']).reshape(4)
+            face_bbox = process_bbox(face_bbox, img['width'], img['height'], ratio=1.2)
             face_bbox[2:] += face_bbox[:2]  # xywh -> xyxy
 
             mesh_gt_path = osp.join(self.data_path, img['file_name'].split('_')[0] + '_align.ply')

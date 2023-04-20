@@ -93,7 +93,7 @@ class MSCOCO(torch.utils.data.Dataset):
                 if ann['iscrowd'] or (ann['num_keypoints'] == 0): continue
 
                 # bbox
-                bbox = process_bbox(ann['bbox'], img['width'], img['height'])
+                bbox = process_bbox(ann['bbox'], img['width'], img['height'], ratio=1.2)
                 if bbox is None: continue
 
                 # joint coordinates
@@ -119,16 +119,19 @@ class MSCOCO(torch.utils.data.Dataset):
                 # hand/face bbox
                 if ann['lefthand_valid']:
                     lhand_bbox = np.array(ann['lefthand_box']).reshape(4)
+                    lhand_bbox = process_bbox(lhand_bbox, img['width'], img['height'], ratio=1.2)
                     lhand_bbox[2:] += lhand_bbox[:2]  # xywh -> xyxy
                 else:
                     lhand_bbox = None
                 if ann['righthand_valid']:
                     rhand_bbox = np.array(ann['righthand_box']).reshape(4)
+                    rhand_bbox = process_bbox(rhand_bbox, img['width'], img['height'], ratio=1.2)
                     rhand_bbox[2:] += rhand_bbox[:2]  # xywh -> xyxy
                 else:
                     rhand_bbox = None
                 if ann['face_valid']:
                     face_bbox = np.array(ann['face_box']).reshape(4)
+                    face_bbox = process_bbox(face_bbox, img['width'], img['height'], ratio=1.2)
                     face_bbox[2:] += face_bbox[:2]  # xywh -> xyxy
                 else:
                     face_bbox = None
@@ -159,7 +162,7 @@ class MSCOCO(torch.utils.data.Dataset):
                 img_path = osp.join(self.img_path, imgname)
 
                 # bbox
-                bbox = process_bbox(ann['bbox'], img['width'], img['height'])
+                bbox = process_bbox(ann['bbox'], img['width'], img['height'], ratio=1.2)
                 if bbox is None: continue
 
                 # hand/face bbox

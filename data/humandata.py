@@ -66,7 +66,7 @@ class HumanDataset(torch.utils.data.Dataset):
             img_shape = self.img_shape
 
             bbox = bbox_xywh[i][:4]
-            bbox = process_bbox(bbox, img_width=img_shape[1], img_height=img_shape[0])
+            bbox = process_bbox(bbox, img_width=img_shape[1], img_height=img_shape[0], ratio=1.0)
             if bbox is None: continue
 
             # hand/face bbox
@@ -76,16 +76,19 @@ class HumanDataset(torch.utils.data.Dataset):
 
             if lhand_bbox[-1] > 0:  # conf > 0
                 lhand_bbox = lhand_bbox[:4]
+                lhand_bbox = process_bbox(lhand_bbox, img_width=img_shape[1], img_height=img_shape[0], ratio=1.2)
                 lhand_bbox[2:] += lhand_bbox[:2]  # xywh -> xyxy
             else:
                 lhand_bbox = None
             if rhand_bbox[-1] > 0:
                 rhand_bbox = rhand_bbox[:4]
+                rhand_bbox = process_bbox(rhand_bbox, img_width=img_shape[1], img_height=img_shape[0], ratio=1.2)
                 rhand_bbox[2:] += rhand_bbox[:2]  # xywh -> xyxy
             else:
                 rhand_bbox = None
             if face_bbox[-1] > 0:
                 face_bbox = face_bbox[:4]
+                face_bbox = process_bbox(face_bbox, img_width=img_shape[1], img_height=img_shape[0], ratio=1.2)
                 face_bbox[2:] += face_bbox[:2]  # xywh -> xyxy
             else:
                 face_bbox = None

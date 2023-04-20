@@ -32,7 +32,7 @@ class PW3D(torch.utils.data.Dataset):
             cam_param = {k: np.array(v, dtype=np.float32) for k,v in img['cam_param'].items()}
 
             smpl_param = ann['smpl_param']
-            bbox = process_bbox(np.array(ann['bbox']), img['width'], img['height'])
+            bbox = process_bbox(np.array(ann['bbox']), img['width'], img['height'], ratio=1.2)
             if bbox is None: continue
             data_dict = {'img_path': img_path, 'ann_id': aid, 'img_shape': (img['height'], img['width']), 'bbox': bbox, 'smpl_param': smpl_param, 'cam_param': cam_param}
             datalist.append(data_dict)

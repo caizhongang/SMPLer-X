@@ -121,7 +121,7 @@ class AGORA(torch.utils.data.Dataset):
                     bbox[:, 0] = bbox[:, 0] / 3840 * 1280
                     bbox[:, 1] = bbox[:, 1] / 2160 * 720
                     bbox = bbox.reshape(4)
-                    bbox = process_bbox(bbox, img_shape[1], img_shape[0])
+                    bbox = process_bbox(bbox, img_shape[1], img_shape[0], ratio=1.0)
                     if bbox is None:
                         continue
 
@@ -235,7 +235,7 @@ class AGORA(torch.utils.data.Dataset):
                         bbox[:, 0] = bbox[:, 0] / 3840 * 1280
                         bbox[:, 1] = bbox[:, 1] / 2160 * 720
                         bbox = bbox.reshape(4)
-                        bbox = process_bbox(bbox, img_shape[1], img_shape[0])
+                        bbox = process_bbox(bbox, img_shape[1], img_shape[0], ratio=1.0)
                         if bbox is None:
                             continue
                         datalist.append({'img_path': img_path, 'img_shape': img_shape, 'bbox': bbox, 'person_idx': pid})
@@ -495,10 +495,10 @@ class AGORA(torch.utils.data.Dataset):
         eval_result = {'pa_mpvpe_all': [], 'pa_mpvpe_l_hand': [], 'pa_mpvpe_r_hand': [], 'pa_mpvpe_hand': [], 'pa_mpvpe_face': [], 
                        'mpvpe_all': [], 'mpvpe_l_hand': [], 'mpvpe_r_hand': [], 'mpvpe_hand': [], 'mpvpe_face': []}
 
-        vis = False
-        vis_save_dir = '/mnt/cache/caizhongang/osx/output/train_exp13_20230411_235717/vis2'
+        vis = getattr(cfg, 'vis', False)
+        vis_save_dir = cfg.vis_dir
 
-        for n in tqdm.tqdm(range(sample_num)):
+        for n in range(sample_num):
             annot = annots[cur_sample_idx + n]
             out = outs[n]
             mesh_gt = out['smplx_mesh_cam_target']
@@ -552,6 +552,7 @@ class AGORA(torch.utils.data.Dataset):
             eval_result['pa_mpvpe_face'].append(
                 np.sqrt(np.sum((mesh_out_face_align - mesh_gt_face) ** 2, 1)).mean() * 1000)
 
+            ### HARDCODE
             if vis:
 
                 from utils.vis import vis_keypoints, vis_mesh, save_obj, render_mesh

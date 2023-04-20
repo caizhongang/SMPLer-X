@@ -58,7 +58,7 @@ def sanitize_bbox(bbox, img_width, img_height):
     return bbox
 
 
-def process_bbox(bbox, img_width, img_height):
+def process_bbox(bbox, img_width, img_height, ratio=1.25):
     bbox = sanitize_bbox(bbox, img_width, img_height)
     if bbox is None:
         return bbox
@@ -73,8 +73,8 @@ def process_bbox(bbox, img_width, img_height):
         h = w / aspect_ratio
     elif w < aspect_ratio * h:
         w = h * aspect_ratio
-    bbox[2] = w * 1.25
-    bbox[3] = h * 1.25
+    bbox[2] = w * ratio
+    bbox[3] = h * ratio
     bbox[0] = c_x - bbox[2] / 2.
     bbox[1] = c_y - bbox[3] / 2.
 
