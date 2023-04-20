@@ -36,3 +36,5 @@ ln -s /mnt/cache/share_data/zoetrope/osx/pretrained_models/osx_vit_l.pth pretrai
 ln -s /mnt/cache/share_data/zoetrope/osx/pretrained_models/osx_vit_b.pth pretrained_models/osx_vit_b.pth
 ln -s /mnt/cache/share_data/zoetrope/osx/pretrained_models/osx_l.pth.tar pretrained_models/osx_l.pth.tar
 ln -s /mnt/cache/share_data/zoetrope/osx/pretrained_models/osx_l_agora.pth.tar pretrained_models/osx_l_agora.pth.tar
+ln -s /mnt/cache/share_data/zoetrope/osx/pretrained_models/motionbert/ pretrained_models/motionbert
+ln -s /mnt/cache/share_data/zoetrope/osx/pretrained_models/humanbench/ pretrained_models/humanbench
