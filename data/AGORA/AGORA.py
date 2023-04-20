@@ -121,7 +121,11 @@ class AGORA(torch.utils.data.Dataset):
                     bbox[:, 0] = bbox[:, 0] / 3840 * 1280
                     bbox[:, 1] = bbox[:, 1] / 2160 * 720
                     bbox = bbox.reshape(4)
-                    bbox = process_bbox(bbox, img_shape[1], img_shape[0], ratio=1.0)
+                    if hasattr(cfg, 'bbox_ratio'):
+                        bbox_ratio = cfg.bbox_ratio * 0.833 # agora preprocess is giving 1.2 box padding
+                    else:
+                        bbox_ratio = 1.25
+                    bbox = process_bbox(bbox, img_shape[1], img_shape[0], ratio=bbox_ratio)
                     if bbox is None:
                         continue
 
@@ -235,7 +239,11 @@ class AGORA(torch.utils.data.Dataset):
                         bbox[:, 0] = bbox[:, 0] / 3840 * 1280
                         bbox[:, 1] = bbox[:, 1] / 2160 * 720
                         bbox = bbox.reshape(4)
-                        bbox = process_bbox(bbox, img_shape[1], img_shape[0], ratio=1.0)
+                        if hasattr(cfg, 'bbox_ratio'):
+                            bbox_ratio = cfg.bbox_ratio * 0.833 # agora preprocess is giving 1.2 box padding
+                        else:
+                            bbox_ratio = 1.25
+                        bbox = process_bbox(bbox, img_shape[1], img_shape[0], ratio=bbox_ratio)
                         if bbox is None:
                             continue
                         datalist.append({'img_path': img_path, 'img_shape': img_shape, 'bbox': bbox, 'person_idx': pid})

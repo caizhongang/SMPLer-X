@@ -65,7 +65,7 @@ class MPI_INF_3DHP(torch.utils.data.Dataset):
             joint_img = cam2pixel(joint_cam, focal, princpt)
             joint_valid = np.ones_like(joint_img[:,:1])
 
-            bbox = process_bbox(np.array(ann['bbox']), img['width'], img['height'], ratio=1.2)
+            bbox = process_bbox(np.array(ann['bbox']), img['width'], img['height'], ratio=getattr(cfg, 'bbox_ratio', 1.25))
             if bbox is None: continue
 
             # smplx parameter

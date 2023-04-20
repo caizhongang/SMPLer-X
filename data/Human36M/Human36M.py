@@ -111,7 +111,7 @@ class Human36M(torch.utils.data.Dataset):
             joint_img = cam2pixel(joint_cam, f, c)[:,:2]
             joint_valid = np.ones((self.joint_set['joint_num'],1))
         
-            bbox = process_bbox(np.array(ann['bbox']), img['width'], img['height'], ratio=1.2)
+            bbox = process_bbox(np.array(ann['bbox']), img['width'], img['height'], ratio=getattr(cfg, 'bbox_ratio', 1.25))
             if bbox is None: continue
             
             datalist.append({

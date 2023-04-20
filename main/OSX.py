@@ -363,6 +363,24 @@ class Model(nn.Module):
                                                 meta_info['joint_trunc'][:, smpl_x.joint_part['face']], meta_info['is_3D']) * net_kps_2d_weight
             loss['smplx_joint_img'] = self.coord_loss(joint_img, smpl_x.reduce_joint_set(targets['smplx_joint_img']), 
                                                     smpl_x.reduce_joint_set(meta_info['smplx_joint_trunc'])) * net_kps_2d_weight
+            
+            out = {}
+            out['img'] = inputs['img']
+            out['joint_img'] = joint_img
+            out['smplx_joint_proj'] = joint_proj
+            out['smplx_mesh_cam'] = mesh_cam
+            out['smplx_root_pose'] = root_pose
+            out['smplx_body_pose'] = body_pose
+            out['smplx_lhand_pose'] = lhand_pose
+            out['smplx_rhand_pose'] = rhand_pose
+            out['smplx_jaw_pose'] = jaw_pose
+            out['smplx_shape'] = shape
+            out['smplx_expr'] = expr
+            out['cam_trans'] = cam_trans
+            out['lhand_bbox'] = lhand_bbox
+            out['rhand_bbox'] = rhand_bbox
+            out['face_bbox'] = face_bbox
+
             return loss
         else:
             # change hand output joint_img according to hand bbox
