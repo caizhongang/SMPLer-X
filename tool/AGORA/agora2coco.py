@@ -59,7 +59,8 @@ def parse_args():
     return args
 
 args = parse_args()
-root_path = args.root_path
+# root_path = args.root_path
+root_path = args.dataset_path
 smplx_layer = smplx.create(args.human_model_path, 'smplx', use_pca=False)
 
 image_id = 0
@@ -96,7 +97,8 @@ pathlib.Path(osp.join(root_path, gt_verts_path, 'smpl')).mkdir(parents=True, exi
 for split in ('train', 'validation'):
     images = []
     annotations = []
-    data_path_list = glob(osp.join(root_path, split + '_SMPLX', 'SMPLX', '*.pkl')) + glob(osp.join(root_path, split + '_SMPL', 'SMPL', '*.pkl'))
+    # data_path_list = glob(osp.join(root_path, split + '_SMPLX', 'SMPLX', '*.pkl')) + glob(osp.join(root_path, split + '_SMPL', 'SMPL', '*.pkl'))
+    data_path_list = glob(osp.join(root_path, split + '_SMPLX', 'SMPLX', '*.pkl'))
     data_path_list = sorted(data_path_list)
 
     for data_path in tqdm(data_path_list):
@@ -114,7 +116,7 @@ for split in ('train', 'validation'):
             img_folder_name = 'validation'
         img_num = len(data_smplx['imgPath'])
         
-        for i in range(img_num):
+        for i in tqdm(range(img_num)):
             img_dict = {}
             img_dict['id'] = image_id
             img_dict['file_name_3840x2160'] = osp.join('3840x2160', img_folder_name, data_smplx['imgPath'][i])
