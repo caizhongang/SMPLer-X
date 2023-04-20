@@ -8,14 +8,18 @@ source setup.sh
 ## Training
 ```bash
 cd main
-sh slurm_train.sh {PARTITION} {JOB_NAME} {NUM_GPU}
+sh slurm_train.sh {JOB_NAME} {NUM_GPU} {CONFIG_FILE}
 # logs and ckpts will be saved to ../output/train_{JOB_NAME}_{DATE_TIME}
+# config file is the file name under ./config, e.g. ./config/config_base.py
+# a copy of current config file wil be saved to ../output/train_{JOB_NAME}_{DATE_TIME}/code/config_base.py
+
 ```
 
 ## Testing
 ```bash
 cd main
-sh slurm_test.sh {PARTITION} {JOB_NAME} {NUM_GPU}
+sh slurm_test.sh {JOB_NAME} {NUM_GPU} {TRAIN_OUTPUT_DIR} {CKPT_ID}
+# this will eval the model ../output/train_{JOB_NAME}_{DATE_TIME}/model_dump/snapshot_{CKPT_ID}.pth.tar with confing ../output/train_{JOB_NAME}_{DATE_TIME}/code/config_base.py
 # logs and results  will be saved to ../output/test_{JOB_NAME}_{DATE_TIME}
 ```
 
