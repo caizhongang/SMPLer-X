@@ -256,16 +256,28 @@ class Model(nn.Module):
             # loss functions
             loss = {}
 
-            if hasattr(cfg, 'smplx_kps_weight'):
-                smplx_kps_weight = cfg.smplx_kps_weight
-            else:
-                smplx_kps_weight = 1
+            smplx_kps_3d_weight = getattr(cfg, 'smplx_kps_3d_weight', 1.0)
+            smplx_kps_3d_weight = getattr(cfg, 'smplx_kps_weight', smplx_kps_3d_weight) # old config
 
-            loss['smplx_pose'] = self.param_loss(pose, targets['smplx_pose'], meta_info['smplx_pose_valid'])[:, 3:]
-            loss['smplx_shape'] = self.param_loss(shape, targets['smplx_shape'], meta_info['smplx_shape_valid'][:, None]) * cfg.smplx_loss_weight
+            smplx_kps_2d_weight = getattr(cfg, 'smplx_kps_2d_weight', 1.0)
+            net_kps_2d_weight = getattr(cfg, 'net_kps_2d_weight', 1.0)
+
+            smplx_pose_weight = getattr(cfg, 'smplx_pose_weight', 1.0)
+            smplx_shape_weight = getattr(cfg, 'smplx_loss_weight', 1.0)
+            
+
+            # do not supervise root pose if original agora json is used
+            if getattr(cfg, 'agora_fix_global_orient_transl', False):
+                loss['smplx_pose'] = self.param_loss(pose, targets['smplx_pose'], meta_info['smplx_pose_valid']) * smplx_pose_weight
+            else:
+                loss['smplx_pose'] = self.param_loss(pose, targets['smplx_pose'], meta_info['smplx_pose_valid'])[:, 3:] * smplx_pose_weight
+
+            loss['smplx_shape'] = self.param_loss(shape, targets['smplx_shape'], meta_info['smplx_shape_valid'][:, None]) * smplx_shape_weight 
             loss['smplx_expr'] = self.param_loss(expr, targets['smplx_expr'], meta_info['smplx_expr_valid'][:, None])
-            loss['joint_cam'] = self.coord_loss(joint_cam, targets['joint_cam'], meta_info['joint_valid'] * meta_info['is_3D'][:, None, None]) * smplx_kps_weight
-            loss['smplx_joint_cam'] = self.coord_loss(joint_cam, targets['smplx_joint_cam'], meta_info['smplx_joint_valid']) * smplx_kps_weight
+
+            loss['joint_cam'] = self.coord_loss(joint_cam, targets['joint_cam'], meta_info['joint_valid'] * meta_info['is_3D'][:, None, None]) * smplx_kps_3d_weight
+            loss['smplx_joint_cam'] = self.coord_loss(joint_cam, targets['smplx_joint_cam'], meta_info['smplx_joint_valid']) * smplx_kps_3d_weight
+
             loss['lhand_bbox'] = (self.coord_loss(lhand_bbox_center, targets['lhand_bbox_center'], meta_info['lhand_bbox_valid'][:, None]) +
                                   self.coord_loss(lhand_bbox_size, targets['lhand_bbox_size'], meta_info['lhand_bbox_valid'][:, None]))
             loss['rhand_bbox'] = (self.coord_loss(rhand_bbox_center, targets['rhand_bbox_center'], meta_info['rhand_bbox_valid'][:, None]) +
@@ -343,13 +355,14 @@ class Model(nn.Module):
             joint_proj = torch.cat((joint_proj[:, :smpl_x.joint_part['face'][0], :], coord,
                                     joint_proj[:, smpl_x.joint_part['face'][-1] + 1:, :]), 1)
 
-            loss['joint_proj'] = self.coord_loss(joint_proj, targets['joint_img'][:, :, :2], meta_info['joint_trunc'])
+            loss['joint_proj'] = self.coord_loss(joint_proj, targets['joint_img'][:, :, :2], meta_info['joint_trunc']) * smplx_kps_2d_weight
+            
             loss['joint_img'] = self.coord_loss(joint_img, smpl_x.reduce_joint_set(targets['joint_img']),
-                                                smpl_x.reduce_joint_set(meta_info['joint_trunc']), meta_info['is_3D'])
+                                                smpl_x.reduce_joint_set(meta_info['joint_trunc']), meta_info['is_3D']) * net_kps_2d_weight
             loss['joint_img_face'] = self.coord_loss(face_joint_img, targets['joint_img'][:, smpl_x.joint_part['face']],
-                                                meta_info['joint_trunc'][:, smpl_x.joint_part['face']], meta_info['is_3D'])
-            loss['smplx_joint_img'] = self.coord_loss(joint_img, smpl_x.reduce_joint_set(targets['smplx_joint_img']),
-                                                      smpl_x.reduce_joint_set(meta_info['smplx_joint_trunc']))
+                                                meta_info['joint_trunc'][:, smpl_x.joint_part['face']], meta_info['is_3D']) * net_kps_2d_weight
+            loss['smplx_joint_img'] = self.coord_loss(joint_img, smpl_x.reduce_joint_set(targets['smplx_joint_img']), 
+                                                    smpl_x.reduce_joint_set(meta_info['smplx_joint_trunc'])) * net_kps_2d_weight
             return loss
         else:
             # change hand output joint_img according to hand bbox
