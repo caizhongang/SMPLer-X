@@ -6,19 +6,22 @@ num_gpus = -1
 exp_name = 'output/exp1/pre_analysis'
 
 # quick access
-lr = 1e-4
-end_epoch = 14
+lr = 2e-5
+end_epoch = 100
 train_batch_size = 32
 
+syncbn = False
+
 # continue
-continue_train = False
-pretrained_model_path = None
+continue_train = True
+start_over = True
+pretrained_model_path = '../output/train_exp18_20230414_183422/model_dump/snapshot_20.pth.tar'
 
 # dataset setting
 dataset_list = ['Human36M', 'MSCOCO', 'MPII', 'AGORA', 'EHF', 'SynBody', 'GTA_Human2']
-trainset_3d = ['Human36M']
-trainset_2d = ['MSCOCO', 'MPII']
-trainset_humandata = []
+trainset_3d = ['AGORA']
+trainset_2d = []
+trainset_humandata = ['SynBody']
 testset = 'EHF'
 
 # model
@@ -68,7 +71,7 @@ print_iters = 100
 lr_mult = 1
 
 ## testing config
-test_batch_size = 32
+test_batch_size = 16
 
 ## others
 num_thread = 16

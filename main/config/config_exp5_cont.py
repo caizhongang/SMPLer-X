@@ -1,24 +1,27 @@
 import os
 import os.path as osp
 
+cur_dir = '/mnt/cache/yinwanqi/01-project/osx/main'
+
 # will be update in exp
 num_gpus = -1
 exp_name = 'output/exp1/pre_analysis'
 
 # quick access
 lr = 1e-4
-end_epoch = 14
+end_epoch = 50
 train_batch_size = 32
 
 # continue
-continue_train = False
-pretrained_model_path = None
+continue_train = True
+start_over = False
+pretrained_model_path = '../output/train_exp5_20230413_074105/model_dump/snapshot_11.pth.tar'
 
 # dataset setting
 dataset_list = ['Human36M', 'MSCOCO', 'MPII', 'AGORA', 'EHF', 'SynBody', 'GTA_Human2']
-trainset_3d = ['Human36M']
+trainset_3d = ['Human36M','AGORA']
 trainset_2d = ['MSCOCO', 'MPII']
-trainset_humandata = []
+trainset_humandata = ['SynBody', 'GTA_Human2']
 testset = 'EHF'
 
 # model
@@ -75,4 +78,8 @@ num_thread = 16
 vis = False
 
 ## directory
+root_dir = osp.join(cur_dir, '..')
+data_dir = osp.join(root_dir, 'dataset')
+
 output_dir, model_dir, vis_dir, log_dir, result_dir, code_dir = None, None, None, None, None, None
+human_model_path = osp.join(root_dir, 'common', 'utils', 'human_model_files')

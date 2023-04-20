@@ -8,7 +8,6 @@ import time
 import torch
 import torch.distributed as dist
 from mmcv.runner import get_dist_info
-from xrprimer.utils.log_utils import get_logger
 import random
 import numpy as np
 import subprocess
@@ -98,6 +97,28 @@ def get_rank():
     if not is_dist_avail_and_initialized():
         return 0
     return dist.get_rank()
+
+def get_process_groups():
+    world_size = int(os.environ['WORLD_SIZE'])
+    ranks = list(range(world_size))
+    num_gpus = torch.cuda.device_count()
+    num_nodes = world_size // num_gpus
+    if world_size % num_gpus != 0:
+        raise NotImplementedError('Not implemented for node not fully used.')
+
+    groups = []
+    for node_idx in range(num_nodes):
+        groups.append(ranks[node_idx*num_gpus : (node_idx+1)*num_gpus])
+    process_groups = [torch.distributed.new_group(group) for group in groups]
+
+    return process_groups
+
+def get_group_idx():
+    num_gpus = torch.cuda.device_count()
+    proc_id = get_rank()
+    group_idx = proc_id // num_gpus
+
+    return group_idx
 
 
 def is_main_process():

@@ -18,7 +18,7 @@ import torch.distributed as dist
 from torch.utils.data import DistributedSampler
 import torch.utils.data.distributed
 from utils.distribute_utils import (
-    get_rank, is_main_process, time_synchronized,
+    get_rank, is_main_process, time_synchronized, get_group_idx, get_process_groups
 )
 from mmcv.runner import get_dist_info
 
@@ -101,9 +101,14 @@ class Trainer(Base):
         if cfg.pretrained_model_path is not None:
             ckpt_path = cfg.pretrained_model_path
             ckpt = torch.load(ckpt_path, map_location=torch.device('cpu')) # solve CUDA OOM error in DDP
-            start_epoch = 0
             model.load_state_dict(ckpt['network'], strict=False)
             self.logger.info('Load checkpoint from {}'.format(ckpt_path))
+            if not hasattr(cfg, 'start_over') or cfg.start_over:
+                start_epoch = 0
+            else:
+                optimizer.load_state_dict(ckpt['optimizer'])
+                start_epoch = ckpt['epoch']
+                self.logger.info(f'Load optimizer, start from{start_epoch}')
         else:
             start_epoch = 0
 
@@ -171,15 +176,35 @@ class Trainer(Base):
         if self.distributed:
             self.logger_info("Using distributed data parallel.")
             model.cuda()
-            model = torch.nn.parallel.DistributedDataParallel(
-                model, device_ids=[self.gpu_idx],
-                find_unused_parameters=True)
+            if hasattr(cfg, 'syncbn') and cfg.syncbn:
+                self.logger_info("Using sync batch norm layers.")
+
+                process_groups = get_process_groups()
+                process_group = process_groups[get_group_idx()]
+                syncbn_model = torch.nn.SyncBatchNorm.convert_sync_batchnorm(model, process_group)
+                model = torch.nn.parallel.DistributedDataParallel(
+                    syncbn_model, device_ids=[self.gpu_idx],
+                    find_unused_parameters=True)
+            else:
+                model = torch.nn.parallel.DistributedDataParallel(
+                    model, device_ids=[self.gpu_idx],
+                    find_unused_parameters=True)
         else:
         # dp
             model = DataParallel(model).cuda()
 
         optimizer = self.get_optimizer(model)
-        scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, cfg.end_epoch * self.itr_per_epoch,
+        
+        if hasattr(cfg, "scheduler"):
+            if cfg.scheduler == 'cos':
+                scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, cfg.end_epoch * self.itr_per_epoch,
+                                                               eta_min=1e-6)
+            elif cfg.scheduler == 'step':
+                scheduler = torch.optim.lr_scheduler.StepLR(optimizer, cfg.step_size, gamma=cfg.gamma, 
+                                                            last_epoch=- 1, verbose=False)                                           
+
+        else:
+            scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, cfg.end_epoch * self.itr_per_epoch,
                                                                eta_min=1e-6)
         if cfg.continue_train:
             if self.distributed:
