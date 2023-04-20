@@ -13,6 +13,7 @@ from utils.human_models import smpl_x
 from utils.preprocessing import load_img, sanitize_bbox, process_bbox, augmentation, process_db_coord, \
     process_human_model_output, load_ply, load_obj
 from utils.transforms import rigid_align
+import tqdm
 
 class AGORA(torch.utils.data.Dataset):
     def __init__(self, transform, data_split):
@@ -20,8 +21,8 @@ class AGORA(torch.utils.data.Dataset):
         self.data_split = data_split
         self.data_path = osp.join(cfg.data_dir, 'AGORA', 'data')
         self.resolution = (2160, 3840)  # height, width. one of (720, 1280) and (2160, 3840)
-        if cfg.agora_benchmark == 'agora_model_test' or cfg.agora_benchmark == 'test_only':  
-            self.test_set = 'test' 
+        if cfg.agora_benchmark == 'agora_model_test' or cfg.agora_benchmark == 'test_only':
+            self.test_set = 'test'
         else:
             self.test_set = 'val'  # val, test
 
@@ -87,11 +88,11 @@ class AGORA(torch.utils.data.Dataset):
         datalist = []
         if self.data_split == 'train' or (self.data_split == 'test' and self.test_set == 'val'):
             if self.data_split == 'train':
-                db = COCO(osp.join(self.data_path, 'AGORA_train.json'))
+                db = COCO(osp.join(self.data_path, 'AGORA_train_fix_global_orient_transl.json'))
             else:
-                db = COCO(osp.join(self.data_path, 'AGORA_validation.json'))
+                db = COCO(osp.join(self.data_path, 'AGORA_validation_fix_global_orient_transl.json'))
 
-            for aid in db.anns.keys():
+            for aid in tqdm.tqdm(db.anns.keys()):
                 ann = db.anns[aid]
                 image_id = ann['image_id']
                 img = db.loadImgs(image_id)[0]
@@ -102,6 +103,7 @@ class AGORA(torch.utils.data.Dataset):
                 joints_3d_path = osp.join(self.data_path, ann['smplx_joints_3d_path'])
                 verts_path = osp.join(self.data_path, ann['smplx_verts_path'])
                 smplx_param_path = osp.join(self.data_path, ann['smplx_param_path'])
+                if not osp.exists(smplx_param_path): print(smplx_param_path)
 
                 if self.resolution == (720, 1280):
                     img_shape = self.resolution
@@ -215,7 +217,7 @@ class AGORA(torch.utils.data.Dataset):
             with open(osp.join(self.data_path, 'AGORA_test_bbox.json')) as f:
                 bboxs = json.load(f)
 
-            for filename in bboxs.keys():
+            for filename in tqdm.tqdm(bboxs.keys()):
                 if self.resolution == (720, 1280):
                     img_path = osp.join(self.data_path, 'test', filename)
                     img_shape = self.resolution
@@ -485,7 +487,11 @@ class AGORA(torch.utils.data.Dataset):
         sample_num = len(outs)
         eval_result = {'pa_mpvpe_all': [], 'pa_mpvpe_l_hand': [], 'pa_mpvpe_r_hand': [], 'pa_mpvpe_hand': [], 'pa_mpvpe_face': [], 
                        'mpvpe_all': [], 'mpvpe_l_hand': [], 'mpvpe_r_hand': [], 'mpvpe_hand': [], 'mpvpe_face': []}
-        for n in range(sample_num):
+
+        vis = False
+        vis_save_dir = '/mnt/cache/caizhongang/osx/output/train_exp13_20230411_235717/vis2'
+
+        for n in tqdm.tqdm(range(sample_num)):
             annot = annots[cur_sample_idx + n]
             out = outs[n]
             mesh_gt = out['smplx_mesh_cam_target']
@@ -539,8 +545,8 @@ class AGORA(torch.utils.data.Dataset):
             eval_result['pa_mpvpe_face'].append(
                 np.sqrt(np.sum((mesh_out_face_align - mesh_gt_face) ** 2, 1)).mean() * 1000)
 
-            vis = False
             if vis:
+
                 from utils.vis import vis_keypoints, vis_mesh, save_obj, render_mesh
                 # img = (out['img'].transpose(1,2,0)[:,:,::-1] * 255).copy()
                 # joint_img = out['joint_img'].copy()
@@ -562,16 +568,16 @@ class AGORA(torch.utils.data.Dataset):
                 focal[1] = focal[1] / cfg.input_body_shape[0] * bbox[3]
                 princpt[0] = princpt[0] / cfg.input_body_shape[1] * bbox[2] + bbox[0]
                 princpt[1] = princpt[1] / cfg.input_body_shape[0] * bbox[3] + bbox[1]
-                img = render_mesh(img, out['smplx_mesh_cam'], smpl_x.face, {'focal': focal, 'princpt': princpt})
+                img = render_mesh(img, out['smplx_mesh_cam'], smpl_x.face, {'focal': focal, 'princpt': princpt}, mesh_as_vertices=True)
                 # img = cv2.resize(img, (512,512))
-                cv2.imwrite(img_id + '_' + str(ann_id) + '.jpg', img)
+                cv2.imwrite(osp.join(vis_save_dir, img_id + '_' + str(ann_id) + '.jpg'), img)
 
                 vis_mesh_out = out['smplx_mesh_cam']
                 vis_mesh_out = vis_mesh_out - np.dot(smpl_x.layer['neutral'].J_regressor, vis_mesh_out)[
                                               smpl_x.J_regressor_idx['pelvis'], None, :]
                 # vis_mesh_gt = out['smplx_mesh_cam_target']
                 # vis_mesh_gt = vis_mesh_gt - np.dot(smpl_x.layer['neutral'].J_regressor, vis_mesh_gt)[smpl_x.J_regressor_idx['pelvis'],None,:]
-                save_obj(vis_mesh_out, smpl_x.face, img_id + '_' + str(ann_id) + '.obj')
+                # save_obj(vis_mesh_out, smpl_x.face, osp.join(img_id + '_' + str(ann_id) + '.obj'))
                 # save_obj(vis_mesh_gt, smpl_x.face, str(cur_sample_idx + n) + '_gt.obj')
 
             # save results for the official evaluation codes/server
@@ -636,7 +642,7 @@ class AGORA(torch.utils.data.Dataset):
 
         if self.data_split == 'test' and self.test_set == 'test':  # do not print. just submit the results to the official evaluation server
             return
-        
+
         print('======AGORA-val======')
         print('PA MPVPE (All): %.2f mm' % np.mean(eval_result['pa_mpvpe_all']))
         print('PA MPVPE (L-Hands): %.2f mm' % np.mean(eval_result['pa_mpvpe_l_hand']))
@@ -644,7 +650,7 @@ class AGORA(torch.utils.data.Dataset):
         print('PA MPVPE (Hands): %.2f mm' % np.mean(eval_result['pa_mpvpe_hand']))
         print('PA MPVPE (Face): %.2f mm' % np.mean(eval_result['pa_mpvpe_face']))
         print()
-        
+
         print('MPVPE (All): %.2f mm' % np.mean(eval_result['mpvpe_all']))
         print('MPVPE (L-Hands): %.2f mm' % np.mean(eval_result['mpvpe_l_hand']))
         print('MPVPE (R-Hands): %.2f mm' % np.mean(eval_result['mpvpe_r_hand']))
