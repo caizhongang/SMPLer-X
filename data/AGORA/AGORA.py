@@ -88,9 +88,16 @@ class AGORA(torch.utils.data.Dataset):
         datalist = []
         if self.data_split == 'train' or (self.data_split == 'test' and self.test_set == 'val'):
             if self.data_split == 'train':
-                db = COCO(osp.join(self.data_path, 'AGORA_train_fix_global_orient_transl.json'))
+                if getattr(cfg, 'agora_fix_global_orient_transl', False):
+                    db = COCO(osp.join(self.data_path, 'AGORA_train_fix_global_orient_transl.json'))
+                else:
+                    db = COCO(osp.join(self.data_path, 'AGORA_train.json'))
             else:
-                db = COCO(osp.join(self.data_path, 'AGORA_validation_fix_global_orient_transl.json'))
+                if getattr(cfg, 'agora_fix_global_orient_transl', False):
+                    db = COCO(osp.join(self.data_path, 'AGORA_validation_fix_global_orient_transl.json'))
+                else:
+                    db = COCO(osp.join(self.data_path, 'AGORA_validation.json'))
+
 
             for aid in tqdm.tqdm(db.anns.keys()):
                 ann = db.anns[aid]
