@@ -4,3 +4,6 @@ pretrained_models/
 dataset
 output
 .vscode
+*.npy
+*.tar
+main/vis

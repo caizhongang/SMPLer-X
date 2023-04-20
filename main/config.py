@@ -10,6 +10,12 @@ class Config:
         cfg = MMConfig.fromfile(self.config_path)
         self.__dict__.update(dict(cfg))
 
+        # update dir
+        self.cur_dir = osp.dirname(os.path.abspath(__file__))
+        self.root_dir = osp.join(self.cur_dir, '..')
+        self.data_dir = osp.join(self.root_dir, 'dataset')
+        self.human_model_path = osp.join(self.root_dir, 'common', 'utils', 'human_model_files')
+
         ## add some paths to the system root dir
         sys.path.insert(0, osp.join(self.root_dir, 'common'))
         from utils.dir import add_pypath

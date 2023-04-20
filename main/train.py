@@ -110,7 +110,7 @@ def main():
             trainer.read_timer.tic()
 
         # save model ddp, save model.module on rank 0 only
-        if is_main_process():
+        if is_main_process() and (epoch % 10 == 0 or epoch == cfg.end_epoch - 1):
             trainer.save_model({
                 'epoch': epoch,
                 'network': trainer.model.state_dict(),
