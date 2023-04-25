@@ -264,11 +264,13 @@ class Model(nn.Module):
 
             smplx_pose_weight = getattr(cfg, 'smplx_pose_weight', 1.0)
             smplx_shape_weight = getattr(cfg, 'smplx_loss_weight', 1.0)
-            
+            smplx_orient_weight = getattr(cfg, 'smplx_orient_weight', smplx_pose_weight) # if not specified, use the same weight as pose
+    
 
             # do not supervise root pose if original agora json is used
             if getattr(cfg, 'agora_fix_global_orient_transl', False):
-                loss['smplx_pose'] = self.param_loss(pose, targets['smplx_pose'], meta_info['smplx_pose_valid']) * smplx_pose_weight
+                loss['smplx_pose'] = self.param_loss(pose, targets['smplx_pose'], meta_info['smplx_pose_valid'])[:, 3:] * smplx_pose_weight
+                loss['smplx_orient'] = self.param_loss(pose, targets['smplx_pose'], meta_info['smplx_pose_valid'])[:, :3] * smplx_orient_weight
             else:
                 loss['smplx_pose'] = self.param_loss(pose, targets['smplx_pose'], meta_info['smplx_pose_valid'])[:, 3:] * smplx_pose_weight
 
@@ -284,6 +286,12 @@ class Model(nn.Module):
                                   self.coord_loss(rhand_bbox_size, targets['rhand_bbox_size'], meta_info['rhand_bbox_valid'][:, None]))
             loss['face_bbox'] = (self.coord_loss(face_bbox_center, targets['face_bbox_center'], meta_info['face_bbox_valid'][:, None]) +
                                  self.coord_loss(face_bbox_size, targets['face_bbox_size'], meta_info['face_bbox_valid'][:, None]))
+            
+            if getattr(cfg, 'save_vis', False):
+                out = {}
+                targets['original_joint_img'] = targets['joint_img'].clone()
+                out['original_joint_proj'] = joint_proj.clone()
+
             # change hand target joint_img and joint_trunc according to hand bbox (cfg.output_hm_shape -> downsampled hand bbox space)
             for part_name, bbox in (('lhand', lhand_bbox), ('rhand', rhand_bbox)):
                 for coord_name, trunc_name in (('joint_img', 'joint_trunc'), ('smplx_joint_img', 'smplx_joint_trunc')):
@@ -363,23 +371,35 @@ class Model(nn.Module):
                                                 meta_info['joint_trunc'][:, smpl_x.joint_part['face']], meta_info['is_3D']) * net_kps_2d_weight
             loss['smplx_joint_img'] = self.coord_loss(joint_img, smpl_x.reduce_joint_set(targets['smplx_joint_img']), 
                                                     smpl_x.reduce_joint_set(meta_info['smplx_joint_trunc'])) * net_kps_2d_weight
-            
-            out = {}
-            out['img'] = inputs['img']
-            out['joint_img'] = joint_img
-            out['smplx_joint_proj'] = joint_proj
-            out['smplx_mesh_cam'] = mesh_cam
-            out['smplx_root_pose'] = root_pose
-            out['smplx_body_pose'] = body_pose
-            out['smplx_lhand_pose'] = lhand_pose
-            out['smplx_rhand_pose'] = rhand_pose
-            out['smplx_jaw_pose'] = jaw_pose
-            out['smplx_shape'] = shape
-            out['smplx_expr'] = expr
-            out['cam_trans'] = cam_trans
-            out['lhand_bbox'] = lhand_bbox
-            out['rhand_bbox'] = rhand_bbox
-            out['face_bbox'] = face_bbox
+            ### HARDCODE vis for debug
+            if getattr(cfg, 'save_vis', False):
+                
+                out['img'] = inputs['img']
+                out['joint_img'] = joint_img
+                out['smplx_joint_proj'] = joint_proj
+                out['smplx_mesh_cam'] = mesh_cam
+                out['smplx_root_pose'] = root_pose
+                out['smplx_body_pose'] = body_pose
+                out['smplx_lhand_pose'] = lhand_pose
+                out['smplx_rhand_pose'] = rhand_pose
+                out['smplx_jaw_pose'] = jaw_pose
+                out['smplx_shape'] = shape
+                out['smplx_expr'] = expr
+                out['cam_trans'] = cam_trans
+                out['lhand_bbox'] = lhand_bbox
+                out['rhand_bbox'] = rhand_bbox
+                out['face_bbox'] = face_bbox
+                
+                import numpy as np
+                # np.save('./vis/train_output_18.npy', out)
+                # np.save('./vis/train_target_18.npy', targets)
+                # np.save('./vis/train_input_18.npy', inputs)
+                # np.save('./vis/train_meta_info_18.npy', meta_info)
+                for key in ['joint_cam_', 'mesh_rot_', 'joint_cam', 'mesh_orig', 'joint_cam_orig_', 'joint_cam_orig']:
+                    to_save = targets[key].cpu().detach().numpy()
+                    np.save(f'./vis/train_{key}.npy', to_save)
+
+                import pdb; pdb.set_trace()
 
             return loss
         else:

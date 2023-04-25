@@ -7,10 +7,11 @@ exp_name = 'output/exp1/pre_analysis'
 
 # quick access
 lr = 2e-5
-end_epoch = 140
+end_epoch = 100
 train_batch_size = 32
 
 syncbn = True
+# bbox_ratio = 1.2
 
 # continue
 continue_train = True
@@ -18,12 +19,13 @@ start_over = True
 pretrained_model_path = '../output/train_gta_synbody_ft_20230410_132110/model_dump/snapshot_2.pth.tar'
 
 # dataset setting
-agora_fix_global_orient_transl = True
+agora_fix_global_orient_transl = False
+agora_valid_root_pose = False
 
 dataset_list = ['Human36M', 'MSCOCO', 'MPII', 'AGORA', 'EHF', 'SynBody', 'GTA_Human2']
 trainset_3d = ['AGORA']
 trainset_2d = []
-trainset_humandata = []
+trainset_humandata = ['SynBody', 'GTA_Human2']
 testset = 'EHF'
 
 # model

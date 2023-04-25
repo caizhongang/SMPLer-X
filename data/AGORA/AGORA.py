@@ -97,9 +97,12 @@ class AGORA(torch.utils.data.Dataset):
                     db = COCO(osp.join(self.data_path, 'AGORA_validation_fix_global_orient_transl.json'))
                 else:
                     db = COCO(osp.join(self.data_path, 'AGORA_validation.json'))
-
-
+            ### HARDCODE vis for debug
+            # count = 0
             for aid in tqdm.tqdm(db.anns.keys()):
+                # if getattr(cfg, 'save_vis', False) and count > 63:
+                #     continue
+                # count += 1
                 ann = db.anns[aid]
                 image_id = ann['image_id']
                 img = db.loadImgs(image_id)[0]
@@ -334,6 +337,8 @@ class AGORA(torch.utils.data.Dataset):
                 joint_img[:, 1] = joint_img[:, 1] / 2160 * self.resolution[0]
             with open(data['joints_3d_path']) as f:
                 joint_cam = np.array(json.load(f)).reshape(-1, 3)
+                ### HARDCODE vis for debug
+                # joint_cam_orig = joint_cam.copy()
             with open(data['smplx_param_path'], 'rb') as f:
                 smplx_param = pickle.load(f, encoding='latin1')
 
@@ -451,24 +456,33 @@ class AGORA(torch.utils.data.Dataset):
                            'trans': trans}
             _, _, _, smplx_pose, smplx_shape, smplx_expr, smplx_pose_valid, _, smplx_expr_valid, _ = process_human_model_output(
                 smplx_param, cam_param, do_flip, img_shape, img2bb_trans, rot, 'smplx')
+            ### HARDCODE vis for debug
+            # mesh_rot_, joint_cam_, _, smplx_pose, smplx_shape, smplx_expr, smplx_pose_valid, _, smplx_expr_valid, mesh_orig, joint_cam_orig_ = process_human_model_output(
+            #     smplx_param, cam_param, do_flip, img_shape, img2bb_trans, rot, 'smplx')
             smplx_pose_valid = np.tile(smplx_pose_valid[:, None], (1, 3)).reshape(-1)
-            smplx_pose_valid[
-            :3] = 0  # global orient of the provided parameter is a rotation to world coordinate system. I want camera coordinate system.
+            
+            if not getattr(cfg, 'agora_valid_root_pose', False):
+                smplx_pose_valid[:3] = 0  # global orient of the provided parameter is a rotation to world coordinate system. I want camera coordinate system.
             smplx_shape_valid = True
-
             inputs = {'img': img}
             targets = {'joint_img': joint_img, 'joint_cam': joint_cam, 'smplx_joint_img': joint_img,
                        'smplx_joint_cam': joint_cam, 'smplx_pose': smplx_pose, 'smplx_shape': smplx_shape,
                        'smplx_expr': smplx_expr, 'lhand_bbox_center': lhand_bbox_center,
                        'lhand_bbox_size': lhand_bbox_size, 'rhand_bbox_center': rhand_bbox_center,
                        'rhand_bbox_size': rhand_bbox_size, 'face_bbox_center': face_bbox_center,
-                       'face_bbox_size': face_bbox_size}
+                       'face_bbox_size': face_bbox_size,
+                        }   
+                        ### HARDCODE vis for debug
+                        # 'mesh_rot_': mesh_rot_, 'joint_cam_': joint_cam_, 'mesh_orig': mesh_orig, 'joint_cam_orig': joint_cam_orig, 'joint_cam_orig_': joint_cam_orig_}
             meta_info = {'joint_valid': joint_valid, 'joint_trunc': joint_trunc,
                          'smplx_joint_valid': np.zeros_like(joint_valid),
                          'smplx_joint_trunc': np.zeros_like(joint_trunc), 'smplx_pose_valid': smplx_pose_valid,
                          'smplx_shape_valid': float(smplx_shape_valid), 'smplx_expr_valid': float(smplx_expr_valid),
                          'is_3D': float(True), 'lhand_bbox_valid': lhand_bbox_valid,
-                         'rhand_bbox_valid': rhand_bbox_valid, 'face_bbox_valid': face_bbox_valid}
+                         'rhand_bbox_valid': rhand_bbox_valid, 'face_bbox_valid': face_bbox_valid,
+                         }
+                        ### HARDCODE vis for debug
+                        #  'gt_3d_path': data['joints_3d_path'], 'smplx_path': data['smplx_param_path'], 'id': idx}
             return inputs, targets, meta_info
         else:
             # load crop and resize information (for the 4K setting)

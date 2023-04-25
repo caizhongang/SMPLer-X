@@ -278,6 +278,8 @@ def process_human_model_output(human_model_param, cam_param, do_flip, img_shape,
                                           leye_pose=zero_pose, reye_pose=zero_pose, expression=expr)
         mesh_cam = output.vertices[0].numpy()
         joint_cam = output.joints[0].numpy()[smpl_x.joint_idx, :]
+        ### HARDCODE
+        # joint_cam_orig_ = joint_cam.copy()
 
         # apply camera exrinsic (translation)
         # compenstate rotation (translation from origin to root joint was not cancled)
@@ -453,6 +455,29 @@ def process_human_model_output(human_model_param, cam_param, do_flip, img_shape,
     if human_model_type == 'smplx':
         pose = pose.reshape(-1)
         expr = expr.numpy().reshape(-1)
+
+        ### ### HARDCODE temp save vis for debug
+        # POSE: torch.cat((root_pose, body_pose, lhand_pose, rhand_pose, jaw_pose))
+        # pose_ = pose.numpy().copy()
+
+        # root_pose = torch.FloatTensor(pose[0:3]).view(1, 3)  # (1,3)
+        # body_pose = torch.FloatTensor(pose[3:66]).view(-1, 3)  # (21,3)
+        # lhand_pose = torch.FloatTensor(pose[66:111]).view(-1, 3)  # (15,3)
+        # rhand_pose = torch.FloatTensor(pose[111:156]).view(-1, 3)  # (15,3)
+        # jaw_pose = torch.FloatTensor(pose[156:159]).view(-1, 3)  # (1,3)
+        # shape = torch.FloatTensor(shape).view(1, -1)  # SMPLX shape parameter
+        # expr = torch.FloatTensor(expr).view(1, -1)  # SMPLX expression parameter
+        # trans = torch.FloatTensor(trans).view(1, -1)  # translation vector
+        
+        # with torch.no_grad():
+        #     output = smpl_x.layer[gender](betas=shape, body_pose=body_pose.view(1, -1), global_orient=root_pose,
+        #                                   transl=zero_pose, left_hand_pose=lhand_pose.view(1, -1),
+        #                                   right_hand_pose=rhand_pose.view(1, -1), jaw_pose=jaw_pose.view(1, -1),
+        #                                   leye_pose=zero_pose, reye_pose=zero_pose, expression=expr)
+        # mesh_rot = output.vertices[0].numpy()
+        # joint_rot = output.joints[0].numpy()[smpl_x.joint_idx, :]
+        # return mesh_rot, joint_cam, joint_trunc, pose, shape, expr, rotation_valid, coord_valid, expr_valid, mesh_cam_orig, joint_cam_orig_
+
         return joint_img, joint_cam, joint_trunc, pose, shape, expr, rotation_valid, coord_valid, expr_valid, mesh_cam_orig
     elif human_model_type == 'smpl':
         pose = pose.reshape(-1)

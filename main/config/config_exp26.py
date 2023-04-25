@@ -19,6 +19,7 @@ pretrained_model_path = '../output/train_gta_synbody_ft_20230410_132110/model_du
 
 # dataset setting
 agora_fix_global_orient_transl = True
+agora_valid_root_pose = True
 
 dataset_list = ['Human36M', 'MSCOCO', 'MPII', 'AGORA', 'EHF', 'SynBody', 'GTA_Human2']
 trainset_3d = ['AGORA']

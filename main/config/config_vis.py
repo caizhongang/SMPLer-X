@@ -14,14 +14,19 @@ syncbn = True
 
 # continue
 continue_train = True
-start_over = True
-pretrained_model_path = '../output/train_gta_synbody_ft_20230410_132110/model_dump/snapshot_2.pth.tar'
+start_over = False
+# pretrained_model_path = '../output/train_exp24_20230420_114342/model_dump/snapshot_80.pth.tar'
+pretrained_model_path = '../output/train_exp18_20230414_183422/model_dump/snapshot_20.pth.tar'
+
+save_vis = True
 
 # dataset setting
+agora_fix_global_orient_transl = True
+
 dataset_list = ['Human36M', 'MSCOCO', 'MPII', 'AGORA', 'EHF', 'SynBody', 'GTA_Human2']
 trainset_3d = ['AGORA']
 trainset_2d = []
-trainset_humandata = ['SynBody', 'GTA_Human2']
+trainset_humandata = []
 testset = 'EHF'
 
 # model

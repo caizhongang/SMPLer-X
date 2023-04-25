@@ -7,3 +7,4 @@ output
 *.npy
 *.tar
 main/vis
+demo/

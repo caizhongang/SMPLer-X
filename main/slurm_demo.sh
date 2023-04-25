@@ -5,7 +5,8 @@ set -x
 PARTITION=Zoetrope
 JOB_NAME=$1
 GPUS=$2
-CONFIG=$3
+RES_PATH=$3
+CKPT=$4
 
 GPUS_PER_NODE=$((${GPUS}<8?${GPUS}:8))
 CPUS_PER_TASK=4 # ${CPUS_PER_TASK:-2}
@@ -20,9 +21,11 @@ srun -p ${PARTITION} \
     --cpus-per-task=${CPUS_PER_TASK} \
     --kill-on-bad-exit=1 \
     ${SRUN_ARGS} \
-    python train.py \
-        --num_gpus ${GPUS} \
-        --exp_name output/train_${JOB_NAME} \
-        --master_port 46686 \
-        --config ${CONFIG}
+    python demo.py \
+        --num_gpus ${GPUS_PER_NODE} \
+        --exp_name output/demo_${JOB_NAME} \
+        --result_path ${RES_PATH} \
+        --ckpt_idx ${CKPT} \
+        --img_path ../demo/demo_video/frames_00001.jpg \
+        --output_folder ../demo/demo_video_out
 
