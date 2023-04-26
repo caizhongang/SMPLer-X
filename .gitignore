@@ -8,3 +8,5 @@ output
 *.tar
 main/vis
 demo/
+*egg-info/
+.idea/
