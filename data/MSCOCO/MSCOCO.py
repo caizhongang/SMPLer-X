@@ -137,7 +137,7 @@ class MSCOCO(torch.utils.data.Dataset):
                     face_bbox = np.array(ann['face_box']).reshape(4)
                     if hasattr(cfg, 'bbox_ratio'):
                         face_bbox = process_bbox(face_bbox, img['width'], img['height'], ratio=cfg.bbox_ratio)
-                    if face_bbox is not None
+                    if face_bbox is not None:
                         face_bbox[2:] += face_bbox[:2]  # xywh -> xyxy
                 else:
                     face_bbox = None
