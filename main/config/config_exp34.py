@@ -23,16 +23,16 @@ agora_fix_global_orient_transl = True
 agora_valid_root_pose = True
 
 dataset_list = ['Human36M', 'MSCOCO', 'MPII', 'AGORA', 'EHF', 'SynBody', 'GTA_Human2']
-trainset_3d = []
+trainset_3d = ['AGORA']
 trainset_2d = []
 trainset_humandata = ['SynBody', 'GTA_Human2']
 testset = 'EHF'
 
 # model
 smplx_loss_weight = 1.0 #2 for agora_model for smplx shape
-smplx_pose_weight = 1.0
+smplx_pose_weight = 10.0
 
-smplx_kps_3d_weight = 1.0
+smplx_kps_3d_weight = 100.0
 smplx_kps_2d_weight = 1.0
 net_kps_2d_weight = 1.0
 
@@ -77,7 +77,7 @@ face_3d_size = 0.3
 camera_3d_size = 2.5
 
 ## training config
-print_iters = 1
+print_iters = 100
 lr_mult = 1
 
 ## testing config
