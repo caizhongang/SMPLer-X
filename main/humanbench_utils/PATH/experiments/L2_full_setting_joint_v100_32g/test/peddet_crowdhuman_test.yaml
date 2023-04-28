@@ -1,0 +1,34 @@
+common:
+  # backbone:
+  #   kwargs:
+  #     test_pos_mode: learnable_interpolate
+  tester:
+    type: TesterMultiTaskDev
+    kwargs:
+      pos_thr: 0.05
+      gt_path: 'CHval.odgt'
+
+  use_ceph: True
+  sync: True
+  collate: det
+
+tasks:
+  0:
+    name: CrowdHumanPeddetTest
+    loss_weight: 1.0 # *redundant*
+    gres_ratio: 1 # int, > 0| world/sum*ratio, *redundant*
+    dataset:
+      type: PedestrainDetectionDataset
+      kwargs:
+        data_use_ratio: 1
+        task_spec:
+          img_folder: 
+            - sh1424:s3://peddet_public/CrowdHuman/Images
+          ann_file: 
+            - sh1424:s3://peddet_public/CrowdHuman/annotations/val.json
+          return_masks: False
+        augmentation: {'max_size': 1333}
+        vit: True
+        train: False
+    sampler:
+      batch_size: 1

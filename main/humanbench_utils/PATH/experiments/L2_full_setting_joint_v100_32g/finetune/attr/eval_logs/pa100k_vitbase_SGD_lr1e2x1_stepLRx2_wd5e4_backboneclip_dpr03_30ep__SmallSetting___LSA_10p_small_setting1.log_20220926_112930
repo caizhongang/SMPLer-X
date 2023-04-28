@@ -1,0 +1,1032 @@
+phoenix-srun: Job 88916 scheduled successfully!
+Current QUOTA_TYPE is [reserved], which means the job has occupied quota in RESERVED_TOTAL under your partition.
+Current PHX_PRIORITY is P0
+
+[_init_petrel]-   1  cur: 0.000s, avg(1): 0.000s
+[rank 0000]-[INFO]-[e626]-[2022-09-26 11:11:41]-[/spring/src/linklink/src/core.cc:220]: linklink init: world_size=1, rank=(0,0), device_num=1, thread_pool=1, buffer_pool=-1
+[rank 0] >> task_info.group[0] ranks [0]
+[rank 0] >> task_info.root_group ranks [0]
+[rank 0] >> task_info.backbone_share_group[[0]] ranks [0]
+[rank 0] >> task_info.neck_share_group[[0]] ranks [0]
+[rank 0] >> task_info.decoder_share_group[[0]] ranks [0]
+[rank 0] neck of task0 has been overided to {'type': 'DoNothing', 'kwargs': {}}
+[rank 0] decoder of task0 has been overided to {'type': 'pedattr_cls_vit_A', 'kwargs': {'out_feature': 768, 'nattr': 26, 'loss_cfg': {'type': 'CEL_Sigmoid', 'kwargs': {'sample_weight': [0.04354444, 0.17997778, 0.5834, 0.4166, 0.04947778, 0.15104444, 0.10775556, 0.04191111, 0.00472222, 0.01688889, 0.03241111, 0.71171111, 0.17344444, 0.11484444, 0.006, 0.185, 0.19273333, 0.1601, 0.00952222, 0.01345556, 0.92437778, 0.06216667, 0.46044444, 0.35266667, 0.29462222, 0.35271111], 'size_average': True}}}}
+[rank 0] dataset of task0 has been overided to {'type': 'AttrDataset', 'kwargs': {'task_spec': {'dataset': 'PA-100k', 'data_path': 'shlg:s3://pedattr_public/PA-100k/dataset.pkl', 'root_path': 'shlg:s3://pedattr_public/PA-100k/data/'}, 'augmentation': {'height': 256, 'width': 192, 'use_random_aug': False}}}
+[rank 0] sampler of task0 has been overided to {'batch_size': 32, 'shuffle_strategy': 1}
+[rank 0] >> task_info.group[0] ranks [0]
+[rank 0] >> task_info.root_group ranks [0]
+[rank 0] >> task_info.backbone_share_group[[0]] ranks [0]
+[rank 0] >> task_info.neck_share_group[[0]] ranks [0]
+[rank 0] >> task_info.decoder_share_group[[0]] ranks [0]
+[rank 0] dataset of task0 has been overided to {'type': 'AttrDataset', 'kwargs': {'task_spec': {'dataset': 'PA-100k', 'data_path': 'shlg:s3://pedattr_public/PA-100k/dataset.pkl', 'root_path': 'shlg:s3://pedattr_public/PA-100k/data/'}, 'augmentation': {'height': 256, 'width': 192}, 'train': False}}
+2022-09-26 11:11:44 acb75bf1 SUCCESS: (pavi2.training) SummaryWriter is initialized, remember to close the SummaryWriter at the end of your program.
+
+PAVI Info ###################################
+Training：pa100k_vitbase_SGD_lr1e2x1_stepLRx2_wd5e4_backboneclip_dpr03_30ep__SmallSetting___LSA_10p_small_setting1
+Project：L2_samll_setting_attr_FT
+Training_id：114449
+Training_url：http://autolink.parrots.sensetime.com/pages/content/project/3886/training/114449
+Warning: If `Training_url` is not accessible, please upgrade your pavi version.
+#############################################
+
+sync_print: rank 0, override tensor.cuda() to preserve task_specific flag
+[2022-09-26 11:11:44,052][solver_multitask_dev.py][line: 575][    INFO] deterministic mode, seed: 42, worker_rank: True,                                   cudnn_deterministic: True
+[rank 0] config[kwargs] {'task_spec': {'dataset': 'PA-100k', 'data_path': 'shlg:s3://pedattr_public/PA-100k/dataset.pkl', 'root_path': 'shlg:s3://pedattr_public/PA-100k/data/'}, 'augmentation': {'height': 256, 'width': 192, 'use_random_aug': False}, 'train': False, 'ginfo': {'group': 1, 'task_size': 1, 'task_id': 0, 'task_rank': 0, 'task_root_rank': 0, 'root_group': 2, 'task_sizes': [1], 'task_root_ranks': [0], 'task_num': 1, 'backbone_share_group': 3, 'backbone_group_size': 1, 'backbone_task_size': 1, 'backbone_task_rank': 0, 'neck_share_group': 4, 'neck_group_size': 1, 'neck_task_size': 1, 'neck_task_rank': 0, 'decoder_share_group': 5, 'decoder_group_size': 1, 'decoder_task_size': 1, 'decoder_task_rank': 0, 'task_name': 'pedattr', 'task_names': ['pedattr'], 'task_weight': 1.0, 'task_type': 'normal', 'task_types': ['normal'], 'task_random_seed': 0}}
+[rank 0] <core.data.datasets.images.pedattr_dataset.AttrDataset object at 0x7fcbc57f94a8>
+Missing keys: ['blocks.8.attn.rel_pos_h', 'blocks.1.attn.rel_pos_w', 'blocks.11.attn.rel_pos_w', 'blocks.1.attn.rel_pos_h', 'blocks.4.attn.rel_pos_w', 'blocks.10.attn.rel_pos_w', 'blocks.3.attn.rel_pos_w', 'blocks.9.attn.rel_pos_w', 'blocks.5.attn.rel_pos_w', 'blocks.9.attn.rel_pos_h', 'blocks.0.attn.rel_pos_w', 'blocks.2.attn.rel_pos_h', 'blocks.7.attn.rel_pos_h', 'blocks.7.attn.rel_pos_w', 'blocks.5.attn.rel_pos_h', 'blocks.10.attn.rel_pos_h', 'blocks.3.attn.rel_pos_h', 'blocks.4.attn.rel_pos_h', 'blocks.6.attn.rel_pos_h', 'blocks.0.attn.rel_pos_h', 'blocks.8.attn.rel_pos_w', 'blocks.2.attn.rel_pos_w', 'blocks.11.attn.rel_pos_h', 'blocks.6.attn.rel_pos_w']
+
+finish load
+sync_print: rank 0, Number of conv/bn params: 0.59M
+sync_print: rank 0, Number of linear params: 85.02M
+[rank 0] add param pos_embed as backbone_specific
+[rank 0] add param patch_embed.proj.weight as backbone_specific
+[rank 0] add param patch_embed.proj.bias as backbone_specific
+[rank 0] add param blocks.0.norm1.weight as backbone_specific
+[rank 0] add param blocks.0.norm1.bias as backbone_specific
+[rank 0] add param blocks.0.attn.rel_pos_h as backbone_specific
+[rank 0] add param blocks.0.attn.rel_pos_w as backbone_specific
+[rank 0] add param blocks.0.attn.qkv.weight as backbone_specific
+[rank 0] add param blocks.0.attn.qkv.bias as backbone_specific
+[rank 0] add param blocks.0.attn.proj.weight as backbone_specific
+[rank 0] add param blocks.0.attn.proj.bias as backbone_specific
+[rank 0] add param blocks.0.norm2.weight as backbone_specific
+[rank 0] add param blocks.0.norm2.bias as backbone_specific
+[rank 0] add param blocks.0.mlp.fc1.weight as backbone_specific
+[rank 0] add param blocks.0.mlp.fc1.bias as backbone_specific
+[rank 0] add param blocks.0.mlp.fc2.weight as backbone_specific
+[rank 0] add param blocks.0.mlp.fc2.bias as backbone_specific
+[rank 0] add param blocks.1.norm1.weight as backbone_specific
+[rank 0] add param blocks.1.norm1.bias as backbone_specific
+[rank 0] add param blocks.1.attn.rel_pos_h as backbone_specific
+[rank 0] add param blocks.1.attn.rel_pos_w as backbone_specific
+[rank 0] add param blocks.1.attn.qkv.weight as backbone_specific
+[rank 0] add param blocks.1.attn.qkv.bias as backbone_specific
+[rank 0] add param blocks.1.attn.proj.weight as backbone_specific
+[rank 0] add param blocks.1.attn.proj.bias as backbone_specific
+[rank 0] add param blocks.1.norm2.weight as backbone_specific
+[rank 0] add param blocks.1.norm2.bias as backbone_specific
+[rank 0] add param blocks.1.mlp.fc1.weight as backbone_specific
+[rank 0] add param blocks.1.mlp.fc1.bias as backbone_specific
+[rank 0] add param blocks.1.mlp.fc2.weight as backbone_specific
+[rank 0] add param blocks.1.mlp.fc2.bias as backbone_specific
+[rank 0] add param blocks.2.norm1.weight as backbone_specific
+[rank 0] add param blocks.2.norm1.bias as backbone_specific
+[rank 0] add param blocks.2.attn.rel_pos_h as backbone_specific
+[rank 0] add param blocks.2.attn.rel_pos_w as backbone_specific
+[rank 0] add param blocks.2.attn.qkv.weight as backbone_specific
+[rank 0] add param blocks.2.attn.qkv.bias as backbone_specific
+[rank 0] add param blocks.2.attn.proj.weight as backbone_specific
+[rank 0] add param blocks.2.attn.proj.bias as backbone_specific
+[rank 0] add param blocks.2.norm2.weight as backbone_specific
+[rank 0] add param blocks.2.norm2.bias as backbone_specific
+[rank 0] add param blocks.2.mlp.fc1.weight as backbone_specific
+[rank 0] add param blocks.2.mlp.fc1.bias as backbone_specific
+[rank 0] add param blocks.2.mlp.fc2.weight as backbone_specific
+[rank 0] add param blocks.2.mlp.fc2.bias as backbone_specific
+[rank 0] add param blocks.3.norm1.weight as backbone_specific
+[rank 0] add param blocks.3.norm1.bias as backbone_specific
+[rank 0] add param blocks.3.attn.rel_pos_h as backbone_specific
+[rank 0] add param blocks.3.attn.rel_pos_w as backbone_specific
+[rank 0] add param blocks.3.attn.qkv.weight as backbone_specific
+[rank 0] add param blocks.3.attn.qkv.bias as backbone_specific
+[rank 0] add param blocks.3.attn.proj.weight as backbone_specific
+[rank 0] add param blocks.3.attn.proj.bias as backbone_specific
+[rank 0] add param blocks.3.norm2.weight as backbone_specific
+[rank 0] add param blocks.3.norm2.bias as backbone_specific
+[rank 0] add param blocks.3.mlp.fc1.weight as backbone_specific
+[rank 0] add param blocks.3.mlp.fc1.bias as backbone_specific
+[rank 0] add param blocks.3.mlp.fc2.weight as backbone_specific
+[rank 0] add param blocks.3.mlp.fc2.bias as backbone_specific
+[rank 0] add param blocks.4.norm1.weight as backbone_specific
+[rank 0] add param blocks.4.norm1.bias as backbone_specific
+[rank 0] add param blocks.4.attn.rel_pos_h as backbone_specific
+[rank 0] add param blocks.4.attn.rel_pos_w as backbone_specific
+[rank 0] add param blocks.4.attn.qkv.weight as backbone_specific
+[rank 0] add param blocks.4.attn.qkv.bias as backbone_specific
+[rank 0] add param blocks.4.attn.proj.weight as backbone_specific
+[rank 0] add param blocks.4.attn.proj.bias as backbone_specific
+[rank 0] add param blocks.4.norm2.weight as backbone_specific
+[rank 0] add param blocks.4.norm2.bias as backbone_specific
+[rank 0] add param blocks.4.mlp.fc1.weight as backbone_specific
+[rank 0] add param blocks.4.mlp.fc1.bias as backbone_specific
+[rank 0] add param blocks.4.mlp.fc2.weight as backbone_specific
+[rank 0] add param blocks.4.mlp.fc2.bias as backbone_specific
+[rank 0] add param blocks.5.norm1.weight as backbone_specific
+[rank 0] add param blocks.5.norm1.bias as backbone_specific
+[rank 0] add param blocks.5.attn.rel_pos_h as backbone_specific
+[rank 0] add param blocks.5.attn.rel_pos_w as backbone_specific
+[rank 0] add param blocks.5.attn.qkv.weight as backbone_specific
+[rank 0] add param blocks.5.attn.qkv.bias as backbone_specific
+[rank 0] add param blocks.5.attn.proj.weight as backbone_specific
+[rank 0] add param blocks.5.attn.proj.bias as backbone_specific
+[rank 0] add param blocks.5.norm2.weight as backbone_specific
+[rank 0] add param blocks.5.norm2.bias as backbone_specific
+[rank 0] add param blocks.5.mlp.fc1.weight as backbone_specific
+[rank 0] add param blocks.5.mlp.fc1.bias as backbone_specific
+[rank 0] add param blocks.5.mlp.fc2.weight as backbone_specific
+[rank 0] add param blocks.5.mlp.fc2.bias as backbone_specific
+[rank 0] add param blocks.6.norm1.weight as backbone_specific
+[rank 0] add param blocks.6.norm1.bias as backbone_specific
+[rank 0] add param blocks.6.attn.rel_pos_h as backbone_specific
+[rank 0] add param blocks.6.attn.rel_pos_w as backbone_specific
+[rank 0] add param blocks.6.attn.qkv.weight as backbone_specific
+[rank 0] add param blocks.6.attn.qkv.bias as backbone_specific
+[rank 0] add param blocks.6.attn.proj.weight as backbone_specific
+[rank 0] add param blocks.6.attn.proj.bias as backbone_specific
+[rank 0] add param blocks.6.norm2.weight as backbone_specific
+[rank 0] add param blocks.6.norm2.bias as backbone_specific
+[rank 0] add param blocks.6.mlp.fc1.weight as backbone_specific
+[rank 0] add param blocks.6.mlp.fc1.bias as backbone_specific
+[rank 0] add param blocks.6.mlp.fc2.weight as backbone_specific
+[rank 0] add param blocks.6.mlp.fc2.bias as backbone_specific
+[rank 0] add param blocks.7.norm1.weight as backbone_specific
+[rank 0] add param blocks.7.norm1.bias as backbone_specific
+[rank 0] add param blocks.7.attn.rel_pos_h as backbone_specific
+[rank 0] add param blocks.7.attn.rel_pos_w as backbone_specific
+[rank 0] add param blocks.7.attn.qkv.weight as backbone_specific
+[rank 0] add param blocks.7.attn.qkv.bias as backbone_specific
+[rank 0] add param blocks.7.attn.proj.weight as backbone_specific
+[rank 0] add param blocks.7.attn.proj.bias as backbone_specific
+[rank 0] add param blocks.7.norm2.weight as backbone_specific
+[rank 0] add param blocks.7.norm2.bias as backbone_specific
+[rank 0] add param blocks.7.mlp.fc1.weight as backbone_specific
+[rank 0] add param blocks.7.mlp.fc1.bias as backbone_specific
+[rank 0] add param blocks.7.mlp.fc2.weight as backbone_specific
+[rank 0] add param blocks.7.mlp.fc2.bias as backbone_specific
+[rank 0] add param blocks.8.norm1.weight as backbone_specific
+[rank 0] add param blocks.8.norm1.bias as backbone_specific
+[rank 0] add param blocks.8.attn.rel_pos_h as backbone_specific
+[rank 0] add param blocks.8.attn.rel_pos_w as backbone_specific
+[rank 0] add param blocks.8.attn.qkv.weight as backbone_specific
+[rank 0] add param blocks.8.attn.qkv.bias as backbone_specific
+[rank 0] add param blocks.8.attn.proj.weight as backbone_specific
+[rank 0] add param blocks.8.attn.proj.bias as backbone_specific
+[rank 0] add param blocks.8.norm2.weight as backbone_specific
+[rank 0] add param blocks.8.norm2.bias as backbone_specific
+[rank 0] add param blocks.8.mlp.fc1.weight as backbone_specific
+[rank 0] add param blocks.8.mlp.fc1.bias as backbone_specific
+[rank 0] add param blocks.8.mlp.fc2.weight as backbone_specific
+[rank 0] add param blocks.8.mlp.fc2.bias as backbone_specific
+[rank 0] add param blocks.9.norm1.weight as backbone_specific
+[rank 0] add param blocks.9.norm1.bias as backbone_specific
+[rank 0] add param blocks.9.attn.rel_pos_h as backbone_specific
+[rank 0] add param blocks.9.attn.rel_pos_w as backbone_specific
+[rank 0] add param blocks.9.attn.qkv.weight as backbone_specific
+[rank 0] add param blocks.9.attn.qkv.bias as backbone_specific
+[rank 0] add param blocks.9.attn.proj.weight as backbone_specific
+[rank 0] add param blocks.9.attn.proj.bias as backbone_specific
+[rank 0] add param blocks.9.norm2.weight as backbone_specific
+[rank 0] add param blocks.9.norm2.bias as backbone_specific
+[rank 0] add param blocks.9.mlp.fc1.weight as backbone_specific
+[rank 0] add param blocks.9.mlp.fc1.bias as backbone_specific
+[rank 0] add param blocks.9.mlp.fc2.weight as backbone_specific
+[rank 0] add param blocks.9.mlp.fc2.bias as backbone_specific
+[rank 0] add param blocks.10.norm1.weight as backbone_specific
+[rank 0] add param blocks.10.norm1.bias as backbone_specific
+[rank 0] add param blocks.10.attn.rel_pos_h as backbone_specific
+[rank 0] add param blocks.10.attn.rel_pos_w as backbone_specific
+[rank 0] add param blocks.10.attn.qkv.weight as backbone_specific
+[rank 0] add param blocks.10.attn.qkv.bias as backbone_specific
+[rank 0] add param blocks.10.attn.proj.weight as backbone_specific
+[rank 0] add param blocks.10.attn.proj.bias as backbone_specific
+[rank 0] add param blocks.10.norm2.weight as backbone_specific
+[rank 0] add param blocks.10.norm2.bias as backbone_specific
+[rank 0] add param blocks.10.mlp.fc1.weight as backbone_specific
+[rank 0] add param blocks.10.mlp.fc1.bias as backbone_specific
+[rank 0] add param blocks.10.mlp.fc2.weight as backbone_specific
+[rank 0] add param blocks.10.mlp.fc2.bias as backbone_specific
+[rank 0] add param blocks.11.norm1.weight as backbone_specific
+[rank 0] add param blocks.11.norm1.bias as backbone_specific
+[rank 0] add param blocks.11.attn.rel_pos_h as backbone_specific
+[rank 0] add param blocks.11.attn.rel_pos_w as backbone_specific
+[rank 0] add param blocks.11.attn.qkv.weight as backbone_specific
+[rank 0] add param blocks.11.attn.qkv.bias as backbone_specific
+[rank 0] add param blocks.11.attn.proj.weight as backbone_specific
+[rank 0] add param blocks.11.attn.proj.bias as backbone_specific
+[rank 0] add param blocks.11.norm2.weight as backbone_specific
+[rank 0] add param blocks.11.norm2.bias as backbone_specific
+[rank 0] add param blocks.11.mlp.fc1.weight as backbone_specific
+[rank 0] add param blocks.11.mlp.fc1.bias as backbone_specific
+[rank 0] add param blocks.11.mlp.fc2.weight as backbone_specific
+[rank 0] add param blocks.11.mlp.fc2.bias as backbone_specific
+[rank 0] add param norm.weight as backbone_specific
+[rank 0] add param norm.bias as backbone_specific
+[rank 0] add param logits.0.weight as decoder_specific
+[rank 0] add param logits.0.bias as decoder_specific
+[rank 0] add param logits.1.weight as decoder_specific
+[rank 0] add param logits.1.bias as decoder_specific
+[rank 0] add buffer logits.1.running_mean as decoder_specific
+[rank 0] add buffer logits.1.running_var as decoder_specific
+[rank 0] add buffer logits.1.num_batches_tracked as decoder_specific
+model_entry(
+  (backbone_module): ViT(
+    (patch_embed): PatchEmbed(
+      (proj): Conv2d(3, 768, kernel_size=(16, 16), stride=(16, 16))
+    )
+    (pos_drop): Dropout(p=0.0, inplace=False)
+    (blocks): ModuleList(
+      (0): Block(
+        (norm1): LayerNorm((768,), eps=1e-06, elementwise_affine=True)
+        (attn): Attention(
+          (qkv): Linear(in_features=768, out_features=2304, bias=True)
+          (attn_drop): Dropout(p=0.0, inplace=False)
+          (proj): Linear(in_features=768, out_features=768, bias=True)
+          (proj_drop): Dropout(p=0.0, inplace=False)
+        )
+        (drop_path): Identity()
+        (norm2): LayerNorm((768,), eps=1e-06, elementwise_affine=True)
+        (mlp): Mlp(
+          (fc1): Linear(in_features=768, out_features=3072, bias=True)
+          (act): GELU()
+          (fc2): Linear(in_features=3072, out_features=768, bias=True)
+          (drop): Dropout(p=0.0, inplace=False)
+        )
+      )
+      (1): Block(
+        (norm1): LayerNorm((768,), eps=1e-06, elementwise_affine=True)
+        (attn): Attention(
+          (qkv): Linear(in_features=768, out_features=2304, bias=True)
+          (attn_drop): Dropout(p=0.0, inplace=False)
+          (proj): Linear(in_features=768, out_features=768, bias=True)
+          (proj_drop): Dropout(p=0.0, inplace=False)
+        )
+        (drop_path): DropPath(p=0.027272729203104973)
+        (norm2): LayerNorm((768,), eps=1e-06, elementwise_affine=True)
+        (mlp): Mlp(
+          (fc1): Linear(in_features=768, out_features=3072, bias=True)
+          (act): GELU()
+          (fc2): Linear(in_features=3072, out_features=768, bias=True)
+          (drop): Dropout(p=0.0, inplace=False)
+        )
+      )
+      (2): Block(
+        (norm1): LayerNorm((768,), eps=1e-06, elementwise_affine=True)
+        (attn): Attention(
+          (qkv): Linear(in_features=768, out_features=2304, bias=True)
+          (attn_drop): Dropout(p=0.0, inplace=False)
+          (proj): Linear(in_features=768, out_features=768, bias=True)
+          (proj_drop): Dropout(p=0.0, inplace=False)
+        )
+        (drop_path): DropPath(p=0.054545458406209946)
+        (norm2): LayerNorm((768,), eps=1e-06, elementwise_affine=True)
+        (mlp): Mlp(
+          (fc1): Linear(in_features=768, out_features=3072, bias=True)
+          (act): GELU()
+          (fc2): Linear(in_features=3072, out_features=768, bias=True)
+          (drop): Dropout(p=0.0, inplace=False)
+        )
+      )
+      (3): Block(
+        (norm1): LayerNorm((768,), eps=1e-06, elementwise_affine=True)
+        (attn): Attention(
+          (qkv): Linear(in_features=768, out_features=2304, bias=True)
+          (attn_drop): Dropout(p=0.0, inplace=False)
+          (proj): Linear(in_features=768, out_features=768, bias=True)
+          (proj_drop): Dropout(p=0.0, inplace=False)
+        )
+        (drop_path): DropPath(p=0.08181818574666977)
+        (norm2): LayerNorm((768,), eps=1e-06, elementwise_affine=True)
+        (mlp): Mlp(
+          (fc1): Linear(in_features=768, out_features=3072, bias=True)
+          (act): GELU()
+          (fc2): Linear(in_features=3072, out_features=768, bias=True)
+          (drop): Dropout(p=0.0, inplace=False)
+        )
+      )
+      (4): Block(
+        (norm1): LayerNorm((768,), eps=1e-06, elementwise_affine=True)
+        (attn): Attention(
+          (qkv): Linear(in_features=768, out_features=2304, bias=True)
+          (attn_drop): Dropout(p=0.0, inplace=False)
+          (proj): Linear(in_features=768, out_features=768, bias=True)
+          (proj_drop): Dropout(p=0.0, inplace=False)
+        )
+        (drop_path): DropPath(p=0.10909091681241989)
+        (norm2): LayerNorm((768,), eps=1e-06, elementwise_affine=True)
+        (mlp): Mlp(
+          (fc1): Linear(in_features=768, out_features=3072, bias=True)
+          (act): GELU()
+          (fc2): Linear(in_features=3072, out_features=768, bias=True)
+          (drop): Dropout(p=0.0, inplace=False)
+        )
+      )
+      (5): Block(
+        (norm1): LayerNorm((768,), eps=1e-06, elementwise_affine=True)
+        (attn): Attention(
+          (qkv): Linear(in_features=768, out_features=2304, bias=True)
+          (attn_drop): Dropout(p=0.0, inplace=False)
+          (proj): Linear(in_features=768, out_features=768, bias=True)
+          (proj_drop): Dropout(p=0.0, inplace=False)
+        )
+        (drop_path): DropPath(p=0.13636364042758942)
+        (norm2): LayerNorm((768,), eps=1e-06, elementwise_affine=True)
+        (mlp): Mlp(
+          (fc1): Linear(in_features=768, out_features=3072, bias=True)
+          (act): GELU()
+          (fc2): Linear(in_features=3072, out_features=768, bias=True)
+          (drop): Dropout(p=0.0, inplace=False)
+        )
+      )
+      (6): Block(
+        (norm1): LayerNorm((768,), eps=1e-06, elementwise_affine=True)
+        (attn): Attention(
+          (qkv): Linear(in_features=768, out_features=2304, bias=True)
+          (attn_drop): Dropout(p=0.0, inplace=False)
+          (proj): Linear(in_features=768, out_features=768, bias=True)
+          (proj_drop): Dropout(p=0.0, inplace=False)
+        )
+        (drop_path): DropPath(p=0.16363637149333954)
+        (norm2): LayerNorm((768,), eps=1e-06, elementwise_affine=True)
+        (mlp): Mlp(
+          (fc1): Linear(in_features=768, out_features=3072, bias=True)
+          (act): GELU()
+          (fc2): Linear(in_features=3072, out_features=768, bias=True)
+          (drop): Dropout(p=0.0, inplace=False)
+        )
+      )
+      (7): Block(
+        (norm1): LayerNorm((768,), eps=1e-06, elementwise_affine=True)
+        (attn): Attention(
+          (qkv): Linear(in_features=768, out_features=2304, bias=True)
+          (attn_drop): Dropout(p=0.0, inplace=False)
+          (proj): Linear(in_features=768, out_features=768, bias=True)
+          (proj_drop): Dropout(p=0.0, inplace=False)
+        )
+        (drop_path): DropPath(p=0.19090908765792847)
+        (norm2): LayerNorm((768,), eps=1e-06, elementwise_affine=True)
+        (mlp): Mlp(
+          (fc1): Linear(in_features=768, out_features=3072, bias=True)
+          (act): GELU()
+          (fc2): Linear(in_features=3072, out_features=768, bias=True)
+          (drop): Dropout(p=0.0, inplace=False)
+        )
+      )
+      (8): Block(
+        (norm1): LayerNorm((768,), eps=1e-06, elementwise_affine=True)
+        (attn): Attention(
+          (qkv): Linear(in_features=768, out_features=2304, bias=True)
+          (attn_drop): Dropout(p=0.0, inplace=False)
+          (proj): Linear(in_features=768, out_features=768, bias=True)
+          (proj_drop): Dropout(p=0.0, inplace=False)
+        )
+        (drop_path): DropPath(p=0.2181818187236786)
+        (norm2): LayerNorm((768,), eps=1e-06, elementwise_affine=True)
+        (mlp): Mlp(
+          (fc1): Linear(in_features=768, out_features=3072, bias=True)
+          (act): GELU()
+          (fc2): Linear(in_features=3072, out_features=768, bias=True)
+          (drop): Dropout(p=0.0, inplace=False)
+        )
+      )
+      (9): Block(
+        (norm1): LayerNorm((768,), eps=1e-06, elementwise_affine=True)
+        (attn): Attention(
+          (qkv): Linear(in_features=768, out_features=2304, bias=True)
+          (attn_drop): Dropout(p=0.0, inplace=False)
+          (proj): Linear(in_features=768, out_features=768, bias=True)
+          (proj_drop): Dropout(p=0.0, inplace=False)
+        )
+        (drop_path): DropPath(p=0.2454545497894287)
+        (norm2): LayerNorm((768,), eps=1e-06, elementwise_affine=True)
+        (mlp): Mlp(
+          (fc1): Linear(in_features=768, out_features=3072, bias=True)
+          (act): GELU()
+          (fc2): Linear(in_features=3072, out_features=768, bias=True)
+          (drop): Dropout(p=0.0, inplace=False)
+        )
+      )
+      (10): Block(
+        (norm1): LayerNorm((768,), eps=1e-06, elementwise_affine=True)
+        (attn): Attention(
+          (qkv): Linear(in_features=768, out_features=2304, bias=True)
+          (attn_drop): Dropout(p=0.0, inplace=False)
+          (proj): Linear(in_features=768, out_features=768, bias=True)
+          (proj_drop): Dropout(p=0.0, inplace=False)
+        )
+        (drop_path): DropPath(p=0.27272728085517883)
+        (norm2): LayerNorm((768,), eps=1e-06, elementwise_affine=True)
+        (mlp): Mlp(
+          (fc1): Linear(in_features=768, out_features=3072, bias=True)
+          (act): GELU()
+          (fc2): Linear(in_features=3072, out_features=768, bias=True)
+          (drop): Dropout(p=0.0, inplace=False)
+        )
+      )
+      (11): Block(
+        (norm1): LayerNorm((768,), eps=1e-06, elementwise_affine=True)
+        (attn): Attention(
+          (qkv): Linear(in_features=768, out_features=2304, bias=True)
+          (attn_drop): Dropout(p=0.0, inplace=False)
+          (proj): Linear(in_features=768, out_features=768, bias=True)
+          (proj_drop): Dropout(p=0.0, inplace=False)
+        )
+        (drop_path): DropPath(p=0.30000001192092896)
+        (norm2): LayerNorm((768,), eps=1e-06, elementwise_affine=True)
+        (mlp): Mlp(
+          (fc1): Linear(in_features=768, out_features=3072, bias=True)
+          (act): GELU()
+          (fc2): Linear(in_features=3072, out_features=768, bias=True)
+          (drop): Dropout(p=0.0, inplace=False)
+        )
+      )
+    )
+    (norm): LayerNorm((768,), eps=1e-06, elementwise_affine=True)
+  )
+  (neck_module): DoNothing()
+  (decoder_module): pedattr_cls_vit_A(
+    (logits): Sequential(
+      (0): Linear(in_features=768, out_features=26, bias=True)
+      (1): BatchNorm1d(26, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+    )
+    (avg_pool2d): AdaptiveAvgPool2d(output_size=1)
+    (loss): CEL_Sigmoid(sample_weight=[0.04354444 0.17997778 0.5834     0.4166     0.04947778 0.15104444
+     0.10775556 0.04191111 0.00472222 0.01688889 0.03241111 0.71171111
+     0.17344444 0.11484444 0.006      0.185      0.19273333 0.1601
+     0.00952222 0.01345556 0.92437778 0.06216667 0.46044444 0.35266667
+     0.29462222 0.35271111], size_average=True)
+  )
+)
+[rank 0] broadcasting backbone-specific param module.backbone_module.pos_embed	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.patch_embed.proj.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.patch_embed.proj.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.0.norm1.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.0.norm1.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.0.attn.rel_pos_h	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.0.attn.rel_pos_w	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.0.attn.qkv.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.0.attn.qkv.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.0.attn.proj.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.0.attn.proj.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.0.norm2.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.0.norm2.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.0.mlp.fc1.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.0.mlp.fc1.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.0.mlp.fc2.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.0.mlp.fc2.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.1.norm1.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.1.norm1.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.1.attn.rel_pos_h	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.1.attn.rel_pos_w	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.1.attn.qkv.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.1.attn.qkv.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.1.attn.proj.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.1.attn.proj.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.1.norm2.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.1.norm2.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.1.mlp.fc1.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.1.mlp.fc1.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.1.mlp.fc2.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.1.mlp.fc2.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.2.norm1.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.2.norm1.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.2.attn.rel_pos_h	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.2.attn.rel_pos_w	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.2.attn.qkv.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.2.attn.qkv.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.2.attn.proj.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.2.attn.proj.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.2.norm2.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.2.norm2.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.2.mlp.fc1.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.2.mlp.fc1.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.2.mlp.fc2.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.2.mlp.fc2.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.3.norm1.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.3.norm1.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.3.attn.rel_pos_h	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.3.attn.rel_pos_w	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.3.attn.qkv.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.3.attn.qkv.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.3.attn.proj.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.3.attn.proj.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.3.norm2.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.3.norm2.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.3.mlp.fc1.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.3.mlp.fc1.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.3.mlp.fc2.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.3.mlp.fc2.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.4.norm1.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.4.norm1.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.4.attn.rel_pos_h	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.4.attn.rel_pos_w	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.4.attn.qkv.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.4.attn.qkv.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.4.attn.proj.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.4.attn.proj.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.4.norm2.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.4.norm2.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.4.mlp.fc1.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.4.mlp.fc1.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.4.mlp.fc2.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.4.mlp.fc2.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.5.norm1.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.5.norm1.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.5.attn.rel_pos_h	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.5.attn.rel_pos_w	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.5.attn.qkv.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.5.attn.qkv.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.5.attn.proj.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.5.attn.proj.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.5.norm2.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.5.norm2.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.5.mlp.fc1.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.5.mlp.fc1.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.5.mlp.fc2.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.5.mlp.fc2.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.6.norm1.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.6.norm1.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.6.attn.rel_pos_h	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.6.attn.rel_pos_w	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.6.attn.qkv.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.6.attn.qkv.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.6.attn.proj.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.6.attn.proj.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.6.norm2.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.6.norm2.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.6.mlp.fc1.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.6.mlp.fc1.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.6.mlp.fc2.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.6.mlp.fc2.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.7.norm1.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.7.norm1.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.7.attn.rel_pos_h	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.7.attn.rel_pos_w	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.7.attn.qkv.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.7.attn.qkv.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.7.attn.proj.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.7.attn.proj.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.7.norm2.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.7.norm2.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.7.mlp.fc1.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.7.mlp.fc1.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.7.mlp.fc2.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.7.mlp.fc2.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.8.norm1.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.8.norm1.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.8.attn.rel_pos_h	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.8.attn.rel_pos_w	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.8.attn.qkv.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.8.attn.qkv.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.8.attn.proj.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.8.attn.proj.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.8.norm2.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.8.norm2.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.8.mlp.fc1.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.8.mlp.fc1.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.8.mlp.fc2.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.8.mlp.fc2.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.9.norm1.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.9.norm1.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.9.attn.rel_pos_h	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.9.attn.rel_pos_w	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.9.attn.qkv.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.9.attn.qkv.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.9.attn.proj.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.9.attn.proj.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.9.norm2.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.9.norm2.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.9.mlp.fc1.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.9.mlp.fc1.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.9.mlp.fc2.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.9.mlp.fc2.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.10.norm1.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.10.norm1.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.10.attn.rel_pos_h	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.10.attn.rel_pos_w	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.10.attn.qkv.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.10.attn.qkv.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.10.attn.proj.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.10.attn.proj.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.10.norm2.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.10.norm2.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.10.mlp.fc1.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.10.mlp.fc1.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.10.mlp.fc2.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.10.mlp.fc2.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.11.norm1.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.11.norm1.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.11.attn.rel_pos_h	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.11.attn.rel_pos_w	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.11.attn.qkv.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.11.attn.qkv.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.11.attn.proj.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.11.attn.proj.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.11.norm2.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.11.norm2.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.11.mlp.fc1.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.11.mlp.fc1.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.11.mlp.fc2.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.11.mlp.fc2.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.norm.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.norm.bias	group_idx=3
+[rank 0] broadcasting decoder-specific param module.decoder_module.logits.0.weight	group_idx=5
+[rank 0] broadcasting decoder-specific param module.decoder_module.logits.0.bias	group_idx=5
+[rank 0] broadcasting decoder-specific param module.decoder_module.logits.1.weight	group_idx=5
+[rank 0] broadcasting decoder-specific param module.decoder_module.logits.1.bias	group_idx=5
+[rank 0] broadcasting decoder-specific buffer module.decoder_module.logits.1.running_mean
+[rank 0] broadcasting decoder-specific buffer module.decoder_module.logits.1.running_var
+[rank 0] broadcasting decoder-specific buffer module.decoder_module.logits.1.num_batches_tracked
+[rank 0] Recovering from /mnt/lustrenew/chencheng1/expr_files/vitruvian/devL2/L2_samll_setting_attr_FT/checkpoints/pa100k_vitbase_SGD_lr1e2x1_stepLRx2_wd5e4_backboneclip_dpr03_30ep__SmallSetting___LSA_10p_small_setting1/ckpt_task0_iter_newest.pth.tar, keys=['step', 'backbone_args', 'neck_args', 'decoder_args', 'state_dict', 'optimizer']
+[rank 0] ======= loading model state for task 0 ... =======
+[2022-09-26 11:11:58,709][solver_multitask_dev.py][line: 679][    INFO] Start inference on 313 batches
+[2022-09-26 11:14:54,706][solver_multitask_dev.py][line: 720][    INFO] Inference done 11/313. Dataloading: 0.0019 s/iter. Inference: 0.1588 s/iter. Eval: 0.0002 s/iter. Total: 0.1627 s/iter. ETA=0:00:49
+[2022-09-26 11:14:54,871][solver_multitask_dev.py][line: 720][    INFO] Inference done 12/313. Dataloading: 0.0020 s/iter. Inference: 0.1589 s/iter. Eval: 0.0002 s/iter. Total: 0.1631 s/iter. ETA=0:00:49
+[2022-09-26 11:14:55,035][solver_multitask_dev.py][line: 720][    INFO] Inference done 13/313. Dataloading: 0.0020 s/iter. Inference: 0.1589 s/iter. Eval: 0.0002 s/iter. Total: 0.1632 s/iter. ETA=0:00:48
+[2022-09-26 11:14:55,199][solver_multitask_dev.py][line: 720][    INFO] Inference done 14/313. Dataloading: 0.0020 s/iter. Inference: 0.1590 s/iter. Eval: 0.0002 s/iter. Total: 0.1633 s/iter. ETA=0:00:48
+[2022-09-26 11:14:55,363][solver_multitask_dev.py][line: 720][    INFO] Inference done 15/313. Dataloading: 0.0021 s/iter. Inference: 0.1590 s/iter. Eval: 0.0002 s/iter. Total: 0.1634 s/iter. ETA=0:00:48
+[2022-09-26 11:14:55,528][solver_multitask_dev.py][line: 720][    INFO] Inference done 16/313. Dataloading: 0.0021 s/iter. Inference: 0.1591 s/iter. Eval: 0.0002 s/iter. Total: 0.1635 s/iter. ETA=0:00:48
+[2022-09-26 11:14:55,693][solver_multitask_dev.py][line: 720][    INFO] Inference done 17/313. Dataloading: 0.0021 s/iter. Inference: 0.1591 s/iter. Eval: 0.0002 s/iter. Total: 0.1637 s/iter. ETA=0:00:48
+[2022-09-26 11:14:55,858][solver_multitask_dev.py][line: 720][    INFO] Inference done 18/313. Dataloading: 0.0021 s/iter. Inference: 0.1592 s/iter. Eval: 0.0002 s/iter. Total: 0.1637 s/iter. ETA=0:00:48
+[2022-09-26 11:14:56,022][solver_multitask_dev.py][line: 720][    INFO] Inference done 19/313. Dataloading: 0.0021 s/iter. Inference: 0.1592 s/iter. Eval: 0.0002 s/iter. Total: 0.1638 s/iter. ETA=0:00:48
+[2022-09-26 11:14:56,187][solver_multitask_dev.py][line: 720][    INFO] Inference done 20/313. Dataloading: 0.0021 s/iter. Inference: 0.1593 s/iter. Eval: 0.0002 s/iter. Total: 0.1639 s/iter. ETA=0:00:48
+[2022-09-26 11:14:56,353][solver_multitask_dev.py][line: 720][    INFO] Inference done 21/313. Dataloading: 0.0022 s/iter. Inference: 0.1594 s/iter. Eval: 0.0002 s/iter. Total: 0.1640 s/iter. ETA=0:00:47
+[2022-09-26 11:14:56,517][solver_multitask_dev.py][line: 720][    INFO] Inference done 22/313. Dataloading: 0.0022 s/iter. Inference: 0.1594 s/iter. Eval: 0.0002 s/iter. Total: 0.1640 s/iter. ETA=0:00:47
+[2022-09-26 11:14:56,683][solver_multitask_dev.py][line: 720][    INFO] Inference done 23/313. Dataloading: 0.0022 s/iter. Inference: 0.1595 s/iter. Eval: 0.0002 s/iter. Total: 0.1641 s/iter. ETA=0:00:47
+[2022-09-26 11:14:56,848][solver_multitask_dev.py][line: 720][    INFO] Inference done 24/313. Dataloading: 0.0022 s/iter. Inference: 0.1595 s/iter. Eval: 0.0002 s/iter. Total: 0.1642 s/iter. ETA=0:00:47
+[2022-09-26 11:14:57,013][solver_multitask_dev.py][line: 720][    INFO] Inference done 25/313. Dataloading: 0.0022 s/iter. Inference: 0.1595 s/iter. Eval: 0.0002 s/iter. Total: 0.1642 s/iter. ETA=0:00:47
+[2022-09-26 11:14:57,178][solver_multitask_dev.py][line: 720][    INFO] Inference done 26/313. Dataloading: 0.0022 s/iter. Inference: 0.1596 s/iter. Eval: 0.0002 s/iter. Total: 0.1642 s/iter. ETA=0:00:47
+[2022-09-26 11:14:57,343][solver_multitask_dev.py][line: 720][    INFO] Inference done 27/313. Dataloading: 0.0022 s/iter. Inference: 0.1596 s/iter. Eval: 0.0002 s/iter. Total: 0.1643 s/iter. ETA=0:00:46
+[2022-09-26 11:14:57,508][solver_multitask_dev.py][line: 720][    INFO] Inference done 28/313. Dataloading: 0.0022 s/iter. Inference: 0.1596 s/iter. Eval: 0.0002 s/iter. Total: 0.1643 s/iter. ETA=0:00:46
+[2022-09-26 11:14:57,673][solver_multitask_dev.py][line: 720][    INFO] Inference done 29/313. Dataloading: 0.0022 s/iter. Inference: 0.1597 s/iter. Eval: 0.0002 s/iter. Total: 0.1643 s/iter. ETA=0:00:46
+[2022-09-26 11:14:57,839][solver_multitask_dev.py][line: 720][    INFO] Inference done 30/313. Dataloading: 0.0022 s/iter. Inference: 0.1597 s/iter. Eval: 0.0002 s/iter. Total: 0.1644 s/iter. ETA=0:00:46
+[2022-09-26 11:14:58,005][solver_multitask_dev.py][line: 720][    INFO] Inference done 31/313. Dataloading: 0.0022 s/iter. Inference: 0.1597 s/iter. Eval: 0.0002 s/iter. Total: 0.1644 s/iter. ETA=0:00:46
+[2022-09-26 11:14:58,170][solver_multitask_dev.py][line: 720][    INFO] Inference done 32/313. Dataloading: 0.0022 s/iter. Inference: 0.1597 s/iter. Eval: 0.0002 s/iter. Total: 0.1645 s/iter. ETA=0:00:46
+[2022-09-26 11:14:58,334][solver_multitask_dev.py][line: 720][    INFO] Inference done 33/313. Dataloading: 0.0022 s/iter. Inference: 0.1597 s/iter. Eval: 0.0002 s/iter. Total: 0.1645 s/iter. ETA=0:00:46
+[2022-09-26 11:14:58,499][solver_multitask_dev.py][line: 720][    INFO] Inference done 34/313. Dataloading: 0.0022 s/iter. Inference: 0.1598 s/iter. Eval: 0.0002 s/iter. Total: 0.1645 s/iter. ETA=0:00:45
+[2022-09-26 11:14:58,664][solver_multitask_dev.py][line: 720][    INFO] Inference done 35/313. Dataloading: 0.0022 s/iter. Inference: 0.1598 s/iter. Eval: 0.0002 s/iter. Total: 0.1645 s/iter. ETA=0:00:45
+[2022-09-26 11:14:58,829][solver_multitask_dev.py][line: 720][    INFO] Inference done 36/313. Dataloading: 0.0022 s/iter. Inference: 0.1598 s/iter. Eval: 0.0002 s/iter. Total: 0.1645 s/iter. ETA=0:00:45
+[2022-09-26 11:14:58,993][solver_multitask_dev.py][line: 720][    INFO] Inference done 37/313. Dataloading: 0.0022 s/iter. Inference: 0.1598 s/iter. Eval: 0.0002 s/iter. Total: 0.1645 s/iter. ETA=0:00:45
+[2022-09-26 11:14:59,159][solver_multitask_dev.py][line: 720][    INFO] Inference done 38/313. Dataloading: 0.0022 s/iter. Inference: 0.1598 s/iter. Eval: 0.0002 s/iter. Total: 0.1645 s/iter. ETA=0:00:45
+[2022-09-26 11:14:59,324][solver_multitask_dev.py][line: 720][    INFO] Inference done 39/313. Dataloading: 0.0022 s/iter. Inference: 0.1598 s/iter. Eval: 0.0002 s/iter. Total: 0.1646 s/iter. ETA=0:00:45
+[2022-09-26 11:14:59,489][solver_multitask_dev.py][line: 720][    INFO] Inference done 40/313. Dataloading: 0.0022 s/iter. Inference: 0.1599 s/iter. Eval: 0.0002 s/iter. Total: 0.1646 s/iter. ETA=0:00:44
+[2022-09-26 11:14:59,654][solver_multitask_dev.py][line: 720][    INFO] Inference done 41/313. Dataloading: 0.0022 s/iter. Inference: 0.1599 s/iter. Eval: 0.0002 s/iter. Total: 0.1646 s/iter. ETA=0:00:44
+[2022-09-26 11:14:59,818][solver_multitask_dev.py][line: 720][    INFO] Inference done 42/313. Dataloading: 0.0022 s/iter. Inference: 0.1599 s/iter. Eval: 0.0002 s/iter. Total: 0.1646 s/iter. ETA=0:00:44
+[2022-09-26 11:14:59,983][solver_multitask_dev.py][line: 720][    INFO] Inference done 43/313. Dataloading: 0.0022 s/iter. Inference: 0.1599 s/iter. Eval: 0.0002 s/iter. Total: 0.1646 s/iter. ETA=0:00:44
+[2022-09-26 11:15:00,147][solver_multitask_dev.py][line: 720][    INFO] Inference done 44/313. Dataloading: 0.0022 s/iter. Inference: 0.1599 s/iter. Eval: 0.0002 s/iter. Total: 0.1646 s/iter. ETA=0:00:44
+[2022-09-26 11:15:00,312][solver_multitask_dev.py][line: 720][    INFO] Inference done 45/313. Dataloading: 0.0022 s/iter. Inference: 0.1599 s/iter. Eval: 0.0002 s/iter. Total: 0.1646 s/iter. ETA=0:00:44
+[2022-09-26 11:15:00,477][solver_multitask_dev.py][line: 720][    INFO] Inference done 46/313. Dataloading: 0.0022 s/iter. Inference: 0.1599 s/iter. Eval: 0.0002 s/iter. Total: 0.1646 s/iter. ETA=0:00:43
+[2022-09-26 11:15:00,641][solver_multitask_dev.py][line: 720][    INFO] Inference done 47/313. Dataloading: 0.0021 s/iter. Inference: 0.1599 s/iter. Eval: 0.0002 s/iter. Total: 0.1646 s/iter. ETA=0:00:43
+[2022-09-26 11:15:00,806][solver_multitask_dev.py][line: 720][    INFO] Inference done 48/313. Dataloading: 0.0021 s/iter. Inference: 0.1599 s/iter. Eval: 0.0002 s/iter. Total: 0.1646 s/iter. ETA=0:00:43
+[2022-09-26 11:15:00,970][solver_multitask_dev.py][line: 720][    INFO] Inference done 49/313. Dataloading: 0.0021 s/iter. Inference: 0.1599 s/iter. Eval: 0.0002 s/iter. Total: 0.1646 s/iter. ETA=0:00:43
+[2022-09-26 11:15:01,135][solver_multitask_dev.py][line: 720][    INFO] Inference done 50/313. Dataloading: 0.0021 s/iter. Inference: 0.1599 s/iter. Eval: 0.0002 s/iter. Total: 0.1646 s/iter. ETA=0:00:43
+[2022-09-26 11:15:01,299][solver_multitask_dev.py][line: 720][    INFO] Inference done 51/313. Dataloading: 0.0021 s/iter. Inference: 0.1599 s/iter. Eval: 0.0002 s/iter. Total: 0.1646 s/iter. ETA=0:00:43
+[2022-09-26 11:15:01,464][solver_multitask_dev.py][line: 720][    INFO] Inference done 52/313. Dataloading: 0.0021 s/iter. Inference: 0.1599 s/iter. Eval: 0.0002 s/iter. Total: 0.1646 s/iter. ETA=0:00:42
+[2022-09-26 11:15:01,629][solver_multitask_dev.py][line: 720][    INFO] Inference done 53/313. Dataloading: 0.0021 s/iter. Inference: 0.1600 s/iter. Eval: 0.0002 s/iter. Total: 0.1646 s/iter. ETA=0:00:42
+[2022-09-26 11:15:01,794][solver_multitask_dev.py][line: 720][    INFO] Inference done 54/313. Dataloading: 0.0021 s/iter. Inference: 0.1600 s/iter. Eval: 0.0002 s/iter. Total: 0.1646 s/iter. ETA=0:00:42
+[2022-09-26 11:15:01,960][solver_multitask_dev.py][line: 720][    INFO] Inference done 55/313. Dataloading: 0.0021 s/iter. Inference: 0.1600 s/iter. Eval: 0.0002 s/iter. Total: 0.1646 s/iter. ETA=0:00:42
+[2022-09-26 11:15:02,126][solver_multitask_dev.py][line: 720][    INFO] Inference done 56/313. Dataloading: 0.0021 s/iter. Inference: 0.1600 s/iter. Eval: 0.0002 s/iter. Total: 0.1646 s/iter. ETA=0:00:42
+[2022-09-26 11:15:02,291][solver_multitask_dev.py][line: 720][    INFO] Inference done 57/313. Dataloading: 0.0021 s/iter. Inference: 0.1600 s/iter. Eval: 0.0002 s/iter. Total: 0.1646 s/iter. ETA=0:00:42
+[2022-09-26 11:15:02,456][solver_multitask_dev.py][line: 720][    INFO] Inference done 58/313. Dataloading: 0.0021 s/iter. Inference: 0.1600 s/iter. Eval: 0.0002 s/iter. Total: 0.1647 s/iter. ETA=0:00:41
+[2022-09-26 11:15:02,622][solver_multitask_dev.py][line: 720][    INFO] Inference done 59/313. Dataloading: 0.0021 s/iter. Inference: 0.1600 s/iter. Eval: 0.0002 s/iter. Total: 0.1647 s/iter. ETA=0:00:41
+[2022-09-26 11:15:02,787][solver_multitask_dev.py][line: 720][    INFO] Inference done 60/313. Dataloading: 0.0021 s/iter. Inference: 0.1600 s/iter. Eval: 0.0002 s/iter. Total: 0.1647 s/iter. ETA=0:00:41
+[2022-09-26 11:15:02,953][solver_multitask_dev.py][line: 720][    INFO] Inference done 61/313. Dataloading: 0.0021 s/iter. Inference: 0.1601 s/iter. Eval: 0.0002 s/iter. Total: 0.1647 s/iter. ETA=0:00:41
+[2022-09-26 11:15:03,118][solver_multitask_dev.py][line: 720][    INFO] Inference done 62/313. Dataloading: 0.0021 s/iter. Inference: 0.1601 s/iter. Eval: 0.0002 s/iter. Total: 0.1647 s/iter. ETA=0:00:41
+[2022-09-26 11:15:03,284][solver_multitask_dev.py][line: 720][    INFO] Inference done 63/313. Dataloading: 0.0021 s/iter. Inference: 0.1601 s/iter. Eval: 0.0002 s/iter. Total: 0.1647 s/iter. ETA=0:00:41
+[2022-09-26 11:15:03,449][solver_multitask_dev.py][line: 720][    INFO] Inference done 64/313. Dataloading: 0.0021 s/iter. Inference: 0.1601 s/iter. Eval: 0.0002 s/iter. Total: 0.1647 s/iter. ETA=0:00:41
+[2022-09-26 11:15:03,615][solver_multitask_dev.py][line: 720][    INFO] Inference done 65/313. Dataloading: 0.0021 s/iter. Inference: 0.1601 s/iter. Eval: 0.0002 s/iter. Total: 0.1648 s/iter. ETA=0:00:40
+[2022-09-26 11:15:03,781][solver_multitask_dev.py][line: 720][    INFO] Inference done 66/313. Dataloading: 0.0021 s/iter. Inference: 0.1601 s/iter. Eval: 0.0002 s/iter. Total: 0.1648 s/iter. ETA=0:00:40
+[2022-09-26 11:15:03,947][solver_multitask_dev.py][line: 720][    INFO] Inference done 67/313. Dataloading: 0.0021 s/iter. Inference: 0.1601 s/iter. Eval: 0.0002 s/iter. Total: 0.1648 s/iter. ETA=0:00:40
+[2022-09-26 11:15:04,112][solver_multitask_dev.py][line: 720][    INFO] Inference done 68/313. Dataloading: 0.0021 s/iter. Inference: 0.1601 s/iter. Eval: 0.0002 s/iter. Total: 0.1648 s/iter. ETA=0:00:40
+[2022-09-26 11:15:04,281][solver_multitask_dev.py][line: 720][    INFO] Inference done 69/313. Dataloading: 0.0021 s/iter. Inference: 0.1602 s/iter. Eval: 0.0002 s/iter. Total: 0.1649 s/iter. ETA=0:00:40
+[2022-09-26 11:15:04,484][solver_multitask_dev.py][line: 720][    INFO] Inference done 70/313. Dataloading: 0.0023 s/iter. Inference: 0.1604 s/iter. Eval: 0.0005 s/iter. Total: 0.1655 s/iter. ETA=0:00:40
+[2022-09-26 11:15:04,697][solver_multitask_dev.py][line: 720][    INFO] Inference done 71/313. Dataloading: 0.0023 s/iter. Inference: 0.1611 s/iter. Eval: 0.0005 s/iter. Total: 0.1662 s/iter. ETA=0:00:40
+[2022-09-26 11:15:04,863][solver_multitask_dev.py][line: 720][    INFO] Inference done 72/313. Dataloading: 0.0023 s/iter. Inference: 0.1611 s/iter. Eval: 0.0005 s/iter. Total: 0.1662 s/iter. ETA=0:00:40
+[2022-09-26 11:15:05,029][solver_multitask_dev.py][line: 720][    INFO] Inference done 73/313. Dataloading: 0.0023 s/iter. Inference: 0.1611 s/iter. Eval: 0.0005 s/iter. Total: 0.1662 s/iter. ETA=0:00:39
+[2022-09-26 11:15:05,194][solver_multitask_dev.py][line: 720][    INFO] Inference done 74/313. Dataloading: 0.0023 s/iter. Inference: 0.1611 s/iter. Eval: 0.0004 s/iter. Total: 0.1661 s/iter. ETA=0:00:39
+[2022-09-26 11:15:05,359][solver_multitask_dev.py][line: 720][    INFO] Inference done 75/313. Dataloading: 0.0023 s/iter. Inference: 0.1611 s/iter. Eval: 0.0004 s/iter. Total: 0.1661 s/iter. ETA=0:00:39
+[2022-09-26 11:15:05,524][solver_multitask_dev.py][line: 720][    INFO] Inference done 76/313. Dataloading: 0.0023 s/iter. Inference: 0.1611 s/iter. Eval: 0.0004 s/iter. Total: 0.1661 s/iter. ETA=0:00:39
+[2022-09-26 11:15:05,690][solver_multitask_dev.py][line: 720][    INFO] Inference done 77/313. Dataloading: 0.0023 s/iter. Inference: 0.1611 s/iter. Eval: 0.0004 s/iter. Total: 0.1661 s/iter. ETA=0:00:39
+[2022-09-26 11:15:05,856][solver_multitask_dev.py][line: 720][    INFO] Inference done 78/313. Dataloading: 0.0023 s/iter. Inference: 0.1611 s/iter. Eval: 0.0004 s/iter. Total: 0.1661 s/iter. ETA=0:00:39
+[2022-09-26 11:15:06,021][solver_multitask_dev.py][line: 720][    INFO] Inference done 79/313. Dataloading: 0.0023 s/iter. Inference: 0.1611 s/iter. Eval: 0.0004 s/iter. Total: 0.1661 s/iter. ETA=0:00:38
+[2022-09-26 11:15:06,186][solver_multitask_dev.py][line: 720][    INFO] Inference done 80/313. Dataloading: 0.0023 s/iter. Inference: 0.1611 s/iter. Eval: 0.0004 s/iter. Total: 0.1661 s/iter. ETA=0:00:38
+[2022-09-26 11:15:06,350][solver_multitask_dev.py][line: 720][    INFO] Inference done 81/313. Dataloading: 0.0023 s/iter. Inference: 0.1610 s/iter. Eval: 0.0004 s/iter. Total: 0.1661 s/iter. ETA=0:00:38
+[2022-09-26 11:15:06,516][solver_multitask_dev.py][line: 720][    INFO] Inference done 82/313. Dataloading: 0.0022 s/iter. Inference: 0.1610 s/iter. Eval: 0.0004 s/iter. Total: 0.1661 s/iter. ETA=0:00:38
+[2022-09-26 11:15:06,681][solver_multitask_dev.py][line: 720][    INFO] Inference done 83/313. Dataloading: 0.0022 s/iter. Inference: 0.1610 s/iter. Eval: 0.0004 s/iter. Total: 0.1660 s/iter. ETA=0:00:38
+[2022-09-26 11:15:06,846][solver_multitask_dev.py][line: 720][    INFO] Inference done 84/313. Dataloading: 0.0022 s/iter. Inference: 0.1610 s/iter. Eval: 0.0004 s/iter. Total: 0.1660 s/iter. ETA=0:00:38
+[2022-09-26 11:15:07,013][solver_multitask_dev.py][line: 720][    INFO] Inference done 85/313. Dataloading: 0.0022 s/iter. Inference: 0.1610 s/iter. Eval: 0.0004 s/iter. Total: 0.1660 s/iter. ETA=0:00:37
+[2022-09-26 11:15:07,179][solver_multitask_dev.py][line: 720][    INFO] Inference done 86/313. Dataloading: 0.0022 s/iter. Inference: 0.1610 s/iter. Eval: 0.0004 s/iter. Total: 0.1660 s/iter. ETA=0:00:37
+[2022-09-26 11:15:07,345][solver_multitask_dev.py][line: 720][    INFO] Inference done 87/313. Dataloading: 0.0022 s/iter. Inference: 0.1610 s/iter. Eval: 0.0004 s/iter. Total: 0.1660 s/iter. ETA=0:00:37
+[2022-09-26 11:15:07,511][solver_multitask_dev.py][line: 720][    INFO] Inference done 88/313. Dataloading: 0.0022 s/iter. Inference: 0.1611 s/iter. Eval: 0.0004 s/iter. Total: 0.1660 s/iter. ETA=0:00:37
+[2022-09-26 11:15:07,677][solver_multitask_dev.py][line: 720][    INFO] Inference done 89/313. Dataloading: 0.0022 s/iter. Inference: 0.1611 s/iter. Eval: 0.0004 s/iter. Total: 0.1660 s/iter. ETA=0:00:37
+[2022-09-26 11:15:07,843][solver_multitask_dev.py][line: 720][    INFO] Inference done 90/313. Dataloading: 0.0022 s/iter. Inference: 0.1611 s/iter. Eval: 0.0004 s/iter. Total: 0.1660 s/iter. ETA=0:00:37
+[2022-09-26 11:15:08,009][solver_multitask_dev.py][line: 720][    INFO] Inference done 91/313. Dataloading: 0.0023 s/iter. Inference: 0.1611 s/iter. Eval: 0.0004 s/iter. Total: 0.1660 s/iter. ETA=0:00:36
+[2022-09-26 11:15:08,174][solver_multitask_dev.py][line: 720][    INFO] Inference done 92/313. Dataloading: 0.0022 s/iter. Inference: 0.1610 s/iter. Eval: 0.0004 s/iter. Total: 0.1660 s/iter. ETA=0:00:36
+[2022-09-26 11:15:08,341][solver_multitask_dev.py][line: 720][    INFO] Inference done 93/313. Dataloading: 0.0022 s/iter. Inference: 0.1611 s/iter. Eval: 0.0004 s/iter. Total: 0.1660 s/iter. ETA=0:00:36
+[2022-09-26 11:15:08,508][solver_multitask_dev.py][line: 720][    INFO] Inference done 94/313. Dataloading: 0.0022 s/iter. Inference: 0.1611 s/iter. Eval: 0.0004 s/iter. Total: 0.1660 s/iter. ETA=0:00:36
+[2022-09-26 11:15:08,674][solver_multitask_dev.py][line: 720][    INFO] Inference done 95/313. Dataloading: 0.0022 s/iter. Inference: 0.1611 s/iter. Eval: 0.0004 s/iter. Total: 0.1661 s/iter. ETA=0:00:36
+[2022-09-26 11:15:08,839][solver_multitask_dev.py][line: 720][    INFO] Inference done 96/313. Dataloading: 0.0022 s/iter. Inference: 0.1611 s/iter. Eval: 0.0004 s/iter. Total: 0.1660 s/iter. ETA=0:00:36
+[2022-09-26 11:15:09,004][solver_multitask_dev.py][line: 720][    INFO] Inference done 97/313. Dataloading: 0.0022 s/iter. Inference: 0.1611 s/iter. Eval: 0.0004 s/iter. Total: 0.1660 s/iter. ETA=0:00:35
+[2022-09-26 11:15:09,171][solver_multitask_dev.py][line: 720][    INFO] Inference done 98/313. Dataloading: 0.0022 s/iter. Inference: 0.1611 s/iter. Eval: 0.0004 s/iter. Total: 0.1660 s/iter. ETA=0:00:35
+[2022-09-26 11:15:09,337][solver_multitask_dev.py][line: 720][    INFO] Inference done 99/313. Dataloading: 0.0022 s/iter. Inference: 0.1611 s/iter. Eval: 0.0004 s/iter. Total: 0.1660 s/iter. ETA=0:00:35
+[2022-09-26 11:15:09,504][solver_multitask_dev.py][line: 720][    INFO] Inference done 100/313. Dataloading: 0.0022 s/iter. Inference: 0.1611 s/iter. Eval: 0.0004 s/iter. Total: 0.1660 s/iter. ETA=0:00:35
+[2022-09-26 11:15:09,670][solver_multitask_dev.py][line: 720][    INFO] Inference done 101/313. Dataloading: 0.0022 s/iter. Inference: 0.1611 s/iter. Eval: 0.0004 s/iter. Total: 0.1660 s/iter. ETA=0:00:35
+[2022-09-26 11:15:09,836][solver_multitask_dev.py][line: 720][    INFO] Inference done 102/313. Dataloading: 0.0022 s/iter. Inference: 0.1611 s/iter. Eval: 0.0004 s/iter. Total: 0.1660 s/iter. ETA=0:00:35
+[2022-09-26 11:15:10,002][solver_multitask_dev.py][line: 720][    INFO] Inference done 103/313. Dataloading: 0.0022 s/iter. Inference: 0.1611 s/iter. Eval: 0.0004 s/iter. Total: 0.1661 s/iter. ETA=0:00:34
+[2022-09-26 11:15:10,170][solver_multitask_dev.py][line: 720][    INFO] Inference done 104/313. Dataloading: 0.0022 s/iter. Inference: 0.1611 s/iter. Eval: 0.0004 s/iter. Total: 0.1661 s/iter. ETA=0:00:34
+[2022-09-26 11:15:10,336][solver_multitask_dev.py][line: 720][    INFO] Inference done 105/313. Dataloading: 0.0022 s/iter. Inference: 0.1611 s/iter. Eval: 0.0004 s/iter. Total: 0.1661 s/iter. ETA=0:00:34
+[2022-09-26 11:15:10,502][solver_multitask_dev.py][line: 720][    INFO] Inference done 106/313. Dataloading: 0.0022 s/iter. Inference: 0.1611 s/iter. Eval: 0.0004 s/iter. Total: 0.1661 s/iter. ETA=0:00:34
+[2022-09-26 11:15:10,668][solver_multitask_dev.py][line: 720][    INFO] Inference done 107/313. Dataloading: 0.0022 s/iter. Inference: 0.1611 s/iter. Eval: 0.0004 s/iter. Total: 0.1661 s/iter. ETA=0:00:34
+[2022-09-26 11:15:10,834][solver_multitask_dev.py][line: 720][    INFO] Inference done 108/313. Dataloading: 0.0022 s/iter. Inference: 0.1611 s/iter. Eval: 0.0004 s/iter. Total: 0.1661 s/iter. ETA=0:00:34
+[2022-09-26 11:15:11,000][solver_multitask_dev.py][line: 720][    INFO] Inference done 109/313. Dataloading: 0.0022 s/iter. Inference: 0.1611 s/iter. Eval: 0.0004 s/iter. Total: 0.1661 s/iter. ETA=0:00:33
+[2022-09-26 11:15:11,166][solver_multitask_dev.py][line: 720][    INFO] Inference done 110/313. Dataloading: 0.0022 s/iter. Inference: 0.1611 s/iter. Eval: 0.0004 s/iter. Total: 0.1661 s/iter. ETA=0:00:33
+[2022-09-26 11:15:11,332][solver_multitask_dev.py][line: 720][    INFO] Inference done 111/313. Dataloading: 0.0022 s/iter. Inference: 0.1611 s/iter. Eval: 0.0004 s/iter. Total: 0.1661 s/iter. ETA=0:00:33
+[2022-09-26 11:15:11,498][solver_multitask_dev.py][line: 720][    INFO] Inference done 112/313. Dataloading: 0.0022 s/iter. Inference: 0.1611 s/iter. Eval: 0.0004 s/iter. Total: 0.1661 s/iter. ETA=0:00:33
+[2022-09-26 11:15:11,665][solver_multitask_dev.py][line: 720][    INFO] Inference done 113/313. Dataloading: 0.0022 s/iter. Inference: 0.1611 s/iter. Eval: 0.0003 s/iter. Total: 0.1661 s/iter. ETA=0:00:33
+[2022-09-26 11:15:11,831][solver_multitask_dev.py][line: 720][    INFO] Inference done 114/313. Dataloading: 0.0022 s/iter. Inference: 0.1611 s/iter. Eval: 0.0003 s/iter. Total: 0.1661 s/iter. ETA=0:00:33
+[2022-09-26 11:15:11,997][solver_multitask_dev.py][line: 720][    INFO] Inference done 115/313. Dataloading: 0.0022 s/iter. Inference: 0.1611 s/iter. Eval: 0.0003 s/iter. Total: 0.1661 s/iter. ETA=0:00:32
+[2022-09-26 11:15:12,164][solver_multitask_dev.py][line: 720][    INFO] Inference done 116/313. Dataloading: 0.0022 s/iter. Inference: 0.1611 s/iter. Eval: 0.0003 s/iter. Total: 0.1661 s/iter. ETA=0:00:32
+[2022-09-26 11:15:12,331][solver_multitask_dev.py][line: 720][    INFO] Inference done 117/313. Dataloading: 0.0022 s/iter. Inference: 0.1611 s/iter. Eval: 0.0003 s/iter. Total: 0.1661 s/iter. ETA=0:00:32
+[2022-09-26 11:15:12,498][solver_multitask_dev.py][line: 720][    INFO] Inference done 118/313. Dataloading: 0.0022 s/iter. Inference: 0.1611 s/iter. Eval: 0.0003 s/iter. Total: 0.1661 s/iter. ETA=0:00:32
+[2022-09-26 11:15:12,664][solver_multitask_dev.py][line: 720][    INFO] Inference done 119/313. Dataloading: 0.0022 s/iter. Inference: 0.1611 s/iter. Eval: 0.0003 s/iter. Total: 0.1661 s/iter. ETA=0:00:32
+[2022-09-26 11:15:12,831][solver_multitask_dev.py][line: 720][    INFO] Inference done 120/313. Dataloading: 0.0022 s/iter. Inference: 0.1612 s/iter. Eval: 0.0003 s/iter. Total: 0.1661 s/iter. ETA=0:00:32
+[2022-09-26 11:15:12,997][solver_multitask_dev.py][line: 720][    INFO] Inference done 121/313. Dataloading: 0.0022 s/iter. Inference: 0.1612 s/iter. Eval: 0.0003 s/iter. Total: 0.1661 s/iter. ETA=0:00:31
+[2022-09-26 11:15:13,164][solver_multitask_dev.py][line: 720][    INFO] Inference done 122/313. Dataloading: 0.0022 s/iter. Inference: 0.1612 s/iter. Eval: 0.0003 s/iter. Total: 0.1661 s/iter. ETA=0:00:31
+[2022-09-26 11:15:13,329][solver_multitask_dev.py][line: 720][    INFO] Inference done 123/313. Dataloading: 0.0022 s/iter. Inference: 0.1612 s/iter. Eval: 0.0003 s/iter. Total: 0.1661 s/iter. ETA=0:00:31
+[2022-09-26 11:15:13,496][solver_multitask_dev.py][line: 720][    INFO] Inference done 124/313. Dataloading: 0.0022 s/iter. Inference: 0.1612 s/iter. Eval: 0.0003 s/iter. Total: 0.1661 s/iter. ETA=0:00:31
+[2022-09-26 11:15:13,664][solver_multitask_dev.py][line: 720][    INFO] Inference done 125/313. Dataloading: 0.0022 s/iter. Inference: 0.1612 s/iter. Eval: 0.0003 s/iter. Total: 0.1661 s/iter. ETA=0:00:31
+[2022-09-26 11:15:13,831][solver_multitask_dev.py][line: 720][    INFO] Inference done 126/313. Dataloading: 0.0022 s/iter. Inference: 0.1612 s/iter. Eval: 0.0003 s/iter. Total: 0.1661 s/iter. ETA=0:00:31
+[2022-09-26 11:15:13,998][solver_multitask_dev.py][line: 720][    INFO] Inference done 127/313. Dataloading: 0.0022 s/iter. Inference: 0.1612 s/iter. Eval: 0.0003 s/iter. Total: 0.1661 s/iter. ETA=0:00:30
+[2022-09-26 11:15:14,164][solver_multitask_dev.py][line: 720][    INFO] Inference done 128/313. Dataloading: 0.0022 s/iter. Inference: 0.1612 s/iter. Eval: 0.0003 s/iter. Total: 0.1661 s/iter. ETA=0:00:30
+[2022-09-26 11:15:14,336][solver_multitask_dev.py][line: 720][    INFO] Inference done 129/313. Dataloading: 0.0022 s/iter. Inference: 0.1612 s/iter. Eval: 0.0003 s/iter. Total: 0.1662 s/iter. ETA=0:00:30
+[2022-09-26 11:15:14,506][solver_multitask_dev.py][line: 720][    INFO] Inference done 130/313. Dataloading: 0.0023 s/iter. Inference: 0.1613 s/iter. Eval: 0.0003 s/iter. Total: 0.1662 s/iter. ETA=0:00:30
+[2022-09-26 11:15:14,674][solver_multitask_dev.py][line: 720][    INFO] Inference done 131/313. Dataloading: 0.0023 s/iter. Inference: 0.1613 s/iter. Eval: 0.0003 s/iter. Total: 0.1662 s/iter. ETA=0:00:30
+[2022-09-26 11:15:14,840][solver_multitask_dev.py][line: 720][    INFO] Inference done 132/313. Dataloading: 0.0023 s/iter. Inference: 0.1613 s/iter. Eval: 0.0003 s/iter. Total: 0.1662 s/iter. ETA=0:00:30
+[2022-09-26 11:15:15,005][solver_multitask_dev.py][line: 720][    INFO] Inference done 133/313. Dataloading: 0.0023 s/iter. Inference: 0.1613 s/iter. Eval: 0.0003 s/iter. Total: 0.1662 s/iter. ETA=0:00:29
+[2022-09-26 11:15:15,170][solver_multitask_dev.py][line: 720][    INFO] Inference done 134/313. Dataloading: 0.0023 s/iter. Inference: 0.1613 s/iter. Eval: 0.0003 s/iter. Total: 0.1662 s/iter. ETA=0:00:29
+[2022-09-26 11:15:15,336][solver_multitask_dev.py][line: 720][    INFO] Inference done 135/313. Dataloading: 0.0023 s/iter. Inference: 0.1613 s/iter. Eval: 0.0003 s/iter. Total: 0.1662 s/iter. ETA=0:00:29
+[2022-09-26 11:15:15,502][solver_multitask_dev.py][line: 720][    INFO] Inference done 136/313. Dataloading: 0.0022 s/iter. Inference: 0.1613 s/iter. Eval: 0.0003 s/iter. Total: 0.1662 s/iter. ETA=0:00:29
+[2022-09-26 11:15:15,666][solver_multitask_dev.py][line: 720][    INFO] Inference done 137/313. Dataloading: 0.0022 s/iter. Inference: 0.1613 s/iter. Eval: 0.0003 s/iter. Total: 0.1662 s/iter. ETA=0:00:29
+[2022-09-26 11:15:15,833][solver_multitask_dev.py][line: 720][    INFO] Inference done 138/313. Dataloading: 0.0022 s/iter. Inference: 0.1613 s/iter. Eval: 0.0003 s/iter. Total: 0.1662 s/iter. ETA=0:00:29
+[2022-09-26 11:15:15,999][solver_multitask_dev.py][line: 720][    INFO] Inference done 139/313. Dataloading: 0.0022 s/iter. Inference: 0.1613 s/iter. Eval: 0.0003 s/iter. Total: 0.1662 s/iter. ETA=0:00:28
+[2022-09-26 11:15:16,165][solver_multitask_dev.py][line: 720][    INFO] Inference done 140/313. Dataloading: 0.0022 s/iter. Inference: 0.1613 s/iter. Eval: 0.0003 s/iter. Total: 0.1662 s/iter. ETA=0:00:28
+[2022-09-26 11:15:16,331][solver_multitask_dev.py][line: 720][    INFO] Inference done 141/313. Dataloading: 0.0022 s/iter. Inference: 0.1613 s/iter. Eval: 0.0003 s/iter. Total: 0.1662 s/iter. ETA=0:00:28
+[2022-09-26 11:15:16,499][solver_multitask_dev.py][line: 720][    INFO] Inference done 142/313. Dataloading: 0.0022 s/iter. Inference: 0.1613 s/iter. Eval: 0.0003 s/iter. Total: 0.1662 s/iter. ETA=0:00:28
+[2022-09-26 11:15:16,666][solver_multitask_dev.py][line: 720][    INFO] Inference done 143/313. Dataloading: 0.0022 s/iter. Inference: 0.1613 s/iter. Eval: 0.0003 s/iter. Total: 0.1662 s/iter. ETA=0:00:28
+[2022-09-26 11:15:16,833][solver_multitask_dev.py][line: 720][    INFO] Inference done 144/313. Dataloading: 0.0022 s/iter. Inference: 0.1613 s/iter. Eval: 0.0003 s/iter. Total: 0.1662 s/iter. ETA=0:00:28
+[2022-09-26 11:15:17,000][solver_multitask_dev.py][line: 720][    INFO] Inference done 145/313. Dataloading: 0.0022 s/iter. Inference: 0.1613 s/iter. Eval: 0.0003 s/iter. Total: 0.1662 s/iter. ETA=0:00:27
+[2022-09-26 11:15:17,166][solver_multitask_dev.py][line: 720][    INFO] Inference done 146/313. Dataloading: 0.0022 s/iter. Inference: 0.1613 s/iter. Eval: 0.0003 s/iter. Total: 0.1662 s/iter. ETA=0:00:27
+[2022-09-26 11:15:17,331][solver_multitask_dev.py][line: 720][    INFO] Inference done 147/313. Dataloading: 0.0022 s/iter. Inference: 0.1613 s/iter. Eval: 0.0003 s/iter. Total: 0.1662 s/iter. ETA=0:00:27
+[2022-09-26 11:15:17,497][solver_multitask_dev.py][line: 720][    INFO] Inference done 148/313. Dataloading: 0.0022 s/iter. Inference: 0.1613 s/iter. Eval: 0.0003 s/iter. Total: 0.1662 s/iter. ETA=0:00:27
+[2022-09-26 11:15:17,663][solver_multitask_dev.py][line: 720][    INFO] Inference done 149/313. Dataloading: 0.0022 s/iter. Inference: 0.1613 s/iter. Eval: 0.0003 s/iter. Total: 0.1662 s/iter. ETA=0:00:27
+[2022-09-26 11:15:17,829][solver_multitask_dev.py][line: 720][    INFO] Inference done 150/313. Dataloading: 0.0022 s/iter. Inference: 0.1613 s/iter. Eval: 0.0003 s/iter. Total: 0.1662 s/iter. ETA=0:00:27
+[2022-09-26 11:15:17,994][solver_multitask_dev.py][line: 720][    INFO] Inference done 151/313. Dataloading: 0.0022 s/iter. Inference: 0.1613 s/iter. Eval: 0.0003 s/iter. Total: 0.1662 s/iter. ETA=0:00:26
+[2022-09-26 11:15:18,162][solver_multitask_dev.py][line: 720][    INFO] Inference done 152/313. Dataloading: 0.0022 s/iter. Inference: 0.1613 s/iter. Eval: 0.0003 s/iter. Total: 0.1662 s/iter. ETA=0:00:26
+[2022-09-26 11:15:18,329][solver_multitask_dev.py][line: 720][    INFO] Inference done 153/313. Dataloading: 0.0022 s/iter. Inference: 0.1613 s/iter. Eval: 0.0003 s/iter. Total: 0.1662 s/iter. ETA=0:00:26
+[2022-09-26 11:15:18,495][solver_multitask_dev.py][line: 720][    INFO] Inference done 154/313. Dataloading: 0.0022 s/iter. Inference: 0.1613 s/iter. Eval: 0.0003 s/iter. Total: 0.1662 s/iter. ETA=0:00:26
+[2022-09-26 11:15:18,662][solver_multitask_dev.py][line: 720][    INFO] Inference done 155/313. Dataloading: 0.0022 s/iter. Inference: 0.1613 s/iter. Eval: 0.0003 s/iter. Total: 0.1662 s/iter. ETA=0:00:26
+[2022-09-26 11:15:18,829][solver_multitask_dev.py][line: 720][    INFO] Inference done 156/313. Dataloading: 0.0022 s/iter. Inference: 0.1613 s/iter. Eval: 0.0003 s/iter. Total: 0.1662 s/iter. ETA=0:00:26
+[2022-09-26 11:15:18,997][solver_multitask_dev.py][line: 720][    INFO] Inference done 157/313. Dataloading: 0.0022 s/iter. Inference: 0.1613 s/iter. Eval: 0.0003 s/iter. Total: 0.1662 s/iter. ETA=0:00:25
+[2022-09-26 11:15:19,164][solver_multitask_dev.py][line: 720][    INFO] Inference done 158/313. Dataloading: 0.0022 s/iter. Inference: 0.1613 s/iter. Eval: 0.0003 s/iter. Total: 0.1662 s/iter. ETA=0:00:25
+[2022-09-26 11:15:19,331][solver_multitask_dev.py][line: 720][    INFO] Inference done 159/313. Dataloading: 0.0022 s/iter. Inference: 0.1613 s/iter. Eval: 0.0003 s/iter. Total: 0.1662 s/iter. ETA=0:00:25
+[2022-09-26 11:15:19,498][solver_multitask_dev.py][line: 720][    INFO] Inference done 160/313. Dataloading: 0.0022 s/iter. Inference: 0.1614 s/iter. Eval: 0.0003 s/iter. Total: 0.1662 s/iter. ETA=0:00:25
+[2022-09-26 11:15:19,666][solver_multitask_dev.py][line: 720][    INFO] Inference done 161/313. Dataloading: 0.0022 s/iter. Inference: 0.1614 s/iter. Eval: 0.0003 s/iter. Total: 0.1663 s/iter. ETA=0:00:25
+[2022-09-26 11:15:19,834][solver_multitask_dev.py][line: 720][    INFO] Inference done 162/313. Dataloading: 0.0022 s/iter. Inference: 0.1614 s/iter. Eval: 0.0003 s/iter. Total: 0.1663 s/iter. ETA=0:00:25
+[2022-09-26 11:15:20,001][solver_multitask_dev.py][line: 720][    INFO] Inference done 163/313. Dataloading: 0.0022 s/iter. Inference: 0.1614 s/iter. Eval: 0.0003 s/iter. Total: 0.1663 s/iter. ETA=0:00:24
+[2022-09-26 11:15:20,168][solver_multitask_dev.py][line: 720][    INFO] Inference done 164/313. Dataloading: 0.0022 s/iter. Inference: 0.1614 s/iter. Eval: 0.0003 s/iter. Total: 0.1663 s/iter. ETA=0:00:24
+[2022-09-26 11:15:20,335][solver_multitask_dev.py][line: 720][    INFO] Inference done 165/313. Dataloading: 0.0022 s/iter. Inference: 0.1614 s/iter. Eval: 0.0003 s/iter. Total: 0.1663 s/iter. ETA=0:00:24
+[2022-09-26 11:15:20,503][solver_multitask_dev.py][line: 720][    INFO] Inference done 166/313. Dataloading: 0.0022 s/iter. Inference: 0.1614 s/iter. Eval: 0.0003 s/iter. Total: 0.1663 s/iter. ETA=0:00:24
+[2022-09-26 11:15:20,670][solver_multitask_dev.py][line: 720][    INFO] Inference done 167/313. Dataloading: 0.0022 s/iter. Inference: 0.1614 s/iter. Eval: 0.0003 s/iter. Total: 0.1663 s/iter. ETA=0:00:24
+[2022-09-26 11:15:20,838][solver_multitask_dev.py][line: 720][    INFO] Inference done 168/313. Dataloading: 0.0022 s/iter. Inference: 0.1614 s/iter. Eval: 0.0003 s/iter. Total: 0.1663 s/iter. ETA=0:00:24
+[2022-09-26 11:15:21,005][solver_multitask_dev.py][line: 720][    INFO] Inference done 169/313. Dataloading: 0.0022 s/iter. Inference: 0.1614 s/iter. Eval: 0.0003 s/iter. Total: 0.1663 s/iter. ETA=0:00:23
+[2022-09-26 11:15:21,173][solver_multitask_dev.py][line: 720][    INFO] Inference done 170/313. Dataloading: 0.0022 s/iter. Inference: 0.1614 s/iter. Eval: 0.0003 s/iter. Total: 0.1663 s/iter. ETA=0:00:23
+[2022-09-26 11:15:21,341][solver_multitask_dev.py][line: 720][    INFO] Inference done 171/313. Dataloading: 0.0022 s/iter. Inference: 0.1614 s/iter. Eval: 0.0003 s/iter. Total: 0.1663 s/iter. ETA=0:00:23
+[2022-09-26 11:15:21,506][solver_multitask_dev.py][line: 720][    INFO] Inference done 172/313. Dataloading: 0.0022 s/iter. Inference: 0.1614 s/iter. Eval: 0.0003 s/iter. Total: 0.1663 s/iter. ETA=0:00:23
+[2022-09-26 11:15:21,671][solver_multitask_dev.py][line: 720][    INFO] Inference done 173/313. Dataloading: 0.0022 s/iter. Inference: 0.1614 s/iter. Eval: 0.0003 s/iter. Total: 0.1663 s/iter. ETA=0:00:23
+[2022-09-26 11:15:21,837][solver_multitask_dev.py][line: 720][    INFO] Inference done 174/313. Dataloading: 0.0022 s/iter. Inference: 0.1614 s/iter. Eval: 0.0003 s/iter. Total: 0.1663 s/iter. ETA=0:00:23
+[2022-09-26 11:15:22,002][solver_multitask_dev.py][line: 720][    INFO] Inference done 175/313. Dataloading: 0.0022 s/iter. Inference: 0.1614 s/iter. Eval: 0.0003 s/iter. Total: 0.1663 s/iter. ETA=0:00:22
+[2022-09-26 11:15:22,168][solver_multitask_dev.py][line: 720][    INFO] Inference done 176/313. Dataloading: 0.0022 s/iter. Inference: 0.1614 s/iter. Eval: 0.0003 s/iter. Total: 0.1663 s/iter. ETA=0:00:22
+[2022-09-26 11:15:22,336][solver_multitask_dev.py][line: 720][    INFO] Inference done 177/313. Dataloading: 0.0022 s/iter. Inference: 0.1614 s/iter. Eval: 0.0003 s/iter. Total: 0.1663 s/iter. ETA=0:00:22
+[2022-09-26 11:15:22,504][solver_multitask_dev.py][line: 720][    INFO] Inference done 178/313. Dataloading: 0.0022 s/iter. Inference: 0.1614 s/iter. Eval: 0.0003 s/iter. Total: 0.1663 s/iter. ETA=0:00:22
+[2022-09-26 11:15:22,670][solver_multitask_dev.py][line: 720][    INFO] Inference done 179/313. Dataloading: 0.0022 s/iter. Inference: 0.1614 s/iter. Eval: 0.0003 s/iter. Total: 0.1663 s/iter. ETA=0:00:22
+[2022-09-26 11:15:22,838][solver_multitask_dev.py][line: 720][    INFO] Inference done 180/313. Dataloading: 0.0022 s/iter. Inference: 0.1614 s/iter. Eval: 0.0003 s/iter. Total: 0.1663 s/iter. ETA=0:00:22
+[2022-09-26 11:15:23,005][solver_multitask_dev.py][line: 720][    INFO] Inference done 181/313. Dataloading: 0.0022 s/iter. Inference: 0.1615 s/iter. Eval: 0.0003 s/iter. Total: 0.1663 s/iter. ETA=0:00:21
+[2022-09-26 11:15:23,172][solver_multitask_dev.py][line: 720][    INFO] Inference done 182/313. Dataloading: 0.0022 s/iter. Inference: 0.1615 s/iter. Eval: 0.0003 s/iter. Total: 0.1663 s/iter. ETA=0:00:21
+[2022-09-26 11:15:23,340][solver_multitask_dev.py][line: 720][    INFO] Inference done 183/313. Dataloading: 0.0022 s/iter. Inference: 0.1615 s/iter. Eval: 0.0003 s/iter. Total: 0.1664 s/iter. ETA=0:00:21
+[2022-09-26 11:15:23,507][solver_multitask_dev.py][line: 720][    INFO] Inference done 184/313. Dataloading: 0.0022 s/iter. Inference: 0.1615 s/iter. Eval: 0.0003 s/iter. Total: 0.1664 s/iter. ETA=0:00:21
+[2022-09-26 11:15:23,674][solver_multitask_dev.py][line: 720][    INFO] Inference done 185/313. Dataloading: 0.0022 s/iter. Inference: 0.1615 s/iter. Eval: 0.0003 s/iter. Total: 0.1664 s/iter. ETA=0:00:21
+[2022-09-26 11:15:23,840][solver_multitask_dev.py][line: 720][    INFO] Inference done 186/313. Dataloading: 0.0022 s/iter. Inference: 0.1615 s/iter. Eval: 0.0003 s/iter. Total: 0.1664 s/iter. ETA=0:00:21
+[2022-09-26 11:15:24,007][solver_multitask_dev.py][line: 720][    INFO] Inference done 187/313. Dataloading: 0.0022 s/iter. Inference: 0.1615 s/iter. Eval: 0.0003 s/iter. Total: 0.1664 s/iter. ETA=0:00:20
+[2022-09-26 11:15:24,174][solver_multitask_dev.py][line: 720][    INFO] Inference done 188/313. Dataloading: 0.0022 s/iter. Inference: 0.1615 s/iter. Eval: 0.0003 s/iter. Total: 0.1664 s/iter. ETA=0:00:20
+[2022-09-26 11:15:24,341][solver_multitask_dev.py][line: 720][    INFO] Inference done 189/313. Dataloading: 0.0022 s/iter. Inference: 0.1615 s/iter. Eval: 0.0003 s/iter. Total: 0.1664 s/iter. ETA=0:00:20
+[2022-09-26 11:15:24,508][solver_multitask_dev.py][line: 720][    INFO] Inference done 190/313. Dataloading: 0.0022 s/iter. Inference: 0.1615 s/iter. Eval: 0.0003 s/iter. Total: 0.1664 s/iter. ETA=0:00:20
+[2022-09-26 11:15:24,676][solver_multitask_dev.py][line: 720][    INFO] Inference done 191/313. Dataloading: 0.0022 s/iter. Inference: 0.1615 s/iter. Eval: 0.0003 s/iter. Total: 0.1664 s/iter. ETA=0:00:20
+[2022-09-26 11:15:24,843][solver_multitask_dev.py][line: 720][    INFO] Inference done 192/313. Dataloading: 0.0022 s/iter. Inference: 0.1615 s/iter. Eval: 0.0003 s/iter. Total: 0.1664 s/iter. ETA=0:00:20
+[2022-09-26 11:15:25,009][solver_multitask_dev.py][line: 720][    INFO] Inference done 193/313. Dataloading: 0.0022 s/iter. Inference: 0.1615 s/iter. Eval: 0.0003 s/iter. Total: 0.1664 s/iter. ETA=0:00:19
+[2022-09-26 11:15:25,176][solver_multitask_dev.py][line: 720][    INFO] Inference done 194/313. Dataloading: 0.0022 s/iter. Inference: 0.1615 s/iter. Eval: 0.0003 s/iter. Total: 0.1664 s/iter. ETA=0:00:19
+[2022-09-26 11:15:25,343][solver_multitask_dev.py][line: 720][    INFO] Inference done 195/313. Dataloading: 0.0022 s/iter. Inference: 0.1615 s/iter. Eval: 0.0003 s/iter. Total: 0.1664 s/iter. ETA=0:00:19
+[2022-09-26 11:15:25,509][solver_multitask_dev.py][line: 720][    INFO] Inference done 196/313. Dataloading: 0.0022 s/iter. Inference: 0.1615 s/iter. Eval: 0.0003 s/iter. Total: 0.1664 s/iter. ETA=0:00:19
+[2022-09-26 11:15:25,676][solver_multitask_dev.py][line: 720][    INFO] Inference done 197/313. Dataloading: 0.0022 s/iter. Inference: 0.1615 s/iter. Eval: 0.0003 s/iter. Total: 0.1664 s/iter. ETA=0:00:19
+[2022-09-26 11:15:25,843][solver_multitask_dev.py][line: 720][    INFO] Inference done 198/313. Dataloading: 0.0022 s/iter. Inference: 0.1615 s/iter. Eval: 0.0003 s/iter. Total: 0.1664 s/iter. ETA=0:00:19
+[2022-09-26 11:15:26,009][solver_multitask_dev.py][line: 720][    INFO] Inference done 199/313. Dataloading: 0.0022 s/iter. Inference: 0.1615 s/iter. Eval: 0.0003 s/iter. Total: 0.1664 s/iter. ETA=0:00:18
+[2022-09-26 11:15:26,176][solver_multitask_dev.py][line: 720][    INFO] Inference done 200/313. Dataloading: 0.0022 s/iter. Inference: 0.1615 s/iter. Eval: 0.0003 s/iter. Total: 0.1664 s/iter. ETA=0:00:18
+[2022-09-26 11:15:26,343][solver_multitask_dev.py][line: 720][    INFO] Inference done 201/313. Dataloading: 0.0022 s/iter. Inference: 0.1615 s/iter. Eval: 0.0003 s/iter. Total: 0.1664 s/iter. ETA=0:00:18
+[2022-09-26 11:15:26,510][solver_multitask_dev.py][line: 720][    INFO] Inference done 202/313. Dataloading: 0.0022 s/iter. Inference: 0.1616 s/iter. Eval: 0.0003 s/iter. Total: 0.1664 s/iter. ETA=0:00:18
+[2022-09-26 11:15:26,678][solver_multitask_dev.py][line: 720][    INFO] Inference done 203/313. Dataloading: 0.0022 s/iter. Inference: 0.1616 s/iter. Eval: 0.0003 s/iter. Total: 0.1664 s/iter. ETA=0:00:18
+[2022-09-26 11:15:26,846][solver_multitask_dev.py][line: 720][    INFO] Inference done 204/313. Dataloading: 0.0022 s/iter. Inference: 0.1616 s/iter. Eval: 0.0003 s/iter. Total: 0.1664 s/iter. ETA=0:00:18
+[2022-09-26 11:15:27,012][solver_multitask_dev.py][line: 720][    INFO] Inference done 205/313. Dataloading: 0.0022 s/iter. Inference: 0.1616 s/iter. Eval: 0.0003 s/iter. Total: 0.1664 s/iter. ETA=0:00:17
+[2022-09-26 11:15:27,179][solver_multitask_dev.py][line: 720][    INFO] Inference done 206/313. Dataloading: 0.0022 s/iter. Inference: 0.1616 s/iter. Eval: 0.0003 s/iter. Total: 0.1664 s/iter. ETA=0:00:17
+[2022-09-26 11:15:27,346][solver_multitask_dev.py][line: 720][    INFO] Inference done 207/313. Dataloading: 0.0022 s/iter. Inference: 0.1616 s/iter. Eval: 0.0003 s/iter. Total: 0.1664 s/iter. ETA=0:00:17
+[2022-09-26 11:15:27,513][solver_multitask_dev.py][line: 720][    INFO] Inference done 208/313. Dataloading: 0.0022 s/iter. Inference: 0.1616 s/iter. Eval: 0.0003 s/iter. Total: 0.1664 s/iter. ETA=0:00:17
+[2022-09-26 11:15:27,680][solver_multitask_dev.py][line: 720][    INFO] Inference done 209/313. Dataloading: 0.0022 s/iter. Inference: 0.1616 s/iter. Eval: 0.0003 s/iter. Total: 0.1664 s/iter. ETA=0:00:17
+[2022-09-26 11:15:27,848][solver_multitask_dev.py][line: 720][    INFO] Inference done 210/313. Dataloading: 0.0022 s/iter. Inference: 0.1616 s/iter. Eval: 0.0003 s/iter. Total: 0.1664 s/iter. ETA=0:00:17
+[2022-09-26 11:15:28,015][solver_multitask_dev.py][line: 720][    INFO] Inference done 211/313. Dataloading: 0.0022 s/iter. Inference: 0.1616 s/iter. Eval: 0.0003 s/iter. Total: 0.1664 s/iter. ETA=0:00:16
+[2022-09-26 11:15:28,183][solver_multitask_dev.py][line: 720][    INFO] Inference done 212/313. Dataloading: 0.0022 s/iter. Inference: 0.1616 s/iter. Eval: 0.0003 s/iter. Total: 0.1664 s/iter. ETA=0:00:16
+[2022-09-26 11:15:28,350][solver_multitask_dev.py][line: 720][    INFO] Inference done 213/313. Dataloading: 0.0022 s/iter. Inference: 0.1616 s/iter. Eval: 0.0003 s/iter. Total: 0.1664 s/iter. ETA=0:00:16
+[2022-09-26 11:15:28,518][solver_multitask_dev.py][line: 720][    INFO] Inference done 214/313. Dataloading: 0.0022 s/iter. Inference: 0.1616 s/iter. Eval: 0.0003 s/iter. Total: 0.1665 s/iter. ETA=0:00:16
+[2022-09-26 11:15:28,685][solver_multitask_dev.py][line: 720][    INFO] Inference done 215/313. Dataloading: 0.0022 s/iter. Inference: 0.1616 s/iter. Eval: 0.0003 s/iter. Total: 0.1665 s/iter. ETA=0:00:16
+[2022-09-26 11:15:28,852][solver_multitask_dev.py][line: 720][    INFO] Inference done 216/313. Dataloading: 0.0022 s/iter. Inference: 0.1616 s/iter. Eval: 0.0003 s/iter. Total: 0.1665 s/iter. ETA=0:00:16
+[2022-09-26 11:15:29,020][solver_multitask_dev.py][line: 720][    INFO] Inference done 217/313. Dataloading: 0.0022 s/iter. Inference: 0.1616 s/iter. Eval: 0.0003 s/iter. Total: 0.1665 s/iter. ETA=0:00:15
+[2022-09-26 11:15:29,187][solver_multitask_dev.py][line: 720][    INFO] Inference done 218/313. Dataloading: 0.0022 s/iter. Inference: 0.1616 s/iter. Eval: 0.0003 s/iter. Total: 0.1665 s/iter. ETA=0:00:15
+[2022-09-26 11:15:29,355][solver_multitask_dev.py][line: 720][    INFO] Inference done 219/313. Dataloading: 0.0022 s/iter. Inference: 0.1616 s/iter. Eval: 0.0003 s/iter. Total: 0.1665 s/iter. ETA=0:00:15
+[2022-09-26 11:15:29,522][solver_multitask_dev.py][line: 720][    INFO] Inference done 220/313. Dataloading: 0.0022 s/iter. Inference: 0.1616 s/iter. Eval: 0.0003 s/iter. Total: 0.1665 s/iter. ETA=0:00:15
+[2022-09-26 11:15:29,690][solver_multitask_dev.py][line: 720][    INFO] Inference done 221/313. Dataloading: 0.0022 s/iter. Inference: 0.1616 s/iter. Eval: 0.0003 s/iter. Total: 0.1665 s/iter. ETA=0:00:15
+[2022-09-26 11:15:29,857][solver_multitask_dev.py][line: 720][    INFO] Inference done 222/313. Dataloading: 0.0022 s/iter. Inference: 0.1617 s/iter. Eval: 0.0003 s/iter. Total: 0.1665 s/iter. ETA=0:00:15
+[2022-09-26 11:15:30,024][solver_multitask_dev.py][line: 720][    INFO] Inference done 223/313. Dataloading: 0.0022 s/iter. Inference: 0.1617 s/iter. Eval: 0.0003 s/iter. Total: 0.1665 s/iter. ETA=0:00:14
+[2022-09-26 11:15:30,191][solver_multitask_dev.py][line: 720][    INFO] Inference done 224/313. Dataloading: 0.0022 s/iter. Inference: 0.1617 s/iter. Eval: 0.0003 s/iter. Total: 0.1665 s/iter. ETA=0:00:14
+[2022-09-26 11:15:30,358][solver_multitask_dev.py][line: 720][    INFO] Inference done 225/313. Dataloading: 0.0022 s/iter. Inference: 0.1617 s/iter. Eval: 0.0003 s/iter. Total: 0.1665 s/iter. ETA=0:00:14
+[2022-09-26 11:15:30,525][solver_multitask_dev.py][line: 720][    INFO] Inference done 226/313. Dataloading: 0.0022 s/iter. Inference: 0.1617 s/iter. Eval: 0.0003 s/iter. Total: 0.1665 s/iter. ETA=0:00:14
+[2022-09-26 11:15:30,694][solver_multitask_dev.py][line: 720][    INFO] Inference done 227/313. Dataloading: 0.0022 s/iter. Inference: 0.1617 s/iter. Eval: 0.0003 s/iter. Total: 0.1665 s/iter. ETA=0:00:14
+[2022-09-26 11:15:30,864][solver_multitask_dev.py][line: 720][    INFO] Inference done 228/313. Dataloading: 0.0022 s/iter. Inference: 0.1617 s/iter. Eval: 0.0003 s/iter. Total: 0.1665 s/iter. ETA=0:00:14
+[2022-09-26 11:15:31,034][solver_multitask_dev.py][line: 720][    INFO] Inference done 229/313. Dataloading: 0.0022 s/iter. Inference: 0.1617 s/iter. Eval: 0.0003 s/iter. Total: 0.1665 s/iter. ETA=0:00:13
+[2022-09-26 11:15:31,204][solver_multitask_dev.py][line: 720][    INFO] Inference done 230/313. Dataloading: 0.0022 s/iter. Inference: 0.1617 s/iter. Eval: 0.0003 s/iter. Total: 0.1666 s/iter. ETA=0:00:13
+[2022-09-26 11:15:31,371][solver_multitask_dev.py][line: 720][    INFO] Inference done 231/313. Dataloading: 0.0022 s/iter. Inference: 0.1617 s/iter. Eval: 0.0003 s/iter. Total: 0.1666 s/iter. ETA=0:00:13
+[2022-09-26 11:15:31,539][solver_multitask_dev.py][line: 720][    INFO] Inference done 232/313. Dataloading: 0.0022 s/iter. Inference: 0.1617 s/iter. Eval: 0.0003 s/iter. Total: 0.1666 s/iter. ETA=0:00:13
+[2022-09-26 11:15:31,706][solver_multitask_dev.py][line: 720][    INFO] Inference done 233/313. Dataloading: 0.0022 s/iter. Inference: 0.1617 s/iter. Eval: 0.0003 s/iter. Total: 0.1666 s/iter. ETA=0:00:13
+[2022-09-26 11:15:31,874][solver_multitask_dev.py][line: 720][    INFO] Inference done 234/313. Dataloading: 0.0022 s/iter. Inference: 0.1617 s/iter. Eval: 0.0003 s/iter. Total: 0.1666 s/iter. ETA=0:00:13
+[2022-09-26 11:15:32,043][solver_multitask_dev.py][line: 720][    INFO] Inference done 235/313. Dataloading: 0.0022 s/iter. Inference: 0.1617 s/iter. Eval: 0.0003 s/iter. Total: 0.1666 s/iter. ETA=0:00:12
+[2022-09-26 11:15:32,211][solver_multitask_dev.py][line: 720][    INFO] Inference done 236/313. Dataloading: 0.0022 s/iter. Inference: 0.1618 s/iter. Eval: 0.0003 s/iter. Total: 0.1666 s/iter. ETA=0:00:12
+[2022-09-26 11:15:32,378][solver_multitask_dev.py][line: 720][    INFO] Inference done 237/313. Dataloading: 0.0022 s/iter. Inference: 0.1618 s/iter. Eval: 0.0003 s/iter. Total: 0.1666 s/iter. ETA=0:00:12
+[2022-09-26 11:15:32,548][solver_multitask_dev.py][line: 720][    INFO] Inference done 238/313. Dataloading: 0.0022 s/iter. Inference: 0.1618 s/iter. Eval: 0.0003 s/iter. Total: 0.1666 s/iter. ETA=0:00:12
+[2022-09-26 11:15:32,722][solver_multitask_dev.py][line: 720][    INFO] Inference done 239/313. Dataloading: 0.0022 s/iter. Inference: 0.1618 s/iter. Eval: 0.0003 s/iter. Total: 0.1666 s/iter. ETA=0:00:12
+[2022-09-26 11:15:32,898][solver_multitask_dev.py][line: 720][    INFO] Inference done 240/313. Dataloading: 0.0022 s/iter. Inference: 0.1618 s/iter. Eval: 0.0003 s/iter. Total: 0.1667 s/iter. ETA=0:00:12
+[2022-09-26 11:15:33,072][solver_multitask_dev.py][line: 720][    INFO] Inference done 241/313. Dataloading: 0.0022 s/iter. Inference: 0.1619 s/iter. Eval: 0.0003 s/iter. Total: 0.1667 s/iter. ETA=0:00:12
+[2022-09-26 11:15:33,246][solver_multitask_dev.py][line: 720][    INFO] Inference done 242/313. Dataloading: 0.0022 s/iter. Inference: 0.1619 s/iter. Eval: 0.0003 s/iter. Total: 0.1667 s/iter. ETA=0:00:11
+[2022-09-26 11:15:33,420][solver_multitask_dev.py][line: 720][    INFO] Inference done 243/313. Dataloading: 0.0022 s/iter. Inference: 0.1619 s/iter. Eval: 0.0003 s/iter. Total: 0.1668 s/iter. ETA=0:00:11
+[2022-09-26 11:15:33,591][solver_multitask_dev.py][line: 720][    INFO] Inference done 244/313. Dataloading: 0.0022 s/iter. Inference: 0.1620 s/iter. Eval: 0.0003 s/iter. Total: 0.1668 s/iter. ETA=0:00:11
+[2022-09-26 11:15:33,763][solver_multitask_dev.py][line: 720][    INFO] Inference done 245/313. Dataloading: 0.0022 s/iter. Inference: 0.1620 s/iter. Eval: 0.0003 s/iter. Total: 0.1668 s/iter. ETA=0:00:11
+[2022-09-26 11:15:33,936][solver_multitask_dev.py][line: 720][    INFO] Inference done 246/313. Dataloading: 0.0022 s/iter. Inference: 0.1620 s/iter. Eval: 0.0003 s/iter. Total: 0.1668 s/iter. ETA=0:00:11
+[2022-09-26 11:15:34,110][solver_multitask_dev.py][line: 720][    INFO] Inference done 247/313. Dataloading: 0.0022 s/iter. Inference: 0.1620 s/iter. Eval: 0.0003 s/iter. Total: 0.1669 s/iter. ETA=0:00:11
+[2022-09-26 11:15:34,279][solver_multitask_dev.py][line: 720][    INFO] Inference done 248/313. Dataloading: 0.0022 s/iter. Inference: 0.1620 s/iter. Eval: 0.0003 s/iter. Total: 0.1669 s/iter. ETA=0:00:10
+[2022-09-26 11:15:34,446][solver_multitask_dev.py][line: 720][    INFO] Inference done 249/313. Dataloading: 0.0022 s/iter. Inference: 0.1620 s/iter. Eval: 0.0003 s/iter. Total: 0.1669 s/iter. ETA=0:00:10
+[2022-09-26 11:15:34,613][solver_multitask_dev.py][line: 720][    INFO] Inference done 250/313. Dataloading: 0.0022 s/iter. Inference: 0.1620 s/iter. Eval: 0.0003 s/iter. Total: 0.1669 s/iter. ETA=0:00:10
+[2022-09-26 11:15:34,779][solver_multitask_dev.py][line: 720][    INFO] Inference done 251/313. Dataloading: 0.0022 s/iter. Inference: 0.1620 s/iter. Eval: 0.0003 s/iter. Total: 0.1669 s/iter. ETA=0:00:10
+[2022-09-26 11:15:34,946][solver_multitask_dev.py][line: 720][    INFO] Inference done 252/313. Dataloading: 0.0022 s/iter. Inference: 0.1620 s/iter. Eval: 0.0003 s/iter. Total: 0.1669 s/iter. ETA=0:00:10
+[2022-09-26 11:15:35,113][solver_multitask_dev.py][line: 720][    INFO] Inference done 253/313. Dataloading: 0.0022 s/iter. Inference: 0.1620 s/iter. Eval: 0.0003 s/iter. Total: 0.1669 s/iter. ETA=0:00:10
+[2022-09-26 11:15:35,280][solver_multitask_dev.py][line: 720][    INFO] Inference done 254/313. Dataloading: 0.0022 s/iter. Inference: 0.1620 s/iter. Eval: 0.0003 s/iter. Total: 0.1669 s/iter. ETA=0:00:09
+[2022-09-26 11:15:35,446][solver_multitask_dev.py][line: 720][    INFO] Inference done 255/313. Dataloading: 0.0022 s/iter. Inference: 0.1620 s/iter. Eval: 0.0003 s/iter. Total: 0.1669 s/iter. ETA=0:00:09
+[2022-09-26 11:15:35,618][solver_multitask_dev.py][line: 720][    INFO] Inference done 256/313. Dataloading: 0.0022 s/iter. Inference: 0.1621 s/iter. Eval: 0.0003 s/iter. Total: 0.1669 s/iter. ETA=0:00:09
+[2022-09-26 11:15:35,790][solver_multitask_dev.py][line: 720][    INFO] Inference done 257/313. Dataloading: 0.0022 s/iter. Inference: 0.1621 s/iter. Eval: 0.0003 s/iter. Total: 0.1669 s/iter. ETA=0:00:09
+[2022-09-26 11:15:35,958][solver_multitask_dev.py][line: 720][    INFO] Inference done 258/313. Dataloading: 0.0022 s/iter. Inference: 0.1621 s/iter. Eval: 0.0003 s/iter. Total: 0.1669 s/iter. ETA=0:00:09
+[2022-09-26 11:15:36,126][solver_multitask_dev.py][line: 720][    INFO] Inference done 259/313. Dataloading: 0.0022 s/iter. Inference: 0.1621 s/iter. Eval: 0.0003 s/iter. Total: 0.1669 s/iter. ETA=0:00:09
+[2022-09-26 11:15:36,294][solver_multitask_dev.py][line: 720][    INFO] Inference done 260/313. Dataloading: 0.0022 s/iter. Inference: 0.1621 s/iter. Eval: 0.0003 s/iter. Total: 0.1669 s/iter. ETA=0:00:08
+[2022-09-26 11:15:36,461][solver_multitask_dev.py][line: 720][    INFO] Inference done 261/313. Dataloading: 0.0022 s/iter. Inference: 0.1621 s/iter. Eval: 0.0002 s/iter. Total: 0.1669 s/iter. ETA=0:00:08
+[2022-09-26 11:15:36,628][solver_multitask_dev.py][line: 720][    INFO] Inference done 262/313. Dataloading: 0.0022 s/iter. Inference: 0.1621 s/iter. Eval: 0.0002 s/iter. Total: 0.1669 s/iter. ETA=0:00:08
+[2022-09-26 11:15:36,794][solver_multitask_dev.py][line: 720][    INFO] Inference done 263/313. Dataloading: 0.0022 s/iter. Inference: 0.1621 s/iter. Eval: 0.0002 s/iter. Total: 0.1669 s/iter. ETA=0:00:08
+[2022-09-26 11:15:36,963][solver_multitask_dev.py][line: 720][    INFO] Inference done 264/313. Dataloading: 0.0022 s/iter. Inference: 0.1621 s/iter. Eval: 0.0002 s/iter. Total: 0.1669 s/iter. ETA=0:00:08
+[2022-09-26 11:15:37,130][solver_multitask_dev.py][line: 720][    INFO] Inference done 265/313. Dataloading: 0.0022 s/iter. Inference: 0.1621 s/iter. Eval: 0.0002 s/iter. Total: 0.1669 s/iter. ETA=0:00:08
+[2022-09-26 11:15:37,297][solver_multitask_dev.py][line: 720][    INFO] Inference done 266/313. Dataloading: 0.0022 s/iter. Inference: 0.1621 s/iter. Eval: 0.0002 s/iter. Total: 0.1669 s/iter. ETA=0:00:07
+[2022-09-26 11:15:37,465][solver_multitask_dev.py][line: 720][    INFO] Inference done 267/313. Dataloading: 0.0022 s/iter. Inference: 0.1621 s/iter. Eval: 0.0002 s/iter. Total: 0.1669 s/iter. ETA=0:00:07
+[2022-09-26 11:15:37,634][solver_multitask_dev.py][line: 720][    INFO] Inference done 268/313. Dataloading: 0.0022 s/iter. Inference: 0.1621 s/iter. Eval: 0.0002 s/iter. Total: 0.1669 s/iter. ETA=0:00:07
+[2022-09-26 11:15:37,803][solver_multitask_dev.py][line: 720][    INFO] Inference done 269/313. Dataloading: 0.0022 s/iter. Inference: 0.1621 s/iter. Eval: 0.0002 s/iter. Total: 0.1669 s/iter. ETA=0:00:07
+[2022-09-26 11:15:37,971][solver_multitask_dev.py][line: 720][    INFO] Inference done 270/313. Dataloading: 0.0022 s/iter. Inference: 0.1621 s/iter. Eval: 0.0002 s/iter. Total: 0.1670 s/iter. ETA=0:00:07
+[2022-09-26 11:15:38,140][solver_multitask_dev.py][line: 720][    INFO] Inference done 271/313. Dataloading: 0.0022 s/iter. Inference: 0.1622 s/iter. Eval: 0.0002 s/iter. Total: 0.1670 s/iter. ETA=0:00:07
+[2022-09-26 11:15:38,309][solver_multitask_dev.py][line: 720][    INFO] Inference done 272/313. Dataloading: 0.0022 s/iter. Inference: 0.1622 s/iter. Eval: 0.0002 s/iter. Total: 0.1670 s/iter. ETA=0:00:06
+[2022-09-26 11:15:38,477][solver_multitask_dev.py][line: 720][    INFO] Inference done 273/313. Dataloading: 0.0022 s/iter. Inference: 0.1622 s/iter. Eval: 0.0002 s/iter. Total: 0.1670 s/iter. ETA=0:00:06
+[2022-09-26 11:15:38,646][solver_multitask_dev.py][line: 720][    INFO] Inference done 274/313. Dataloading: 0.0022 s/iter. Inference: 0.1622 s/iter. Eval: 0.0002 s/iter. Total: 0.1670 s/iter. ETA=0:00:06
+[2022-09-26 11:15:38,814][solver_multitask_dev.py][line: 720][    INFO] Inference done 275/313. Dataloading: 0.0022 s/iter. Inference: 0.1622 s/iter. Eval: 0.0002 s/iter. Total: 0.1670 s/iter. ETA=0:00:06
+[2022-09-26 11:15:38,982][solver_multitask_dev.py][line: 720][    INFO] Inference done 276/313. Dataloading: 0.0022 s/iter. Inference: 0.1622 s/iter. Eval: 0.0002 s/iter. Total: 0.1670 s/iter. ETA=0:00:06
+[2022-09-26 11:15:39,150][solver_multitask_dev.py][line: 720][    INFO] Inference done 277/313. Dataloading: 0.0022 s/iter. Inference: 0.1622 s/iter. Eval: 0.0002 s/iter. Total: 0.1670 s/iter. ETA=0:00:06
+[2022-09-26 11:15:39,317][solver_multitask_dev.py][line: 720][    INFO] Inference done 278/313. Dataloading: 0.0022 s/iter. Inference: 0.1622 s/iter. Eval: 0.0002 s/iter. Total: 0.1670 s/iter. ETA=0:00:05
+[2022-09-26 11:15:39,485][solver_multitask_dev.py][line: 720][    INFO] Inference done 279/313. Dataloading: 0.0022 s/iter. Inference: 0.1622 s/iter. Eval: 0.0002 s/iter. Total: 0.1670 s/iter. ETA=0:00:05
+[2022-09-26 11:15:39,652][solver_multitask_dev.py][line: 720][    INFO] Inference done 280/313. Dataloading: 0.0022 s/iter. Inference: 0.1622 s/iter. Eval: 0.0002 s/iter. Total: 0.1670 s/iter. ETA=0:00:05
+[2022-09-26 11:15:39,819][solver_multitask_dev.py][line: 720][    INFO] Inference done 281/313. Dataloading: 0.0022 s/iter. Inference: 0.1622 s/iter. Eval: 0.0002 s/iter. Total: 0.1670 s/iter. ETA=0:00:05
+[2022-09-26 11:15:39,985][solver_multitask_dev.py][line: 720][    INFO] Inference done 282/313. Dataloading: 0.0022 s/iter. Inference: 0.1622 s/iter. Eval: 0.0002 s/iter. Total: 0.1670 s/iter. ETA=0:00:05
+[2022-09-26 11:15:40,151][solver_multitask_dev.py][line: 720][    INFO] Inference done 283/313. Dataloading: 0.0022 s/iter. Inference: 0.1622 s/iter. Eval: 0.0002 s/iter. Total: 0.1670 s/iter. ETA=0:00:05
+[2022-09-26 11:15:40,318][solver_multitask_dev.py][line: 720][    INFO] Inference done 284/313. Dataloading: 0.0022 s/iter. Inference: 0.1622 s/iter. Eval: 0.0002 s/iter. Total: 0.1670 s/iter. ETA=0:00:04
+[2022-09-26 11:15:40,489][solver_multitask_dev.py][line: 720][    INFO] Inference done 285/313. Dataloading: 0.0022 s/iter. Inference: 0.1622 s/iter. Eval: 0.0002 s/iter. Total: 0.1670 s/iter. ETA=0:00:04
+[2022-09-26 11:15:40,658][solver_multitask_dev.py][line: 720][    INFO] Inference done 286/313. Dataloading: 0.0022 s/iter. Inference: 0.1622 s/iter. Eval: 0.0002 s/iter. Total: 0.1670 s/iter. ETA=0:00:04
+[2022-09-26 11:15:40,830][solver_multitask_dev.py][line: 720][    INFO] Inference done 287/313. Dataloading: 0.0022 s/iter. Inference: 0.1622 s/iter. Eval: 0.0003 s/iter. Total: 0.1670 s/iter. ETA=0:00:04
+[2022-09-26 11:15:41,008][solver_multitask_dev.py][line: 720][    INFO] Inference done 288/313. Dataloading: 0.0022 s/iter. Inference: 0.1623 s/iter. Eval: 0.0003 s/iter. Total: 0.1671 s/iter. ETA=0:00:04
+[2022-09-26 11:15:41,176][solver_multitask_dev.py][line: 720][    INFO] Inference done 289/313. Dataloading: 0.0022 s/iter. Inference: 0.1623 s/iter. Eval: 0.0003 s/iter. Total: 0.1671 s/iter. ETA=0:00:04
+[2022-09-26 11:15:41,343][solver_multitask_dev.py][line: 720][    INFO] Inference done 290/313. Dataloading: 0.0022 s/iter. Inference: 0.1623 s/iter. Eval: 0.0002 s/iter. Total: 0.1671 s/iter. ETA=0:00:03
+[2022-09-26 11:15:41,511][solver_multitask_dev.py][line: 720][    INFO] Inference done 291/313. Dataloading: 0.0022 s/iter. Inference: 0.1623 s/iter. Eval: 0.0002 s/iter. Total: 0.1671 s/iter. ETA=0:00:03
+[2022-09-26 11:15:41,680][solver_multitask_dev.py][line: 720][    INFO] Inference done 292/313. Dataloading: 0.0022 s/iter. Inference: 0.1623 s/iter. Eval: 0.0002 s/iter. Total: 0.1671 s/iter. ETA=0:00:03
+[2022-09-26 11:15:41,848][solver_multitask_dev.py][line: 720][    INFO] Inference done 293/313. Dataloading: 0.0022 s/iter. Inference: 0.1623 s/iter. Eval: 0.0002 s/iter. Total: 0.1671 s/iter. ETA=0:00:03
+[2022-09-26 11:15:42,015][solver_multitask_dev.py][line: 720][    INFO] Inference done 294/313. Dataloading: 0.0022 s/iter. Inference: 0.1623 s/iter. Eval: 0.0002 s/iter. Total: 0.1671 s/iter. ETA=0:00:03
+[2022-09-26 11:15:42,182][solver_multitask_dev.py][line: 720][    INFO] Inference done 295/313. Dataloading: 0.0022 s/iter. Inference: 0.1623 s/iter. Eval: 0.0002 s/iter. Total: 0.1671 s/iter. ETA=0:00:03
+[2022-09-26 11:15:42,350][solver_multitask_dev.py][line: 720][    INFO] Inference done 296/313. Dataloading: 0.0022 s/iter. Inference: 0.1623 s/iter. Eval: 0.0002 s/iter. Total: 0.1671 s/iter. ETA=0:00:02
+[2022-09-26 11:15:42,517][solver_multitask_dev.py][line: 720][    INFO] Inference done 297/313. Dataloading: 0.0022 s/iter. Inference: 0.1623 s/iter. Eval: 0.0002 s/iter. Total: 0.1671 s/iter. ETA=0:00:02
+[2022-09-26 11:15:42,685][solver_multitask_dev.py][line: 720][    INFO] Inference done 298/313. Dataloading: 0.0022 s/iter. Inference: 0.1623 s/iter. Eval: 0.0002 s/iter. Total: 0.1671 s/iter. ETA=0:00:02
+[2022-09-26 11:15:42,853][solver_multitask_dev.py][line: 720][    INFO] Inference done 299/313. Dataloading: 0.0022 s/iter. Inference: 0.1623 s/iter. Eval: 0.0002 s/iter. Total: 0.1671 s/iter. ETA=0:00:02
+[2022-09-26 11:15:43,020][solver_multitask_dev.py][line: 720][    INFO] Inference done 300/313. Dataloading: 0.0022 s/iter. Inference: 0.1623 s/iter. Eval: 0.0002 s/iter. Total: 0.1671 s/iter. ETA=0:00:02
+[2022-09-26 11:15:43,187][solver_multitask_dev.py][line: 720][    INFO] Inference done 301/313. Dataloading: 0.0022 s/iter. Inference: 0.1623 s/iter. Eval: 0.0002 s/iter. Total: 0.1671 s/iter. ETA=0:00:02
+[2022-09-26 11:15:43,356][solver_multitask_dev.py][line: 720][    INFO] Inference done 302/313. Dataloading: 0.0022 s/iter. Inference: 0.1623 s/iter. Eval: 0.0002 s/iter. Total: 0.1671 s/iter. ETA=0:00:01
+[2022-09-26 11:15:43,523][solver_multitask_dev.py][line: 720][    INFO] Inference done 303/313. Dataloading: 0.0022 s/iter. Inference: 0.1623 s/iter. Eval: 0.0002 s/iter. Total: 0.1671 s/iter. ETA=0:00:01
+[2022-09-26 11:15:43,691][solver_multitask_dev.py][line: 720][    INFO] Inference done 304/313. Dataloading: 0.0022 s/iter. Inference: 0.1623 s/iter. Eval: 0.0002 s/iter. Total: 0.1671 s/iter. ETA=0:00:01
+[2022-09-26 11:15:43,859][solver_multitask_dev.py][line: 720][    INFO] Inference done 305/313. Dataloading: 0.0022 s/iter. Inference: 0.1623 s/iter. Eval: 0.0002 s/iter. Total: 0.1671 s/iter. ETA=0:00:01
+[2022-09-26 11:15:44,026][solver_multitask_dev.py][line: 720][    INFO] Inference done 306/313. Dataloading: 0.0022 s/iter. Inference: 0.1623 s/iter. Eval: 0.0002 s/iter. Total: 0.1671 s/iter. ETA=0:00:01
+[2022-09-26 11:15:44,196][solver_multitask_dev.py][line: 720][    INFO] Inference done 307/313. Dataloading: 0.0021 s/iter. Inference: 0.1623 s/iter. Eval: 0.0002 s/iter. Total: 0.1671 s/iter. ETA=0:00:01
+[2022-09-26 11:15:44,368][solver_multitask_dev.py][line: 720][    INFO] Inference done 308/313. Dataloading: 0.0021 s/iter. Inference: 0.1624 s/iter. Eval: 0.0002 s/iter. Total: 0.1671 s/iter. ETA=0:00:00
+[2022-09-26 11:15:44,539][solver_multitask_dev.py][line: 720][    INFO] Inference done 309/313. Dataloading: 0.0021 s/iter. Inference: 0.1624 s/iter. Eval: 0.0002 s/iter. Total: 0.1671 s/iter. ETA=0:00:00
+[2022-09-26 11:15:44,710][solver_multitask_dev.py][line: 720][    INFO] Inference done 310/313. Dataloading: 0.0021 s/iter. Inference: 0.1624 s/iter. Eval: 0.0002 s/iter. Total: 0.1671 s/iter. ETA=0:00:00
+[2022-09-26 11:15:44,879][solver_multitask_dev.py][line: 720][    INFO] Inference done 311/313. Dataloading: 0.0021 s/iter. Inference: 0.1624 s/iter. Eval: 0.0002 s/iter. Total: 0.1672 s/iter. ETA=0:00:00
+[2022-09-26 11:15:45,049][solver_multitask_dev.py][line: 720][    INFO] Inference done 312/313. Dataloading: 0.0021 s/iter. Inference: 0.1624 s/iter. Eval: 0.0002 s/iter. Total: 0.1672 s/iter. ETA=0:00:00
+[2022-09-26 11:15:45,140][solver_multitask_dev.py][line: 720][    INFO] Inference done 313/313. Dataloading: 0.0021 s/iter. Inference: 0.1622 s/iter. Eval: 0.0002 s/iter. Total: 0.1669 s/iter. ETA=0:00:00
+[_init_petrel]-   1  cur: 0.000s, avg(1): 0.000s
+[_init_petrel]-   1  cur: 0.000s, avg(1): 0.000s
+[2022-09-26 11:15:45,768][solver_multitask_dev.py][line: 734][    INFO] Total inference time: 0:00:52.039041 (0.168958 s / iter per device, on 1 devices)
+[2022-09-26 11:15:45,769][solver_multitask_dev.py][line: 740][    INFO] Total inference pure compute time: 0:00:49 (0.162177 s / iter per device, on 1 devices)
+[2022-09-26 11:15:45,797][solver_multitask_dev.py][line: 777][    INFO] Evaluation results for pedattr in csv format:
+[2022-09-26 11:15:45,800][solver_multitask_dev.py][line:1241][    INFO] copypaste: label_pos_recall=[0.43205575 0.76826299 0.9226231  0.92115144 0.75433071 0.76712329
+ 0.67104184 0.78299776 0.68       0.49579832 0.50223214 0.96540321
+ 0.85536547 0.75702076 0.05454545 0.57610922 0.62608696 0.65458141
+ 0.27722772 0.56589147 0.9934715  0.22826087 0.89476386 0.88270981
+ 0.85671343 0.9269977 ]
+[2022-09-26 11:15:45,801][solver_multitask_dev.py][line:1241][    INFO] copypaste: label_neg_recall=[0.99619067 0.91109342 0.94314321 0.94054913 0.99006941 0.94257335
+ 0.96947956 0.99267246 0.99518797 0.9976723  0.98953099 0.9059869
+ 0.98565527 0.97963185 0.99879336 0.97106034 0.94655065 0.9725333
+ 0.99858572 0.99815233 0.54       0.99818329 0.95642202 0.94156121
+ 0.91744341 0.95904584]
+[2022-09-26 11:15:45,801][solver_multitask_dev.py][line:1241][    INFO] copypaste: label_prec=[0.77018634 0.73858759 0.9274635  0.95160694 0.83741259 0.65429553
+ 0.75322284 0.83333333 0.26153846 0.7195122  0.69230769 0.974201
+ 0.89795918 0.76827757 0.2        0.7736022  0.74002418 0.80995106
+ 0.66666667 0.8902439  0.98348379 0.53846154 0.92910448 0.86435644
+ 0.87334014 0.90818299]
+[2022-09-26 11:15:45,802][solver_multitask_dev.py][line:1241][    INFO] copypaste: label_acc=[0.38271605 0.60402042 0.8605291  0.87993168 0.65796703 0.54587156
+ 0.55010087 0.67698259 0.23287671 0.41549296 0.41058394 0.94133697
+ 0.77958894 0.61630219 0.04477612 0.49299065 0.51320755 0.56742857
+ 0.24347826 0.52898551 0.97716848 0.19090909 0.83757809 0.77531083
+ 0.76203209 0.84756464]
+[2022-09-26 11:15:45,802][solver_multitask_dev.py][line:1241][    INFO] copypaste: label_f1=[0.55357143 0.75313308 0.92503697 0.93613155 0.7937034  0.70623145
+ 0.70976139 0.80738178 0.37777778 0.58706468 0.58214748 0.96978215
+ 0.87614496 0.76260763 0.08571429 0.66040689 0.67830424 0.72402479
+ 0.39160839 0.69194313 0.98845242 0.32061069 0.91161088 0.87343672
+ 0.86494689 0.9174939 ]
+[2022-09-26 11:15:45,802][solver_multitask_dev.py][line:1241][    INFO] copypaste: label_ma=[0.71412321 0.8396782  0.93288316 0.93085028 0.87220006 0.85484832
+ 0.8202607  0.88783511 0.83759398 0.74673531 0.74588157 0.93569505
+ 0.92051037 0.8683263  0.52666941 0.77358478 0.7863188  0.81355736
+ 0.63790672 0.7820219  0.76673575 0.61322208 0.92559294 0.91213551
+ 0.88707842 0.94302177]
+[2022-09-26 11:15:45,803][solver_multitask_dev.py][line:1241][    INFO] copypaste: ma=0.8182795023842971
+[2022-09-26 11:15:45,803][solver_multitask_dev.py][line:1241][    INFO] copypaste: instance_acc=0.8142023773448773
+[2022-09-26 11:15:45,804][solver_multitask_dev.py][line:1241][    INFO] copypaste: instance_prec=0.9031415873015874
+[2022-09-26 11:15:45,804][solver_multitask_dev.py][line:1241][    INFO] copypaste: instance_recall=0.8768704761904763
+[2022-09-26 11:15:45,804][solver_multitask_dev.py][line:1241][    INFO] copypaste: instance_f1=0.8856680705405704
+[2022-09-26 11:15:45,804][solver_multitask_dev.py][line:1241][    INFO] copypaste: error_num=[ 200. 1241.  659.  703.  249.  792.  669.  167.   56.   83.  323.  473.
+  311.  386.   64.  868. 1161.  757.   87.  130.  224.   89.  676.  759.
+ 1068.  507.]
+[2022-09-26 11:15:45,805][solver_multitask_dev.py][line:1241][    INFO] copypaste: fn_num=[163. 571. 341. 441. 156. 289. 401.  97.   8.  60. 223. 272. 186. 199.
+  52. 621. 731. 524.  73. 112.  63.  71. 410. 348. 572. 222.]
+[2022-09-26 11:15:45,805][solver_multitask_dev.py][line:1241][    INFO] copypaste: fp_num=[ 37. 670. 318. 262.  93. 503. 268.  70.  48.  23. 100. 201. 125. 187.
+  12. 247. 430. 233.  14.  18. 161.  18. 266. 411. 496. 285.]
+[2022-09-26 11:15:45,805][solver_multitask_dev.py][line:1241][    INFO] copypaste: pos_recall=0.6851063910944036
+[2022-09-26 11:15:45,805][solver_multitask_dev.py][line:1241][    INFO] copypaste: neg_recall=0.9514526136741909
+** results: {'label_pos_recall': array([0.43205575, 0.76826299, 0.9226231 , 0.92115144, 0.75433071,
+       0.76712329, 0.67104184, 0.78299776, 0.68      , 0.49579832,
+       0.50223214, 0.96540321, 0.85536547, 0.75702076, 0.05454545,
+       0.57610922, 0.62608696, 0.65458141, 0.27722772, 0.56589147,
+       0.9934715 , 0.22826087, 0.89476386, 0.88270981, 0.85671343,
+       0.9269977 ]), 'label_neg_recall': array([0.99619067, 0.91109342, 0.94314321, 0.94054913, 0.99006941,
+       0.94257335, 0.96947956, 0.99267246, 0.99518797, 0.9976723 ,
+       0.98953099, 0.9059869 , 0.98565527, 0.97963185, 0.99879336,
+       0.97106034, 0.94655065, 0.9725333 , 0.99858572, 0.99815233,
+       0.54      , 0.99818329, 0.95642202, 0.94156121, 0.91744341,
+       0.95904584]), 'label_prec': array([0.77018634, 0.73858759, 0.9274635 , 0.95160694, 0.83741259,
+       0.65429553, 0.75322284, 0.83333333, 0.26153846, 0.7195122 ,
+       0.69230769, 0.974201  , 0.89795918, 0.76827757, 0.2       ,
+       0.7736022 , 0.74002418, 0.80995106, 0.66666667, 0.8902439 ,
+       0.98348379, 0.53846154, 0.92910448, 0.86435644, 0.87334014,
+       0.90818299]), 'label_acc': array([0.38271605, 0.60402042, 0.8605291 , 0.87993168, 0.65796703,
+       0.54587156, 0.55010087, 0.67698259, 0.23287671, 0.41549296,
+       0.41058394, 0.94133697, 0.77958894, 0.61630219, 0.04477612,
+       0.49299065, 0.51320755, 0.56742857, 0.24347826, 0.52898551,
+       0.97716848, 0.19090909, 0.83757809, 0.77531083, 0.76203209,
+       0.84756464]), 'label_f1': array([0.55357143, 0.75313308, 0.92503697, 0.93613155, 0.7937034 ,
+       0.70623145, 0.70976139, 0.80738178, 0.37777778, 0.58706468,
+       0.58214748, 0.96978215, 0.87614496, 0.76260763, 0.08571429,
+       0.66040689, 0.67830424, 0.72402479, 0.39160839, 0.69194313,
+       0.98845242, 0.32061069, 0.91161088, 0.87343672, 0.86494689,
+       0.9174939 ]), 'label_ma': array([0.71412321, 0.8396782 , 0.93288316, 0.93085028, 0.87220006,
+       0.85484832, 0.8202607 , 0.88783511, 0.83759398, 0.74673531,
+       0.74588157, 0.93569505, 0.92051037, 0.8683263 , 0.52666941,
+       0.77358478, 0.7863188 , 0.81355736, 0.63790672, 0.7820219 ,
+       0.76673575, 0.61322208, 0.92559294, 0.91213551, 0.88707842,
+       0.94302177]), 'ma': 0.8182795023842971, 'instance_acc': 0.8142023773448773, 'instance_prec': 0.9031415873015874, 'instance_recall': 0.8768704761904763, 'instance_f1': 0.8856680705405704, 'error_num': array([ 200., 1241.,  659.,  703.,  249.,  792.,  669.,  167.,   56.,
+         83.,  323.,  473.,  311.,  386.,   64.,  868., 1161.,  757.,
+         87.,  130.,  224.,   89.,  676.,  759., 1068.,  507.]), 'fn_num': array([163., 571., 341., 441., 156., 289., 401.,  97.,   8.,  60., 223.,
+       272., 186., 199.,  52., 621., 731., 524.,  73., 112.,  63.,  71.,
+       410., 348., 572., 222.]), 'fp_num': array([ 37., 670., 318., 262.,  93., 503., 268.,  70.,  48.,  23., 100.,
+       201., 125., 187.,  12., 247., 430., 233.,  14.,  18., 161.,  18.,
+       266., 411., 496., 285.]), 'pos_recall': 0.6851063910944036, 'neg_recall': 0.9514526136741909}
+[rank 0000]-[INFO]-[e626]-[2022-09-26 11:15:45]-[/spring/src/linklink/src/core.cc:260]: linklink finalized!
+2022-09-26 11:15:45 23a6271c INFO: (pavi2.training) SummaryWriter now to close ... Flushing data ...
+2022-09-26 11:15:45 0694e85a SUCCESS: (pavi2.training) SummaryWriter is successfully closed
+
+PAVI Info ###################################
+Training：pa100k_vitbase_SGD_lr1e2x1_stepLRx2_wd5e4_backboneclip_dpr03_30ep__SmallSetting___LSA_10p_small_setting1
+Project：L2_samll_setting_attr_FT
+Training_id：114449
+Training_url：http://autolink.parrots.sensetime.com/pages/content/project/3886/training/114449
+Warning: If `Training_url` is not accessible, please upgrade your pavi version.
+#############################################
+

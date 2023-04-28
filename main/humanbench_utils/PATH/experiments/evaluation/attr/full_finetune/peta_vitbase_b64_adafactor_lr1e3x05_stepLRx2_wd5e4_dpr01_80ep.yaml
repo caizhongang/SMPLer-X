@@ -1,0 +1,109 @@
+out_dir: /mnt/lustrenew/chencheng1/expr_files/vitruvian/devL2/L2_attr_finetune
+
+common:  # prefix
+  project_name: L2_peta_attr_finetune
+
+  backbone:
+    type: vit_base_patch16
+    kwargs:
+      task_sp_list: ['pos_embed', 'rel_pos_h', 'rel_pos_w'] # wrong list would somehow cause .cuda() stuck without error
+      pretrained: True
+      pretrain_path: /mnt/lustre/share/chencheng1/pretrain/L2_final_base/wo_cls_token/v100_32g_vitbase_size224_lr1e3_stepLRx3_bmp1_adafactor_wd01_clip05_layerdecay075_lpe_peddet_citypersons_LSA_reduct8_tbn1_heads2_gate1_peddetShareDecoder_exp3_setting_SharePosEmbed.pth
+      img_size: [224, 224]  # deprecated by simple interpolate
+      lms_checkpoint_train: fairscale
+      window: False
+      test_pos_mode: learnable_simple_interpolate # to_do: ablation
+      pad_attn_mask: False  # to_do: ablation
+      round_padding: True
+      learnable_pos: True
+      drop_path_rate: 0.1
+
+  solver:
+    type: SolverMultiTaskDev
+
+  lr_scheduler:
+    type: 'Step'
+    kwargs:
+      base_lr: 1.0e-5
+      warmup_steps: 500
+      warmup_lr: 1.0e-3  #5.0e-4
+      lr_mults: [0.1, 0.1]
+      lr_steps: [10687, 12825] # 75% 90%
+
+  backbone_multiplier: 0.5
+  
+  optimizer:
+    type: Adafactor_dev
+    kwargs:
+      beta1: 0.9
+      clip_beta2: 0.999
+      clip_threshold: 1.
+      decay_rate: -0.8
+      scale_parameter: False
+      relative_step: False
+      weight_decay: 0.05
+
+  layer_decay:
+    # layer decay
+    num_layers: 12
+    layer_decay_rate: 0.75
+    lpe_lr: True
+
+  auto_denan: False
+
+  workers: 2
+  max_iter: 14250
+
+  deterministic: True   # seed control
+  cudnn_deterministic: True
+  worker_rank: True
+  random_seed: 42
+
+  print_freq: 10
+  vis_batch: False
+  save_interval: 60000
+  save_iters: [12000]
+
+  use_ceph: True
+  sync: True
+
+
+tasks :  # prefix
+  0:
+    name: attr_peta
+    loss_weight: 1.0
+    gres_ratio: 1  # int, > 0| world/sum*ratio
+    dataset:
+      type: AttrDataset
+      kwargs:
+        task_spec:
+          dataset: 'peta'
+          data_path: sh1424:s3://pedattr_public/peta/dataset.pkl
+          root_path: sh1424:s3://pedattr_public/peta/images/
+        augmentation:
+          height: 256
+          width: 192
+          use_random_aug: False
+    sampler:
+      batch_size: 32  # per card
+      shuffle_strategy: 1
+    neck:
+      type: DoNothing
+      kwargs: {}
+
+    decoder:  # todo: coco instance seg config for now
+      type: pedattr_cls_vit_A
+      kwargs:
+        out_feature: 768
+        nattr: 35
+        loss_cfg:
+          type: CEL_Sigmoid
+          kwargs:
+            sample_weight: [0.10570175, 0.08438596, 0.74526316, 0.02929825, 0.23763158,
+                            0.85192982, 0.13491228, 0.06842105, 0.04096491, 0.02649123,
+                            0.14078947, 0.01754386, 0.08421053, 0.45614035, 0.01263158,
+                            0.86052632, 0.13763158, 0.30701754, 0.035     , 0.045     ,
+                            0.51210526, 0.29938596, 0.02140351, 0.36210526, 0.21324561,
+                            0.19631579, 0.19807018, 0.29333333, 0.27649123, 0.07614035,
+                            0.4922807 , 0.33385965, 0.10219298, 0.06236842, 0.55035088]
+            size_average: True

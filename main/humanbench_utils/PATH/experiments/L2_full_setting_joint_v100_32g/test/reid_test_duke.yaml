@@ -1,0 +1,22 @@
+common:
+  tester:
+    type: 'ReIDTester'
+    test_feature_name: 'feature_nobn'
+  use_ceph: True
+  sync: True
+
+tasks :
+  0 :
+    name : reid_duke
+    loss_weight : 1.0
+    gres_ratio: 1
+    dataset:
+      type: ReIDTestDataset
+      kwargs:
+        root_path: sh1424:s3://pedreid_public/
+        query_file_path:
+          - sh1424:s3://pedreid_public/dukemtmc-reid/data_list/probe.txt
+        gallery_file_path:
+          - sh1424:s3://pedreid_public/dukemtmc-reid/data_list/gallery.txt
+        loader: 'pil'
+        vit: True

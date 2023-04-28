@@ -1,0 +1,37 @@
+project_name: parsing_test
+
+common:
+  # backbone:
+  #   kwargs:
+  #     test_pos_mode: learnable
+  tester:
+    type: TesterMultiTaskDev
+  use_ceph: True
+  sync: True
+  collate: dev
+
+# task_specific_param = ['backbone', 'neck', 'decoder', 'dataset', 'sampler', 'lr_scheduler', 'optimizer']
+tasks:
+  0:
+    name: ParTest
+    loss_weight: 1.0  # *redundant*
+    gres_ratio: 1  # int, > 0| world/sum*ratio, *redundant*
+    dataset:
+      type: Human3M6ParsingDataset
+      kwargs:
+        data_path: sh1424:s3://parsing_public/human3.6
+        data_use_ratio: 1
+        dataset: val
+        is_train: False
+        cfg:
+          eval_crop_size: [ 480, 480 ]
+          is_flip: False
+          is_multi_scale: False
+          
+          ignore_value: 255 # TODO: duplicated with decoder.kwargs.ignore_value
+          num_classes: 25
+          label_list: [ 0, 1, 2, 3, 6, 7, 8, 17, 18, 19, 25, 26, 27, 32, 33, 34, 38, 39, 43, 44,
+                        46, 49, 50, 56, 58 ]
+          
+    sampler:
+      batch_size: 4 # per card

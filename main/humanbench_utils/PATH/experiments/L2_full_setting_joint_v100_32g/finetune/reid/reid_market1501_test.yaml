@@ -1,0 +1,22 @@
+common:
+  tester:
+    type: 'ReIDTester'
+    test_feature_name: 'feature_nobn'
+  use_ceph: True
+  sync: True
+
+tasks :
+  0 :
+    name : market1501
+    loss_weight : 1.0
+    gres_ratio: 1
+    dataset:
+      type: ReIDTestDataset
+      kwargs:
+        root_path: sh40:s3://chendapeng.reid_data/datasets8/
+        query_file_path:
+          - sh1986:s3://tangshixiang.reid_data_list/market1501/probe.txt
+        gallery_file_path:
+          - sh1986:s3://tangshixiang.reid_data_list/market1501/gallery.txt
+        loader: 'pil'
+        vit: True
