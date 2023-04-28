@@ -1,0 +1,151 @@
+common:  # prefix
+  project_name: release_debug
+
+  #######################
+  # dataset:
+  # pose: cocopose / aic / posetrack / jrdb2022 / mhp_pose / penn_action / 3dpw
+  # human parsing: h36m / lip / cihp / vip
+  # clothes parsing: deepfashion / modanet
+  # pedattr: rap2 / pa100k / HARDHC / uavhuman / parse27k / duke / market_attr
+  # reid: 5set / DGMarket / LaST_PRCC
+  # peddet: crowdhuman / widerPersons_coco-person
+  #######################
+
+  share_backbone_group: [0]
+  share_neck_group: [0]
+  share_decoder_group: [0]
+
+  model_entry_type: backbone_aio_entry
+  solver:
+    type: SolverMultiTaskDev
+
+  lr_scheduler:
+    type: 'Step'
+    kwargs:
+      base_lr: 1.0e-7  #5.0e-7
+      warmup_steps: 1500
+      warmup_lr: 1.0e-3  #5.0e-4
+      lr_mults: [0.5, 0.2, 0.1]
+      lr_steps: [40000, 60000, 76000] # 50% 75% 95%
+
+  backbone_multiplier: 1.0
+  optimizer:
+    type: Adafactor_dev
+    kwargs:
+      beta1: 0.9
+      clip_beta2: 0.999
+      clip_threshold: 1.
+      decay_rate: -0.8
+      scale_parameter: False
+      relative_step: False
+      weight_decay: 0.05
+
+  layer_decay:
+    # layer decay
+    num_layers: 12
+    layer_decay_rate: 0.75
+    lpe_lr: True
+
+  auto_denan: False
+
+  workers: 2
+  max_iter: 80000
+
+  deterministic: True   # seed control
+  cudnn_deterministic: False
+  worker_rank: True
+  random_seed: 42
+
+  print_freq: 10
+  vis_batch: False
+  save_interval: 15000
+
+  use_ceph: True
+  sync: True
+
+
+tasks :
+## peddet ##
+  # crowdhuman
+  0:
+    name: CrowdHuman_det
+    loss_weight: 1
+    gres_ratio: 1  # int, > 0| world/sum*ratio
+    backbone:
+      type: vit_base_patch16_ladder_attention
+      kwargs:
+        task_sp_list: ['pos_embed', 'rel_pos_h', 'rel_pos_w'] # wrong list would somehow cause .cuda() stuck without error
+        pretrained: True
+        img_size: [224, 224]  # deprecated by simple interpolate
+        lms_checkpoint_train: fairscale
+        window: False
+        test_pos_mode: learnable_simple_interpolate # to_do: ablation
+        pad_attn_mask: False  # to_do: ablation
+        round_padding: True
+        learnable_pos: True
+        drop_path_rate: 0.
+
+    dataset:
+      type: PedestrainDetectionDataset
+      kwargs:
+        dataset_name: 'CrowdHuman'
+        data_use_ratio: 1
+        nested: True
+        task_spec:
+          img_folder:
+            - sh1424:s3://peddet_public/CrowdHuman/Images
+          ann_file:
+            - sh1424:s3://peddet_public/CrowdHuman/annotations/train.json
+          return_masks: False
+        augmentation: {'max_size': 1333}
+        vit: True
+    sampler:
+      type: DistributedGroupSampler
+      batch_size: 1  # per card
+      shuffle_strategy: 1
+
+    neck:
+      type: LadderSideAttentionFPN
+      kwargs:
+        lms_checkpoint_train: fairscale
+        layer_feat_nums: 12
+        hidden_dim: 768
+        reduct_ration: 8
+        transformer_block_nums: 1
+        transformer_block_num_heads: 2
+        gate_T: 1.0
+        gate_alpha: 0
+
+    decoder:
+      type: AIOHead
+      kwargs:
+        task: peddet
+        loss_weight: 1.0
+        peddet_mask_dim: False
+        transformer_predictor_cfg:
+          hidden_dim: 256
+          num_queries: 900  # 3 * 300
+          nheads: 8
+          dim_feedforward: 2048
+          dec_layers: 9
+          pre_norm: False
+          arch: fan_in
+          enforce_input_project: False
+          mask_on: False # no atten_mask for pedestrain detection
+          num_feature_levels: 1
+          cross_pos_embed: anchor
+          cls_out_dim: 1
+          peddet_cfgs:
+            share_content_query: 3
+            query_pe_dim: 2
+        loss_cfg:
+          type: DetFocalDiceLoss
+          kwargs:
+            cfg:
+              deep_supervision: True
+              focal_alpha: 0.25
+              class_weight: 2.0
+              bbox_weight: 5.0
+              giou_weight: 2.
+              ign_thr: 0.7
+              dec_layers: 9 # w/o init proposal

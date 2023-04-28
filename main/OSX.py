@@ -469,23 +469,56 @@ def init_weights(m):
 
 
 def get_model(mode):
+    third_party_encoder = getattr(cfg, 'third_party_encoder', None)
+    if third_party_encoder is None:
+
+        vit_cfg = Config.fromfile(cfg.encoder_config_file)
+        vit = build_posenet(vit_cfg.model)
+        if mode == 'train':
+            encoder_pretrained_model = torch.load(cfg.encoder_pretrained_model_path)['state_dict']
+            vit.load_state_dict(encoder_pretrained_model, strict=False)
+            print(f"Initialize backbone from {cfg.encoder_pretrained_model_path}")
+        encoder = vit.backbone
+
+    elif third_party_encoder == 'humanbench':
+        # ref: https://github.com/OpenGVLab/HumanBench/blob/6478b659773de5de8ac6f2dd8e35d47cedc54877/PATH/core/models/backbones/vitdet_for_ladder_attention_share_pos_embed.py
+        from humanbench_utils import get_backbone, load_checkpoint
+
+        backbone = get_backbone(cfg.third_party_encoder_type)
+        if mode == 'train':
+            checkpoint = torch.load(cfg.encoder_pretrained_model_path)['model']
+            load_checkpoint(backbone, checkpoint, load_pos_embed=True, strict=False)
+            print(f"Initialize backbone from {cfg.encoder_pretrained_model_path}")
+        encoder = backbone
+
+    elif third_party_encoder == 'motionbert':
+        from motionbert_utils import get_backbone
+
+        backbone = get_backbone(cfg.third_party_encoder_type)
+        if mode == 'train':
+            checkpoint = torch.load(cfg.encoder_pretrained_model_path, map_location=lambda storage, loc: storage)
+            backbone.load_state_dict(checkpoint['model_pos'], strict=True)
+            print(f"Initialize backbone from {cfg.encoder_pretrained_model_path}")
+        encoder = backbone
+
+    else:
+        raise NotImplementedError('Undefined third party encoder: {}'.format(third_party_encoder))
+
     # body
-    vit_cfg = Config.fromfile(cfg.encoder_config_file)
-    vit = build_posenet(vit_cfg.model)
     body_position_net = PositionNet('body', feat_dim=cfg.feat_dim)
     body_rotation_net = BodyRotationNet(feat_dim=cfg.feat_dim)
     box_net = BoxNet(feat_dim=cfg.feat_dim)
 
     # hand
     hand_roi_net = HandRoI(feat_dim=cfg.feat_dim, upscale=cfg.upscale)
-    hand_position_net = PositionNet('hand', feat_dim=cfg.feat_dim//2)
+    hand_position_net = PositionNet('hand', feat_dim=cfg.feat_dim // 2)
     hand_rotation_net = HandRotationNet('hand', feat_dim=256)
     decoder_cfg = Config.fromfile('transformer_utils/configs/osx/decoder/hand_decoder.py')
     hand_decoder = build_posenet(decoder_cfg.model)
 
     # face
     face_roi_net = FaceRoI(feat_dim=cfg.feat_dim, upscale=cfg.upscale)
-    face_position_net = PositionNet('face', feat_dim=cfg.feat_dim//2)
+    face_position_net = PositionNet('face', feat_dim=cfg.feat_dim // 2)
     face_regressor = FaceRegressor(feat_dim=cfg.feat_dim, joint_feat_dim=256)
     decoder_cfg = Config.fromfile('transformer_utils/configs/osx/decoder/face_decoder.py')
     face_decoder = build_posenet(decoder_cfg.model)
@@ -494,10 +527,6 @@ def get_model(mode):
         body_position_net.apply(init_weights)
         body_rotation_net.apply(init_weights)
         box_net.apply(init_weights)
-        
-        encoder_pretrained_model = torch.load(cfg.encoder_pretrained_model_path)['state_dict']
-        vit.load_state_dict(encoder_pretrained_model, strict=False)
-        print(f"Initialize backbone from {cfg.encoder_pretrained_model_path}")
 
         # hand
         hand_position_net.apply(init_weights)
@@ -511,7 +540,8 @@ def get_model(mode):
         face_decoder.apply(init_weights)
         face_regressor.apply(init_weights)
 
-    encoder = vit.backbone
-    model = Model(encoder, body_position_net, body_rotation_net, box_net, hand_position_net, hand_roi_net, hand_decoder, hand_rotation_net,
+    model = Model(encoder, body_position_net, body_rotation_net, box_net, hand_position_net, hand_roi_net, hand_decoder,
+                  hand_rotation_net,
                   face_position_net, face_roi_net, face_decoder, face_regressor)
+
     return model

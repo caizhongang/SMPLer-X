@@ -1,0 +1,130 @@
+out_dir: /mnt/lustrenew/chencheng1/expr_files/vitruvian/peddet_finetine
+
+common:  # prefix
+  project_name: L2_peddet_finetune
+  model_entry_type: backbone_aio_entry
+  backbone:
+    type: vit_base_patch16
+    kwargs:
+      pretrained: True
+      pretrain_path: /mnt/lustre/share/chencheng1/pretrain/L2_final_base/wo_cls_token/v100_32g_vitbase_size224_lr1e3_stepLRx3_bmp1_adafactor_wd01_clip05_layerdecay075_lpe_peddet_citypersons_LSA_reduct8_tbn1_heads2_gate1_peddetShareDecoder_exp3_setting_SharePosEmbed.pth
+      img_size: [224, 224]  # deprecated by simple interpolate
+      lms_checkpoint_train: fairscale
+      window: False
+      test_pos_mode: learnable_simple_interpolate # to_do: ablation
+      pad_attn_mask: False  # to_do: ablation
+      round_padding: True
+      # learnable_pos: True
+      drop_path_rate: 0.2
+
+  solver:
+    type: SolverMultiTaskDev
+
+  lr_scheduler:
+    type: 'Cosine'
+    kwargs:
+      eta_min: 5.e-7
+      base_lr: 5.e-7
+      warmup_lr: 5.e-4
+      warmup_steps: 500
+
+  backbone_multiplier: 0.5
+  # pos_embed_multiplier: 2.0
+
+  layer_decay:
+    num_layers: 12
+    layer_decay_rate: 0.75
+    # lpe_lr: True
+
+  optimizer:
+    type: Adafactor_dev
+    kwargs:
+      beta1: 0.9
+      clip_beta2: 0.999
+      clip_threshold: 1.
+      decay_rate: -0.8
+      scale_parameter: False
+      relative_step: False
+      weight_decay: 0
+
+  auto_denan: False
+  workers: 2
+  max_iter: 46875  # 100 ep. (100 * 15000) / 32 =    
+
+  deterministic: True   # seed control
+  cudnn_deterministic: False
+  worker_rank: True
+  random_seed: 42
+
+  print_freq: 10
+  vis_batch: False
+  save_interval: 100000
+  # save_iters: [16000, 17000]
+
+  use_ceph: True
+  sync: True
+
+  collate: det
+  expand_bs: True
+
+  fix_backbone: True
+
+# task_specific_param = ['backbone', 'neck', 'decoder', 'dataset', 'sampler', 'lr_scheduler', 'optimizer']
+tasks :
+  0:
+    name: crowdhuman_det
+    loss_weight: 1.0
+    gres_ratio: 1  # int, > 0| world/sum*ratio
+
+    dataset:
+      type: PedestrainDetectionDataset
+      kwargs:
+        nested: True
+        dataset_name: 'CrowdHuman'
+        task_spec:
+          img_folder: sh1424:s3://peddet_public/CrowdHuman/Images
+          ann_file: sh1424:s3://peddet_public/CrowdHuman/annotations/train.json
+          return_masks: False
+        augmentation: {'max_size': 1333}
+        vit: True
+    sampler:
+      batch_size: 1  # per card
+      shuffle_strategy: 1
+    
+    neck:
+      type: DoNothing
+      kwargs: {}
+
+    decoder:
+      type: AIOHead
+      kwargs:
+        task: peddet
+        loss_weight: 1.0
+        peddet_mask_dim: False
+        transformer_predictor_cfg:
+          hidden_dim: 256
+          num_queries: 900  # 3 * 300
+          nheads: 8
+          dim_feedforward: 2048
+          dec_layers: 9
+          pre_norm: False
+          arch: fan_in
+          enforce_input_project: False
+          mask_on: False # no atten_mask for pedestrain detection
+          num_feature_levels: 1
+          cross_pos_embed: anchor
+          cls_out_dim: 1
+          peddet_cfgs:
+            share_content_query: 3
+            query_pe_dim: 2
+        loss_cfg:
+          type: DetFocalDiceLoss
+          kwargs:
+            cfg:
+              deep_supervision: True
+              focal_alpha: 0.25
+              class_weight: 2.0
+              bbox_weight: 5.0
+              giou_weight: 2.
+              ign_thr: 0.7
+              dec_layers: 9 # w/o init proposal

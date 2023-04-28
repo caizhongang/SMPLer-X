@@ -1,0 +1,4 @@
+phoenix-srun: Job 88662 scheduled successfully!
+Current QUOTA_TYPE is [reserved], which means the job has occupied quota in RESERVED_TOTAL under your partition.
+Current PHX_PRIORITY is P0
+

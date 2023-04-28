@@ -1,0 +1,35 @@
+common:
+  project_name: parsing_test
+  # backbone:
+  #   kwargs:
+  #     test_pos_mode: learnable
+  tester:
+    type: TesterMultiTaskDev
+  use_ceph: True
+  sync: True
+  collate: dev
+
+# task_specific_param = ['backbone', 'neck', 'decoder', 'dataset', 'sampler', 'lr_scheduler', 'optimizer']
+tasks:
+  0:
+    name: ParTest
+    loss_weight: 1.0  # *redundant*
+    gres_ratio: 1  # int, > 0| world/sum*ratio, *redundant*
+    dataset:
+      type: LIPParsingDataset
+      kwargs:
+        data_path: sh1424:s3://parsing_public/LIP
+        data_use_ratio: 1
+        dataset: val
+        is_train: False
+        cfg:
+          eval_crop_size: [ 480, 480 ]
+          is_flip: False
+          is_multi_scale: False
+          
+          ignore_value: 255
+          num_classes: 20
+          label_list: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]
+          
+    sampler:
+      batch_size: 4

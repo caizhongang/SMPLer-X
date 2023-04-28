@@ -1,0 +1,1990 @@
+phoenix-srun: Job 88661 scheduled successfully!
+Current QUOTA_TYPE is [reserved], which means the job has occupied quota in RESERVED_TOTAL under your partition.
+Current PHX_PRIORITY is P0
+
+[_init_petrel]-   1  cur: 0.000s, avg(1): 0.000s
+[_init_petrel]-   1  cur: 0.000s, avg(1): 0.000s
+[_init_petrel]-   1  cur: 0.000s, avg(1): 0.000s
+[_init_petrel]-   1  cur: 0.000s, avg(1): 0.000s
+[rank 0001]-[INFO]-[ca55]-[2022-09-25 04:23:15]-[/spring/src/linklink/src/core.cc:220]: linklink init: world_size=4, rank=(1,1), device_num=1, thread_pool=1, buffer_pool=-1
+[rank 0002]-[INFO]-[615e]-[2022-09-25 04:23:15]-[/spring/src/linklink/src/core.cc:220]: linklink init: world_size=4, rank=(2,2), device_num=1, thread_pool=1, buffer_pool=-1
+[rank 0003]-[INFO]-[b621]-[2022-09-25 04:23:15]-[/spring/src/linklink/src/core.cc:220]: linklink init: world_size=4, rank=(3,3), device_num=1, thread_pool=1, buffer_pool=-1
+[rank 0000]-[INFO]-[78f3]-[2022-09-25 04:23:15]-[/spring/src/linklink/src/core.cc:220]: linklink init: world_size=4, rank=(0,0), device_num=1, thread_pool=1, buffer_pool=-1
+[rank 0] >> task_info.group[0] ranks [0, 1, 2, 3]
+[rank 3] >> task_info.group[0] ranks [0, 1, 2, 3]
+[rank 2] >> task_info.group[0] ranks [0, 1, 2, 3]
+[rank 1] >> task_info.group[0] ranks [0, 1, 2, 3]
+[rank 1] >> task_info.root_group ranks [0]
+[rank 3] >> task_info.root_group ranks [0]
+[rank 2] >> task_info.root_group ranks [0]
+[rank 0] >> task_info.root_group ranks [0]
+[rank 0] >> task_info.backbone_share_group[[0]] ranks [0, 1, 2, 3]
+[rank 3] >> task_info.backbone_share_group[[0]] ranks [0, 1, 2, 3]
+[rank 1] >> task_info.backbone_share_group[[0]] ranks [0, 1, 2, 3]
+[rank 2] >> task_info.backbone_share_group[[0]] ranks [0, 1, 2, 3]
+[rank 3] >> task_info.neck_share_group[[0]] ranks [0, 1, 2, 3]
+[rank 0] >> task_info.neck_share_group[[0]] ranks [0, 1, 2, 3]
+[rank 2] >> task_info.neck_share_group[[0]] ranks [0, 1, 2, 3]
+[rank 1] >> task_info.neck_share_group[[0]] ranks [0, 1, 2, 3]
+[rank 3] >> task_info.decoder_share_group[[0]] ranks [0, 1, 2, 3]
+[rank 3] neck of task0 has been overided to {'type': 'DoNothing', 'kwargs': {'backbone': 'None'}}
+[rank 3] decoder of task0 has been overided to {'type': 'TopDownSimpleHead', 'kwargs': {'layer_norm': True, 'use_sync_bn': False, 'bn_sync_stats': False, 'in_channels': 768, 'out_channels': 17, 'num_deconv_layers': 2, 'num_deconv_filters': [256, 256], 'num_deconv_kernels': [4, 4], 'upsample': 0, 'extra': {'final_conv_kernel': 1}, 'train_cfg': {}, 'test_cfg': {'flip_test': True, 'post_process': 'default', 'shift_heatmap': False, 'modulate_kernel': 11, 'use_udp': True}}}
+[rank 3] dataset of task0 has been overided to {'type': 'COCOPosDatasetDev', 'kwargs': {'ann_file': 'openmmlab:s3://openmmlab/datasets/detection/coco/annotations/person_keypoints_train2017.json', 'img_prefix': 'openmmlab:s3://openmmlab/datasets/detection/coco/train2017/', 'use_udp': True, 'data_cfg': {'image_size': [192, 256], 'heatmap_size': [48, 64], 'num_output_channels': 17, 'num_joints': 17, 'dataset_channel': [[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]], 'inference_channel': [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16], 'soft_nms': False, 'nms_thr': 1.0, 'oks_thr': 0.9, 'vis_thr': 0.2, 'use_gt_bbox': False, 'det_bbox_thr': 0.0, 'bbox_file': '/mnt/lustre/share/chencheng1/dataset/person_detection_results/COCO_val2017_detections_AP_H_56_person.json'}}}
+[rank 3] sampler of task0 has been overided to {'batch_size': 40, 'shuffle_strategy': 1}
+[rank 0] >> task_info.decoder_share_group[[0]] ranks [0, 1, 2, 3]
+[rank 0] neck of task0 has been overided to {'type': 'DoNothing', 'kwargs': {'backbone': 'None'}}
+[rank 0] decoder of task0 has been overided to {'type': 'TopDownSimpleHead', 'kwargs': {'layer_norm': True, 'use_sync_bn': False, 'bn_sync_stats': False, 'in_channels': 768, 'out_channels': 17, 'num_deconv_layers': 2, 'num_deconv_filters': [256, 256], 'num_deconv_kernels': [4, 4], 'upsample': 0, 'extra': {'final_conv_kernel': 1}, 'train_cfg': {}, 'test_cfg': {'flip_test': True, 'post_process': 'default', 'shift_heatmap': False, 'modulate_kernel': 11, 'use_udp': True}}}
+[rank 0] dataset of task0 has been overided to {'type': 'COCOPosDatasetDev', 'kwargs': {'ann_file': 'openmmlab:s3://openmmlab/datasets/detection/coco/annotations/person_keypoints_train2017.json', 'img_prefix': 'openmmlab:s3://openmmlab/datasets/detection/coco/train2017/', 'use_udp': True, 'data_cfg': {'image_size': [192, 256], 'heatmap_size': [48, 64], 'num_output_channels': 17, 'num_joints': 17, 'dataset_channel': [[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]], 'inference_channel': [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16], 'soft_nms': False, 'nms_thr': 1.0, 'oks_thr': 0.9, 'vis_thr': 0.2, 'use_gt_bbox': False, 'det_bbox_thr': 0.0, 'bbox_file': '/mnt/lustre/share/chencheng1/dataset/person_detection_results/COCO_val2017_detections_AP_H_56_person.json'}}}
+[rank 0] sampler of task0 has been overided to {'batch_size': 40, 'shuffle_strategy': 1}
+[rank 2] >> task_info.decoder_share_group[[0]] ranks [0, 1, 2, 3]
+[rank 1] >> task_info.decoder_share_group[[0]] ranks [0, 1, 2, 3]
+[rank 2] neck of task0 has been overided to {'type': 'DoNothing', 'kwargs': {'backbone': 'None'}}
+[rank 1] neck of task0 has been overided to {'type': 'DoNothing', 'kwargs': {'backbone': 'None'}}
+[rank 2] decoder of task0 has been overided to {'type': 'TopDownSimpleHead', 'kwargs': {'layer_norm': True, 'use_sync_bn': False, 'bn_sync_stats': False, 'in_channels': 768, 'out_channels': 17, 'num_deconv_layers': 2, 'num_deconv_filters': [256, 256], 'num_deconv_kernels': [4, 4], 'upsample': 0, 'extra': {'final_conv_kernel': 1}, 'train_cfg': {}, 'test_cfg': {'flip_test': True, 'post_process': 'default', 'shift_heatmap': False, 'modulate_kernel': 11, 'use_udp': True}}}
+[rank 1] decoder of task0 has been overided to {'type': 'TopDownSimpleHead', 'kwargs': {'layer_norm': True, 'use_sync_bn': False, 'bn_sync_stats': False, 'in_channels': 768, 'out_channels': 17, 'num_deconv_layers': 2, 'num_deconv_filters': [256, 256], 'num_deconv_kernels': [4, 4], 'upsample': 0, 'extra': {'final_conv_kernel': 1}, 'train_cfg': {}, 'test_cfg': {'flip_test': True, 'post_process': 'default', 'shift_heatmap': False, 'modulate_kernel': 11, 'use_udp': True}}}
+[rank 2] dataset of task0 has been overided to {'type': 'COCOPosDatasetDev', 'kwargs': {'ann_file': 'openmmlab:s3://openmmlab/datasets/detection/coco/annotations/person_keypoints_train2017.json', 'img_prefix': 'openmmlab:s3://openmmlab/datasets/detection/coco/train2017/', 'use_udp': True, 'data_cfg': {'image_size': [192, 256], 'heatmap_size': [48, 64], 'num_output_channels': 17, 'num_joints': 17, 'dataset_channel': [[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]], 'inference_channel': [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16], 'soft_nms': False, 'nms_thr': 1.0, 'oks_thr': 0.9, 'vis_thr': 0.2, 'use_gt_bbox': False, 'det_bbox_thr': 0.0, 'bbox_file': '/mnt/lustre/share/chencheng1/dataset/person_detection_results/COCO_val2017_detections_AP_H_56_person.json'}}}
+[rank 2] sampler of task0 has been overided to {'batch_size': 40, 'shuffle_strategy': 1}
+[rank 1] dataset of task0 has been overided to {'type': 'COCOPosDatasetDev', 'kwargs': {'ann_file': 'openmmlab:s3://openmmlab/datasets/detection/coco/annotations/person_keypoints_train2017.json', 'img_prefix': 'openmmlab:s3://openmmlab/datasets/detection/coco/train2017/', 'use_udp': True, 'data_cfg': {'image_size': [192, 256], 'heatmap_size': [48, 64], 'num_output_channels': 17, 'num_joints': 17, 'dataset_channel': [[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]], 'inference_channel': [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16], 'soft_nms': False, 'nms_thr': 1.0, 'oks_thr': 0.9, 'vis_thr': 0.2, 'use_gt_bbox': False, 'det_bbox_thr': 0.0, 'bbox_file': '/mnt/lustre/share/chencheng1/dataset/person_detection_results/COCO_val2017_detections_AP_H_56_person.json'}}}
+[rank 1] sampler of task0 has been overided to {'batch_size': 40, 'shuffle_strategy': 1}
+sync_print: rank 1, override tensor.cuda() to preserve task_specific flag
+sync_print: rank 3, override tensor.cuda() to preserve task_specific flag
+sync_print: rank 2, override tensor.cuda() to preserve task_specific flag
+2022-09-25 16:23:17 c2cafa77 SUCCESS: (pavi2.training) SummaryWriter is initialized, remember to close the SummaryWriter at the end of your program.
+
+PAVI Info ###################################
+Training：coco_pose_lr5e4x08_wd01_backbonebclip_layerdecay_stepLR_classichead_dpr3e1_wowin_LN_udp_50ep__SmallSetting___LSA_10p_small_setting1
+Project：default
+Training_id：114443
+Training_url：http://autolink.parrots.sensetime.com/pages/content/project/3477/training/114443
+Warning: If `Training_url` is not accessible, please upgrade your pavi version.
+#############################################
+
+[2022-09-25 16:23:17,981][           solver.py][line:  84][    INFO] auto_denan disabled!
+sync_print: rank 0, override tensor.cuda() to preserve task_specific flag
+[2022-09-25 16:23:17,985][     solver_deter.py][line:  59][    INFO] deterministic mode, seed: 42, worker_rank: True,                                   cudnn_deterministic: False
+sync_print: rank 0, override tensor.half() to preserve task_specific flag
+sync_print: rank 1, override tensor.half() to preserve task_specific flag
+sync_print: rank 2, override tensor.half() to preserve task_specific flag
+sync_print: rank 3, override tensor.half() to preserve task_specific flag
+[rank 1] config[kwargs] {'ann_file': 'openmmlab:s3://openmmlab/datasets/detection/coco/annotations/person_keypoints_train2017.json', 'img_prefix': 'openmmlab:s3://openmmlab/datasets/detection/coco/train2017/', 'use_udp': True, 'data_cfg': {'image_size': [192, 256], 'heatmap_size': [48, 64], 'num_output_channels': 17, 'num_joints': 17, 'dataset_channel': [[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]], 'inference_channel': [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16], 'soft_nms': False, 'nms_thr': 1.0, 'oks_thr': 0.9, 'vis_thr': 0.2, 'use_gt_bbox': False, 'det_bbox_thr': 0.0, 'bbox_file': '/mnt/lustre/share/chencheng1/dataset/person_detection_results/COCO_val2017_detections_AP_H_56_person.json'}, 'ginfo': {'group': 1, 'task_size': 4, 'task_id': 0, 'task_rank': 1, 'task_root_rank': 0, 'root_group': 2, 'task_sizes': [4], 'task_root_ranks': [0], 'task_num': 1, 'backbone_share_group': 3, 'backbone_group_size': 1, 'backbone_task_size': 4, 'backbone_task_rank': 2, 'neck_share_group': 4, 'neck_group_size': 1, 'neck_task_size': 4, 'neck_task_rank': 2, 'decoder_share_group': 5, 'decoder_group_size': 1, 'decoder_task_size': 4, 'decoder_task_rank': 2, 'task_name': 'cocopose_256x192', 'task_names': ['cocopose_256x192'], 'task_weight': 1.0, 'task_type': 'normal', 'task_types': ['normal'], 'task_random_seed': 0}}
+[rank 3] config[kwargs] {'ann_file': 'openmmlab:s3://openmmlab/datasets/detection/coco/annotations/person_keypoints_train2017.json', 'img_prefix': 'openmmlab:s3://openmmlab/datasets/detection/coco/train2017/', 'use_udp': True, 'data_cfg': {'image_size': [192, 256], 'heatmap_size': [48, 64], 'num_output_channels': 17, 'num_joints': 17, 'dataset_channel': [[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]], 'inference_channel': [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16], 'soft_nms': False, 'nms_thr': 1.0, 'oks_thr': 0.9, 'vis_thr': 0.2, 'use_gt_bbox': False, 'det_bbox_thr': 0.0, 'bbox_file': '/mnt/lustre/share/chencheng1/dataset/person_detection_results/COCO_val2017_detections_AP_H_56_person.json'}, 'ginfo': {'group': 1, 'task_size': 4, 'task_id': 0, 'task_rank': 3, 'task_root_rank': 0, 'root_group': 2, 'task_sizes': [4], 'task_root_ranks': [0], 'task_num': 1, 'backbone_share_group': 3, 'backbone_group_size': 1, 'backbone_task_size': 4, 'backbone_task_rank': 0, 'neck_share_group': 4, 'neck_group_size': 1, 'neck_task_size': 4, 'neck_task_rank': 0, 'decoder_share_group': 5, 'decoder_group_size': 1, 'decoder_task_size': 4, 'decoder_task_rank': 0, 'task_name': 'cocopose_256x192', 'task_names': ['cocopose_256x192'], 'task_weight': 1.0, 'task_type': 'normal', 'task_types': ['normal'], 'task_random_seed': 0}}
+data_cfg0 {'image_size': [192, 256], 'heatmap_size': [48, 64], 'num_output_channels': 17, 'num_joints': 17, 'dataset_channel': [[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]], 'inference_channel': [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16], 'soft_nms': False, 'nms_thr': 1.0, 'oks_thr': 0.9, 'vis_thr': 0.2, 'use_gt_bbox': False, 'det_bbox_thr': 0.0, 'bbox_file': '/mnt/lustre/share/chencheng1/dataset/person_detection_results/COCO_val2017_detections_AP_H_56_person.json'}
+data_cfg0 {'image_size': [192, 256], 'heatmap_size': [48, 64], 'num_output_channels': 17, 'num_joints': 17, 'dataset_channel': [[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]], 'inference_channel': [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16], 'soft_nms': False, 'nms_thr': 1.0, 'oks_thr': 0.9, 'vis_thr': 0.2, 'use_gt_bbox': False, 'det_bbox_thr': 0.0, 'bbox_file': '/mnt/lustre/share/chencheng1/dataset/person_detection_results/COCO_val2017_detections_AP_H_56_person.json'}
+loading annotations into memory...
+loading annotations into memory...
+[rank 0] config[kwargs] {'ann_file': 'openmmlab:s3://openmmlab/datasets/detection/coco/annotations/person_keypoints_train2017.json', 'img_prefix': 'openmmlab:s3://openmmlab/datasets/detection/coco/train2017/', 'use_udp': True, 'data_cfg': {'image_size': [192, 256], 'heatmap_size': [48, 64], 'num_output_channels': 17, 'num_joints': 17, 'dataset_channel': [[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]], 'inference_channel': [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16], 'soft_nms': False, 'nms_thr': 1.0, 'oks_thr': 0.9, 'vis_thr': 0.2, 'use_gt_bbox': False, 'det_bbox_thr': 0.0, 'bbox_file': '/mnt/lustre/share/chencheng1/dataset/person_detection_results/COCO_val2017_detections_AP_H_56_person.json'}, 'ginfo': {'group': 1, 'task_size': 4, 'task_id': 0, 'task_rank': 0, 'task_root_rank': 0, 'root_group': 2, 'task_sizes': [4], 'task_root_ranks': [0], 'task_num': 1, 'backbone_share_group': 3, 'backbone_group_size': 1, 'backbone_task_size': 4, 'backbone_task_rank': 3, 'neck_share_group': 4, 'neck_group_size': 1, 'neck_task_size': 4, 'neck_task_rank': 3, 'decoder_share_group': 5, 'decoder_group_size': 1, 'decoder_task_size': 4, 'decoder_task_rank': 3, 'task_name': 'cocopose_256x192', 'task_names': ['cocopose_256x192'], 'task_weight': 1.0, 'task_type': 'normal', 'task_types': ['normal'], 'task_random_seed': 0}}
+data_cfg0 {'image_size': [192, 256], 'heatmap_size': [48, 64], 'num_output_channels': 17, 'num_joints': 17, 'dataset_channel': [[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]], 'inference_channel': [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16], 'soft_nms': False, 'nms_thr': 1.0, 'oks_thr': 0.9, 'vis_thr': 0.2, 'use_gt_bbox': False, 'det_bbox_thr': 0.0, 'bbox_file': '/mnt/lustre/share/chencheng1/dataset/person_detection_results/COCO_val2017_detections_AP_H_56_person.json'}
+loading annotations into memory...
+[rank 2] config[kwargs] {'ann_file': 'openmmlab:s3://openmmlab/datasets/detection/coco/annotations/person_keypoints_train2017.json', 'img_prefix': 'openmmlab:s3://openmmlab/datasets/detection/coco/train2017/', 'use_udp': True, 'data_cfg': {'image_size': [192, 256], 'heatmap_size': [48, 64], 'num_output_channels': 17, 'num_joints': 17, 'dataset_channel': [[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]], 'inference_channel': [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16], 'soft_nms': False, 'nms_thr': 1.0, 'oks_thr': 0.9, 'vis_thr': 0.2, 'use_gt_bbox': False, 'det_bbox_thr': 0.0, 'bbox_file': '/mnt/lustre/share/chencheng1/dataset/person_detection_results/COCO_val2017_detections_AP_H_56_person.json'}, 'ginfo': {'group': 1, 'task_size': 4, 'task_id': 0, 'task_rank': 2, 'task_root_rank': 0, 'root_group': 2, 'task_sizes': [4], 'task_root_ranks': [0], 'task_num': 1, 'backbone_share_group': 3, 'backbone_group_size': 1, 'backbone_task_size': 4, 'backbone_task_rank': 1, 'neck_share_group': 4, 'neck_group_size': 1, 'neck_task_size': 4, 'neck_task_rank': 1, 'decoder_share_group': 5, 'decoder_group_size': 1, 'decoder_task_size': 4, 'decoder_task_rank': 1, 'task_name': 'cocopose_256x192', 'task_names': ['cocopose_256x192'], 'task_weight': 1.0, 'task_type': 'normal', 'task_types': ['normal'], 'task_random_seed': 0}}
+data_cfg0 {'image_size': [192, 256], 'heatmap_size': [48, 64], 'num_output_channels': 17, 'num_joints': 17, 'dataset_channel': [[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]], 'inference_channel': [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16], 'soft_nms': False, 'nms_thr': 1.0, 'oks_thr': 0.9, 'vis_thr': 0.2, 'use_gt_bbox': False, 'det_bbox_thr': 0.0, 'bbox_file': '/mnt/lustre/share/chencheng1/dataset/person_detection_results/COCO_val2017_detections_AP_H_56_person.json'}
+loading annotations into memory...
+Done (t=11.53s)
+creating index...
+Done (t=11.67s)
+creating index...
+index created!
+Done (t=12.13s)
+creating index...
+index created!
+index created!
+Done (t=12.51s)
+creating index...
+index created!
+=> num_images: 118287
+=> load 149813 samples
+[rank 2] <core.data.datasets.images.pos_dataset_dev.COCOPosDatasetDev object at 0x7fbf5bad72e8>
+=> num_images: 118287
+=> load 149813 samples
+[rank 0] <core.data.datasets.images.pos_dataset_dev.COCOPosDatasetDev object at 0x7fcefed60390>
+=> num_images: 118287
+=> load 149813 samples
+[rank 1] <core.data.datasets.images.pos_dataset_dev.COCOPosDatasetDev object at 0x7fcfe77c2358>
+=> num_images: 118287
+=> load 149813 samples
+[rank 3] <core.data.datasets.images.pos_dataset_dev.COCOPosDatasetDev object at 0x7f80abaa2320>
+Missing keys: ['blocks.5.attn.rel_pos_w', 'blocks.3.attn.rel_pos_h', 'blocks.6.attn.rel_pos_w', 'blocks.0.attn.rel_pos_w', 'blocks.10.attn.rel_pos_w', 'blocks.7.attn.rel_pos_w', 'blocks.7.attn.rel_pos_h', 'blocks.4.attn.rel_pos_w', 'blocks.2.attn.rel_pos_h', 'blocks.0.attn.rel_pos_h', 'blocks.9.attn.rel_pos_w', 'blocks.3.attn.rel_pos_w', 'blocks.1.attn.rel_pos_w', 'blocks.5.attn.rel_pos_h', 'blocks.8.attn.rel_pos_h', 'blocks.6.attn.rel_pos_h', 'blocks.4.attn.rel_pos_h', 'blocks.8.attn.rel_pos_w', 'blocks.11.attn.rel_pos_h', 'blocks.2.attn.rel_pos_w', 'blocks.10.attn.rel_pos_h', 'blocks.9.attn.rel_pos_h', 'blocks.1.attn.rel_pos_h', 'blocks.11.attn.rel_pos_w']
+Missing keys: ['blocks.10.attn.rel_pos_w', 'blocks.11.attn.rel_pos_w', 'blocks.3.attn.rel_pos_h', 'blocks.0.attn.rel_pos_h', 'blocks.6.attn.rel_pos_w', 'blocks.1.attn.rel_pos_h', 'blocks.5.attn.rel_pos_h', 'blocks.9.attn.rel_pos_w', 'blocks.8.attn.rel_pos_w', 'blocks.2.attn.rel_pos_w', 'blocks.10.attn.rel_pos_h', 'blocks.7.attn.rel_pos_w', 'blocks.2.attn.rel_pos_h', 'blocks.5.attn.rel_pos_w', 'blocks.3.attn.rel_pos_w', 'blocks.8.attn.rel_pos_h', 'blocks.0.attn.rel_pos_w', 'blocks.11.attn.rel_pos_h', 'blocks.4.attn.rel_pos_h', 'blocks.6.attn.rel_pos_h', 'blocks.1.attn.rel_pos_w', 'blocks.7.attn.rel_pos_h', 'blocks.9.attn.rel_pos_h', 'blocks.4.attn.rel_pos_w']
+Missing keys: ['blocks.2.attn.rel_pos_h', 'blocks.7.attn.rel_pos_h', 'blocks.11.attn.rel_pos_h', 'blocks.8.attn.rel_pos_w', 'blocks.3.attn.rel_pos_h', 'blocks.11.attn.rel_pos_w', 'blocks.10.attn.rel_pos_h', 'blocks.6.attn.rel_pos_h', 'blocks.8.attn.rel_pos_h', 'blocks.7.attn.rel_pos_w', 'blocks.1.attn.rel_pos_h', 'blocks.3.attn.rel_pos_w', 'blocks.9.attn.rel_pos_h', 'blocks.5.attn.rel_pos_h', 'blocks.9.attn.rel_pos_w', 'blocks.10.attn.rel_pos_w', 'blocks.0.attn.rel_pos_w', 'blocks.2.attn.rel_pos_w', 'blocks.4.attn.rel_pos_w', 'blocks.1.attn.rel_pos_w', 'blocks.6.attn.rel_pos_w', 'blocks.0.attn.rel_pos_h', 'blocks.5.attn.rel_pos_w', 'blocks.4.attn.rel_pos_h']
+Missing keys: ['blocks.7.attn.rel_pos_w', 'blocks.5.attn.rel_pos_w', 'blocks.6.attn.rel_pos_w', 'blocks.9.attn.rel_pos_h', 'blocks.7.attn.rel_pos_h', 'blocks.9.attn.rel_pos_w', 'blocks.3.attn.rel_pos_w', 'blocks.2.attn.rel_pos_w', 'blocks.0.attn.rel_pos_h', 'blocks.0.attn.rel_pos_w', 'blocks.1.attn.rel_pos_h', 'blocks.1.attn.rel_pos_w', 'blocks.10.attn.rel_pos_w', 'blocks.11.attn.rel_pos_h', 'blocks.5.attn.rel_pos_h', 'blocks.6.attn.rel_pos_h', 'blocks.11.attn.rel_pos_w', 'blocks.4.attn.rel_pos_h', 'blocks.10.attn.rel_pos_h', 'blocks.3.attn.rel_pos_h', 'blocks.8.attn.rel_pos_h', 'blocks.2.attn.rel_pos_h', 'blocks.4.attn.rel_pos_w', 'blocks.8.attn.rel_pos_w']
+
+finish load
+finish load
+finish load
+sync_print: rank 3, Number of conv/bn params: 0.59M
+sync_print: rank 3, Number of linear params: 85.02M
+sync_print: rank 0, Number of conv/bn params: 0.59M
+sync_print: rank 0, Number of linear params: 85.02M
+sync_print: rank 2, Number of conv/bn params: 0.59M
+sync_print: rank 2, Number of linear params: 85.02M
+finish load
+sync_print: rank 1, Number of conv/bn params: 0.59M
+sync_print: rank 1, Number of linear params: 85.02M
+[rank 2] add param pos_embed as backbone_specific
+[rank 2] add param patch_embed.proj.weight as backbone_specific
+[rank 3] add param pos_embed as backbone_specific
+[rank 3] add param patch_embed.proj.weight as backbone_specific
+[rank 3] add param patch_embed.proj.bias as backbone_specific
+[rank 2] add param patch_embed.proj.bias as backbone_specific
+[rank 2] add param blocks.0.norm1.weight as backbone_specific
+[rank 2] add param blocks.0.norm1.bias as backbone_specific
+[rank 3] add param blocks.0.norm1.weight as backbone_specific
+[rank 3] add param blocks.0.norm1.bias as backbone_specific
+[rank 3] add param blocks.0.attn.rel_pos_h as backbone_specific
+[rank 3] add param blocks.0.attn.rel_pos_w as backbone_specific
+[rank 2] add param blocks.0.attn.rel_pos_h as backbone_specific
+[rank 2] add param blocks.0.attn.rel_pos_w as backbone_specific
+[rank 2] add param blocks.0.attn.qkv.weight as backbone_specific
+[rank 2] add param blocks.0.attn.qkv.bias as backbone_specific
+[rank 3] add param blocks.0.attn.qkv.weight as backbone_specific
+[rank 3] add param blocks.0.attn.qkv.bias as backbone_specific
+[rank 3] add param blocks.0.attn.proj.weight as backbone_specific
+[rank 2] add param blocks.0.attn.proj.weight as backbone_specific
+[rank 3] add param blocks.0.attn.proj.bias as backbone_specific
+[rank 3] add param blocks.0.norm2.weight as backbone_specific
+[rank 2] add param blocks.0.attn.proj.bias as backbone_specific
+[rank 2] add param blocks.0.norm2.weight as backbone_specific
+[rank 3] add param blocks.0.norm2.bias as backbone_specific
+[rank 2] add param blocks.0.norm2.bias as backbone_specific
+[rank 3] add param blocks.0.mlp.fc1.weight as backbone_specific
+[rank 3] add param blocks.0.mlp.fc1.bias as backbone_specific
+[rank 2] add param blocks.0.mlp.fc1.weight as backbone_specific
+[rank 2] add param blocks.0.mlp.fc1.bias as backbone_specific
+[rank 3] add param blocks.0.mlp.fc2.weight as backbone_specific
+[rank 2] add param blocks.0.mlp.fc2.weight as backbone_specific
+[rank 2] add param blocks.0.mlp.fc2.bias as backbone_specific
+[rank 3] add param blocks.0.mlp.fc2.bias as backbone_specific
+[rank 3] add param blocks.1.norm1.weight as backbone_specific
+[rank 2] add param blocks.1.norm1.weight as backbone_specific
+[rank 2] add param blocks.1.norm1.bias as backbone_specific
+[rank 3] add param blocks.1.norm1.bias as backbone_specific
+[rank 3] add param blocks.1.attn.rel_pos_h as backbone_specific
+[rank 3] add param blocks.1.attn.rel_pos_w as backbone_specific
+[rank 2] add param blocks.1.attn.rel_pos_h as backbone_specific
+[rank 2] add param blocks.1.attn.rel_pos_w as backbone_specific
+[rank 3] add param blocks.1.attn.qkv.weight as backbone_specific
+[rank 2] add param blocks.1.attn.qkv.weight as backbone_specific
+[rank 2] add param blocks.1.attn.qkv.bias as backbone_specific
+[rank 3] add param blocks.1.attn.qkv.bias as backbone_specific
+[rank 3] add param blocks.1.attn.proj.weight as backbone_specific
+[rank 2] add param blocks.1.attn.proj.weight as backbone_specific
+[rank 2] add param blocks.1.attn.proj.bias as backbone_specific
+[rank 2] add param blocks.1.norm2.weight as backbone_specific
+[rank 3] add param blocks.1.attn.proj.bias as backbone_specific
+[rank 3] add param blocks.1.norm2.weight as backbone_specific
+[rank 3] add param blocks.1.norm2.bias as backbone_specific
+[rank 2] add param blocks.1.norm2.bias as backbone_specific
+[rank 2] add param blocks.1.mlp.fc1.weight as backbone_specific
+[rank 3] add param blocks.1.mlp.fc1.weight as backbone_specific
+[rank 3] add param blocks.1.mlp.fc1.bias as backbone_specific
+[rank 2] add param blocks.1.mlp.fc1.bias as backbone_specific
+[rank 3] add param blocks.1.mlp.fc2.weight as backbone_specific
+[rank 3] add param blocks.1.mlp.fc2.bias as backbone_specific
+[rank 2] add param blocks.1.mlp.fc2.weight as backbone_specific
+[rank 2] add param blocks.1.mlp.fc2.bias as backbone_specific
+[rank 3] add param blocks.2.norm1.weight as backbone_specific
+[rank 3] add param blocks.2.norm1.bias as backbone_specific
+[rank 2] add param blocks.2.norm1.weight as backbone_specific
+[rank 2] add param blocks.2.norm1.bias as backbone_specific
+[rank 3] add param blocks.2.attn.rel_pos_h as backbone_specific
+[rank 3] add param blocks.2.attn.rel_pos_w as backbone_specific
+[rank 2] add param blocks.2.attn.rel_pos_h as backbone_specific
+[rank 2] add param blocks.2.attn.rel_pos_w as backbone_specific
+[rank 2] add param blocks.2.attn.qkv.weight as backbone_specific
+[rank 3] add param blocks.2.attn.qkv.weight as backbone_specific
+[rank 3] add param blocks.2.attn.qkv.bias as backbone_specific
+[rank 3] add param blocks.2.attn.proj.weight as backbone_specific
+[rank 2] add param blocks.2.attn.qkv.bias as backbone_specific
+[rank 2] add param blocks.2.attn.proj.weight as backbone_specific
+[rank 3] add param blocks.2.attn.proj.bias as backbone_specific
+[rank 2] add param blocks.2.attn.proj.bias as backbone_specific
+[rank 2] add param blocks.2.norm2.weight as backbone_specific
+[rank 3] add param blocks.2.norm2.weight as backbone_specific
+[rank 3] add param blocks.2.norm2.bias as backbone_specific
+[rank 2] add param blocks.2.norm2.bias as backbone_specific
+[rank 2] add param blocks.2.mlp.fc1.weight as backbone_specific
+[rank 3] add param blocks.2.mlp.fc1.weight as backbone_specific
+[rank 3] add param blocks.2.mlp.fc1.bias as backbone_specific
+[rank 3] add param blocks.2.mlp.fc2.weight as backbone_specific
+[rank 2] add param blocks.2.mlp.fc1.bias as backbone_specific
+[rank 2] add param blocks.2.mlp.fc2.weight as backbone_specific
+[rank 2] add param blocks.2.mlp.fc2.bias as backbone_specific
+[rank 3] add param blocks.2.mlp.fc2.bias as backbone_specific
+[rank 3] add param blocks.3.norm1.weight as backbone_specific
+[rank 2] add param blocks.3.norm1.weight as backbone_specific
+[rank 2] add param blocks.3.norm1.bias as backbone_specific
+[rank 3] add param blocks.3.norm1.bias as backbone_specific
+[rank 3] add param blocks.3.attn.rel_pos_h as backbone_specific
+[rank 3] add param blocks.3.attn.rel_pos_w as backbone_specific
+[rank 2] add param blocks.3.attn.rel_pos_h as backbone_specific
+[rank 2] add param blocks.3.attn.rel_pos_w as backbone_specific
+[rank 3] add param blocks.3.attn.qkv.weight as backbone_specific
+[rank 3] add param blocks.3.attn.qkv.bias as backbone_specific
+[rank 2] add param blocks.3.attn.qkv.weight as backbone_specific
+[rank 2] add param blocks.3.attn.qkv.bias as backbone_specific
+[rank 3] add param blocks.3.attn.proj.weight as backbone_specific
+[rank 3] add param blocks.3.attn.proj.bias as backbone_specific
+[rank 2] add param blocks.3.attn.proj.weight as backbone_specific
+[rank 2] add param blocks.3.attn.proj.bias as backbone_specific
+[rank 3] add param blocks.3.norm2.weight as backbone_specific
+[rank 3] add param blocks.3.norm2.bias as backbone_specific
+[rank 2] add param blocks.3.norm2.weight as backbone_specific
+[rank 2] add param blocks.3.norm2.bias as backbone_specific
+[rank 2] add param blocks.3.mlp.fc1.weight as backbone_specific
+[rank 3] add param blocks.3.mlp.fc1.weight as backbone_specific
+[rank 3] add param blocks.3.mlp.fc1.bias as backbone_specific
+[rank 3] add param blocks.3.mlp.fc2.weight as backbone_specific
+[rank 2] add param blocks.3.mlp.fc1.bias as backbone_specific
+[rank 2] add param blocks.3.mlp.fc2.weight as backbone_specific
+[rank 3] add param blocks.3.mlp.fc2.bias as backbone_specific
+[rank 3] add param blocks.4.norm1.weight as backbone_specific
+[rank 2] add param blocks.3.mlp.fc2.bias as backbone_specific
+[rank 3] add param blocks.4.norm1.bias as backbone_specific
+[rank 2] add param blocks.4.norm1.weight as backbone_specific
+[rank 2] add param blocks.4.norm1.bias as backbone_specific
+[rank 3] add param blocks.4.attn.rel_pos_h as backbone_specific
+[rank 3] add param blocks.4.attn.rel_pos_w as backbone_specific
+[rank 3] add param blocks.4.attn.qkv.weight as backbone_specific
+[rank 2] add param blocks.4.attn.rel_pos_h as backbone_specific
+[rank 2] add param blocks.4.attn.rel_pos_w as backbone_specific
+[rank 2] add param blocks.4.attn.qkv.weight as backbone_specific
+[rank 3] add param blocks.4.attn.qkv.bias as backbone_specific
+[rank 3] add param blocks.4.attn.proj.weight as backbone_specific
+[rank 2] add param blocks.4.attn.qkv.bias as backbone_specific
+[rank 3] add param blocks.4.attn.proj.bias as backbone_specific
+[rank 2] add param blocks.4.attn.proj.weight as backbone_specific
+[rank 2] add param blocks.4.attn.proj.bias as backbone_specific
+[rank 3] add param blocks.4.norm2.weight as backbone_specific
+[rank 3] add param blocks.4.norm2.bias as backbone_specific
+[rank 2] add param blocks.4.norm2.weight as backbone_specific
+[rank 2] add param blocks.4.norm2.bias as backbone_specific
+[rank 3] add param blocks.4.mlp.fc1.weight as backbone_specific
+[rank 3] add param blocks.4.mlp.fc1.bias as backbone_specific
+[rank 2] add param blocks.4.mlp.fc1.weight as backbone_specific
+[rank 2] add param blocks.4.mlp.fc1.bias as backbone_specific
+[rank 3] add param blocks.4.mlp.fc2.weight as backbone_specific
+[rank 3] add param blocks.4.mlp.fc2.bias as backbone_specific
+[rank 2] add param blocks.4.mlp.fc2.weight as backbone_specific
+[rank 2] add param blocks.4.mlp.fc2.bias as backbone_specific
+[rank 3] add param blocks.5.norm1.weight as backbone_specific
+[rank 3] add param blocks.5.norm1.bias as backbone_specific
+[rank 2] add param blocks.5.norm1.weight as backbone_specific
+[rank 2] add param blocks.5.norm1.bias as backbone_specific
+[rank 3] add param blocks.5.attn.rel_pos_h as backbone_specific
+[rank 3] add param blocks.5.attn.rel_pos_w as backbone_specific
+[rank 2] add param blocks.5.attn.rel_pos_h as backbone_specific
+[rank 2] add param blocks.5.attn.rel_pos_w as backbone_specific
+[rank 3] add param blocks.5.attn.qkv.weight as backbone_specific
+[rank 3] add param blocks.5.attn.qkv.bias as backbone_specific
+[rank 2] add param blocks.5.attn.qkv.weight as backbone_specific
+[rank 2] add param blocks.5.attn.qkv.bias as backbone_specific
+[rank 3] add param blocks.5.attn.proj.weight as backbone_specific
+[rank 3] add param blocks.5.attn.proj.bias as backbone_specific
+[rank 2] add param blocks.5.attn.proj.weight as backbone_specific
+[rank 2] add param blocks.5.attn.proj.bias as backbone_specific
+[rank 3] add param blocks.5.norm2.weight as backbone_specific
+[rank 3] add param blocks.5.norm2.bias as backbone_specific
+[rank 2] add param blocks.5.norm2.weight as backbone_specific
+[rank 2] add param blocks.5.norm2.bias as backbone_specific
+[rank 3] add param blocks.5.mlp.fc1.weight as backbone_specific
+[rank 2] add param blocks.5.mlp.fc1.weight as backbone_specific
+[rank 2] add param blocks.5.mlp.fc1.bias as backbone_specific
+[rank 3] add param blocks.5.mlp.fc1.bias as backbone_specific
+[rank 3] add param blocks.5.mlp.fc2.weight as backbone_specific
+[rank 3] add param blocks.5.mlp.fc2.bias as backbone_specific
+[rank 2] add param blocks.5.mlp.fc2.weight as backbone_specific
+[rank 2] add param blocks.5.mlp.fc2.bias as backbone_specific
+[rank 3] add param blocks.6.norm1.weight as backbone_specific
+[rank 3] add param blocks.6.norm1.bias as backbone_specific
+[rank 2] add param blocks.6.norm1.weight as backbone_specific
+[rank 3] add param blocks.6.attn.rel_pos_h as backbone_specific
+[rank 3] add param blocks.6.attn.rel_pos_w as backbone_specific
+[rank 2] add param blocks.6.norm1.bias as backbone_specific
+[rank 2] add param blocks.6.attn.rel_pos_h as backbone_specific
+[rank 3] add param blocks.6.attn.qkv.weight as backbone_specific
+[rank 3] add param blocks.6.attn.qkv.bias as backbone_specific
+[rank 2] add param blocks.6.attn.rel_pos_w as backbone_specific
+[rank 2] add param blocks.6.attn.qkv.weight as backbone_specific
+[rank 3] add param blocks.6.attn.proj.weight as backbone_specific
+[rank 3] add param blocks.6.attn.proj.bias as backbone_specific
+[rank 2] add param blocks.6.attn.qkv.bias as backbone_specific
+[rank 2] add param blocks.6.attn.proj.weight as backbone_specific
+[rank 2] add param blocks.6.attn.proj.bias as backbone_specific
+[rank 3] add param blocks.6.norm2.weight as backbone_specific
+[rank 3] add param blocks.6.norm2.bias as backbone_specific
+[rank 2] add param blocks.6.norm2.weight as backbone_specific
+[rank 3] add param blocks.6.mlp.fc1.weight as backbone_specific
+[rank 3] add param blocks.6.mlp.fc1.bias as backbone_specific
+[rank 2] add param blocks.6.norm2.bias as backbone_specific
+[rank 2] add param blocks.6.mlp.fc1.weight as backbone_specific
+[rank 2] add param blocks.6.mlp.fc1.bias as backbone_specific
+[rank 3] add param blocks.6.mlp.fc2.weight as backbone_specific
+[rank 3] add param blocks.6.mlp.fc2.bias as backbone_specific
+[rank 2] add param blocks.6.mlp.fc2.weight as backbone_specific
+[rank 3] add param blocks.7.norm1.weight as backbone_specific
+[rank 3] add param blocks.7.norm1.bias as backbone_specific
+[rank 2] add param blocks.6.mlp.fc2.bias as backbone_specific
+[rank 2] add param blocks.7.norm1.weight as backbone_specific
+[rank 2] add param blocks.7.norm1.bias as backbone_specific
+[rank 3] add param blocks.7.attn.rel_pos_h as backbone_specific
+[rank 3] add param blocks.7.attn.rel_pos_w as backbone_specific
+[rank 2] add param blocks.7.attn.rel_pos_h as backbone_specific
+[rank 3] add param blocks.7.attn.qkv.weight as backbone_specific
+[rank 3] add param blocks.7.attn.qkv.bias as backbone_specific
+[rank 2] add param blocks.7.attn.rel_pos_w as backbone_specific
+[rank 2] add param blocks.7.attn.qkv.weight as backbone_specific
+[rank 3] add param blocks.7.attn.proj.weight as backbone_specific
+[rank 3] add param blocks.7.attn.proj.bias as backbone_specific
+[rank 2] add param blocks.7.attn.qkv.bias as backbone_specific
+[rank 2] add param blocks.7.attn.proj.weight as backbone_specific
+[rank 2] add param blocks.7.attn.proj.bias as backbone_specific
+[rank 3] add param blocks.7.norm2.weight as backbone_specific
+[rank 3] add param blocks.7.norm2.bias as backbone_specific
+[rank 2] add param blocks.7.norm2.weight as backbone_specific
+[rank 3] add param blocks.7.mlp.fc1.weight as backbone_specific
+[rank 3] add param blocks.7.mlp.fc1.bias as backbone_specific
+[rank 2] add param blocks.7.norm2.bias as backbone_specific
+[rank 2] add param blocks.7.mlp.fc1.weight as backbone_specific
+[rank 3] add param blocks.7.mlp.fc2.weight as backbone_specific
+[rank 3] add param blocks.7.mlp.fc2.bias as backbone_specific
+[rank 2] add param blocks.7.mlp.fc1.bias as backbone_specific
+[rank 2] add param blocks.7.mlp.fc2.weight as backbone_specific
+[rank 2] add param blocks.7.mlp.fc2.bias as backbone_specific
+[rank 3] add param blocks.8.norm1.weight as backbone_specific
+[rank 3] add param blocks.8.norm1.bias as backbone_specific
+[rank 2] add param blocks.8.norm1.weight as backbone_specific
+[rank 3] add param blocks.8.attn.rel_pos_h as backbone_specific
+[rank 3] add param blocks.8.attn.rel_pos_w as backbone_specific
+[rank 2] add param blocks.8.norm1.bias as backbone_specific
+[rank 2] add param blocks.8.attn.rel_pos_h as backbone_specific
+[rank 3] add param blocks.8.attn.qkv.weight as backbone_specific
+[rank 3] add param blocks.8.attn.qkv.bias as backbone_specific
+[rank 2] add param blocks.8.attn.rel_pos_w as backbone_specific
+[rank 2] add param blocks.8.attn.qkv.weight as backbone_specific
+[rank 3] add param blocks.8.attn.proj.weight as backbone_specific
+[rank 3] add param blocks.8.attn.proj.bias as backbone_specific
+[rank 2] add param blocks.8.attn.qkv.bias as backbone_specific
+[rank 2] add param blocks.8.attn.proj.weight as backbone_specific
+[rank 3] add param blocks.8.norm2.weight as backbone_specific
+[rank 3] add param blocks.8.norm2.bias as backbone_specific
+[rank 2] add param blocks.8.attn.proj.bias as backbone_specific
+[rank 3] add param blocks.8.mlp.fc1.weight as backbone_specific
+[rank 3] add param blocks.8.mlp.fc1.bias as backbone_specific
+[rank 2] add param blocks.8.norm2.weight as backbone_specific
+[rank 2] add param blocks.8.norm2.bias as backbone_specific
+[rank 2] add param blocks.8.mlp.fc1.weight as backbone_specific
+[rank 3] add param blocks.8.mlp.fc2.weight as backbone_specific
+[rank 3] add param blocks.8.mlp.fc2.bias as backbone_specific
+[rank 2] add param blocks.8.mlp.fc1.bias as backbone_specific
+[rank 2] add param blocks.8.mlp.fc2.weight as backbone_specific
+[rank 2] add param blocks.8.mlp.fc2.bias as backbone_specific
+[rank 3] add param blocks.9.norm1.weight as backbone_specific
+[rank 3] add param blocks.9.norm1.bias as backbone_specific
+[rank 2] add param blocks.9.norm1.weight as backbone_specific
+[rank 3] add param blocks.9.attn.rel_pos_h as backbone_specific
+[rank 3] add param blocks.9.attn.rel_pos_w as backbone_specific
+[rank 2] add param blocks.9.norm1.bias as backbone_specific
+[rank 2] add param blocks.9.attn.rel_pos_h as backbone_specific
+[rank 3] add param blocks.9.attn.qkv.weight as backbone_specific
+[rank 3] add param blocks.9.attn.qkv.bias as backbone_specific
+[rank 2] add param blocks.9.attn.rel_pos_w as backbone_specific
+[rank 2] add param blocks.9.attn.qkv.weight as backbone_specific
+[rank 3] add param blocks.9.attn.proj.weight as backbone_specific
+[rank 3] add param blocks.9.attn.proj.bias as backbone_specific
+[rank 2] add param blocks.9.attn.qkv.bias as backbone_specific
+[rank 2] add param blocks.9.attn.proj.weight as backbone_specific
+[rank 3] add param blocks.9.norm2.weight as backbone_specific
+[rank 3] add param blocks.9.norm2.bias as backbone_specific
+[rank 2] add param blocks.9.attn.proj.bias as backbone_specific
+[rank 3] add param blocks.9.mlp.fc1.weight as backbone_specific
+[rank 2] add param blocks.9.norm2.weight as backbone_specific
+[rank 2] add param blocks.9.norm2.bias as backbone_specific
+[rank 3] add param blocks.9.mlp.fc1.bias as backbone_specific
+[rank 3] add param blocks.9.mlp.fc2.weight as backbone_specific
+[rank 2] add param blocks.9.mlp.fc1.weight as backbone_specific
+[rank 3] add param blocks.9.mlp.fc2.bias as backbone_specific
+[rank 2] add param blocks.9.mlp.fc1.bias as backbone_specific
+[rank 2] add param blocks.9.mlp.fc2.weight as backbone_specific
+[rank 3] add param blocks.10.norm1.weight as backbone_specific
+[rank 3] add param blocks.10.norm1.bias as backbone_specific
+[rank 2] add param blocks.9.mlp.fc2.bias as backbone_specific
+[rank 2] add param blocks.10.norm1.weight as backbone_specific
+[rank 3] add param blocks.10.attn.rel_pos_h as backbone_specific
+[rank 3] add param blocks.10.attn.rel_pos_w as backbone_specific
+[rank 2] add param blocks.10.norm1.bias as backbone_specific
+[rank 2] add param blocks.10.attn.rel_pos_h as backbone_specific
+[rank 3] add param blocks.10.attn.qkv.weight as backbone_specific
+[rank 3] add param blocks.10.attn.qkv.bias as backbone_specific
+[rank 2] add param blocks.10.attn.rel_pos_w as backbone_specific
+[rank 2] add param blocks.10.attn.qkv.weight as backbone_specific
+[rank 3] add param blocks.10.attn.proj.weight as backbone_specific
+[rank 3] add param blocks.10.attn.proj.bias as backbone_specific
+[rank 2] add param blocks.10.attn.qkv.bias as backbone_specific
+[rank 2] add param blocks.10.attn.proj.weight as backbone_specific
+[rank 3] add param blocks.10.norm2.weight as backbone_specific
+[rank 3] add param blocks.10.norm2.bias as backbone_specific
+[rank 2] add param blocks.10.attn.proj.bias as backbone_specific
+[rank 3] add param blocks.10.mlp.fc1.weight as backbone_specific
+[rank 3] add param blocks.10.mlp.fc1.bias as backbone_specific
+[rank 2] add param blocks.10.norm2.weight as backbone_specific
+[rank 2] add param blocks.10.norm2.bias as backbone_specific
+[rank 2] add param blocks.10.mlp.fc1.weight as backbone_specific
+[rank 3] add param blocks.10.mlp.fc2.weight as backbone_specific
+[rank 3] add param blocks.10.mlp.fc2.bias as backbone_specific
+[rank 2] add param blocks.10.mlp.fc1.bias as backbone_specific
+[rank 3] add param blocks.11.norm1.weight as backbone_specific
+[rank 3] add param blocks.11.norm1.bias as backbone_specific
+[rank 2] add param blocks.10.mlp.fc2.weight as backbone_specific
+[rank 2] add param blocks.10.mlp.fc2.bias as backbone_specific
+[rank 3] add param blocks.11.attn.rel_pos_h as backbone_specific
+[rank 3] add param blocks.11.attn.rel_pos_w as backbone_specific
+[rank 2] add param blocks.11.norm1.weight as backbone_specific
+[rank 2] add param blocks.11.norm1.bias as backbone_specific
+[rank 3] add param blocks.11.attn.qkv.weight as backbone_specific
+[rank 3] add param blocks.11.attn.qkv.bias as backbone_specific
+[rank 2] add param blocks.11.attn.rel_pos_h as backbone_specific
+[rank 2] add param blocks.11.attn.rel_pos_w as backbone_specific
+[rank 3] add param blocks.11.attn.proj.weight as backbone_specific
+[rank 3] add param blocks.11.attn.proj.bias as backbone_specific
+[rank 2] add param blocks.11.attn.qkv.weight as backbone_specific
+[rank 2] add param blocks.11.attn.qkv.bias as backbone_specific
+[rank 3] add param blocks.11.norm2.weight as backbone_specific
+[rank 3] add param blocks.11.norm2.bias as backbone_specific
+[rank 2] add param blocks.11.attn.proj.weight as backbone_specific
+[rank 2] add param blocks.11.attn.proj.bias as backbone_specific
+[rank 3] add param blocks.11.mlp.fc1.weight as backbone_specific
+[rank 3] add param blocks.11.mlp.fc1.bias as backbone_specific
+[rank 2] add param blocks.11.norm2.weight as backbone_specific
+[rank 2] add param blocks.11.norm2.bias as backbone_specific
+[rank 3] add param blocks.11.mlp.fc2.weight as backbone_specific
+[rank 3] add param blocks.11.mlp.fc2.bias as backbone_specific
+[rank 2] add param blocks.11.mlp.fc1.weight as backbone_specific
+[rank 2] add param blocks.11.mlp.fc1.bias as backbone_specific
+[rank 3] add param norm.weight as backbone_specific
+[rank 3] add param norm.bias as backbone_specific
+[rank 2] add param blocks.11.mlp.fc2.weight as backbone_specific
+[rank 2] add param blocks.11.mlp.fc2.bias as backbone_specific
+[rank 2] add param norm.weight as backbone_specific
+[rank 2] add param norm.bias as backbone_specific
+[rank 3] add param deconv_layers.0.weight as decoder_specific
+[rank 3] add param deconv_layers.1.weight as decoder_specific
+[rank 3] add param deconv_layers.1.bias as decoder_specific
+[rank 3] add param deconv_layers.3.weight as decoder_specific
+[rank 3] add param deconv_layers.4.weight as decoder_specific
+[rank 3] add param deconv_layers.4.bias as decoder_specific
+[rank 3] add param final_layer.weight as decoder_specific
+[rank 3] add param final_layer.bias as decoder_specific
+[rank 2] add param deconv_layers.0.weight as decoder_specific
+[rank 2] add param deconv_layers.1.weight as decoder_specific
+[rank 2] add param deconv_layers.1.bias as decoder_specific
+[rank 2] add param deconv_layers.3.weight as decoder_specific
+[rank 2] add param deconv_layers.4.weight as decoder_specific
+[rank 2] add param deconv_layers.4.bias as decoder_specific
+[rank 2] add param final_layer.weight as decoder_specific
+[rank 2] add param final_layer.bias as decoder_specific
+[rank 1] add param pos_embed as backbone_specific
+[rank 1] add param patch_embed.proj.weight as backbone_specific
+[rank 1] add param patch_embed.proj.bias as backbone_specific
+[rank 1] add param blocks.0.norm1.weight as backbone_specific
+[rank 1] add param blocks.0.norm1.bias as backbone_specific
+[rank 1] add param blocks.0.attn.rel_pos_h as backbone_specific
+[rank 1] add param blocks.0.attn.rel_pos_w as backbone_specific
+[rank 1] add param blocks.0.attn.qkv.weight as backbone_specific
+[rank 1] add param blocks.0.attn.qkv.bias as backbone_specific
+[rank 1] add param blocks.0.attn.proj.weight as backbone_specific
+[rank 1] add param blocks.0.attn.proj.bias as backbone_specific
+[rank 1] add param blocks.0.norm2.weight as backbone_specific
+[rank 1] add param blocks.0.norm2.bias as backbone_specific
+[rank 1] add param blocks.0.mlp.fc1.weight as backbone_specific
+[rank 1] add param blocks.0.mlp.fc1.bias as backbone_specific
+[rank 1] add param blocks.0.mlp.fc2.weight as backbone_specific
+[rank 1] add param blocks.0.mlp.fc2.bias as backbone_specific
+[rank 1] add param blocks.1.norm1.weight as backbone_specific
+[rank 1] add param blocks.1.norm1.bias as backbone_specific
+[rank 1] add param blocks.1.attn.rel_pos_h as backbone_specific
+[rank 1] add param blocks.1.attn.rel_pos_w as backbone_specific
+[rank 1] add param blocks.1.attn.qkv.weight as backbone_specific
+[rank 1] add param blocks.1.attn.qkv.bias as backbone_specific
+[rank 1] add param blocks.1.attn.proj.weight as backbone_specific
+[rank 1] add param blocks.1.attn.proj.bias as backbone_specific
+[rank 1] add param blocks.1.norm2.weight as backbone_specific
+[rank 1] add param blocks.1.norm2.bias as backbone_specific
+[rank 1] add param blocks.1.mlp.fc1.weight as backbone_specific
+[rank 1] add param blocks.1.mlp.fc1.bias as backbone_specific
+[rank 1] add param blocks.1.mlp.fc2.weight as backbone_specific
+[rank 1] add param blocks.1.mlp.fc2.bias as backbone_specific
+[rank 1] add param blocks.2.norm1.weight as backbone_specific
+[rank 1] add param blocks.2.norm1.bias as backbone_specific
+[rank 1] add param blocks.2.attn.rel_pos_h as backbone_specific
+[rank 1] add param blocks.2.attn.rel_pos_w as backbone_specific
+[rank 1] add param blocks.2.attn.qkv.weight as backbone_specific
+[rank 1] add param blocks.2.attn.qkv.bias as backbone_specific
+[rank 1] add param blocks.2.attn.proj.weight as backbone_specific
+[rank 1] add param blocks.2.attn.proj.bias as backbone_specific
+[rank 1] add param blocks.2.norm2.weight as backbone_specific
+[rank 1] add param blocks.2.norm2.bias as backbone_specific
+[rank 1] add param blocks.2.mlp.fc1.weight as backbone_specific
+[rank 1] add param blocks.2.mlp.fc1.bias as backbone_specific
+[rank 1] add param blocks.2.mlp.fc2.weight as backbone_specific
+[rank 1] add param blocks.2.mlp.fc2.bias as backbone_specific
+[rank 1] add param blocks.3.norm1.weight as backbone_specific
+[rank 1] add param blocks.3.norm1.bias as backbone_specific
+[rank 1] add param blocks.3.attn.rel_pos_h as backbone_specific
+[rank 1] add param blocks.3.attn.rel_pos_w as backbone_specific
+[rank 1] add param blocks.3.attn.qkv.weight as backbone_specific
+[rank 1] add param blocks.3.attn.qkv.bias as backbone_specific
+[rank 1] add param blocks.3.attn.proj.weight as backbone_specific
+[rank 1] add param blocks.3.attn.proj.bias as backbone_specific
+[rank 1] add param blocks.3.norm2.weight as backbone_specific
+[rank 1] add param blocks.3.norm2.bias as backbone_specific
+[rank 1] add param blocks.3.mlp.fc1.weight as backbone_specific
+[rank 1] add param blocks.3.mlp.fc1.bias as backbone_specific
+[rank 1] add param blocks.3.mlp.fc2.weight as backbone_specific
+[rank 1] add param blocks.3.mlp.fc2.bias as backbone_specific
+[rank 1] add param blocks.4.norm1.weight as backbone_specific
+[rank 1] add param blocks.4.norm1.bias as backbone_specific
+[rank 1] add param blocks.4.attn.rel_pos_h as backbone_specific
+[rank 1] add param blocks.4.attn.rel_pos_w as backbone_specific
+[rank 1] add param blocks.4.attn.qkv.weight as backbone_specific
+[rank 1] add param blocks.4.attn.qkv.bias as backbone_specific
+[rank 1] add param blocks.4.attn.proj.weight as backbone_specific
+[rank 1] add param blocks.4.attn.proj.bias as backbone_specific
+[rank 1] add param blocks.4.norm2.weight as backbone_specific
+[rank 1] add param blocks.4.norm2.bias as backbone_specific
+[rank 1] add param blocks.4.mlp.fc1.weight as backbone_specific
+[rank 1] add param blocks.4.mlp.fc1.bias as backbone_specific
+[rank 1] add param blocks.4.mlp.fc2.weight as backbone_specific
+[rank 1] add param blocks.4.mlp.fc2.bias as backbone_specific
+[rank 1] add param blocks.5.norm1.weight as backbone_specific
+[rank 1] add param blocks.5.norm1.bias as backbone_specific
+[rank 1] add param blocks.5.attn.rel_pos_h as backbone_specific
+[rank 1] add param blocks.5.attn.rel_pos_w as backbone_specific
+[rank 1] add param blocks.5.attn.qkv.weight as backbone_specific
+[rank 1] add param blocks.5.attn.qkv.bias as backbone_specific
+[rank 1] add param blocks.5.attn.proj.weight as backbone_specific
+[rank 1] add param blocks.5.attn.proj.bias as backbone_specific
+[rank 1] add param blocks.5.norm2.weight as backbone_specific
+[rank 1] add param blocks.5.norm2.bias as backbone_specific
+[rank 1] add param blocks.5.mlp.fc1.weight as backbone_specific
+[rank 1] add param blocks.5.mlp.fc1.bias as backbone_specific
+[rank 1] add param blocks.5.mlp.fc2.weight as backbone_specific
+[rank 1] add param blocks.5.mlp.fc2.bias as backbone_specific
+[rank 1] add param blocks.6.norm1.weight as backbone_specific
+[rank 1] add param blocks.6.norm1.bias as backbone_specific
+[rank 1] add param blocks.6.attn.rel_pos_h as backbone_specific
+[rank 1] add param blocks.6.attn.rel_pos_w as backbone_specific
+[rank 1] add param blocks.6.attn.qkv.weight as backbone_specific
+[rank 1] add param blocks.6.attn.qkv.bias as backbone_specific
+[rank 1] add param blocks.6.attn.proj.weight as backbone_specific
+[rank 1] add param blocks.6.attn.proj.bias as backbone_specific
+[rank 1] add param blocks.6.norm2.weight as backbone_specific
+[rank 1] add param blocks.6.norm2.bias as backbone_specific
+[rank 1] add param blocks.6.mlp.fc1.weight as backbone_specific
+[rank 1] add param blocks.6.mlp.fc1.bias as backbone_specific
+[rank 1] add param blocks.6.mlp.fc2.weight as backbone_specific
+[rank 1] add param blocks.6.mlp.fc2.bias as backbone_specific
+[rank 1] add param blocks.7.norm1.weight as backbone_specific
+[rank 1] add param blocks.7.norm1.bias as backbone_specific
+[rank 1] add param blocks.7.attn.rel_pos_h as backbone_specific
+[rank 1] add param blocks.7.attn.rel_pos_w as backbone_specific
+[rank 1] add param blocks.7.attn.qkv.weight as backbone_specific
+[rank 1] add param blocks.7.attn.qkv.bias as backbone_specific
+[rank 1] add param blocks.7.attn.proj.weight as backbone_specific
+[rank 1] add param blocks.7.attn.proj.bias as backbone_specific
+[rank 1] add param blocks.7.norm2.weight as backbone_specific
+[rank 1] add param blocks.7.norm2.bias as backbone_specific
+[rank 1] add param blocks.7.mlp.fc1.weight as backbone_specific
+[rank 1] add param blocks.7.mlp.fc1.bias as backbone_specific
+[rank 1] add param blocks.7.mlp.fc2.weight as backbone_specific
+[rank 1] add param blocks.7.mlp.fc2.bias as backbone_specific
+[rank 1] add param blocks.8.norm1.weight as backbone_specific
+[rank 1] add param blocks.8.norm1.bias as backbone_specific
+[rank 1] add param blocks.8.attn.rel_pos_h as backbone_specific
+[rank 1] add param blocks.8.attn.rel_pos_w as backbone_specific
+[rank 1] add param blocks.8.attn.qkv.weight as backbone_specific
+[rank 1] add param blocks.8.attn.qkv.bias as backbone_specific
+[rank 1] add param blocks.8.attn.proj.weight as backbone_specific
+[rank 1] add param blocks.8.attn.proj.bias as backbone_specific
+[rank 1] add param blocks.8.norm2.weight as backbone_specific
+[rank 1] add param blocks.8.norm2.bias as backbone_specific
+[rank 1] add param blocks.8.mlp.fc1.weight as backbone_specific
+[rank 1] add param blocks.8.mlp.fc1.bias as backbone_specific
+[rank 1] add param blocks.8.mlp.fc2.weight as backbone_specific
+[rank 1] add param blocks.8.mlp.fc2.bias as backbone_specific
+[rank 1] add param blocks.9.norm1.weight as backbone_specific
+[rank 1] add param blocks.9.norm1.bias as backbone_specific
+[rank 1] add param blocks.9.attn.rel_pos_h as backbone_specific
+[rank 1] add param blocks.9.attn.rel_pos_w as backbone_specific
+[rank 1] add param blocks.9.attn.qkv.weight as backbone_specific
+[rank 1] add param blocks.9.attn.qkv.bias as backbone_specific
+[rank 1] add param blocks.9.attn.proj.weight as backbone_specific
+[rank 1] add param blocks.9.attn.proj.bias as backbone_specific
+[rank 1] add param blocks.9.norm2.weight as backbone_specific
+[rank 1] add param blocks.9.norm2.bias as backbone_specific
+[rank 1] add param blocks.9.mlp.fc1.weight as backbone_specific
+[rank 1] add param blocks.9.mlp.fc1.bias as backbone_specific
+[rank 1] add param blocks.9.mlp.fc2.weight as backbone_specific
+[rank 1] add param blocks.9.mlp.fc2.bias as backbone_specific
+[rank 1] add param blocks.10.norm1.weight as backbone_specific
+[rank 1] add param blocks.10.norm1.bias as backbone_specific
+[rank 1] add param blocks.10.attn.rel_pos_h as backbone_specific
+[rank 1] add param blocks.10.attn.rel_pos_w as backbone_specific
+[rank 1] add param blocks.10.attn.qkv.weight as backbone_specific
+[rank 1] add param blocks.10.attn.qkv.bias as backbone_specific
+[rank 1] add param blocks.10.attn.proj.weight as backbone_specific
+[rank 1] add param blocks.10.attn.proj.bias as backbone_specific
+[rank 1] add param blocks.10.norm2.weight as backbone_specific
+[rank 1] add param blocks.10.norm2.bias as backbone_specific
+[rank 1] add param blocks.10.mlp.fc1.weight as backbone_specific
+[rank 1] add param blocks.10.mlp.fc1.bias as backbone_specific
+[rank 1] add param blocks.10.mlp.fc2.weight as backbone_specific
+[rank 1] add param blocks.10.mlp.fc2.bias as backbone_specific
+[rank 1] add param blocks.11.norm1.weight as backbone_specific
+[rank 1] add param blocks.11.norm1.bias as backbone_specific
+[rank 1] add param blocks.11.attn.rel_pos_h as backbone_specific
+[rank 1] add param blocks.11.attn.rel_pos_w as backbone_specific
+[rank 1] add param blocks.11.attn.qkv.weight as backbone_specific
+[rank 1] add param blocks.11.attn.qkv.bias as backbone_specific
+[rank 1] add param blocks.11.attn.proj.weight as backbone_specific
+[rank 1] add param blocks.11.attn.proj.bias as backbone_specific
+[rank 1] add param blocks.11.norm2.weight as backbone_specific
+[rank 1] add param blocks.11.norm2.bias as backbone_specific
+[rank 1] add param blocks.11.mlp.fc1.weight as backbone_specific
+[rank 1] add param blocks.11.mlp.fc1.bias as backbone_specific
+[rank 1] add param blocks.11.mlp.fc2.weight as backbone_specific
+[rank 1] add param blocks.11.mlp.fc2.bias as backbone_specific
+[rank 1] add param norm.weight as backbone_specific
+[rank 1] add param norm.bias as backbone_specific
+[rank 1] add param deconv_layers.0.weight as decoder_specific
+[rank 1] add param deconv_layers.1.weight as decoder_specific
+[rank 1] add param deconv_layers.1.bias as decoder_specific
+[rank 1] add param deconv_layers.3.weight as decoder_specific
+[rank 1] add param deconv_layers.4.weight as decoder_specific
+[rank 1] add param deconv_layers.4.bias as decoder_specific
+[rank 1] add param final_layer.weight as decoder_specific
+[rank 1] add param final_layer.bias as decoder_specific
+[rank 0] add param pos_embed as backbone_specific
+[rank 0] add param patch_embed.proj.weight as backbone_specific
+[rank 0] add param patch_embed.proj.bias as backbone_specific
+[rank 0] add param blocks.0.norm1.weight as backbone_specific
+[rank 0] add param blocks.0.norm1.bias as backbone_specific
+[rank 0] add param blocks.0.attn.rel_pos_h as backbone_specific
+[rank 0] add param blocks.0.attn.rel_pos_w as backbone_specific
+[rank 0] add param blocks.0.attn.qkv.weight as backbone_specific
+[rank 0] add param blocks.0.attn.qkv.bias as backbone_specific
+[rank 0] add param blocks.0.attn.proj.weight as backbone_specific
+[rank 0] add param blocks.0.attn.proj.bias as backbone_specific
+[rank 0] add param blocks.0.norm2.weight as backbone_specific
+[rank 0] add param blocks.0.norm2.bias as backbone_specific
+[rank 0] add param blocks.0.mlp.fc1.weight as backbone_specific
+[rank 0] add param blocks.0.mlp.fc1.bias as backbone_specific
+[rank 0] add param blocks.0.mlp.fc2.weight as backbone_specific
+[rank 0] add param blocks.0.mlp.fc2.bias as backbone_specific
+[rank 0] add param blocks.1.norm1.weight as backbone_specific
+[rank 0] add param blocks.1.norm1.bias as backbone_specific
+[rank 0] add param blocks.1.attn.rel_pos_h as backbone_specific
+[rank 0] add param blocks.1.attn.rel_pos_w as backbone_specific
+[rank 0] add param blocks.1.attn.qkv.weight as backbone_specific
+[rank 0] add param blocks.1.attn.qkv.bias as backbone_specific
+[rank 0] add param blocks.1.attn.proj.weight as backbone_specific
+[rank 0] add param blocks.1.attn.proj.bias as backbone_specific
+[rank 0] add param blocks.1.norm2.weight as backbone_specific
+[rank 0] add param blocks.1.norm2.bias as backbone_specific
+[rank 0] add param blocks.1.mlp.fc1.weight as backbone_specific
+[rank 0] add param blocks.1.mlp.fc1.bias as backbone_specific
+[rank 0] add param blocks.1.mlp.fc2.weight as backbone_specific
+[rank 0] add param blocks.1.mlp.fc2.bias as backbone_specific
+[rank 0] add param blocks.2.norm1.weight as backbone_specific
+[rank 0] add param blocks.2.norm1.bias as backbone_specific
+[rank 0] add param blocks.2.attn.rel_pos_h as backbone_specific
+[rank 0] add param blocks.2.attn.rel_pos_w as backbone_specific
+[rank 0] add param blocks.2.attn.qkv.weight as backbone_specific
+[rank 0] add param blocks.2.attn.qkv.bias as backbone_specific
+[rank 0] add param blocks.2.attn.proj.weight as backbone_specific
+[rank 0] add param blocks.2.attn.proj.bias as backbone_specific
+[rank 0] add param blocks.2.norm2.weight as backbone_specific
+[rank 0] add param blocks.2.norm2.bias as backbone_specific
+[rank 0] add param blocks.2.mlp.fc1.weight as backbone_specific
+[rank 0] add param blocks.2.mlp.fc1.bias as backbone_specific
+[rank 0] add param blocks.2.mlp.fc2.weight as backbone_specific
+[rank 0] add param blocks.2.mlp.fc2.bias as backbone_specific
+[rank 0] add param blocks.3.norm1.weight as backbone_specific
+[rank 0] add param blocks.3.norm1.bias as backbone_specific
+[rank 0] add param blocks.3.attn.rel_pos_h as backbone_specific
+[rank 0] add param blocks.3.attn.rel_pos_w as backbone_specific
+[rank 0] add param blocks.3.attn.qkv.weight as backbone_specific
+[rank 0] add param blocks.3.attn.qkv.bias as backbone_specific
+[rank 0] add param blocks.3.attn.proj.weight as backbone_specific
+[rank 0] add param blocks.3.attn.proj.bias as backbone_specific
+[rank 0] add param blocks.3.norm2.weight as backbone_specific
+[rank 0] add param blocks.3.norm2.bias as backbone_specific
+[rank 0] add param blocks.3.mlp.fc1.weight as backbone_specific
+[rank 0] add param blocks.3.mlp.fc1.bias as backbone_specific
+[rank 0] add param blocks.3.mlp.fc2.weight as backbone_specific
+[rank 0] add param blocks.3.mlp.fc2.bias as backbone_specific
+[rank 0] add param blocks.4.norm1.weight as backbone_specific
+[rank 0] add param blocks.4.norm1.bias as backbone_specific
+[rank 0] add param blocks.4.attn.rel_pos_h as backbone_specific
+[rank 0] add param blocks.4.attn.rel_pos_w as backbone_specific
+[rank 0] add param blocks.4.attn.qkv.weight as backbone_specific
+[rank 0] add param blocks.4.attn.qkv.bias as backbone_specific
+[rank 0] add param blocks.4.attn.proj.weight as backbone_specific
+[rank 0] add param blocks.4.attn.proj.bias as backbone_specific
+[rank 0] add param blocks.4.norm2.weight as backbone_specific
+[rank 0] add param blocks.4.norm2.bias as backbone_specific
+[rank 0] add param blocks.4.mlp.fc1.weight as backbone_specific
+[rank 0] add param blocks.4.mlp.fc1.bias as backbone_specific
+[rank 0] add param blocks.4.mlp.fc2.weight as backbone_specific
+[rank 0] add param blocks.4.mlp.fc2.bias as backbone_specific
+[rank 0] add param blocks.5.norm1.weight as backbone_specific
+[rank 0] add param blocks.5.norm1.bias as backbone_specific
+[rank 0] add param blocks.5.attn.rel_pos_h as backbone_specific
+[rank 0] add param blocks.5.attn.rel_pos_w as backbone_specific
+[rank 0] add param blocks.5.attn.qkv.weight as backbone_specific
+[rank 0] add param blocks.5.attn.qkv.bias as backbone_specific
+[rank 0] add param blocks.5.attn.proj.weight as backbone_specific
+[rank 0] add param blocks.5.attn.proj.bias as backbone_specific
+[rank 0] add param blocks.5.norm2.weight as backbone_specific
+[rank 0] add param blocks.5.norm2.bias as backbone_specific
+[rank 0] add param blocks.5.mlp.fc1.weight as backbone_specific
+[rank 0] add param blocks.5.mlp.fc1.bias as backbone_specific
+[rank 0] add param blocks.5.mlp.fc2.weight as backbone_specific
+[rank 0] add param blocks.5.mlp.fc2.bias as backbone_specific
+[rank 0] add param blocks.6.norm1.weight as backbone_specific
+[rank 0] add param blocks.6.norm1.bias as backbone_specific
+[rank 0] add param blocks.6.attn.rel_pos_h as backbone_specific
+[rank 0] add param blocks.6.attn.rel_pos_w as backbone_specific
+[rank 0] add param blocks.6.attn.qkv.weight as backbone_specific
+[rank 0] add param blocks.6.attn.qkv.bias as backbone_specific
+[rank 0] add param blocks.6.attn.proj.weight as backbone_specific
+[rank 0] add param blocks.6.attn.proj.bias as backbone_specific
+[rank 0] add param blocks.6.norm2.weight as backbone_specific
+[rank 0] add param blocks.6.norm2.bias as backbone_specific
+[rank 0] add param blocks.6.mlp.fc1.weight as backbone_specific
+[rank 0] add param blocks.6.mlp.fc1.bias as backbone_specific
+[rank 0] add param blocks.6.mlp.fc2.weight as backbone_specific
+[rank 0] add param blocks.6.mlp.fc2.bias as backbone_specific
+[rank 0] add param blocks.7.norm1.weight as backbone_specific
+[rank 0] add param blocks.7.norm1.bias as backbone_specific
+[rank 0] add param blocks.7.attn.rel_pos_h as backbone_specific
+[rank 0] add param blocks.7.attn.rel_pos_w as backbone_specific
+[rank 0] add param blocks.7.attn.qkv.weight as backbone_specific
+[rank 0] add param blocks.7.attn.qkv.bias as backbone_specific
+[rank 0] add param blocks.7.attn.proj.weight as backbone_specific
+[rank 0] add param blocks.7.attn.proj.bias as backbone_specific
+[rank 0] add param blocks.7.norm2.weight as backbone_specific
+[rank 0] add param blocks.7.norm2.bias as backbone_specific
+[rank 0] add param blocks.7.mlp.fc1.weight as backbone_specific
+[rank 0] add param blocks.7.mlp.fc1.bias as backbone_specific
+[rank 0] add param blocks.7.mlp.fc2.weight as backbone_specific
+[rank 0] add param blocks.7.mlp.fc2.bias as backbone_specific
+[rank 0] add param blocks.8.norm1.weight as backbone_specific
+[rank 0] add param blocks.8.norm1.bias as backbone_specific
+[rank 0] add param blocks.8.attn.rel_pos_h as backbone_specific
+[rank 0] add param blocks.8.attn.rel_pos_w as backbone_specific
+[rank 0] add param blocks.8.attn.qkv.weight as backbone_specific
+[rank 0] add param blocks.8.attn.qkv.bias as backbone_specific
+[rank 0] add param blocks.8.attn.proj.weight as backbone_specific
+[rank 0] add param blocks.8.attn.proj.bias as backbone_specific
+[rank 0] add param blocks.8.norm2.weight as backbone_specific
+[rank 0] add param blocks.8.norm2.bias as backbone_specific
+[rank 0] add param blocks.8.mlp.fc1.weight as backbone_specific
+[rank 0] add param blocks.8.mlp.fc1.bias as backbone_specific
+[rank 0] add param blocks.8.mlp.fc2.weight as backbone_specific
+[rank 0] add param blocks.8.mlp.fc2.bias as backbone_specific
+[rank 0] add param blocks.9.norm1.weight as backbone_specific
+[rank 0] add param blocks.9.norm1.bias as backbone_specific
+[rank 0] add param blocks.9.attn.rel_pos_h as backbone_specific
+[rank 0] add param blocks.9.attn.rel_pos_w as backbone_specific
+[rank 0] add param blocks.9.attn.qkv.weight as backbone_specific
+[rank 0] add param blocks.9.attn.qkv.bias as backbone_specific
+[rank 0] add param blocks.9.attn.proj.weight as backbone_specific
+[rank 0] add param blocks.9.attn.proj.bias as backbone_specific
+[rank 0] add param blocks.9.norm2.weight as backbone_specific
+[rank 0] add param blocks.9.norm2.bias as backbone_specific
+[rank 0] add param blocks.9.mlp.fc1.weight as backbone_specific
+[rank 0] add param blocks.9.mlp.fc1.bias as backbone_specific
+[rank 0] add param blocks.9.mlp.fc2.weight as backbone_specific
+[rank 0] add param blocks.9.mlp.fc2.bias as backbone_specific
+[rank 0] add param blocks.10.norm1.weight as backbone_specific
+[rank 0] add param blocks.10.norm1.bias as backbone_specific
+[rank 0] add param blocks.10.attn.rel_pos_h as backbone_specific
+[rank 0] add param blocks.10.attn.rel_pos_w as backbone_specific
+[rank 0] add param blocks.10.attn.qkv.weight as backbone_specific
+[rank 0] add param blocks.10.attn.qkv.bias as backbone_specific
+[rank 0] add param blocks.10.attn.proj.weight as backbone_specific
+[rank 0] add param blocks.10.attn.proj.bias as backbone_specific
+[rank 0] add param blocks.10.norm2.weight as backbone_specific
+[rank 0] add param blocks.10.norm2.bias as backbone_specific
+[rank 0] add param blocks.10.mlp.fc1.weight as backbone_specific
+[rank 0] add param blocks.10.mlp.fc1.bias as backbone_specific
+[rank 0] add param blocks.10.mlp.fc2.weight as backbone_specific
+[rank 0] add param blocks.10.mlp.fc2.bias as backbone_specific
+[rank 0] add param blocks.11.norm1.weight as backbone_specific
+[rank 0] add param blocks.11.norm1.bias as backbone_specific
+[rank 0] add param blocks.11.attn.rel_pos_h as backbone_specific
+[rank 0] add param blocks.11.attn.rel_pos_w as backbone_specific
+[rank 0] add param blocks.11.attn.qkv.weight as backbone_specific
+[rank 0] add param blocks.11.attn.qkv.bias as backbone_specific
+[rank 0] add param blocks.11.attn.proj.weight as backbone_specific
+[rank 0] add param blocks.11.attn.proj.bias as backbone_specific
+[rank 0] add param blocks.11.norm2.weight as backbone_specific
+[rank 0] add param blocks.11.norm2.bias as backbone_specific
+[rank 0] add param blocks.11.mlp.fc1.weight as backbone_specific
+[rank 0] add param blocks.11.mlp.fc1.bias as backbone_specific
+[rank 0] add param blocks.11.mlp.fc2.weight as backbone_specific
+[rank 0] add param blocks.11.mlp.fc2.bias as backbone_specific
+[rank 0] add param norm.weight as backbone_specific
+[rank 0] add param norm.bias as backbone_specific
+[rank 0] add param deconv_layers.0.weight as decoder_specific
+[rank 0] add param deconv_layers.1.weight as decoder_specific
+[rank 0] add param deconv_layers.1.bias as decoder_specific
+[rank 0] add param deconv_layers.3.weight as decoder_specific
+[rank 0] add param deconv_layers.4.weight as decoder_specific
+[rank 0] add param deconv_layers.4.bias as decoder_specific
+[rank 0] add param final_layer.weight as decoder_specific
+[rank 0] add param final_layer.bias as decoder_specific
+[rank 2] broadcasting backbone-specific param module.backbone_module.pos_embed	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.patch_embed.proj.weight	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.patch_embed.proj.bias	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.0.norm1.weight	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.0.norm1.bias	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.0.attn.rel_pos_h	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.0.attn.rel_pos_w	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.0.attn.qkv.weight	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.0.attn.qkv.bias	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.0.attn.proj.weight	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.0.attn.proj.bias	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.0.norm2.weight	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.0.norm2.bias	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.0.mlp.fc1.weight	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.0.mlp.fc1.bias	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.0.mlp.fc2.weight	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.0.mlp.fc2.bias	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.1.norm1.weight	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.1.norm1.bias	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.1.attn.rel_pos_h	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.1.attn.rel_pos_w	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.1.attn.qkv.weight	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.1.attn.qkv.bias	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.1.attn.proj.weight	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.1.attn.proj.bias	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.1.norm2.weight	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.1.norm2.bias	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.1.mlp.fc1.weight	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.1.mlp.fc1.bias	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.1.mlp.fc2.weight	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.1.mlp.fc2.bias	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.2.norm1.weight	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.2.norm1.bias	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.2.attn.rel_pos_h	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.2.attn.rel_pos_w	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.2.attn.qkv.weight	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.2.attn.qkv.bias	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.2.attn.proj.weight	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.2.attn.proj.bias	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.2.norm2.weight	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.2.norm2.bias	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.2.mlp.fc1.weight	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.2.mlp.fc1.bias	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.2.mlp.fc2.weight	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.2.mlp.fc2.bias	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.3.norm1.weight	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.3.norm1.bias	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.3.attn.rel_pos_h	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.3.attn.rel_pos_w	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.3.attn.qkv.weight	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.3.attn.qkv.bias	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.3.attn.proj.weight	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.3.attn.proj.bias	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.3.norm2.weight	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.3.norm2.bias	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.3.mlp.fc1.weight	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.3.mlp.fc1.bias	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.3.mlp.fc2.weight	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.3.mlp.fc2.bias	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.4.norm1.weight	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.4.norm1.bias	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.4.attn.rel_pos_h	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.4.attn.rel_pos_w	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.4.attn.qkv.weight	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.4.attn.qkv.bias	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.4.attn.proj.weight	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.4.attn.proj.bias	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.4.norm2.weight	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.4.norm2.bias	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.4.mlp.fc1.weight	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.4.mlp.fc1.bias	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.4.mlp.fc2.weight	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.4.mlp.fc2.bias	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.5.norm1.weight	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.5.norm1.bias	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.5.attn.rel_pos_h	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.5.attn.rel_pos_w	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.5.attn.qkv.weight	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.5.attn.qkv.bias	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.5.attn.proj.weight	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.5.attn.proj.bias	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.5.norm2.weight	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.5.norm2.bias	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.5.mlp.fc1.weight	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.5.mlp.fc1.bias	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.5.mlp.fc2.weight	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.5.mlp.fc2.bias	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.6.norm1.weight	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.6.norm1.bias	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.6.attn.rel_pos_h	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.6.attn.rel_pos_w	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.6.attn.qkv.weight	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.6.attn.qkv.bias	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.6.attn.proj.weight	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.6.attn.proj.bias	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.6.norm2.weight	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.6.norm2.bias	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.6.mlp.fc1.weight	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.6.mlp.fc1.bias	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.6.mlp.fc2.weight	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.6.mlp.fc2.bias	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.7.norm1.weight	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.7.norm1.bias	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.7.attn.rel_pos_h	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.7.attn.rel_pos_w	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.7.attn.qkv.weight	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.7.attn.qkv.bias	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.7.attn.proj.weight	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.7.attn.proj.bias	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.7.norm2.weight	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.7.norm2.bias	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.7.mlp.fc1.weight	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.7.mlp.fc1.bias	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.7.mlp.fc2.weight	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.7.mlp.fc2.bias	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.8.norm1.weight	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.8.norm1.bias	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.8.attn.rel_pos_h	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.8.attn.rel_pos_w	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.8.attn.qkv.weight	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.8.attn.qkv.bias	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.8.attn.proj.weight	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.8.attn.proj.bias	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.8.norm2.weight	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.8.norm2.bias	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.8.mlp.fc1.weight	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.8.mlp.fc1.bias	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.8.mlp.fc2.weight	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.8.mlp.fc2.bias	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.9.norm1.weight	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.9.norm1.bias	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.9.attn.rel_pos_h	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.9.attn.rel_pos_w	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.9.attn.qkv.weight	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.9.attn.qkv.bias	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.9.attn.proj.weight	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.9.attn.proj.bias	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.9.norm2.weight	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.9.norm2.bias	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.9.mlp.fc1.weight	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.9.mlp.fc1.bias	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.9.mlp.fc2.weight	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.9.mlp.fc2.bias	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.10.norm1.weight	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.10.norm1.bias	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.10.attn.rel_pos_h	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.10.attn.rel_pos_w	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.10.attn.qkv.weight	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.10.attn.qkv.bias	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.10.attn.proj.weight	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.10.attn.proj.bias	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.10.norm2.weight	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.10.norm2.bias	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.10.mlp.fc1.weight	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.10.mlp.fc1.bias	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.10.mlp.fc2.weight	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.10.mlp.fc2.bias	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.11.norm1.weight	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.11.norm1.bias	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.11.attn.rel_pos_h	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.11.attn.rel_pos_w	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.11.attn.qkv.weight	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.11.attn.qkv.bias	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.11.attn.proj.weight	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.11.attn.proj.bias	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.11.norm2.weight	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.11.norm2.bias	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.11.mlp.fc1.weight	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.11.mlp.fc1.bias	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.11.mlp.fc2.weight	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.blocks.11.mlp.fc2.bias	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.norm.weight	group_idx=3
+[rank 2] broadcasting backbone-specific param module.backbone_module.norm.bias	group_idx=3
+[rank 2] broadcasting decoder-specific param module.decoder_module.deconv_layers.0.weight	group_idx=5
+[rank 2] broadcasting decoder-specific param module.decoder_module.deconv_layers.1.weight	group_idx=5
+[rank 2] broadcasting decoder-specific param module.decoder_module.deconv_layers.1.bias	group_idx=5
+[rank 2] broadcasting decoder-specific param module.decoder_module.deconv_layers.3.weight	group_idx=5
+[rank 2] broadcasting decoder-specific param module.decoder_module.deconv_layers.4.weight	group_idx=5
+[rank 2] broadcasting decoder-specific param module.decoder_module.deconv_layers.4.bias	group_idx=5
+[rank 2] broadcasting decoder-specific param module.decoder_module.final_layer.weight	group_idx=5
+[rank 2] broadcasting decoder-specific param module.decoder_module.final_layer.bias	group_idx=5
+sync_print: rank 2, sampler: rank=2, world_size=4, random_seed=0
+[rank 3] broadcasting backbone-specific param module.backbone_module.pos_embed	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.patch_embed.proj.weight	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.patch_embed.proj.bias	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.0.norm1.weight	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.0.norm1.bias	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.0.attn.rel_pos_h	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.0.attn.rel_pos_w	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.0.attn.qkv.weight	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.0.attn.qkv.bias	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.0.attn.proj.weight	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.0.attn.proj.bias	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.0.norm2.weight	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.0.norm2.bias	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.0.mlp.fc1.weight	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.0.mlp.fc1.bias	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.0.mlp.fc2.weight	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.0.mlp.fc2.bias	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.1.norm1.weight	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.1.norm1.bias	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.1.attn.rel_pos_h	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.1.attn.rel_pos_w	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.1.attn.qkv.weight	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.1.attn.qkv.bias	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.1.attn.proj.weight	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.1.attn.proj.bias	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.1.norm2.weight	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.1.norm2.bias	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.1.mlp.fc1.weight	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.1.mlp.fc1.bias	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.1.mlp.fc2.weight	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.1.mlp.fc2.bias	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.2.norm1.weight	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.2.norm1.bias	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.2.attn.rel_pos_h	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.2.attn.rel_pos_w	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.2.attn.qkv.weight	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.2.attn.qkv.bias	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.2.attn.proj.weight	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.2.attn.proj.bias	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.2.norm2.weight	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.2.norm2.bias	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.2.mlp.fc1.weight	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.2.mlp.fc1.bias	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.2.mlp.fc2.weight	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.2.mlp.fc2.bias	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.3.norm1.weight	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.3.norm1.bias	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.3.attn.rel_pos_h	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.3.attn.rel_pos_w	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.3.attn.qkv.weight	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.3.attn.qkv.bias	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.3.attn.proj.weight	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.3.attn.proj.bias	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.3.norm2.weight	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.3.norm2.bias	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.3.mlp.fc1.weight	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.3.mlp.fc1.bias	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.3.mlp.fc2.weight	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.3.mlp.fc2.bias	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.4.norm1.weight	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.4.norm1.bias	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.4.attn.rel_pos_h	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.4.attn.rel_pos_w	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.4.attn.qkv.weight	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.4.attn.qkv.bias	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.4.attn.proj.weight	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.4.attn.proj.bias	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.4.norm2.weight	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.4.norm2.bias	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.4.mlp.fc1.weight	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.4.mlp.fc1.bias	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.4.mlp.fc2.weight	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.4.mlp.fc2.bias	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.5.norm1.weight	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.5.norm1.bias	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.5.attn.rel_pos_h	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.5.attn.rel_pos_w	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.5.attn.qkv.weight	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.5.attn.qkv.bias	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.5.attn.proj.weight	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.5.attn.proj.bias	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.5.norm2.weight	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.5.norm2.bias	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.5.mlp.fc1.weight	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.5.mlp.fc1.bias	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.5.mlp.fc2.weight	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.5.mlp.fc2.bias	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.6.norm1.weight	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.6.norm1.bias	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.6.attn.rel_pos_h	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.6.attn.rel_pos_w	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.6.attn.qkv.weight	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.6.attn.qkv.bias	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.6.attn.proj.weight	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.6.attn.proj.bias	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.6.norm2.weight	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.6.norm2.bias	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.6.mlp.fc1.weight	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.6.mlp.fc1.bias	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.6.mlp.fc2.weight	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.6.mlp.fc2.bias	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.7.norm1.weight	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.7.norm1.bias	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.7.attn.rel_pos_h	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.7.attn.rel_pos_w	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.7.attn.qkv.weight	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.7.attn.qkv.bias	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.7.attn.proj.weight	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.7.attn.proj.bias	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.7.norm2.weight	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.7.norm2.bias	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.7.mlp.fc1.weight	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.7.mlp.fc1.bias	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.7.mlp.fc2.weight	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.7.mlp.fc2.bias	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.8.norm1.weight	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.8.norm1.bias	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.8.attn.rel_pos_h	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.8.attn.rel_pos_w	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.8.attn.qkv.weight	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.8.attn.qkv.bias	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.8.attn.proj.weight	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.8.attn.proj.bias	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.8.norm2.weight	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.8.norm2.bias	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.8.mlp.fc1.weight	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.8.mlp.fc1.bias	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.8.mlp.fc2.weight	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.8.mlp.fc2.bias	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.9.norm1.weight	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.9.norm1.bias	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.9.attn.rel_pos_h	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.9.attn.rel_pos_w	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.9.attn.qkv.weight	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.9.attn.qkv.bias	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.9.attn.proj.weight	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.9.attn.proj.bias	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.9.norm2.weight	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.9.norm2.bias	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.9.mlp.fc1.weight	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.9.mlp.fc1.bias	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.9.mlp.fc2.weight	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.9.mlp.fc2.bias	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.10.norm1.weight	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.10.norm1.bias	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.10.attn.rel_pos_h	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.10.attn.rel_pos_w	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.10.attn.qkv.weight	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.10.attn.qkv.bias	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.10.attn.proj.weight	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.10.attn.proj.bias	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.10.norm2.weight	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.10.norm2.bias	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.10.mlp.fc1.weight	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.10.mlp.fc1.bias	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.10.mlp.fc2.weight	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.10.mlp.fc2.bias	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.11.norm1.weight	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.11.norm1.bias	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.11.attn.rel_pos_h	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.11.attn.rel_pos_w	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.11.attn.qkv.weight	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.11.attn.qkv.bias	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.11.attn.proj.weight	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.11.attn.proj.bias	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.11.norm2.weight	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.11.norm2.bias	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.11.mlp.fc1.weight	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.11.mlp.fc1.bias	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.11.mlp.fc2.weight	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.blocks.11.mlp.fc2.bias	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.norm.weight	group_idx=3
+[rank 3] broadcasting backbone-specific param module.backbone_module.norm.bias	group_idx=3
+[rank 3] broadcasting decoder-specific param module.decoder_module.deconv_layers.0.weight	group_idx=5
+[rank 3] broadcasting decoder-specific param module.decoder_module.deconv_layers.1.weight	group_idx=5
+[rank 3] broadcasting decoder-specific param module.decoder_module.deconv_layers.1.bias	group_idx=5
+[rank 3] broadcasting decoder-specific param module.decoder_module.deconv_layers.3.weight	group_idx=5
+[rank 3] broadcasting decoder-specific param module.decoder_module.deconv_layers.4.weight	group_idx=5
+[rank 3] broadcasting decoder-specific param module.decoder_module.deconv_layers.4.bias	group_idx=5
+[rank 3] broadcasting decoder-specific param module.decoder_module.final_layer.weight	group_idx=5
+[rank 3] broadcasting decoder-specific param module.decoder_module.final_layer.bias	group_idx=5
+sync_print: rank 3, sampler: rank=3, world_size=4, random_seed=0
+model_entry(
+  (backbone_module): ViT(
+    (patch_embed): PatchEmbed(
+      (proj): Conv2d(3, 768, kernel_size=(16, 16), stride=(16, 16))
+    )
+    (pos_drop): Dropout(p=0.0, inplace=False)
+    (blocks): ModuleList(
+      (0): Block(
+        (norm1): LayerNorm((768,), eps=1e-06, elementwise_affine=True)
+        (attn): Attention(
+          (qkv): Linear(in_features=768, out_features=2304, bias=True)
+          (attn_drop): Dropout(p=0.0, inplace=False)
+          (proj): Linear(in_features=768, out_features=768, bias=True)
+          (proj_drop): Dropout(p=0.0, inplace=False)
+        )
+        (drop_path): Identity()
+        (norm2): LayerNorm((768,), eps=1e-06, elementwise_affine=True)
+        (mlp): Mlp(
+          (fc1): Linear(in_features=768, out_features=3072, bias=True)
+          (act): GELU()
+          (fc2): Linear(in_features=3072, out_features=768, bias=True)
+          (drop): Dropout(p=0.0, inplace=False)
+        )
+      )
+      (1): Block(
+        (norm1): LayerNorm((768,), eps=1e-06, elementwise_affine=True)
+        (attn): Attention(
+          (qkv): Linear(in_features=768, out_features=2304, bias=True)
+          (attn_drop): Dropout(p=0.0, inplace=False)
+          (proj): Linear(in_features=768, out_features=768, bias=True)
+          (proj_drop): Dropout(p=0.0, inplace=False)
+        )
+        (drop_path): DropPath(p=0.027272729203104973)
+        (norm2): LayerNorm((768,), eps=1e-06, elementwise_affine=True)
+        (mlp): Mlp(
+          (fc1): Linear(in_features=768, out_features=3072, bias=True)
+          (act): GELU()
+          (fc2): Linear(in_features=3072, out_features=768, bias=True)
+          (drop): Dropout(p=0.0, inplace=False)
+        )
+      )
+      (2): Block(
+        (norm1): LayerNorm((768,), eps=1e-06, elementwise_affine=True)
+        (attn): Attention(
+          (qkv): Linear(in_features=768, out_features=2304, bias=True)
+          (attn_drop): Dropout(p=0.0, inplace=False)
+          (proj): Linear(in_features=768, out_features=768, bias=True)
+          (proj_drop): Dropout(p=0.0, inplace=False)
+        )
+        (drop_path): DropPath(p=0.054545458406209946)
+        (norm2): LayerNorm((768,), eps=1e-06, elementwise_affine=True)
+        (mlp): Mlp(
+          (fc1): Linear(in_features=768, out_features=3072, bias=True)
+          (act): GELU()
+          (fc2): Linear(in_features=3072, out_features=768, bias=True)
+          (drop): Dropout(p=0.0, inplace=False)
+        )
+      )
+      (3): Block(
+        (norm1): LayerNorm((768,), eps=1e-06, elementwise_affine=True)
+        (attn): Attention(
+          (qkv): Linear(in_features=768, out_features=2304, bias=True)
+          (attn_drop): Dropout(p=0.0, inplace=False)
+          (proj): Linear(in_features=768, out_features=768, bias=True)
+          (proj_drop): Dropout(p=0.0, inplace=False)
+        )
+        (drop_path): DropPath(p=0.08181818574666977)
+        (norm2): LayerNorm((768,), eps=1e-06, elementwise_affine=True)
+        (mlp): Mlp(
+          (fc1): Linear(in_features=768, out_features=3072, bias=True)
+          (act): GELU()
+          (fc2): Linear(in_features=3072, out_features=768, bias=True)
+          (drop): Dropout(p=0.0, inplace=False)
+        )
+      )
+      (4): Block(
+        (norm1): LayerNorm((768,), eps=1e-06, elementwise_affine=True)
+        (attn): Attention(
+          (qkv): Linear(in_features=768, out_features=2304, bias=True)
+          (attn_drop): Dropout(p=0.0, inplace=False)
+          (proj): Linear(in_features=768, out_features=768, bias=True)
+          (proj_drop): Dropout(p=0.0, inplace=False)
+        )
+        (drop_path): DropPath(p=0.10909091681241989)
+        (norm2): LayerNorm((768,), eps=1e-06, elementwise_affine=True)
+        (mlp): Mlp(
+          (fc1): Linear(in_features=768, out_features=3072, bias=True)
+          (act): GELU()
+          (fc2): Linear(in_features=3072, out_features=768, bias=True)
+          (drop): Dropout(p=0.0, inplace=False)
+        )
+      )
+      (5): Block(
+        (norm1): LayerNorm((768,), eps=1e-06, elementwise_affine=True)
+        (attn): Attention(
+          (qkv): Linear(in_features=768, out_features=2304, bias=True)
+          (attn_drop): Dropout(p=0.0, inplace=False)
+          (proj): Linear(in_features=768, out_features=768, bias=True)
+          (proj_drop): Dropout(p=0.0, inplace=False)
+        )
+        (drop_path): DropPath(p=0.13636364042758942)
+        (norm2): LayerNorm((768,), eps=1e-06, elementwise_affine=True)
+        (mlp): Mlp(
+          (fc1): Linear(in_features=768, out_features=3072, bias=True)
+          (act): GELU()
+          (fc2): Linear(in_features=3072, out_features=768, bias=True)
+          (drop): Dropout(p=0.0, inplace=False)
+        )
+      )
+      (6): Block(
+        (norm1): LayerNorm((768,), eps=1e-06, elementwise_affine=True)
+        (attn): Attention(
+          (qkv): Linear(in_features=768, out_features=2304, bias=True)
+          (attn_drop): Dropout(p=0.0, inplace=False)
+          (proj): Linear(in_features=768, out_features=768, bias=True)
+          (proj_drop): Dropout(p=0.0, inplace=False)
+        )
+        (drop_path): DropPath(p=0.16363637149333954)
+        (norm2): LayerNorm((768,), eps=1e-06, elementwise_affine=True)
+        (mlp): Mlp(
+          (fc1): Linear(in_features=768, out_features=3072, bias=True)
+          (act): GELU()
+          (fc2): Linear(in_features=3072, out_features=768, bias=True)
+          (drop): Dropout(p=0.0, inplace=False)
+        )
+      )
+      (7): Block(
+        (norm1): LayerNorm((768,), eps=1e-06, elementwise_affine=True)
+        (attn): Attention(
+          (qkv): Linear(in_features=768, out_features=2304, bias=True)
+          (attn_drop): Dropout(p=0.0, inplace=False)
+          (proj): Linear(in_features=768, out_features=768, bias=True)
+          (proj_drop): Dropout(p=0.0, inplace=False)
+        )
+        (drop_path): DropPath(p=0.19090908765792847)
+        (norm2): LayerNorm((768,), eps=1e-06, elementwise_affine=True)
+        (mlp): Mlp(
+          (fc1): Linear(in_features=768, out_features=3072, bias=True)
+          (act): GELU()
+          (fc2): Linear(in_features=3072, out_features=768, bias=True)
+          (drop): Dropout(p=0.0, inplace=False)
+        )
+      )
+      (8): Block(
+        (norm1): LayerNorm((768,), eps=1e-06, elementwise_affine=True)
+        (attn): Attention(
+          (qkv): Linear(in_features=768, out_features=2304, bias=True)
+          (attn_drop): Dropout(p=0.0, inplace=False)
+          (proj): Linear(in_features=768, out_features=768, bias=True)
+          (proj_drop): Dropout(p=0.0, inplace=False)
+        )
+        (drop_path): DropPath(p=0.2181818187236786)
+        (norm2): LayerNorm((768,), eps=1e-06, elementwise_affine=True)
+        (mlp): Mlp(
+          (fc1): Linear(in_features=768, out_features=3072, bias=True)
+          (act): GELU()
+          (fc2): Linear(in_features=3072, out_features=768, bias=True)
+          (drop): Dropout(p=0.0, inplace=False)
+        )
+      )
+      (9): Block(
+        (norm1): LayerNorm((768,), eps=1e-06, elementwise_affine=True)
+        (attn): Attention(
+          (qkv): Linear(in_features=768, out_features=2304, bias=True)
+          (attn_drop): Dropout(p=0.0, inplace=False)
+          (proj): Linear(in_features=768, out_features=768, bias=True)
+          (proj_drop): Dropout(p=0.0, inplace=False)
+        )
+        (drop_path): DropPath(p=0.2454545497894287)
+        (norm2): LayerNorm((768,), eps=1e-06, elementwise_affine=True)
+        (mlp): Mlp(
+          (fc1): Linear(in_features=768, out_features=3072, bias=True)
+          (act): GELU()
+          (fc2): Linear(in_features=3072, out_features=768, bias=True)
+          (drop): Dropout(p=0.0, inplace=False)
+        )
+      )
+      (10): Block(
+        (norm1): LayerNorm((768,), eps=1e-06, elementwise_affine=True)
+        (attn): Attention(
+          (qkv): Linear(in_features=768, out_features=2304, bias=True)
+          (attn_drop): Dropout(p=0.0, inplace=False)
+          (proj): Linear(in_features=768, out_features=768, bias=True)
+          (proj_drop): Dropout(p=0.0, inplace=False)
+        )
+        (drop_path): DropPath(p=0.27272728085517883)
+        (norm2): LayerNorm((768,), eps=1e-06, elementwise_affine=True)
+        (mlp): Mlp(
+          (fc1): Linear(in_features=768, out_features=3072, bias=True)
+          (act): GELU()
+          (fc2): Linear(in_features=3072, out_features=768, bias=True)
+          (drop): Dropout(p=0.0, inplace=False)
+        )
+      )
+      (11): Block(
+        (norm1): LayerNorm((768,), eps=1e-06, elementwise_affine=True)
+        (attn): Attention(
+          (qkv): Linear(in_features=768, out_features=2304, bias=True)
+          (attn_drop): Dropout(p=0.0, inplace=False)
+          (proj): Linear(in_features=768, out_features=768, bias=True)
+          (proj_drop): Dropout(p=0.0, inplace=False)
+        )
+        (drop_path): DropPath(p=0.30000001192092896)
+        (norm2): LayerNorm((768,), eps=1e-06, elementwise_affine=True)
+        (mlp): Mlp(
+          (fc1): Linear(in_features=768, out_features=3072, bias=True)
+          (act): GELU()
+          (fc2): Linear(in_features=3072, out_features=768, bias=True)
+          (drop): Dropout(p=0.0, inplace=False)
+        )
+      )
+    )
+    (norm): LayerNorm((768,), eps=1e-06, elementwise_affine=True)
+  )
+  (neck_module): DoNothing()
+  (decoder_module): TopDownSimpleHead(
+    (deconv_layers): Sequential(
+      (0): ConvTranspose2d(768, 256, kernel_size=(4, 4), stride=(2, 2), padding=(1, 1), bias=False)
+      (1): LayerNorm()
+      (2): ReLU(inplace=True)
+      (3): ConvTranspose2d(256, 256, kernel_size=(4, 4), stride=(2, 2), padding=(1, 1), bias=False)
+      (4): LayerNorm()
+      (5): ReLU(inplace=True)
+    )
+    (final_layer): Conv2d(256, 17, kernel_size=(1, 1), stride=(1, 1))
+  )
+)
+[rank 0] broadcasting backbone-specific param module.backbone_module.pos_embed	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.patch_embed.proj.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.patch_embed.proj.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.0.norm1.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.0.norm1.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.0.attn.rel_pos_h	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.0.attn.rel_pos_w	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.0.attn.qkv.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.0.attn.qkv.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.0.attn.proj.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.0.attn.proj.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.0.norm2.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.0.norm2.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.0.mlp.fc1.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.0.mlp.fc1.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.0.mlp.fc2.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.0.mlp.fc2.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.1.norm1.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.1.norm1.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.1.attn.rel_pos_h	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.1.attn.rel_pos_w	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.1.attn.qkv.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.1.attn.qkv.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.1.attn.proj.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.1.attn.proj.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.1.norm2.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.1.norm2.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.1.mlp.fc1.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.1.mlp.fc1.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.1.mlp.fc2.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.1.mlp.fc2.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.2.norm1.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.2.norm1.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.2.attn.rel_pos_h	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.2.attn.rel_pos_w	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.2.attn.qkv.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.2.attn.qkv.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.2.attn.proj.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.2.attn.proj.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.2.norm2.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.2.norm2.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.2.mlp.fc1.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.2.mlp.fc1.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.2.mlp.fc2.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.2.mlp.fc2.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.3.norm1.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.3.norm1.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.3.attn.rel_pos_h	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.3.attn.rel_pos_w	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.3.attn.qkv.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.3.attn.qkv.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.3.attn.proj.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.3.attn.proj.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.3.norm2.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.3.norm2.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.3.mlp.fc1.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.3.mlp.fc1.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.3.mlp.fc2.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.3.mlp.fc2.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.4.norm1.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.4.norm1.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.4.attn.rel_pos_h	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.4.attn.rel_pos_w	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.4.attn.qkv.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.4.attn.qkv.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.4.attn.proj.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.4.attn.proj.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.4.norm2.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.4.norm2.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.4.mlp.fc1.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.4.mlp.fc1.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.4.mlp.fc2.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.4.mlp.fc2.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.5.norm1.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.5.norm1.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.5.attn.rel_pos_h	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.5.attn.rel_pos_w	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.5.attn.qkv.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.5.attn.qkv.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.5.attn.proj.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.5.attn.proj.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.5.norm2.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.5.norm2.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.5.mlp.fc1.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.5.mlp.fc1.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.5.mlp.fc2.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.5.mlp.fc2.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.6.norm1.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.6.norm1.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.6.attn.rel_pos_h	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.6.attn.rel_pos_w	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.6.attn.qkv.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.6.attn.qkv.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.6.attn.proj.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.6.attn.proj.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.6.norm2.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.6.norm2.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.6.mlp.fc1.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.6.mlp.fc1.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.6.mlp.fc2.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.6.mlp.fc2.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.7.norm1.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.7.norm1.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.7.attn.rel_pos_h	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.7.attn.rel_pos_w	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.7.attn.qkv.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.7.attn.qkv.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.7.attn.proj.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.7.attn.proj.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.7.norm2.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.7.norm2.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.7.mlp.fc1.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.7.mlp.fc1.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.7.mlp.fc2.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.7.mlp.fc2.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.8.norm1.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.8.norm1.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.8.attn.rel_pos_h	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.8.attn.rel_pos_w	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.8.attn.qkv.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.8.attn.qkv.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.8.attn.proj.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.8.attn.proj.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.8.norm2.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.8.norm2.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.8.mlp.fc1.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.8.mlp.fc1.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.8.mlp.fc2.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.8.mlp.fc2.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.9.norm1.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.9.norm1.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.9.attn.rel_pos_h	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.9.attn.rel_pos_w	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.9.attn.qkv.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.9.attn.qkv.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.9.attn.proj.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.9.attn.proj.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.9.norm2.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.9.norm2.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.9.mlp.fc1.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.9.mlp.fc1.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.9.mlp.fc2.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.9.mlp.fc2.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.10.norm1.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.10.norm1.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.10.attn.rel_pos_h	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.10.attn.rel_pos_w	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.10.attn.qkv.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.10.attn.qkv.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.10.attn.proj.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.10.attn.proj.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.10.norm2.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.10.norm2.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.10.mlp.fc1.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.10.mlp.fc1.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.10.mlp.fc2.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.10.mlp.fc2.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.11.norm1.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.11.norm1.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.11.attn.rel_pos_h	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.11.attn.rel_pos_w	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.11.attn.qkv.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.11.attn.qkv.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.11.attn.proj.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.11.attn.proj.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.11.norm2.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.11.norm2.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.11.mlp.fc1.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.11.mlp.fc1.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.11.mlp.fc2.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.11.mlp.fc2.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.norm.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.norm.bias	group_idx=3
+[rank 0] broadcasting decoder-specific param module.decoder_module.deconv_layers.0.weight	group_idx=5
+[rank 0] broadcasting decoder-specific param module.decoder_module.deconv_layers.1.weight	group_idx=5
+[rank 0] broadcasting decoder-specific param module.decoder_module.deconv_layers.1.bias	group_idx=5
+[rank 0] broadcasting decoder-specific param module.decoder_module.deconv_layers.3.weight	group_idx=5
+[rank 0] broadcasting decoder-specific param module.decoder_module.deconv_layers.4.weight	group_idx=5
+[rank 0] broadcasting decoder-specific param module.decoder_module.deconv_layers.4.bias	group_idx=5
+[rank 0] broadcasting decoder-specific param module.decoder_module.final_layer.weight	group_idx=5
+[rank 0] broadcasting decoder-specific param module.decoder_module.final_layer.bias	group_idx=5
+[2022-09-25 16:24:00,762][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module 		 module_param_name: pos_embed 		 specification: {'lr': 8e-08, 'weight_decay': 0.0}
+[2022-09-25 16:24:00,763][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.patch_embed.proj 		 module_param_name: weight 		 specification: {'lr': 3.3788108825683594e-09, 'weight_decay': 0.1}
+[2022-09-25 16:24:00,763][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.patch_embed.proj 		 module_param_name: bias 		 specification: {'lr': 3.3788108825683594e-09, 'weight_decay': 0.1}
+[2022-09-25 16:24:00,763][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.0.norm1 		 module_param_name: weight 		 specification: {'lr': 4.505081176757812e-09, 'weight_decay': 0.0}
+[2022-09-25 16:24:00,763][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.0.norm1 		 module_param_name: bias 		 specification: {'lr': 4.505081176757812e-09, 'weight_decay': 0.0}
+[2022-09-25 16:24:00,763][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.0.attn 		 module_param_name: rel_pos_h 		 specification: {'lr': 4.505081176757812e-09, 'weight_decay': 0.0}
+[2022-09-25 16:24:00,763][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.0.attn 		 module_param_name: rel_pos_w 		 specification: {'lr': 4.505081176757812e-09, 'weight_decay': 0.0}
+[2022-09-25 16:24:00,764][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.0.attn.qkv 		 module_param_name: weight 		 specification: {'lr': 4.505081176757812e-09, 'weight_decay': 0.1}
+[2022-09-25 16:24:00,764][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.0.attn.qkv 		 module_param_name: bias 		 specification: {'lr': 4.505081176757812e-09, 'weight_decay': 0.1}
+[2022-09-25 16:24:00,764][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.0.attn.proj 		 module_param_name: weight 		 specification: {'lr': 4.505081176757812e-09, 'weight_decay': 0.1}
+[2022-09-25 16:24:00,764][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.0.attn.proj 		 module_param_name: bias 		 specification: {'lr': 4.505081176757812e-09, 'weight_decay': 0.1}
+[2022-09-25 16:24:00,764][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.0.norm2 		 module_param_name: weight 		 specification: {'lr': 4.505081176757812e-09, 'weight_decay': 0.0}
+[2022-09-25 16:24:00,764][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.0.norm2 		 module_param_name: bias 		 specification: {'lr': 4.505081176757812e-09, 'weight_decay': 0.0}
+[2022-09-25 16:24:00,764][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.0.mlp.fc1 		 module_param_name: weight 		 specification: {'lr': 4.505081176757812e-09, 'weight_decay': 0.1}
+[2022-09-25 16:24:00,765][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.0.mlp.fc1 		 module_param_name: bias 		 specification: {'lr': 4.505081176757812e-09, 'weight_decay': 0.1}
+[2022-09-25 16:24:00,765][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.0.mlp.fc2 		 module_param_name: weight 		 specification: {'lr': 4.505081176757812e-09, 'weight_decay': 0.1}
+[2022-09-25 16:24:00,765][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.0.mlp.fc2 		 module_param_name: bias 		 specification: {'lr': 4.505081176757812e-09, 'weight_decay': 0.1}
+[2022-09-25 16:24:00,765][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.1.norm1 		 module_param_name: weight 		 specification: {'lr': 6.006774902343751e-09, 'weight_decay': 0.0}
+[2022-09-25 16:24:00,765][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.1.norm1 		 module_param_name: bias 		 specification: {'lr': 6.006774902343751e-09, 'weight_decay': 0.0}
+[2022-09-25 16:24:00,765][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.1.attn 		 module_param_name: rel_pos_h 		 specification: {'lr': 6.006774902343751e-09, 'weight_decay': 0.0}
+[2022-09-25 16:24:00,765][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.1.attn 		 module_param_name: rel_pos_w 		 specification: {'lr': 6.006774902343751e-09, 'weight_decay': 0.0}
+[2022-09-25 16:24:00,766][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.1.attn.qkv 		 module_param_name: weight 		 specification: {'lr': 6.006774902343751e-09, 'weight_decay': 0.1}
+[2022-09-25 16:24:00,766][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.1.attn.qkv 		 module_param_name: bias 		 specification: {'lr': 6.006774902343751e-09, 'weight_decay': 0.1}
+[2022-09-25 16:24:00,766][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.1.attn.proj 		 module_param_name: weight 		 specification: {'lr': 6.006774902343751e-09, 'weight_decay': 0.1}
+[2022-09-25 16:24:00,766][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.1.attn.proj 		 module_param_name: bias 		 specification: {'lr': 6.006774902343751e-09, 'weight_decay': 0.1}
+[2022-09-25 16:24:00,766][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.1.norm2 		 module_param_name: weight 		 specification: {'lr': 6.006774902343751e-09, 'weight_decay': 0.0}
+[2022-09-25 16:24:00,766][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.1.norm2 		 module_param_name: bias 		 specification: {'lr': 6.006774902343751e-09, 'weight_decay': 0.0}
+[2022-09-25 16:24:00,766][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.1.mlp.fc1 		 module_param_name: weight 		 specification: {'lr': 6.006774902343751e-09, 'weight_decay': 0.1}
+[2022-09-25 16:24:00,766][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.1.mlp.fc1 		 module_param_name: bias 		 specification: {'lr': 6.006774902343751e-09, 'weight_decay': 0.1}
+[2022-09-25 16:24:00,767][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.1.mlp.fc2 		 module_param_name: weight 		 specification: {'lr': 6.006774902343751e-09, 'weight_decay': 0.1}
+[2022-09-25 16:24:00,767][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.1.mlp.fc2 		 module_param_name: bias 		 specification: {'lr': 6.006774902343751e-09, 'weight_decay': 0.1}
+[2022-09-25 16:24:00,767][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.2.norm1 		 module_param_name: weight 		 specification: {'lr': 8.009033203125e-09, 'weight_decay': 0.0}
+[2022-09-25 16:24:00,767][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.2.norm1 		 module_param_name: bias 		 specification: {'lr': 8.009033203125e-09, 'weight_decay': 0.0}
+[2022-09-25 16:24:00,767][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.2.attn 		 module_param_name: rel_pos_h 		 specification: {'lr': 8.009033203125e-09, 'weight_decay': 0.0}
+[2022-09-25 16:24:00,767][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.2.attn 		 module_param_name: rel_pos_w 		 specification: {'lr': 8.009033203125e-09, 'weight_decay': 0.0}
+[2022-09-25 16:24:00,767][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.2.attn.qkv 		 module_param_name: weight 		 specification: {'lr': 8.009033203125e-09, 'weight_decay': 0.1}
+[2022-09-25 16:24:00,768][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.2.attn.qkv 		 module_param_name: bias 		 specification: {'lr': 8.009033203125e-09, 'weight_decay': 0.1}
+[2022-09-25 16:24:00,768][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.2.attn.proj 		 module_param_name: weight 		 specification: {'lr': 8.009033203125e-09, 'weight_decay': 0.1}
+[2022-09-25 16:24:00,768][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.2.attn.proj 		 module_param_name: bias 		 specification: {'lr': 8.009033203125e-09, 'weight_decay': 0.1}
+[2022-09-25 16:24:00,768][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.2.norm2 		 module_param_name: weight 		 specification: {'lr': 8.009033203125e-09, 'weight_decay': 0.0}
+[2022-09-25 16:24:00,768][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.2.norm2 		 module_param_name: bias 		 specification: {'lr': 8.009033203125e-09, 'weight_decay': 0.0}
+[2022-09-25 16:24:00,768][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.2.mlp.fc1 		 module_param_name: weight 		 specification: {'lr': 8.009033203125e-09, 'weight_decay': 0.1}
+[2022-09-25 16:24:00,768][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.2.mlp.fc1 		 module_param_name: bias 		 specification: {'lr': 8.009033203125e-09, 'weight_decay': 0.1}
+[2022-09-25 16:24:00,768][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.2.mlp.fc2 		 module_param_name: weight 		 specification: {'lr': 8.009033203125e-09, 'weight_decay': 0.1}
+[2022-09-25 16:24:00,769][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.2.mlp.fc2 		 module_param_name: bias 		 specification: {'lr': 8.009033203125e-09, 'weight_decay': 0.1}
+[2022-09-25 16:24:00,769][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.3.norm1 		 module_param_name: weight 		 specification: {'lr': 1.0678710937500001e-08, 'weight_decay': 0.0}
+[2022-09-25 16:24:00,769][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.3.norm1 		 module_param_name: bias 		 specification: {'lr': 1.0678710937500001e-08, 'weight_decay': 0.0}
+[2022-09-25 16:24:00,769][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.3.attn 		 module_param_name: rel_pos_h 		 specification: {'lr': 1.0678710937500001e-08, 'weight_decay': 0.0}
+[2022-09-25 16:24:00,769][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.3.attn 		 module_param_name: rel_pos_w 		 specification: {'lr': 1.0678710937500001e-08, 'weight_decay': 0.0}
+[2022-09-25 16:24:00,769][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.3.attn.qkv 		 module_param_name: weight 		 specification: {'lr': 1.0678710937500001e-08, 'weight_decay': 0.1}
+[2022-09-25 16:24:00,769][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.3.attn.qkv 		 module_param_name: bias 		 specification: {'lr': 1.0678710937500001e-08, 'weight_decay': 0.1}
+[2022-09-25 16:24:00,770][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.3.attn.proj 		 module_param_name: weight 		 specification: {'lr': 1.0678710937500001e-08, 'weight_decay': 0.1}
+[2022-09-25 16:24:00,770][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.3.attn.proj 		 module_param_name: bias 		 specification: {'lr': 1.0678710937500001e-08, 'weight_decay': 0.1}
+[2022-09-25 16:24:00,770][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.3.norm2 		 module_param_name: weight 		 specification: {'lr': 1.0678710937500001e-08, 'weight_decay': 0.0}
+[2022-09-25 16:24:00,770][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.3.norm2 		 module_param_name: bias 		 specification: {'lr': 1.0678710937500001e-08, 'weight_decay': 0.0}
+[2022-09-25 16:24:00,770][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.3.mlp.fc1 		 module_param_name: weight 		 specification: {'lr': 1.0678710937500001e-08, 'weight_decay': 0.1}
+[2022-09-25 16:24:00,770][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.3.mlp.fc1 		 module_param_name: bias 		 specification: {'lr': 1.0678710937500001e-08, 'weight_decay': 0.1}
+[2022-09-25 16:24:00,770][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.3.mlp.fc2 		 module_param_name: weight 		 specification: {'lr': 1.0678710937500001e-08, 'weight_decay': 0.1}
+[2022-09-25 16:24:00,770][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.3.mlp.fc2 		 module_param_name: bias 		 specification: {'lr': 1.0678710937500001e-08, 'weight_decay': 0.1}
+[2022-09-25 16:24:00,771][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.4.norm1 		 module_param_name: weight 		 specification: {'lr': 1.423828125e-08, 'weight_decay': 0.0}
+[2022-09-25 16:24:00,771][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.4.norm1 		 module_param_name: bias 		 specification: {'lr': 1.423828125e-08, 'weight_decay': 0.0}
+[2022-09-25 16:24:00,771][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.4.attn 		 module_param_name: rel_pos_h 		 specification: {'lr': 1.423828125e-08, 'weight_decay': 0.0}
+[2022-09-25 16:24:00,771][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.4.attn 		 module_param_name: rel_pos_w 		 specification: {'lr': 1.423828125e-08, 'weight_decay': 0.0}
+[2022-09-25 16:24:00,771][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.4.attn.qkv 		 module_param_name: weight 		 specification: {'lr': 1.423828125e-08, 'weight_decay': 0.1}
+[2022-09-25 16:24:00,771][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.4.attn.qkv 		 module_param_name: bias 		 specification: {'lr': 1.423828125e-08, 'weight_decay': 0.1}
+[2022-09-25 16:24:00,771][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.4.attn.proj 		 module_param_name: weight 		 specification: {'lr': 1.423828125e-08, 'weight_decay': 0.1}
+[2022-09-25 16:24:00,772][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.4.attn.proj 		 module_param_name: bias 		 specification: {'lr': 1.423828125e-08, 'weight_decay': 0.1}
+[2022-09-25 16:24:00,772][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.4.norm2 		 module_param_name: weight 		 specification: {'lr': 1.423828125e-08, 'weight_decay': 0.0}
+[2022-09-25 16:24:00,772][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.4.norm2 		 module_param_name: bias 		 specification: {'lr': 1.423828125e-08, 'weight_decay': 0.0}
+[2022-09-25 16:24:00,772][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.4.mlp.fc1 		 module_param_name: weight 		 specification: {'lr': 1.423828125e-08, 'weight_decay': 0.1}
+[2022-09-25 16:24:00,772][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.4.mlp.fc1 		 module_param_name: bias 		 specification: {'lr': 1.423828125e-08, 'weight_decay': 0.1}
+[2022-09-25 16:24:00,772][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.4.mlp.fc2 		 module_param_name: weight 		 specification: {'lr': 1.423828125e-08, 'weight_decay': 0.1}
+[2022-09-25 16:24:00,772][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.4.mlp.fc2 		 module_param_name: bias 		 specification: {'lr': 1.423828125e-08, 'weight_decay': 0.1}
+[2022-09-25 16:24:00,772][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.5.norm1 		 module_param_name: weight 		 specification: {'lr': 1.8984375e-08, 'weight_decay': 0.0}
+[2022-09-25 16:24:00,773][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.5.norm1 		 module_param_name: bias 		 specification: {'lr': 1.8984375e-08, 'weight_decay': 0.0}
+[2022-09-25 16:24:00,773][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.5.attn 		 module_param_name: rel_pos_h 		 specification: {'lr': 1.8984375e-08, 'weight_decay': 0.0}
+[2022-09-25 16:24:00,773][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.5.attn 		 module_param_name: rel_pos_w 		 specification: {'lr': 1.8984375e-08, 'weight_decay': 0.0}
+[2022-09-25 16:24:00,773][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.5.attn.qkv 		 module_param_name: weight 		 specification: {'lr': 1.8984375e-08, 'weight_decay': 0.1}
+[2022-09-25 16:24:00,773][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.5.attn.qkv 		 module_param_name: bias 		 specification: {'lr': 1.8984375e-08, 'weight_decay': 0.1}
+[2022-09-25 16:24:00,773][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.5.attn.proj 		 module_param_name: weight 		 specification: {'lr': 1.8984375e-08, 'weight_decay': 0.1}
+[2022-09-25 16:24:00,773][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.5.attn.proj 		 module_param_name: bias 		 specification: {'lr': 1.8984375e-08, 'weight_decay': 0.1}
+[2022-09-25 16:24:00,774][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.5.norm2 		 module_param_name: weight 		 specification: {'lr': 1.8984375e-08, 'weight_decay': 0.0}
+[2022-09-25 16:24:00,774][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.5.norm2 		 module_param_name: bias 		 specification: {'lr': 1.8984375e-08, 'weight_decay': 0.0}
+[2022-09-25 16:24:00,774][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.5.mlp.fc1 		 module_param_name: weight 		 specification: {'lr': 1.8984375e-08, 'weight_decay': 0.1}
+[2022-09-25 16:24:00,774][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.5.mlp.fc1 		 module_param_name: bias 		 specification: {'lr': 1.8984375e-08, 'weight_decay': 0.1}
+[2022-09-25 16:24:00,774][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.5.mlp.fc2 		 module_param_name: weight 		 specification: {'lr': 1.8984375e-08, 'weight_decay': 0.1}
+[2022-09-25 16:24:00,774][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.5.mlp.fc2 		 module_param_name: bias 		 specification: {'lr': 1.8984375e-08, 'weight_decay': 0.1}
+[2022-09-25 16:24:00,774][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.6.norm1 		 module_param_name: weight 		 specification: {'lr': 2.5312500000000002e-08, 'weight_decay': 0.0}
+[2022-09-25 16:24:00,774][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.6.norm1 		 module_param_name: bias 		 specification: {'lr': 2.5312500000000002e-08, 'weight_decay': 0.0}
+[2022-09-25 16:24:00,775][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.6.attn 		 module_param_name: rel_pos_h 		 specification: {'lr': 2.5312500000000002e-08, 'weight_decay': 0.0}
+[2022-09-25 16:24:00,775][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.6.attn 		 module_param_name: rel_pos_w 		 specification: {'lr': 2.5312500000000002e-08, 'weight_decay': 0.0}
+[2022-09-25 16:24:00,775][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.6.attn.qkv 		 module_param_name: weight 		 specification: {'lr': 2.5312500000000002e-08, 'weight_decay': 0.1}
+[2022-09-25 16:24:00,775][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.6.attn.qkv 		 module_param_name: bias 		 specification: {'lr': 2.5312500000000002e-08, 'weight_decay': 0.1}
+[2022-09-25 16:24:00,775][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.6.attn.proj 		 module_param_name: weight 		 specification: {'lr': 2.5312500000000002e-08, 'weight_decay': 0.1}
+[2022-09-25 16:24:00,775][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.6.attn.proj 		 module_param_name: bias 		 specification: {'lr': 2.5312500000000002e-08, 'weight_decay': 0.1}
+[2022-09-25 16:24:00,775][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.6.norm2 		 module_param_name: weight 		 specification: {'lr': 2.5312500000000002e-08, 'weight_decay': 0.0}
+[2022-09-25 16:24:00,775][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.6.norm2 		 module_param_name: bias 		 specification: {'lr': 2.5312500000000002e-08, 'weight_decay': 0.0}
+[2022-09-25 16:24:00,776][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.6.mlp.fc1 		 module_param_name: weight 		 specification: {'lr': 2.5312500000000002e-08, 'weight_decay': 0.1}
+[2022-09-25 16:24:00,776][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.6.mlp.fc1 		 module_param_name: bias 		 specification: {'lr': 2.5312500000000002e-08, 'weight_decay': 0.1}
+[2022-09-25 16:24:00,776][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.6.mlp.fc2 		 module_param_name: weight 		 specification: {'lr': 2.5312500000000002e-08, 'weight_decay': 0.1}
+[2022-09-25 16:24:00,776][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.6.mlp.fc2 		 module_param_name: bias 		 specification: {'lr': 2.5312500000000002e-08, 'weight_decay': 0.1}
+[2022-09-25 16:24:00,776][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.7.norm1 		 module_param_name: weight 		 specification: {'lr': 3.375e-08, 'weight_decay': 0.0}
+[2022-09-25 16:24:00,776][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.7.norm1 		 module_param_name: bias 		 specification: {'lr': 3.375e-08, 'weight_decay': 0.0}
+[2022-09-25 16:24:00,776][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.7.attn 		 module_param_name: rel_pos_h 		 specification: {'lr': 3.375e-08, 'weight_decay': 0.0}
+[2022-09-25 16:24:00,777][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.7.attn 		 module_param_name: rel_pos_w 		 specification: {'lr': 3.375e-08, 'weight_decay': 0.0}
+[2022-09-25 16:24:00,777][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.7.attn.qkv 		 module_param_name: weight 		 specification: {'lr': 3.375e-08, 'weight_decay': 0.1}
+[2022-09-25 16:24:00,777][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.7.attn.qkv 		 module_param_name: bias 		 specification: {'lr': 3.375e-08, 'weight_decay': 0.1}
+[2022-09-25 16:24:00,777][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.7.attn.proj 		 module_param_name: weight 		 specification: {'lr': 3.375e-08, 'weight_decay': 0.1}
+[2022-09-25 16:24:00,777][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.7.attn.proj 		 module_param_name: bias 		 specification: {'lr': 3.375e-08, 'weight_decay': 0.1}
+[2022-09-25 16:24:00,777][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.7.norm2 		 module_param_name: weight 		 specification: {'lr': 3.375e-08, 'weight_decay': 0.0}
+[2022-09-25 16:24:00,777][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.7.norm2 		 module_param_name: bias 		 specification: {'lr': 3.375e-08, 'weight_decay': 0.0}
+[2022-09-25 16:24:00,777][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.7.mlp.fc1 		 module_param_name: weight 		 specification: {'lr': 3.375e-08, 'weight_decay': 0.1}
+[2022-09-25 16:24:00,778][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.7.mlp.fc1 		 module_param_name: bias 		 specification: {'lr': 3.375e-08, 'weight_decay': 0.1}
+[2022-09-25 16:24:00,778][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.7.mlp.fc2 		 module_param_name: weight 		 specification: {'lr': 3.375e-08, 'weight_decay': 0.1}
+[2022-09-25 16:24:00,778][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.7.mlp.fc2 		 module_param_name: bias 		 specification: {'lr': 3.375e-08, 'weight_decay': 0.1}
+[2022-09-25 16:24:00,778][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.8.norm1 		 module_param_name: weight 		 specification: {'lr': 4.5e-08, 'weight_decay': 0.0}
+[2022-09-25 16:24:00,778][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.8.norm1 		 module_param_name: bias 		 specification: {'lr': 4.5e-08, 'weight_decay': 0.0}
+[2022-09-25 16:24:00,778][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.8.attn 		 module_param_name: rel_pos_h 		 specification: {'lr': 4.5e-08, 'weight_decay': 0.0}
+[2022-09-25 16:24:00,778][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.8.attn 		 module_param_name: rel_pos_w 		 specification: {'lr': 4.5e-08, 'weight_decay': 0.0}
+[2022-09-25 16:24:00,779][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.8.attn.qkv 		 module_param_name: weight 		 specification: {'lr': 4.5e-08, 'weight_decay': 0.1}
+[2022-09-25 16:24:00,779][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.8.attn.qkv 		 module_param_name: bias 		 specification: {'lr': 4.5e-08, 'weight_decay': 0.1}
+[2022-09-25 16:24:00,779][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.8.attn.proj 		 module_param_name: weight 		 specification: {'lr': 4.5e-08, 'weight_decay': 0.1}
+[2022-09-25 16:24:00,779][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.8.attn.proj 		 module_param_name: bias 		 specification: {'lr': 4.5e-08, 'weight_decay': 0.1}
+[2022-09-25 16:24:00,779][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.8.norm2 		 module_param_name: weight 		 specification: {'lr': 4.5e-08, 'weight_decay': 0.0}
+[2022-09-25 16:24:00,779][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.8.norm2 		 module_param_name: bias 		 specification: {'lr': 4.5e-08, 'weight_decay': 0.0}
+[2022-09-25 16:24:00,779][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.8.mlp.fc1 		 module_param_name: weight 		 specification: {'lr': 4.5e-08, 'weight_decay': 0.1}
+[2022-09-25 16:24:00,779][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.8.mlp.fc1 		 module_param_name: bias 		 specification: {'lr': 4.5e-08, 'weight_decay': 0.1}
+[2022-09-25 16:24:00,780][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.8.mlp.fc2 		 module_param_name: weight 		 specification: {'lr': 4.5e-08, 'weight_decay': 0.1}
+[2022-09-25 16:24:00,780][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.8.mlp.fc2 		 module_param_name: bias 		 specification: {'lr': 4.5e-08, 'weight_decay': 0.1}
+[2022-09-25 16:24:00,780][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.9.norm1 		 module_param_name: weight 		 specification: {'lr': 6e-08, 'weight_decay': 0.0}
+[2022-09-25 16:24:00,780][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.9.norm1 		 module_param_name: bias 		 specification: {'lr': 6e-08, 'weight_decay': 0.0}
+[2022-09-25 16:24:00,780][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.9.attn 		 module_param_name: rel_pos_h 		 specification: {'lr': 6e-08, 'weight_decay': 0.0}
+[2022-09-25 16:24:00,780][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.9.attn 		 module_param_name: rel_pos_w 		 specification: {'lr': 6e-08, 'weight_decay': 0.0}
+[2022-09-25 16:24:00,780][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.9.attn.qkv 		 module_param_name: weight 		 specification: {'lr': 6e-08, 'weight_decay': 0.1}
+[2022-09-25 16:24:00,780][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.9.attn.qkv 		 module_param_name: bias 		 specification: {'lr': 6e-08, 'weight_decay': 0.1}
+[2022-09-25 16:24:00,781][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.9.attn.proj 		 module_param_name: weight 		 specification: {'lr': 6e-08, 'weight_decay': 0.1}
+[2022-09-25 16:24:00,781][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.9.attn.proj 		 module_param_name: bias 		 specification: {'lr': 6e-08, 'weight_decay': 0.1}
+[2022-09-25 16:24:00,781][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.9.norm2 		 module_param_name: weight 		 specification: {'lr': 6e-08, 'weight_decay': 0.0}
+[2022-09-25 16:24:00,781][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.9.norm2 		 module_param_name: bias 		 specification: {'lr': 6e-08, 'weight_decay': 0.0}
+[2022-09-25 16:24:00,781][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.9.mlp.fc1 		 module_param_name: weight 		 specification: {'lr': 6e-08, 'weight_decay': 0.1}
+[2022-09-25 16:24:00,781][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.9.mlp.fc1 		 module_param_name: bias 		 specification: {'lr': 6e-08, 'weight_decay': 0.1}
+[2022-09-25 16:24:00,781][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.9.mlp.fc2 		 module_param_name: weight 		 specification: {'lr': 6e-08, 'weight_decay': 0.1}
+[2022-09-25 16:24:00,782][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.9.mlp.fc2 		 module_param_name: bias 		 specification: {'lr': 6e-08, 'weight_decay': 0.1}
+[2022-09-25 16:24:00,782][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.10.norm1 		 module_param_name: weight 		 specification: {'lr': 8e-08, 'weight_decay': 0.0}
+[2022-09-25 16:24:00,782][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.10.norm1 		 module_param_name: bias 		 specification: {'lr': 8e-08, 'weight_decay': 0.0}
+[2022-09-25 16:24:00,782][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.10.attn 		 module_param_name: rel_pos_h 		 specification: {'lr': 8e-08, 'weight_decay': 0.0}
+[2022-09-25 16:24:00,782][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.10.attn 		 module_param_name: rel_pos_w 		 specification: {'lr': 8e-08, 'weight_decay': 0.0}
+[2022-09-25 16:24:00,782][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.10.attn.qkv 		 module_param_name: weight 		 specification: {'lr': 8e-08, 'weight_decay': 0.1}
+[2022-09-25 16:24:00,782][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.10.attn.qkv 		 module_param_name: bias 		 specification: {'lr': 8e-08, 'weight_decay': 0.1}
+[2022-09-25 16:24:00,783][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.10.attn.proj 		 module_param_name: weight 		 specification: {'lr': 8e-08, 'weight_decay': 0.1}
+[2022-09-25 16:24:00,783][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.10.attn.proj 		 module_param_name: bias 		 specification: {'lr': 8e-08, 'weight_decay': 0.1}
+[2022-09-25 16:24:00,783][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.10.norm2 		 module_param_name: weight 		 specification: {'lr': 8e-08, 'weight_decay': 0.0}
+[2022-09-25 16:24:00,783][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.10.norm2 		 module_param_name: bias 		 specification: {'lr': 8e-08, 'weight_decay': 0.0}
+[2022-09-25 16:24:00,783][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.10.mlp.fc1 		 module_param_name: weight 		 specification: {'lr': 8e-08, 'weight_decay': 0.1}
+[2022-09-25 16:24:00,783][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.10.mlp.fc1 		 module_param_name: bias 		 specification: {'lr': 8e-08, 'weight_decay': 0.1}
+[2022-09-25 16:24:00,783][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.10.mlp.fc2 		 module_param_name: weight 		 specification: {'lr': 8e-08, 'weight_decay': 0.1}
+[2022-09-25 16:24:00,783][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.10.mlp.fc2 		 module_param_name: bias 		 specification: {'lr': 8e-08, 'weight_decay': 0.1}
+[2022-09-25 16:24:00,784][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.11.norm1 		 module_param_name: weight 		 specification: {'lr': 1.0666666666666666e-07, 'weight_decay': 0.0}
+[2022-09-25 16:24:00,784][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.11.norm1 		 module_param_name: bias 		 specification: {'lr': 1.0666666666666666e-07, 'weight_decay': 0.0}
+[2022-09-25 16:24:00,784][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.11.attn 		 module_param_name: rel_pos_h 		 specification: {'lr': 1.0666666666666666e-07, 'weight_decay': 0.0}
+[2022-09-25 16:24:00,784][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.11.attn 		 module_param_name: rel_pos_w 		 specification: {'lr': 1.0666666666666666e-07, 'weight_decay': 0.0}
+[2022-09-25 16:24:00,784][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.11.attn.qkv 		 module_param_name: weight 		 specification: {'lr': 1.0666666666666666e-07, 'weight_decay': 0.1}
+[2022-09-25 16:24:00,784][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.11.attn.qkv 		 module_param_name: bias 		 specification: {'lr': 1.0666666666666666e-07, 'weight_decay': 0.1}
+[2022-09-25 16:24:00,784][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.11.attn.proj 		 module_param_name: weight 		 specification: {'lr': 1.0666666666666666e-07, 'weight_decay': 0.1}
+[2022-09-25 16:24:00,785][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.11.attn.proj 		 module_param_name: bias 		 specification: {'lr': 1.0666666666666666e-07, 'weight_decay': 0.1}
+[2022-09-25 16:24:00,785][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.11.norm2 		 module_param_name: weight 		 specification: {'lr': 1.0666666666666666e-07, 'weight_decay': 0.0}
+[2022-09-25 16:24:00,785][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.11.norm2 		 module_param_name: bias 		 specification: {'lr': 1.0666666666666666e-07, 'weight_decay': 0.0}
+[2022-09-25 16:24:00,785][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.11.mlp.fc1 		 module_param_name: weight 		 specification: {'lr': 1.0666666666666666e-07, 'weight_decay': 0.1}
+[2022-09-25 16:24:00,785][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.11.mlp.fc1 		 module_param_name: bias 		 specification: {'lr': 1.0666666666666666e-07, 'weight_decay': 0.1}
+[2022-09-25 16:24:00,785][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.11.mlp.fc2 		 module_param_name: weight 		 specification: {'lr': 1.0666666666666666e-07, 'weight_decay': 0.1}
+[2022-09-25 16:24:00,785][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.blocks.11.mlp.fc2 		 module_param_name: bias 		 specification: {'lr': 1.0666666666666666e-07, 'weight_decay': 0.1}
+[2022-09-25 16:24:00,785][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.norm 		 module_param_name: weight 		 specification: {'lr': 8e-08, 'weight_decay': 0.0}
+[2022-09-25 16:24:00,786][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.backbone_module.norm 		 module_param_name: bias 		 specification: {'lr': 8e-08, 'weight_decay': 0.0}
+[2022-09-25 16:24:00,786][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.decoder_module.deconv_layers.0 		 module_param_name: weight 		 specification: {'lr': 1e-07, 'weight_decay': 0.1}
+[2022-09-25 16:24:00,786][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.decoder_module.deconv_layers.1 		 module_param_name: weight 		 specification: {'lr': 1e-07, 'weight_decay': 0.1}
+[2022-09-25 16:24:00,786][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.decoder_module.deconv_layers.1 		 module_param_name: bias 		 specification: {'lr': 1e-07, 'weight_decay': 0.1}
+[2022-09-25 16:24:00,786][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.decoder_module.deconv_layers.3 		 module_param_name: weight 		 specification: {'lr': 1e-07, 'weight_decay': 0.1}
+[2022-09-25 16:24:00,786][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.decoder_module.deconv_layers.4 		 module_param_name: weight 		 specification: {'lr': 1e-07, 'weight_decay': 0.1}
+[2022-09-25 16:24:00,786][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.decoder_module.deconv_layers.4 		 module_param_name: bias 		 specification: {'lr': 1e-07, 'weight_decay': 0.1}
+[2022-09-25 16:24:00,786][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.decoder_module.final_layer 		 module_param_name: weight 		 specification: {'lr': 1e-07, 'weight_decay': 0.1}
+[2022-09-25 16:24:00,787][solver_multitask_dev.py][line: 191][    INFO] task_id: 0 	module_name: module.decoder_module.final_layer 		 module_param_name: bias 		 specification: {'lr': 1e-07, 'weight_decay': 0.1}
+sync_print: rank 0, sampler: rank=0, world_size=4, random_seed=0
+[rank 1] broadcasting backbone-specific param module.backbone_module.pos_embed	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.patch_embed.proj.weight	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.patch_embed.proj.bias	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.0.norm1.weight	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.0.norm1.bias	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.0.attn.rel_pos_h	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.0.attn.rel_pos_w	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.0.attn.qkv.weight	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.0.attn.qkv.bias	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.0.attn.proj.weight	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.0.attn.proj.bias	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.0.norm2.weight	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.0.norm2.bias	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.0.mlp.fc1.weight	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.0.mlp.fc1.bias	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.0.mlp.fc2.weight	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.0.mlp.fc2.bias	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.1.norm1.weight	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.1.norm1.bias	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.1.attn.rel_pos_h	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.1.attn.rel_pos_w	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.1.attn.qkv.weight	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.1.attn.qkv.bias	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.1.attn.proj.weight	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.1.attn.proj.bias	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.1.norm2.weight	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.1.norm2.bias	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.1.mlp.fc1.weight	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.1.mlp.fc1.bias	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.1.mlp.fc2.weight	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.1.mlp.fc2.bias	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.2.norm1.weight	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.2.norm1.bias	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.2.attn.rel_pos_h	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.2.attn.rel_pos_w	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.2.attn.qkv.weight	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.2.attn.qkv.bias	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.2.attn.proj.weight	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.2.attn.proj.bias	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.2.norm2.weight	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.2.norm2.bias	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.2.mlp.fc1.weight	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.2.mlp.fc1.bias	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.2.mlp.fc2.weight	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.2.mlp.fc2.bias	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.3.norm1.weight	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.3.norm1.bias	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.3.attn.rel_pos_h	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.3.attn.rel_pos_w	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.3.attn.qkv.weight	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.3.attn.qkv.bias	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.3.attn.proj.weight	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.3.attn.proj.bias	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.3.norm2.weight	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.3.norm2.bias	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.3.mlp.fc1.weight	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.3.mlp.fc1.bias	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.3.mlp.fc2.weight	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.3.mlp.fc2.bias	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.4.norm1.weight	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.4.norm1.bias	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.4.attn.rel_pos_h	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.4.attn.rel_pos_w	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.4.attn.qkv.weight	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.4.attn.qkv.bias	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.4.attn.proj.weight	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.4.attn.proj.bias	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.4.norm2.weight	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.4.norm2.bias	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.4.mlp.fc1.weight	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.4.mlp.fc1.bias	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.4.mlp.fc2.weight	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.4.mlp.fc2.bias	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.5.norm1.weight	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.5.norm1.bias	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.5.attn.rel_pos_h	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.5.attn.rel_pos_w	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.5.attn.qkv.weight	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.5.attn.qkv.bias	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.5.attn.proj.weight	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.5.attn.proj.bias	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.5.norm2.weight	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.5.norm2.bias	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.5.mlp.fc1.weight	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.5.mlp.fc1.bias	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.5.mlp.fc2.weight	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.5.mlp.fc2.bias	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.6.norm1.weight	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.6.norm1.bias	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.6.attn.rel_pos_h	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.6.attn.rel_pos_w	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.6.attn.qkv.weight	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.6.attn.qkv.bias	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.6.attn.proj.weight	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.6.attn.proj.bias	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.6.norm2.weight	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.6.norm2.bias	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.6.mlp.fc1.weight	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.6.mlp.fc1.bias	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.6.mlp.fc2.weight	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.6.mlp.fc2.bias	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.7.norm1.weight	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.7.norm1.bias	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.7.attn.rel_pos_h	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.7.attn.rel_pos_w	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.7.attn.qkv.weight	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.7.attn.qkv.bias	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.7.attn.proj.weight	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.7.attn.proj.bias	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.7.norm2.weight	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.7.norm2.bias	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.7.mlp.fc1.weight	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.7.mlp.fc1.bias	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.7.mlp.fc2.weight	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.7.mlp.fc2.bias	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.8.norm1.weight	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.8.norm1.bias	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.8.attn.rel_pos_h	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.8.attn.rel_pos_w	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.8.attn.qkv.weight	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.8.attn.qkv.bias	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.8.attn.proj.weight	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.8.attn.proj.bias	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.8.norm2.weight	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.8.norm2.bias	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.8.mlp.fc1.weight	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.8.mlp.fc1.bias	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.8.mlp.fc2.weight	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.8.mlp.fc2.bias	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.9.norm1.weight	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.9.norm1.bias	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.9.attn.rel_pos_h	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.9.attn.rel_pos_w	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.9.attn.qkv.weight	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.9.attn.qkv.bias	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.9.attn.proj.weight	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.9.attn.proj.bias	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.9.norm2.weight	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.9.norm2.bias	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.9.mlp.fc1.weight	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.9.mlp.fc1.bias	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.9.mlp.fc2.weight	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.9.mlp.fc2.bias	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.10.norm1.weight	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.10.norm1.bias	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.10.attn.rel_pos_h	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.10.attn.rel_pos_w	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.10.attn.qkv.weight	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.10.attn.qkv.bias	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.10.attn.proj.weight	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.10.attn.proj.bias	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.10.norm2.weight	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.10.norm2.bias	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.10.mlp.fc1.weight	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.10.mlp.fc1.bias	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.10.mlp.fc2.weight	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.10.mlp.fc2.bias	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.11.norm1.weight	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.11.norm1.bias	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.11.attn.rel_pos_h	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.11.attn.rel_pos_w	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.11.attn.qkv.weight	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.11.attn.qkv.bias	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.11.attn.proj.weight	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.11.attn.proj.bias	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.11.norm2.weight	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.11.norm2.bias	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.11.mlp.fc1.weight	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.11.mlp.fc1.bias	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.11.mlp.fc2.weight	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.blocks.11.mlp.fc2.bias	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.norm.weight	group_idx=3
+[rank 1] broadcasting backbone-specific param module.backbone_module.norm.bias	group_idx=3
+[rank 1] broadcasting decoder-specific param module.decoder_module.deconv_layers.0.weight	group_idx=5
+[rank 1] broadcasting decoder-specific param module.decoder_module.deconv_layers.1.weight	group_idx=5
+[rank 1] broadcasting decoder-specific param module.decoder_module.deconv_layers.1.bias	group_idx=5
+[rank 1] broadcasting decoder-specific param module.decoder_module.deconv_layers.3.weight	group_idx=5
+[rank 1] broadcasting decoder-specific param module.decoder_module.deconv_layers.4.weight	group_idx=5
+[rank 1] broadcasting decoder-specific param module.decoder_module.deconv_layers.4.bias	group_idx=5
+[rank 1] broadcasting decoder-specific param module.decoder_module.final_layer.weight	group_idx=5
+[rank 1] broadcasting decoder-specific param module.decoder_module.final_layer.bias	group_idx=5
+sync_print: rank 1, sampler: rank=1, world_size=4, random_seed=0
+[rank 2] >>> sanity check: attempting torch.Tensor(1).cuda(), check task_sp_list if stuck
+[rank 2] >>> sanity check: torch.Tensor(1).cuda() passed
+[rank 3] >>> sanity check: attempting torch.Tensor(1).cuda(), check task_sp_list if stuck
+[rank 3] >>> sanity check: torch.Tensor(1).cuda() passed
+[2022-09-25 16:24:01,163][           solver.py][line: 252][    INFO] using new lr scheduler!
+[rank 0] >>> sanity check: attempting torch.Tensor(1).cuda(), check task_sp_list if stuck
+[rank 0] >>> sanity check: torch.Tensor(1).cuda() passed
+[rank 1] >>> sanity check: attempting torch.Tensor(1).cuda(), check task_sp_list if stuck
+[rank 1] >>> sanity check: torch.Tensor(1).cuda() passed

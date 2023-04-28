@@ -1,0 +1,112 @@
+out_dir: /mnt/lustrenew/chencheng1/expr_files/vitruvian/devL2/L2_attr_finetune
+
+common:  # prefix
+  project_name: L2_rap2_attr_finetune
+
+  backbone:
+    type: vit_base_patch16
+    kwargs:
+      task_sp_list: ['pos_embed', 'rel_pos_h', 'rel_pos_w'] # wrong list would somehow cause .cuda() stuck without error
+      pretrained: True
+      pretrain_path: /mnt/lustre/share/chencheng1/pretrain/L2_final_base/wo_cls_token/v100_32g_vitbase_size224_lr1e3_stepLRx3_bmp1_adafactor_wd01_clip05_layerdecay075_lpe_peddet_citypersons_LSA_reduct8_tbn1_heads2_gate1_peddetShareDecoder_exp3_setting_SharePosEmbed.pth
+      img_size: [224, 224]  # deprecated by simple interpolate
+      lms_checkpoint_train: fairscale
+      window: False
+      test_pos_mode: learnable_simple_interpolate # to_do: ablation
+      pad_attn_mask: False  # to_do: ablation
+      round_padding: True
+      learnable_pos: True
+      drop_path_rate: 0.1
+
+  solver:
+    type: SolverMultiTaskDev
+
+  lr_scheduler:
+    type: 'Step'
+    kwargs:
+      base_lr: 1.0e-4
+      warmup_steps: 500
+      warmup_lr: 1.0e-2  #5.0e-4
+      lr_mults: [0.1, 0.1]
+      lr_steps: [27867, 33440] # 37156 75% 90%
+
+  backbone_multiplier: 1.0
+  pos_embed_multiplier: 2.0
+
+  optimizer:
+    type: SGD
+    kwargs:
+      weight_decay: 0.
+      nesterov: False
+
+  layer_decay:
+    # layer decay
+    num_layers: 12
+    layer_decay_rate: 0.75
+    lpe_lr: True
+
+  auto_denan: False
+
+  workers: 2
+  max_iter: 37156  # 35ep (67943 * 35) / 64 
+
+  deterministic: True   # seed control
+  cudnn_deterministic: True
+  worker_rank: True
+  random_seed: 42
+
+  print_freq: 10
+  vis_batch: False
+  save_interval: 60000
+  save_iters: [32000]
+
+  use_ceph: True
+  sync: True
+
+  fix_backbone_partial_layers: ['backbone_module.cls_token', 'backbone_module.pos_embed', 'backbone_module.patch_embed.proj.weight', 'backbone_module.patch_embed.proj.bias', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
+  partialFT_open_norm: True
+
+tasks :  # prefix
+  0:
+    name: attr_peta
+    loss_weight: 1.0
+    gres_ratio: 1  # int, > 0| world/sum*ratio
+    dataset:
+      type: AttrDataset
+      kwargs:
+        task_spec:
+          dataset: 'rap2'
+          data_path: sh1424:s3://pedattr_public/rap2/dataset.pkl
+          root_path: sh1424:s3://pedattr_public/rap2/RAP_dataset/
+        augmentation:
+          height: 256
+          width: 192
+          use_random_aug: False
+    sampler:
+      batch_size: 32  # per card
+      shuffle_strategy: 1
+    neck:
+      type: DoNothing
+      kwargs: {}
+
+    decoder:
+      type: pedattr_cls_vit_A
+      kwargs:
+        out_feature: 768
+        nattr: 54
+        loss_cfg:
+          type: CEL_Sigmoid
+          kwargs:
+            sample_weight: [0.00575482, 0.19323551, 0.93186936, 0.01533638, 0.0663203 ,
+                            0.21637255, 0.07765333, 0.04739267, 0.23145872, 0.11599429,
+                            0.28473868, 0.03042256, 0.04175559, 0.09656624, 0.02725814,
+                            0.57574732, 0.02970137, 0.02045833, 0.02796462, 0.26612013,
+                            0.11776048, 0.26311761, 0.20243439, 0.0844973 , 0.01432083,
+                            0.22655756, 0.08448258, 0.0213267 , 0.0690726 , 0.02636033,
+                            0.03813491, 0.0274642 , 0.01036163, 0.02444696, 0.296631  ,
+                            0.00887509, 0.4031026 , 0.54734115, 0.03529429, 0.31651531,
+                            0.13645261, 0.77788735, 0.07419455, 0.93875749, 0.05350073,
+                            0.03379303, 0.02666941, 0.04840822, 0.02328422, 0.01050881,
+                            0.01789736, 0.0254478 , 0.13287609, 0.01022916,
+                            ]
+            size_average: True

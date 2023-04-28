@@ -1,0 +1,23 @@
+common:
+  tester:
+    type: 'ReIDTester'
+    test_feature_name: 'feature_nobn'
+  use_ceph: True
+  sync: True
+
+tasks :
+  0 :
+    name : market1501
+    loss_weight : 1.0
+    gres_ratio: 1
+    dataset:
+      type: ReIDTestDataset
+      kwargs:
+        data_use_ratio: 1
+        root_path: sh1424:s3://pedreid_public/
+        query_file_path:
+          - sh1424:s3://pedreid_public/market1501/data_list/probe.txt
+        gallery_file_path:
+          - sh1424:s3://pedreid_public/market1501/data_list/gallery.txt
+        loader: 'pil'
+        vit: True

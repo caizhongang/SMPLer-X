@@ -1,0 +1,156 @@
+common:  # prefix
+  project_name: release_debug
+
+  #######################
+  # dataset:
+  # pose: cocopose / aic / posetrack / jrdb2022 / mhp_pose / penn_action / 3dpw
+  # human parsing: h36m / lip / cihp / vip
+  # clothes parsing: deepfashion / modanet
+  # pedattr: rap2 / pa100k / HARDHC / uavhuman / parse27k / duke / market_attr
+  # reid: 5set / DGMarket / LaST_PRCC
+  # peddet: crowdhuman / widerPersons_coco-person
+  #######################
+
+  share_backbone_group: [0]
+  share_neck_group: [0]
+  share_decoder_group: [0]
+
+  model_entry_type: backbone_aio_entry
+  solver:
+    type: SolverMultiTaskDev
+
+  lr_scheduler:
+    type: 'Step'
+    kwargs:
+      base_lr: 1.0e-7  #5.0e-7
+      warmup_steps: 1500
+      warmup_lr: 1.0e-3  #5.0e-4
+      lr_mults: [0.5, 0.2, 0.1]
+      lr_steps: [40000, 60000, 76000] # 50% 75% 95%
+
+  backbone_multiplier: 1.0
+  optimizer:
+    type: Adafactor_dev
+    kwargs:
+      beta1: 0.9
+      clip_beta2: 0.999
+      clip_threshold: 1.
+      decay_rate: -0.8
+      scale_parameter: False
+      relative_step: False
+      weight_decay: 0.05
+
+  layer_decay:
+    # layer decay
+    num_layers: 12
+    layer_decay_rate: 0.75
+    lpe_lr: True
+
+  auto_denan: False
+
+  workers: 2
+  max_iter: 80000
+
+  deterministic: True   # seed control
+  cudnn_deterministic: False
+  worker_rank: True
+  random_seed: 42
+
+  print_freq: 10
+  vis_batch: False
+  save_interval: 15000
+
+  use_ceph: True
+  sync: True
+
+
+tasks :
+## reid ##
+  # 5set
+  0:
+    name: reid_5sets
+    loss_weight: 1080
+    gres_ratio: 1  # int, > 0, = Task_GPUs / (world_Size/sum(all_gres_ratios))
+    backbone:
+      type: vit_base_patch16_ladder_attention_share_pos_embed
+      kwargs:
+        task_sp_list: ['cls_token', 'cls_token_pos_embed', 'rel_pos_h', 'rel_pos_w'] # wrong list would somehow cause .cuda() stuck without error
+        pretrained: True
+        img_size: [224, 224]  # deprecated by simple interpolate
+        lms_checkpoint_train: fairscale
+        window: False
+        test_pos_mode: learnable_simple_interpolate # to_do: ablation
+        pad_attn_mask: False  # to_do: ablation
+        round_padding: True
+        learnable_pos: True
+        drop_path_rate: 0.
+        use_cls_token: True
+
+    dataset:
+      type: ReIDDataset
+      kwargs:
+        data_use_ratio: 1
+        task_spec:
+          list :
+            - sh1424:s3://pedreid_public/market1501/data_list/fileList.txt
+            - sh1424:s3://pedreid_public/dukemtmc-reid/data_list/fileList.txt
+            - sh1424:s3://pedreid_public/cuhk03_1/data_list/fileList.txt
+            - sh1424:s3://pedreid_public/MSMT17_V1/data_list/fileList.txt
+          meta :
+            - sh1424:s3://pedreid_public/market1501/data_list/metaList.txt
+            - sh1424:s3://pedreid_public/dukemtmc-reid/data_list/metaList.txt
+            - sh1424:s3://pedreid_public/cuhk03_1/data_list/metaList.txt
+            - sh1424:s3://pedreid_public/MSMT17_V1/data_list/metaList.txt
+          prefix :
+            - sh1424:s3://pedreid_public/
+            - sh1424:s3://pedreid_public/
+            - sh1424:s3://pedreid_public/
+            - sh1424:s3://pedreid_public/
+        augmentation:
+          height: 256
+          width : 128
+          earser: True
+          brightness: False
+          contrast: False
+          vit: True
+          split:
+            bg_type: 0
+            aug_type: 3
+            prob: 0.2
+        loader: pil
+
+    sampler:
+      type: RandomIdentity
+      batch_size: 216
+      shuffle_strategy: 6
+
+    neck:
+      type: LadderSideAttentionFPN
+      kwargs:
+        lms_checkpoint_train: fairscale
+        layer_feat_nums: 12
+        hidden_dim: 768
+        reduct_ration: 8
+        transformer_block_nums: 1
+        transformer_block_num_heads: 2
+        gate_T: 1.0
+        gate_alpha: 0
+        use_cls_token: True
+
+    decoder:
+      type: reid_cls_vit_B
+      kwargs:
+        use_sync_bn: True
+        bn_sync_stats: False
+        bn_momentum: 0.1
+        bn_eps: 0.00001
+        feature_bn: True
+        feature_only: False
+        out_feature: 768
+        loss_cfg:
+          type: Softmax_TripletLoss
+          kwargs:
+            in_features: 768
+            out_features: 3886 #751 #3261
+            tri_margin: ~
+            balance_weight: 1
