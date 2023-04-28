@@ -1,0 +1,145 @@
+common:  # prefix
+  project_name: release_debug
+
+  #######################
+  # dataset:
+  # pose: cocopose / aic / posetrack / jrdb2022 / mhp_pose / penn_action / 3dpw
+  # human parsing: h36m / lip / cihp / vip
+  # clothes parsing: deepfashion / modanet
+  # pedattr: rap2 / pa100k / HARDHC / uavhuman / parse27k / duke / market_attr
+  # reid: 5set / DGMarket / LaST_PRCC
+  # peddet: crowdhuman / widerPersons_coco-person
+  #######################
+
+  share_backbone_group: [0]
+  share_neck_group: [0]
+  share_decoder_group: [0]
+
+  model_entry_type: backbone_aio_entry
+  solver:
+    type: SolverMultiTaskDev
+
+  lr_scheduler:
+    type: 'Step'
+    kwargs:
+      base_lr: 1.0e-7  #5.0e-7
+      warmup_steps: 1500
+      warmup_lr: 1.0e-3  #5.0e-4
+      lr_mults: [0.5, 0.2, 0.1]
+      lr_steps: [40000, 60000, 76000] # 50% 75% 95%
+
+  backbone_multiplier: 1.0
+  optimizer:
+    type: Adafactor_dev
+    kwargs:
+      beta1: 0.9
+      clip_beta2: 0.999
+      clip_threshold: 1.
+      decay_rate: -0.8
+      scale_parameter: False
+      relative_step: False
+      weight_decay: 0.05
+
+  layer_decay:
+    # layer decay
+    num_layers: 12
+    layer_decay_rate: 0.75
+    lpe_lr: True
+
+  auto_denan: False
+
+  workers: 2
+  max_iter: 80000
+
+  deterministic: True   # seed control
+  cudnn_deterministic: False
+  worker_rank: True
+  random_seed: 42
+
+  print_freq: 10
+  vis_batch: False
+  save_interval: 15000
+
+  use_ceph: True
+  sync: True
+
+
+tasks :
+## pose ##
+  # cocopose
+  0:
+    name: coco_pose
+    loss_weight: 1
+    gres_ratio: 1
+    backbone:
+      type: vit_base_patch16_ladder_attention
+      kwargs:
+        task_sp_list: ['pos_embed', 'rel_pos_h', 'rel_pos_w'] # wrong list would somehow cause .cuda() stuck without error
+        pretrained: True
+        img_size: [224, 224]  # deprecated by simple interpolate
+        lms_checkpoint_train: fairscale
+        window: False
+        test_pos_mode: learnable_simple_interpolate
+        pad_attn_mask: False
+        round_padding: True
+        learnable_pos: True
+        drop_path_rate: 0.3
+
+    dataset:
+      type: COCOPosDatasetDev
+      kwargs:
+        ann_file:  sh1424:s3://pose_public/coco/annotations/person_keypoints_train2017.json
+        img_prefix: sh1424:s3://pose_public/coco/train2017/
+        use_udp: True
+        data_use_ratio: 1
+        data_cfg: {
+                      'image_size':[192, 256],
+                      'heatmap_size':[48, 64],
+                      'num_output_channels': 17,
+                      'num_joints': 17,
+                      'dataset_channel': [[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16],],
+                      'inference_channel': [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16],
+                      'soft_nms': False,
+                      'nms_thr': 1.0,
+                      'oks_thr': 0.9,
+                      'vis_thr': 0.2,
+                      'use_gt_bbox': False,
+                      'det_bbox_thr': 0.0,
+                      'bbox_file': '/mnt/lustre/share/chencheng1/dataset/person_detection_results/COCO_val2017_detections_AP_H_56_person.json'
+        }
+    sampler:
+      batch_size: 224 # 16
+      shuffle_strategy: 1
+
+    neck:
+      type: LadderSideAttentionFPN
+      kwargs:
+        lms_checkpoint_train: fairscale
+        layer_feat_nums: 12
+        hidden_dim: 768
+        reduct_ration: 8
+        transformer_block_nums: 1
+        transformer_block_num_heads: 2
+        gate_T: 1.0
+        gate_alpha: 0
+
+    decoder:
+      type: TopDownSimpleHead
+      kwargs:
+        layer_norm: True
+        use_sync_bn: False
+        bn_sync_stats: False
+        in_channels: 768
+        out_channels: 17
+        num_deconv_layers: 2
+        num_deconv_filters: [256, 256]
+        num_deconv_kernels: [4, 4]
+        upsample: 0
+        extra: {'final_conv_kernel': 1}
+        train_cfg: {}
+        test_cfg: {
+          'flip_test': True,
+          'post_process':'default',
+          'shift_heatmap': False,
+          'use_udp': True,
+          'modulate_kernel': 11}

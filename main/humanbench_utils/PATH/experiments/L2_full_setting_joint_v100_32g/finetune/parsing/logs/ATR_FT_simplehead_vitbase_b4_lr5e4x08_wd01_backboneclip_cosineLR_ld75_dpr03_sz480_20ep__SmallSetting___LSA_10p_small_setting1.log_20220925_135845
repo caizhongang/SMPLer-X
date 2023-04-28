@@ -1,0 +1,102 @@
+phoenix-srun: Job 88626 scheduled successfully!
+Current QUOTA_TYPE is [reserved], which means the job has occupied quota in RESERVED_TOTAL under your partition.
+Current PHX_PRIORITY is P0
+
+[_init_petrel]-   1  cur: 0.000s, avg(1): 0.000s
+[_init_petrel]-   1  cur: 0.000s, avg(1): 0.000s
+[_init_petrel]-   1  cur: 0.000s, avg(1): 0.000s
+[_init_petrel]-   1  cur: 0.000s, avg(1): 0.000s
+[rank 0000]-[INFO]-[83c2]-[2022-09-25 01:57:47]-[/spring/src/linklink/src/core.cc:220]: linklink init: world_size=4, rank=(0,0), device_num=1, thread_pool=1, buffer_pool=-1
+[rank 0001]-[INFO]-[9bbe]-[2022-09-25 01:57:47]-[/spring/src/linklink/src/core.cc:220]: linklink init: world_size=4, rank=(1,1), device_num=1, thread_pool=1, buffer_pool=-1
+[rank 0002]-[INFO]-[eeab]-[2022-09-25 01:57:47]-[/spring/src/linklink/src/core.cc:220]: linklink init: world_size=4, rank=(2,2), device_num=1, thread_pool=1, buffer_pool=-1
+[rank 0003]-[INFO]-[b506]-[2022-09-25 01:57:47]-[/spring/src/linklink/src/core.cc:220]: linklink init: world_size=4, rank=(3,3), device_num=1, thread_pool=1, buffer_pool=-1
+[rank 3] >> task_info.group[0] ranks [0, 1, 2, 3]
+[rank 0] >> task_info.group[0] ranks [0, 1, 2, 3]
+[rank 2] >> task_info.group[0] ranks [0, 1, 2, 3]
+[rank 1] >> task_info.group[0] ranks [0, 1, 2, 3]
+[rank 1] >> task_info.root_group ranks [0]
+[rank 3] >> task_info.root_group ranks [0]
+[rank 2] >> task_info.root_group ranks [0]
+[rank 0] >> task_info.root_group ranks [0]
+[rank 3] >> task_info.backbone_share_group[[0]] ranks [0, 1, 2, 3]
+[rank 0] >> task_info.backbone_share_group[[0]] ranks [0, 1, 2, 3]
+[rank 2] >> task_info.backbone_share_group[[0]] ranks [0, 1, 2, 3]
+[rank 1] >> task_info.backbone_share_group[[0]] ranks [0, 1, 2, 3]
+[rank 3] >> task_info.neck_share_group[[0]] ranks [0, 1, 2, 3]
+[rank 0] >> task_info.neck_share_group[[0]] ranks [0, 1, 2, 3]
+[rank 2] >> task_info.neck_share_group[[0]] ranks [0, 1, 2, 3]
+[rank 1] >> task_info.neck_share_group[[0]] ranks [0, 1, 2, 3]
+[rank 0] >> task_info.decoder_share_group[[0]] ranks [0, 1, 2, 3]
+[rank 3] >> task_info.decoder_share_group[[0]] ranks [0, 1, 2, 3]
+[rank 3] backbone of task0 has been overided to {'type': 'vit_base_patch16', 'kwargs': {'task_sp_list': ['pos_embed', 'rel_pos_h', 'rel_pos_w'], 'pretrained': True, 'pretrain_path': '/mnt/lustre/chencheng1/expr_files/vitruvian/devL2/transed_ckpt_for_pretrain/devL2_small_setting/parsing/vitbase_lr1e3_StepLRx3_backboneclip_bmp08_ld75_pose_dpr03_dcLN_par_dpr03_dcBN_attr_dpr01_reid_clstoken_dpr0_LSA_10p_small_setting1.pth', 'load_pos_embed': True, 'pos_embed_interp': False, 'learnable_pos': True, 'window': False, 'drop_path_rate': 0.3, 'img_size': 480}}
+[rank 0] backbone of task0 has been overided to {'type': 'vit_base_patch16', 'kwargs': {'task_sp_list': ['pos_embed', 'rel_pos_h', 'rel_pos_w'], 'pretrained': True, 'pretrain_path': '/mnt/lustre/chencheng1/expr_files/vitruvian/devL2/transed_ckpt_for_pretrain/devL2_small_setting/parsing/vitbase_lr1e3_StepLRx3_backboneclip_bmp08_ld75_pose_dpr03_dcLN_par_dpr03_dcBN_attr_dpr01_reid_clstoken_dpr0_LSA_10p_small_setting1.pth', 'load_pos_embed': True, 'pos_embed_interp': False, 'learnable_pos': True, 'window': False, 'drop_path_rate': 0.3, 'img_size': 480}}
+[rank 0] neck of task0 has been overided to {'type': 'DoNothing', 'kwargs': {}}
+[rank 3] neck of task0 has been overided to {'type': 'DoNothing', 'kwargs': {}}
+[rank 0] decoder of task0 has been overided to {'type': 'ViT_SimpleUpSampling', 'kwargs': {'task': 'par', 'input_size': [480, 480], 'in_channels': 768, 'num_classes': 18, 'bn_type': 'torchbn', 'loss_cfg': {'type': 'FSCELoss', 'kwargs': {'configer': {'ce_reduction': 'elementwise_mean', 'ce_ignore_index': 255}}}}}
+[rank 3] decoder of task0 has been overided to {'type': 'ViT_SimpleUpSampling', 'kwargs': {'task': 'par', 'input_size': [480, 480], 'in_channels': 768, 'num_classes': 18, 'bn_type': 'torchbn', 'loss_cfg': {'type': 'FSCELoss', 'kwargs': {'configer': {'ce_reduction': 'elementwise_mean', 'ce_ignore_index': 255}}}}}
+[rank 0] dataset of task0 has been overided to {'type': 'ATRParsingDataset', 'kwargs': {'data_path': '/mnt/lustrenew/share_data/viface/vitruvian/L1_benchmark/human_parsing/ATR', 'cfg': {'is_flip': True, 'crop_size': [480, 480], 'is_multi_scale': True, 'scale_factor': 11, 'center_crop_test': False, 'base_size': 480, 'eval_crop_size': [480, 480], 'ignore_value': 255, 'num_classes': 18, 'label_list': [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17]}}}
+[rank 0] sampler of task0 has been overided to {'batch_size': 4, 'shuffle_strategy': 1}
+[rank 3] dataset of task0 has been overided to {'type': 'ATRParsingDataset', 'kwargs': {'data_path': '/mnt/lustrenew/share_data/viface/vitruvian/L1_benchmark/human_parsing/ATR', 'cfg': {'is_flip': True, 'crop_size': [480, 480], 'is_multi_scale': True, 'scale_factor': 11, 'center_crop_test': False, 'base_size': 480, 'eval_crop_size': [480, 480], 'ignore_value': 255, 'num_classes': 18, 'label_list': [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17]}}}
+[rank 3] sampler of task0 has been overided to {'batch_size': 4, 'shuffle_strategy': 1}
+[rank 1] >> task_info.decoder_share_group[[0]] ranks [0, 1, 2, 3]
+[rank 1] backbone of task0 has been overided to {'type': 'vit_base_patch16', 'kwargs': {'task_sp_list': ['pos_embed', 'rel_pos_h', 'rel_pos_w'], 'pretrained': True, 'pretrain_path': '/mnt/lustre/chencheng1/expr_files/vitruvian/devL2/transed_ckpt_for_pretrain/devL2_small_setting/parsing/vitbase_lr1e3_StepLRx3_backboneclip_bmp08_ld75_pose_dpr03_dcLN_par_dpr03_dcBN_attr_dpr01_reid_clstoken_dpr0_LSA_10p_small_setting1.pth', 'load_pos_embed': True, 'pos_embed_interp': False, 'learnable_pos': True, 'window': False, 'drop_path_rate': 0.3, 'img_size': 480}}
+[rank 1] neck of task0 has been overided to {'type': 'DoNothing', 'kwargs': {}}
+[rank 1] decoder of task0 has been overided to {'type': 'ViT_SimpleUpSampling', 'kwargs': {'task': 'par', 'input_size': [480, 480], 'in_channels': 768, 'num_classes': 18, 'bn_type': 'torchbn', 'loss_cfg': {'type': 'FSCELoss', 'kwargs': {'configer': {'ce_reduction': 'elementwise_mean', 'ce_ignore_index': 255}}}}}
+[rank 1] dataset of task0 has been overided to {'type': 'ATRParsingDataset', 'kwargs': {'data_path': '/mnt/lustrenew/share_data/viface/vitruvian/L1_benchmark/human_parsing/ATR', 'cfg': {'is_flip': True, 'crop_size': [480, 480], 'is_multi_scale': True, 'scale_factor': 11, 'center_crop_test': False, 'base_size': 480, 'eval_crop_size': [480, 480], 'ignore_value': 255, 'num_classes': 18, 'label_list': [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17]}}}
+[rank 2] >> task_info.decoder_share_group[[0]] ranks [0, 1, 2, 3]
+[rank 1] sampler of task0 has been overided to {'batch_size': 4, 'shuffle_strategy': 1}
+[rank 2] backbone of task0 has been overided to {'type': 'vit_base_patch16', 'kwargs': {'task_sp_list': ['pos_embed', 'rel_pos_h', 'rel_pos_w'], 'pretrained': True, 'pretrain_path': '/mnt/lustre/chencheng1/expr_files/vitruvian/devL2/transed_ckpt_for_pretrain/devL2_small_setting/parsing/vitbase_lr1e3_StepLRx3_backboneclip_bmp08_ld75_pose_dpr03_dcLN_par_dpr03_dcBN_attr_dpr01_reid_clstoken_dpr0_LSA_10p_small_setting1.pth', 'load_pos_embed': True, 'pos_embed_interp': False, 'learnable_pos': True, 'window': False, 'drop_path_rate': 0.3, 'img_size': 480}}
+[rank 2] neck of task0 has been overided to {'type': 'DoNothing', 'kwargs': {}}
+[rank 2] decoder of task0 has been overided to {'type': 'ViT_SimpleUpSampling', 'kwargs': {'task': 'par', 'input_size': [480, 480], 'in_channels': 768, 'num_classes': 18, 'bn_type': 'torchbn', 'loss_cfg': {'type': 'FSCELoss', 'kwargs': {'configer': {'ce_reduction': 'elementwise_mean', 'ce_ignore_index': 255}}}}}
+[rank 2] dataset of task0 has been overided to {'type': 'ATRParsingDataset', 'kwargs': {'data_path': '/mnt/lustrenew/share_data/viface/vitruvian/L1_benchmark/human_parsing/ATR', 'cfg': {'is_flip': True, 'crop_size': [480, 480], 'is_multi_scale': True, 'scale_factor': 11, 'center_crop_test': False, 'base_size': 480, 'eval_crop_size': [480, 480], 'ignore_value': 255, 'num_classes': 18, 'label_list': [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17]}}}
+[rank 2] sampler of task0 has been overided to {'batch_size': 4, 'shuffle_strategy': 1}
+sync_print: rank 3, override tensor.cuda() to preserve task_specific flag
+sync_print: rank 1, override tensor.cuda() to preserve task_specific flag
+sync_print: rank 2, override tensor.cuda() to preserve task_specific flag
+2022-09-25 13:57:49 57b8b2fc ERROR: (pavi2.work.training.create_training) error InternalError: internal error
+2022-09-25 13:57:49 dbbc30b2 ERROR: (pavi2.training.__init__) error WriterCreationError: create SummaryWriter error from (InternalError: internal error) [training_id: None]
+Traceback (most recent call last):
+  File "/mnt/lustre/share/platform/dep/PAVI/pavi_latest/pavi2/training.py", line 253, in __init__
+    created)
+  File "/mnt/lustre/share/platform/dep/PAVI/pavi_latest/pavi2/util/log.py", line 106, in catch_wrapper
+    raise exc
+  File "/mnt/lustre/share/platform/dep/PAVI/pavi_latest/pavi2/util/log.py", line 101, in catch_wrapper
+    return function(*args, **kwargs)
+  File "/mnt/lustre/share/platform/dep/PAVI/pavi_latest/pavi2/work/training.py", line 64, in create_training
+    self._training_id = http.create_training(training)
+  File "/mnt/lustre/share/platform/dep/PAVI/pavi_latest/pavi2/http/training.py", line 75, in create_training
+    data = GWClient.CREATE_TRAINING.request(json=json)
+  File "/mnt/lustre/share/platform/dep/PAVI/pavi_latest/pavi2/util/http.py", line 872, in request
+    auth=auth,
+  File "/mnt/lustre/share/platform/dep/PAVI/pavi_latest/pavi2/util/http.py", line 203, in wrapper
+    return function(*args, **kwargs)
+  File "/mnt/lustre/share/platform/dep/PAVI/pavi_latest/pavi2/util/http.py", line 350, in request
+    data, _ = _parse(response)
+  File "/mnt/lustre/share/platform/dep/PAVI/pavi_latest/pavi2/util/http.py", line 292, in _parse
+    raise InternalError(**meta)
+pavi2.exception.InternalError: internal error
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "../../../..//multitask.py", line 78, in <module>
+    main()
+  File "../../../..//multitask.py", line 35, in main
+    S = solver_entry(C)
+  File "/mnt/cache/chencheng1/cc_proj/vitruvian/development/devL2/vitruvian-multitask/core/solvers/__init__.py", line 8, in solver_entry
+    return globals()[C.config['common']['solver']['type']](C)
+  File "/mnt/cache/chencheng1/cc_proj/vitruvian/development/devL2/vitruvian-multitask/core/solvers/solver_multitask_dev.py", line 59, in __init__
+    super().__init__(C)
+  File "/mnt/cache/chencheng1/cc_proj/vitruvian/development/devL2/vitruvian-multitask/core/solvers/solver_deter.py", line 37, in __init__
+    super().__init__(C)
+  File "/mnt/cache/chencheng1/cc_proj/vitruvian/development/devL2/vitruvian-multitask/core/solvers/solver.py", line 59, in __init__
+    self.tb_logger = SummaryWriter(log_dir=self.tb_path,name=C.config['expname'],project=project_name)
+  File "/mnt/lustre/share/platform/dep/PAVI/pavi_latest/pavi2/util/log.py", line 106, in catch_wrapper
+    raise exc
+  File "/mnt/lustre/share/platform/dep/PAVI/pavi_latest/pavi2/util/log.py", line 101, in catch_wrapper
+    return function(*args, **kwargs)
+  File "/mnt/lustre/share/platform/dep/PAVI/pavi_latest/pavi2/training.py", line 283, in __init__
+    raise WriterCreationError from exc
+pavi2.exception.WriterCreationError: create SummaryWriter error
+Error in system call pthread_mutex_destroy: Device or resource busy
+phoenix-srun: error: SH-IDC1-10-5-40-52: task 0: Segmentation fault

@@ -1,0 +1,31 @@
+project_name: pose_test
+common:
+  backbone:
+    kwargs:
+      test_pos_mode: learnable # simple_interpolate, learnable
+  tester:
+    type: TesterMultiTaskDev
+  use_ceph: True
+  sync: True
+  collate: dev_collate
+
+# task_specific_param = ['backbone', 'neck', 'decoder', 'dataset', 'sampler', 'lr_scheduler', 'optimizer']
+tasks:
+  0:
+    name: MPIIPoseTest # deprecated
+    loss_weight: 1.0  # *redundant*
+    gres_ratio: 1  # int, > 0| world/sum*ratio, *redundant*
+    dataset:
+      type: MPIIPosDatasetDev
+      kwargs:
+        ann_file: '/mnt/lustrenew/share_data/viface/vitruvian/L1_benchmark/pose/MPI/annotations/mpii_val.json'
+        img_prefix: '/mnt/lustrenew/share_data/viface/vitruvian/L1_benchmark/pose/MPI/images/'
+        test_mode: True
+        use_udp: True
+        data_use_ratio: 1
+    sampler:
+      batch_size: 16 # per card
+    evaluation:
+      cfg:
+        interval: 10
+        metric: PCKh

@@ -1,0 +1,38 @@
+phoenix-srun: job 486769 queued and waiting for resources
+phoenix-srun: job 486769 has been allocated resources
+phoenix-srun: Job 486769 scheduled successfully!
+Current QUOTA_TYPE is [reserved], which means the job has occupied quota in RESERVED_TOTAL under your partition.
+Current PHX_PRIORITY is normal
+
+[_init_petrel]-   1  cur: 0.000s, avg(1): 0.000s
+[rank 0000]-[INFO]-[a416]-[2022-10-31 04:25:32]-[/spring/src/linklink/src/core.cc:220]: linklink init: world_size=1, rank=(0,0), device_num=1, thread_pool=1, buffer_pool=-1
+[rank 0] >> task_info.group[0] ranks [0]
+[rank 0] >> task_info.root_group ranks [0]
+[rank 0] >> task_info.backbone_share_group[[0]] ranks [0]
+[rank 0] >> task_info.neck_share_group[[0]] ranks [0]
+[rank 0] >> task_info.decoder_share_group[[0]] ranks [0]
+[rank 0] backbone of task0 has been overided to {'type': 'vit_base_patch16_ladder_attention_share_pos_embed', 'kwargs': {'task_sp_list': ['rel_pos_h', 'rel_pos_w'], 'pretrained': True, 'img_size': [224, 224], 'lms_checkpoint_train': 'fairscale', 'window': False, 'test_pos_mode': 'learnable_simple_interpolate', 'pad_attn_mask': False, 'round_padding': True, 'learnable_pos': True, 'drop_path_rate': 0.3}}
+[rank 0] neck of task0 has been overided to {'type': 'LadderSideAttentionFPN', 'kwargs': {'lms_checkpoint_train': 'fairscale', 'layer_feat_nums': 12, 'hidden_dim': 768, 'reduct_ration': 8, 'transformer_block_nums': 1, 'transformer_block_num_heads': 2, 'gate_T': 1.0, 'gate_alpha': 0}}
+[rank 0] decoder of task0 has been overided to {'type': 'ViT_SimpleUpSampling', 'kwargs': {'task': 'par', 'input_size': [480, 480], 'in_channels': 768, 'num_classes': 20, 'bn_type': 'LN', 'loss_cfg': {'type': 'FSCELoss', 'kwargs': {'configer': {'ce_reduction': 'elementwise_mean', 'ce_ignore_index': 255}}}}}
+[rank 0] dataset of task0 has been overided to {'type': 'CIHPParsingDataset', 'kwargs': {'data_path': 'sh1424:s3://parsing_public/CIHP', 'data_use_ratio': 1, 'cfg': {'is_flip': True, 'crop_size': [480, 480], 'is_multi_scale': True, 'scale_factor': 11, 'center_crop_test': False, 'base_size': 480, 'eval_crop_size': [480, 480], 'ignore_value': 255, 'num_classes': 20, 'label_list': [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]}}}
+[rank 0] sampler of task0 has been overided to {'batch_size': 24, 'shuffle_strategy': 1}
+[rank 0] >> task_info.group[0] ranks [0]
+[rank 0] >> task_info.root_group ranks [0]
+[rank 0] >> task_info.backbone_share_group[[0]] ranks [0]
+[rank 0] >> task_info.neck_share_group[[0]] ranks [0]
+[rank 0] >> task_info.decoder_share_group[[0]] ranks [0]
+[rank 0] dataset of task0 has been overided to {'type': 'CIHPParsingDataset', 'kwargs': {'data_path': 'shlg:s3://parsing_public/CIHP', 'data_use_ratio': 1, 'dataset': 'val', 'is_train': False, 'cfg': {'eval_crop_size': [480, 480], 'is_flip': False, 'is_multi_scale': False, 'ignore_value': 255, 'num_classes': 20, 'label_list': [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]}}}
+[rank 0] sampler of task0 has been overided to {'batch_size': 4}
+2022-10-31 16:25:35 3f350cba SUCCESS: (pavi2.training) SummaryWriter is initialized, remember to close the SummaryWriter at the end of your program.
+
+PAVI Info ###################################
+Training：v100_32g_vitbase_size224_lr1e3_stepLRx3_bmp1_adafactor_wd01_clip05_layerdecay075_lpe_peddet_citypersons_LSA_reduct8_tbn1_heads2_gate1_peddetShareDecoder_exp3_setting_SharePosEmbed
+Project：parsing_test
+Training_id：123638
+Training_url：http://autolink.parrots.sensetime.com/pages/content/project/3567/training/123638
+Warning: If `Training_url` is not accessible, please upgrade your pavi version.
+#############################################
+
+sync_print: rank 0, override tensor.cuda() to preserve task_specific flag
+[2022-10-31 16:25:36,826][solver_multitask_dev.py][line: 682][    INFO] deterministic mode, seed: 2022, worker_rank: True,                                   cudnn_deterministic: False
+[rank 0] config[kwargs] {'data_path': 'shlg:s3://parsing_public/CIHP', 'data_use_ratio': 1, 'cfg': {'is_flip': False, 'crop_size': [480, 480], 'is_multi_scale': False, 'scale_factor': 11, 'center_crop_test': False, 'base_size': 480, 'eval_crop_size': [480, 480], 'ignore_value': 255, 'num_classes': 20, 'label_list': [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]}, 'dataset': 'val', 'is_train': False, 'ginfo': {'group': 1, 'task_size': 1, 'task_id': 0, 'task_rank': 0, 'task_root_rank': 0, 'root_group': 2, 'task_sizes': [1], 'task_root_ranks': [0], 'task_num': 1, 'backbone_share_group': 3, 'backbone_group_size': 1, 'backbone_task_size': 1, 'backbone_task_rank': 0, 'neck_share_group': 4, 'neck_group_size': 1, 'neck_task_size': 1, 'neck_task_rank': 0, 'decoder_share_group': 5, 'decoder_group_size': 1, 'decoder_task_size': 1, 'decoder_task_rank': 0, 'task_name': 'parsing_cihp', 'task_names': ['parsing_cihp'], 'task_weight': 1.0, 'task_type': 'normal', 'task_types': ['normal'], 'task_random_seed': 0}}

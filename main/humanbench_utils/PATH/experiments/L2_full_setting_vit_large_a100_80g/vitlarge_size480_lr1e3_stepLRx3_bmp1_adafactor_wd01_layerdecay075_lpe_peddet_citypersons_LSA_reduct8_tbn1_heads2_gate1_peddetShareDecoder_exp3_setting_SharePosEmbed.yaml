@@ -1,0 +1,2113 @@
+out_dir: /mnt/lustre/chencheng1/expr_files/vitruvian/L2_vit_large
+common:  # prefix
+  project_name: L2_vit_large
+
+  #######################
+  # dataset: 
+  # pose: cocopose / aic / posetrack / jrdb2022 / mhp_pose / penn_action / 3dpw / halpe / 3dhp / h36m_pose / AIST
+  # human parsing: h36m / lip / cihp / vip / PaperRoll
+  # clothes parsing: deepfashion / modanet
+  # pedattr: [rap2_pa100k] / [attr_5set]
+  # reid: reid_4set / LaST_PRCC_DGMarket / LUperson
+  # peddet: crowdhuman / det_5set
+  #######################
+
+  share_backbone_group: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+  share_neck_group: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 2, 2, 3, 3, 4, 4, 4, 5, 5]
+  share_decoder_group: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 23]
+
+  model_entry_type: backbone_aio_entry
+  solver:
+    type: SolverMultiTaskDev
+
+  lr_scheduler:
+    type: 'Step'
+    kwargs:
+      base_lr: 1.0e-7  #5.0e-7
+      warmup_steps: 1500
+      warmup_lr: 1.0e-3
+      lr_mults: [0.5, 0.2, 0.1]
+      lr_steps: [40000, 60000, 76000] # 50% 75% 95%
+
+  backbone_multiplier: 1.0
+  pos_embed_multiplier: 2.0
+
+  optimizer:
+    type: Adafactor_dev
+    kwargs:
+      beta1: 0.9
+      clip_beta2: 0.999
+      clip_threshold: 1.
+      decay_rate: -0.8
+      scale_parameter: False
+      relative_step: False
+      weight_decay: 0.05
+
+  layer_decay:
+    num_layers: 12
+    layer_decay_rate: 0.75
+    lpe_lr: True
+    
+  auto_denan: False
+
+  workers: 2
+  max_iter: 80000
+
+  deterministic: True
+  cudnn_deterministic: False
+  worker_rank: True
+  random_seed: 42
+
+  print_freq: 10
+  vis_batch: False
+  save_interval: 10000
+  save_iters: [75000]
+
+  use_ceph: True
+  sync: True
+
+
+tasks :  
+## pose ## 
+  # cocopose
+  0:
+    name: pose_coco
+    loss_weight: 3584000
+    gres_ratio: 1
+    backbone:
+      type: vit_large_patch16_ladder_attention_share_pos_embed
+      kwargs:
+        task_sp_list: ['rel_pos_h', 'rel_pos_w'] # wrong list would somehow cause .cuda() stuck without error
+        pretrained: True
+        img_size: [480, 480]  # deprecated by simple interpolate
+        lms_checkpoint_train: fairscale
+        window: False
+        test_pos_mode: learnable_simple_interpolate
+        pad_attn_mask: False
+        round_padding: True
+        learnable_pos: True
+        drop_path_rate: 0.3
+
+    dataset:
+      type: COCOPosDatasetDev
+      kwargs:
+        ann_file:  sh1424:s3://pose_public/coco/annotations/person_keypoints_train2017.json
+        img_prefix: sh1424:s3://pose_public/coco/train2017/
+        use_udp: True
+        data_use_ratio: 1
+        data_cfg: {
+                      'image_size':[192, 256],
+                      'heatmap_size':[48, 64],
+                      'num_output_channels': 17,
+                      'num_joints': 17,
+                      'dataset_channel': [[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16],],
+                      'inference_channel': [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16],
+                      'soft_nms': False,
+                      'nms_thr': 1.0,
+                      'oks_thr': 0.9,
+                      'vis_thr': 0.2,
+                      'use_gt_bbox': False,
+                      'det_bbox_thr': 0.0,
+                      'bbox_file': '/mnt/lustre/share/chencheng1/dataset/person_detection_results/COCO_val2017_detections_AP_H_56_person.json'
+        }
+    sampler:
+      batch_size: 448
+      shuffle_strategy: 1
+
+    neck:
+      type: LadderSideAttentionFPN
+      kwargs: 
+        lms_checkpoint_train: fairscale
+        layer_feat_nums: 12
+        hidden_dim: 768
+        reduct_ration: 8
+        transformer_block_nums: 1
+        transformer_block_num_heads: 2
+        gate_T: 1.0
+        gate_alpha: 0
+
+    decoder:
+      type: TopDownSimpleHead
+      kwargs:
+        layer_norm: True
+        use_sync_bn: False
+        bn_sync_stats: False
+        in_channels: 768
+        out_channels: 17
+        num_deconv_layers: 2
+        num_deconv_filters: [256, 256]
+        num_deconv_kernels: [4, 4]
+        upsample: 0
+        extra: {'final_conv_kernel': 1}
+        train_cfg: {}
+        test_cfg: {
+          'flip_test': True,
+          'post_process':'default',
+          'shift_heatmap': False,
+          'use_udp': True, 
+          'modulate_kernel': 11}
+  
+  ## aic pose
+  1:
+    name: pose_aic
+    loss_weight: 2688000
+    gres_ratio: 1 # 32  # int, > 0| world/sum*ratio
+
+    backbone:
+      type: vit_large_patch16_ladder_attention_share_pos_embed
+      kwargs:
+        task_sp_list: ['rel_pos_h', 'rel_pos_w'] # wrong list would somehow cause .cuda() stuck without error
+        pretrained: True
+        img_size: [480, 480]  # deprecated by simple interpolate
+        lms_checkpoint_train: fairscale
+        window: False
+        test_pos_mode: learnable_simple_interpolate # to_do: ablation
+        pad_attn_mask: False  # to_do: ablation
+        round_padding: True
+        learnable_pos: True
+        drop_path_rate: 0.3
+
+    dataset:
+      type: MultiPoseDatasetDev
+      kwargs:
+        ann_file:  sh1424:s3://pose_public/ai_challenge/annotations/aic_train.json
+        img_prefix: sh1424:s3://pose_public/ai_challenge/ai_challenger_keypoint_train_20170902/keypoint_train_images_20170902/
+        dataset_name: 'aic'
+        use_udp: True
+        data_use_ratio: 1
+        data_cfg: {
+                      'image_size':[192, 256],
+                      'heatmap_size':[48, 64],
+                      'num_output_channels': 14,
+                      'num_joints': 14,
+                      'dataset_channel': [[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13],],
+                      'inference_channel': [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13],
+                      
+                      'flip_pairs': [[0, 3], [1, 4], [2, 5], [6, 9], [7, 10], [8, 11],],
+                      'upper_body_ids': [0, 1, 2, 3, 4, 5, 12, 13],
+                      'lower_body_ids': [6, 7, 8, 9, 10, 11],
+                      'use_different_joint_weights': False,
+                      'joint_weights': [1., 1.2, 1.5, 1., 1.2, 1.5, 1., 1.2, 1.5, 1., 1.2, 1.5, 1., 1.],
+
+                      'soft_nms': False,
+                      'nms_thr': 1.0,
+                      'oks_thr': 0.9,
+                      'vis_thr': 0.2,
+                      'use_gt_bbox': True,
+                      'det_bbox_thr': 0.0,
+                      'bbox_file': '/mnt/lustre/share/chencheng1/dataset/person_detection_results/COCO_val2017_detections_AP_H_56_person.json'
+        }
+    sampler:
+      batch_size: 448
+      shuffle_strategy: 1
+
+    neck:
+      type: LadderSideAttentionFPN
+      kwargs: 
+        lms_checkpoint_train: fairscale
+        layer_feat_nums: 12
+        hidden_dim: 768
+        reduct_ration: 8
+        transformer_block_nums: 1
+        transformer_block_num_heads: 2
+        gate_T: 1.0
+        gate_alpha: 0
+
+    decoder:
+      type: TopDownSimpleHead
+      kwargs:
+        layer_norm: True
+        use_sync_bn: False
+        bn_sync_stats: False
+        in_channels: 768
+        out_channels: 14
+        num_deconv_layers: 2
+        num_deconv_filters: [256, 256]
+        num_deconv_kernels: [4, 4]
+        upsample: 0
+        extra: {'final_conv_kernel': 1}
+        train_cfg: {}
+        test_cfg: {
+          'flip_test': True,
+          'post_process':'default',
+          'shift_heatmap': False,
+          'use_udp': True,
+          'modulate_kernel': 11}
+
+
+  ## posetrack
+  2:
+    name: pose_posetrack
+    loss_weight: 1344000
+    gres_ratio: 1 
+
+    backbone:
+      type: vit_large_patch16_ladder_attention_share_pos_embed
+      kwargs:
+        task_sp_list: ['rel_pos_h', 'rel_pos_w'] # wrong list would somehow cause .cuda() stuck without error
+        pretrained: True
+        img_size: [480, 480]  # deprecated by simple interpolate
+        lms_checkpoint_train: fairscale
+        window: False
+        test_pos_mode: learnable_simple_interpolate # to_do: ablation
+        pad_attn_mask: False  # to_do: ablation
+        round_padding: True
+        learnable_pos: True
+        drop_path_rate: 0.3
+
+    dataset:
+      type: MultiPoseDatasetDev
+      kwargs: 
+        ann_file: openmmlab:s3://openmmlab/datasets/pose/PoseChallenge2018/annotations/posetrack18_train.json
+        img_prefix: openmmlab:s3://openmmlab/datasets/pose/PoseChallenge2018/
+        data_use_ratio: 1
+        use_udp: True
+        dataset_name: 'posetrack'
+        data_cfg: {
+                      'image_size':[192, 256],
+                      'heatmap_size':[48, 64],
+                      'num_output_channels': 15,
+                      'num_joints': 15,
+                      'dataset_channel': [[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14],],
+                      'inference_channel': [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14],
+                      
+                      'flip_pairs': [[3, 4], [5, 6], [7, 8], [9, 10], [11, 12], [13, 14], ],
+                      'upper_body_ids': [0, 1, 2, 3, 4, 5, 6, 7, 8,],
+                      'lower_body_ids': [9, 10, 11, 12, 13, 14],
+                      'use_different_joint_weights': False,
+                      'joint_weights': [1., 1., 1., 1., 1., 1.2, 1.2, 1.5, 1.5, 1., 1., 1.2, 1.2, 1.5, 1.5],
+
+                      'soft_nms': False,
+                      'nms_thr': 1.0,
+                      'oks_thr': 0.9,
+                      'vis_thr': 0.2,
+                      'use_gt_bbox': True,
+                      'det_bbox_thr': 0.0,
+                      'bbox_file': '/mnt/lustre/share/chencheng1/dataset/person_detection_results/COCO_val2017_detections_AP_H_56_person.json'
+        }
+
+    sampler:
+      batch_size: 224
+      shuffle_strategy: 1
+
+    neck:
+      type: LadderSideAttentionFPN
+      kwargs: 
+        lms_checkpoint_train: fairscale
+        layer_feat_nums: 12
+        hidden_dim: 768
+        reduct_ration: 8
+        transformer_block_nums: 1
+        transformer_block_num_heads: 2
+        gate_T: 1.0
+        gate_alpha: 0
+
+    decoder:
+      type: TopDownSimpleHead
+      kwargs:
+        layer_norm: True
+        use_sync_bn: False
+        bn_sync_stats: False
+        in_channels: 768
+        out_channels: 15
+        num_deconv_layers: 2
+        num_deconv_filters: [256, 256]
+        num_deconv_kernels: [4, 4]
+        upsample: 0
+        extra: {'final_conv_kernel': 1}
+        train_cfg: {}
+        test_cfg: {
+          'flip_test': True,
+          'post_process':'default',
+          'shift_heatmap': False,
+          'use_udp': True,
+          'modulate_kernel': 11}
+
+  # jrdb2022_pose
+  3:
+    name: pose_jrdb2022
+    loss_weight: 896000
+    gres_ratio: 1
+
+    backbone:
+      type: vit_large_patch16_ladder_attention_share_pos_embed
+      kwargs:
+        task_sp_list: ['rel_pos_h', 'rel_pos_w'] # wrong list would somehow cause .cuda() stuck without error
+        pretrained: True
+        img_size: [480, 480]  # deprecated by simple interpolate
+        lms_checkpoint_train: fairscale
+        window: False
+        test_pos_mode: learnable_simple_interpolate # to_do: ablation
+        pad_attn_mask: False  # to_do: ablation
+        round_padding: True
+        learnable_pos: True
+        drop_path_rate: 0.3
+
+    dataset:
+      type: MultiPoseDatasetDev
+      kwargs: 
+        img_prefix: sh1424:s3://pose_public/JRDB2022/images/
+        ann_file: sh1424:s3://pose_public/JRDB2022/train.json
+        data_use_ratio: 1
+        use_udp: True
+        dataset_name: 'JRDB2022'
+        data_cfg: {
+                      'image_size':[192, 256],
+                      'heatmap_size':[48, 64],
+                      'num_output_channels': 17,
+                      'num_joints': 17,
+                      'dataset_channel': [[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16],],
+                      'inference_channel': [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16,],
+                      'flip_pairs': [[2, 5], [3, 6], [4, 7], [8, 11], [9, 12], [10, 13], ],
+                      'upper_body_ids': [0, 1, 2, 3, 4, 5, 6, 7, 8, 11, 14, 15, 16,],
+                      'lower_body_ids': [9, 10, 12, 13],
+                      'use_different_joint_weights': False,
+                      'joint_weights': [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+
+                      'soft_nms': False,
+                      'nms_thr': 1.0,
+                      'oks_thr': 0.9,
+                      'vis_thr': 0.2,
+                      'use_gt_bbox': True,
+                      'det_bbox_thr': 0.0,
+                      'bbox_file': '/mnt/lustre/share/chencheng1/dataset/person_detection_results/COCO_val2017_detections_AP_H_56_person.json'
+        }
+
+    sampler:
+      batch_size: 224
+      shuffle_strategy: 1
+
+    neck:
+      type: LadderSideAttentionFPN
+      kwargs: 
+        lms_checkpoint_train: fairscale
+        layer_feat_nums: 12
+        hidden_dim: 768
+        reduct_ration: 8
+        transformer_block_nums: 1
+        transformer_block_num_heads: 2
+        gate_T: 1.0
+        gate_alpha: 0
+
+    decoder:
+      type: TopDownSimpleHead
+      kwargs:
+        layer_norm: True
+        use_sync_bn: False
+        bn_sync_stats: False
+        in_channels: 768
+        out_channels: 17
+        num_deconv_layers: 2
+        num_deconv_filters: [256, 256]
+        num_deconv_kernels: [4, 4]
+        upsample: 0
+        extra: {'final_conv_kernel': 1}
+        train_cfg: {}
+        test_cfg: {
+          'flip_test': True,
+          'post_process':'default',
+          'shift_heatmap': False,
+          'use_udp': True,
+          'modulate_kernel': 11}
+
+  # mhp_pose
+  4:
+    name: pose_mhp
+    loss_weight: 384000
+    gres_ratio: 1 # 32  # int, > 0| world/sum*ratio
+
+    backbone:
+      type: vit_large_patch16_ladder_attention_share_pos_embed
+      kwargs:
+        task_sp_list: ['rel_pos_h', 'rel_pos_w'] # wrong list would somehow cause .cuda() stuck without error
+        pretrained: True
+        img_size: [480, 480]  # deprecated by simple interpolate
+        lms_checkpoint_train: fairscale
+        window: False
+        test_pos_mode: learnable_simple_interpolate # to_do: ablation
+        pad_attn_mask: False  # to_do: ablation
+        round_padding: True
+        learnable_pos: True
+        drop_path_rate: 0.3
+
+    dataset:
+      type: MultiPoseDatasetDev
+      kwargs: 
+        img_prefix: openmmlab:s3://openmmlab/datasets/pose/LV-MHP-v2/train/images
+        ann_file: sh1424:s3://pose_public/pose_MHPv2/train.json
+        data_use_ratio: 1
+        use_udp: True
+        dataset_name: 'mhp'
+        data_cfg: {
+                      'image_size':[192, 256],
+                      'heatmap_size':[48, 64],
+                      'num_output_channels': 16,
+                      'num_joints': 16,
+                      'dataset_channel': [[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,],],
+                      'inference_channel': [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,],
+                      
+                      'flip_pairs': [[0, 5], [1, 4], [2, 3], [10, 15], [11, 14], [12, 13], ],
+                      'upper_body_ids': [7, 8, 9, 10, 11, 12, 13, 14, 15],
+                      'lower_body_ids': [0, 1, 2, 3, 4, 5, 6],
+                      'use_different_joint_weights': False,
+                      'joint_weights': [1.5, 1.2, 1., 1., 1.2, 1.5, 1., 1., 1., 1., 1.5, 1.2, 1., 1., 1.2, 1.5],
+
+                      'soft_nms': False,
+                      'nms_thr': 1.0,
+                      'oks_thr': 0.9,
+                      'vis_thr': 0.2,
+                      'use_gt_bbox': True,
+                      'det_bbox_thr': 0.0,
+                      'bbox_file': '/mnt/lustre/share/chencheng1/dataset/person_detection_results/COCO_val2017_detections_AP_H_56_person.json'
+        }
+
+    sampler:
+      batch_size: 96
+      shuffle_strategy: 1
+
+    neck:
+      type: LadderSideAttentionFPN
+      kwargs: 
+        lms_checkpoint_train: fairscale
+        layer_feat_nums: 12
+        hidden_dim: 768
+        reduct_ration: 8
+        transformer_block_nums: 1
+        transformer_block_num_heads: 2
+        gate_T: 1.0
+        gate_alpha: 0
+
+    decoder:
+      type: TopDownSimpleHead
+      kwargs:
+        layer_norm: True
+        use_sync_bn: False
+        bn_sync_stats: False
+        in_channels: 768
+        out_channels: 16
+        num_deconv_layers: 2
+        num_deconv_filters: [256, 256]
+        num_deconv_kernels: [4, 4]
+        upsample: 0
+        extra: {'final_conv_kernel': 1}
+        train_cfg: {}
+        test_cfg: {
+          'flip_test': True,
+          'post_process':'default',
+          'shift_heatmap': False,
+          'use_udp': True,
+          'modulate_kernel': 11}
+  
+  5:
+    name: pose_upenn_action
+    loss_weight: 512000
+    gres_ratio: 1 # 32  # int, > 0| world/sum*ratio
+
+    backbone:
+      type: vit_large_patch16_ladder_attention_share_pos_embed
+      kwargs:
+        task_sp_list: ['rel_pos_h', 'rel_pos_w'] # wrong list would somehow cause .cuda() stuck without error
+        pretrained: True
+        img_size: [480, 480]  # deprecated by simple interpolate
+        lms_checkpoint_train: fairscale
+        window: False
+        test_pos_mode: learnable_simple_interpolate # to_do: ablation
+        pad_attn_mask: False  # to_do: ablation
+        round_padding: True
+        learnable_pos: True
+        drop_path_rate: 0.3
+
+    dataset:
+      type: MultiPoseDatasetDev
+      kwargs: 
+        img_prefix: openmmlab:s3://openmmlab/datasets/pose/PENN/Penn_Action/frames
+        ann_file: sh1424:s3://pose_public/pose_penn_action/train.json
+        use_udp: True
+        data_use_ratio: 1
+        dataset_name: 'penn_action'
+        data_cfg: {
+                      'image_size':[192, 256],
+                      'heatmap_size':[48, 64],
+                      'num_output_channels': 13,
+                      'num_joints': 13,
+                      'dataset_channel': [[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12,],],
+                      'inference_channel': [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12,],
+                      
+                      'flip_pairs': [[1, 2], [3, 4], [5, 6], [7, 8], [9, 10], [11, 12], ],
+                      'upper_body_ids': [0, 1, 2, 3, 4, 5, 6, 7, 8],
+                      'lower_body_ids': [9, 10, 11, 12],
+                      'use_different_joint_weights': False,
+                      'joint_weights': [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,],
+
+                      'soft_nms': False,
+                      'nms_thr': 1.0,
+                      'oks_thr': 0.9,
+                      'vis_thr': 0.2,
+                      'use_gt_bbox': True,
+                      'det_bbox_thr': 0.0,
+                      'bbox_file': '/mnt/lustre/share/chencheng1/dataset/person_detection_results/COCO_val2017_detections_AP_H_56_person.json'
+        }
+
+    sampler:
+      batch_size: 128
+      shuffle_strategy: 1
+
+    neck:
+      type: LadderSideAttentionFPN
+      kwargs: 
+        lms_checkpoint_train: fairscale
+        layer_feat_nums: 12
+        hidden_dim: 768
+        reduct_ration: 8
+        transformer_block_nums: 1
+        transformer_block_num_heads: 2
+        gate_T: 1.0
+        gate_alpha: 0
+
+    decoder:
+      type: TopDownSimpleHead
+      kwargs:
+        layer_norm: True
+        use_sync_bn: False
+        bn_sync_stats: False
+        in_channels: 768
+        out_channels: 13
+        num_deconv_layers: 2
+        num_deconv_filters: [256, 256]
+        num_deconv_kernels: [4, 4]
+        upsample: 0
+        extra: {'final_conv_kernel': 1}
+        train_cfg: {}
+        test_cfg: {
+          'flip_test': True,
+          'post_process':'default',
+          'shift_heatmap': False,
+          'use_udp': True,
+          'modulate_kernel': 11}
+
+  6:
+    name: pose_3DPW
+    loss_weight: 512000
+    gres_ratio: 1 # 32  # int, > 0| world/sum*ratio
+
+    backbone:
+      type: vit_large_patch16_ladder_attention_share_pos_embed
+      kwargs:
+        task_sp_list: ['rel_pos_h', 'rel_pos_w'] # wrong list would somehow cause .cuda() stuck without error
+        pretrained: True
+        img_size: [480, 480]  # deprecated by simple interpolate
+        lms_checkpoint_train: fairscale
+        window: False
+        test_pos_mode: learnable_simple_interpolate # to_do: ablation
+        pad_attn_mask: False  # to_do: ablation
+        round_padding: True
+        learnable_pos: True
+        drop_path_rate: 0.3
+
+    dataset:
+      type: MultiPoseDatasetDev
+      kwargs: 
+        img_prefix: sh1424:s3://pose_public/3DPW/imageFiles/
+        ann_file: sh1424:s3://pose_public/3DPW/dataset_merged.json
+        use_udp: True
+        data_use_ratio: 1
+        dataset_name: '3DPW'
+        data_cfg: {
+                      'image_size':[192, 256],
+                      'heatmap_size':[48, 64],
+                      'num_output_channels': 136,
+                      'num_joints': 18,
+                      'dataset_channel': [[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17],],
+                      'inference_channel': [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17],
+                      'flip_pairs': [[2, 5], [3, 6], [4, 7], [8, 11], [9, 12], [10, 13], [14, 15], [16, 17], ],
+                      'upper_body_ids': [0, 1, 2, 3, 4, 5, 6, 7, 8, 11, 14, 15, 16, 17, ],
+                      'lower_body_ids': [9, 10, 12, 13],
+                      'use_different_joint_weights': False,
+                      'joint_weights': [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+
+                      'soft_nms': False,
+                      'nms_thr': 1.0,
+                      'oks_thr': 0.9,
+                      'vis_thr': 0.2,
+                      'use_gt_bbox': True,
+                      'det_bbox_thr': 0.0,
+                      'bbox_file': '/mnt/lustre/share/chencheng1/dataset/person_detection_results/COCO_val2017_detections_AP_H_56_person.json'
+        }
+
+    sampler:
+      batch_size: 128
+      shuffle_strategy: 1
+
+    neck:
+      type: LadderSideAttentionFPN
+      kwargs: 
+        lms_checkpoint_train: fairscale
+        layer_feat_nums: 12
+        hidden_dim: 768
+        reduct_ration: 8
+        transformer_block_nums: 1
+        transformer_block_num_heads: 2
+        gate_T: 1.0
+        gate_alpha: 0
+
+    decoder:
+      type: TopDownSimpleHead
+      kwargs:
+        layer_norm: True
+        use_sync_bn: False
+        bn_sync_stats: False
+        in_channels: 768
+        out_channels: 18
+        num_deconv_layers: 2
+        num_deconv_filters: [256, 256]
+        num_deconv_kernels: [4, 4]
+        upsample: 0
+        extra: {'final_conv_kernel': 1}
+        train_cfg: {}
+        test_cfg: {
+          'flip_test': True,
+          'post_process':'default',
+          'shift_heatmap': False,
+          'use_udp': True,
+          'modulate_kernel': 11}
+
+  7:
+    name: pose_halpe
+    loss_weight: 128000
+    gres_ratio: 1 # 32  # int, > 0| world/sum*ratio
+
+    backbone:
+      type: vit_large_patch16_ladder_attention_share_pos_embed
+      kwargs:
+        task_sp_list: ['rel_pos_h', 'rel_pos_w'] # wrong list would somehow cause .cuda() stuck without error
+        pretrained: True
+        img_size: [480, 480]  # deprecated by simple interpolate
+        lms_checkpoint_train: fairscale
+        window: False
+        test_pos_mode: learnable_simple_interpolate # to_do: ablation
+        pad_attn_mask: False  # to_do: ablation
+        round_padding: True
+        learnable_pos: True
+        drop_path_rate: 0.3
+
+    dataset:
+      type: MultiPoseDatasetDev
+      kwargs:
+        ann_file:  sh1424:s3://pose_public/Halpe/train.json
+        img_prefix: openmmlab:s3://openmmlab/datasets/pose/Halpe/hico_20160224_det/images/train2015/
+        data_use_ratio: 1
+        use_udp: True
+        dataset_name: 'halpe'
+        data_cfg: {
+                      'image_size':[192, 256],
+                      'heatmap_size':[48, 64],
+                      'num_output_channels': 136,
+                      'num_joints': 20,
+                      'dataset_channel': [[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19],],
+                      'inference_channel': [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19],
+                      'flip_pairs': [[1, 2], [3, 4], [5, 6], [7, 8], [9, 10], [11, 12], [13, 14], [15, 16]],
+                      'upper_body_ids': [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+                      'lower_body_ids': [11, 12, 13, 14, 15, 16, 17, 18, 19],
+                      'use_different_joint_weights': False,
+                      'joint_weights': [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+
+                      'soft_nms': False,
+                      'nms_thr': 1.0,
+                      'oks_thr': 0.9,
+                      'vis_thr': 0.2,
+                      'use_gt_bbox': True,
+                      'det_bbox_thr': 0.0,
+                      'bbox_file': '/mnt/lustre/share/chencheng1/dataset/person_detection_results/COCO_val2017_detections_AP_H_56_person.json'
+        }
+
+    sampler:
+      batch_size: 64
+      shuffle_strategy: 1
+
+    neck:
+      type: LadderSideAttentionFPN
+      kwargs: 
+        lms_checkpoint_train: fairscale
+        layer_feat_nums: 12
+        hidden_dim: 768
+        reduct_ration: 8
+        transformer_block_nums: 1
+        transformer_block_num_heads: 2
+        gate_T: 1.0
+        gate_alpha: 0
+
+    decoder:
+      type: TopDownSimpleHead
+      kwargs:
+        layer_norm: True
+        use_sync_bn: False
+        bn_sync_stats: False
+        in_channels: 768
+        out_channels: 20
+        num_deconv_layers: 2
+        num_deconv_filters: [256, 256]
+        num_deconv_kernels: [4, 4]
+        upsample: 0
+        extra: {'final_conv_kernel': 1}
+        train_cfg: {}
+        test_cfg: {
+          'flip_test': True,
+          'post_process':'default',
+          'shift_heatmap': False,
+          'use_udp': True,
+          'modulate_kernel': 11}
+
+  8:
+    name: pose_3dhp
+    loss_weight: 256000
+    gres_ratio: 1 # 32  # int, > 0| world/sum*ratio
+
+    backbone:
+      type: vit_large_patch16_ladder_attention_share_pos_embed
+      kwargs:
+        task_sp_list: ['rel_pos_h', 'rel_pos_w'] # wrong list would somehow cause .cuda() stuck without error
+        pretrained: True
+        img_size: [480, 480]  # deprecated by simple interpolate
+        lms_checkpoint_train: fairscale
+        window: False
+        test_pos_mode: learnable_simple_interpolate # to_do: ablation
+        pad_attn_mask: False  # to_do: ablation
+        round_padding: True
+        learnable_pos: True
+        drop_path_rate: 0.3
+
+    dataset:
+      type: MultiPoseDatasetDev
+      kwargs:
+        ann_file:  sh1424:s3://pose_public/3dhp/train.json
+        img_prefix: openmmlab:s3://openmmlab/datasets/pose/mpi_inf_3dhp/processed/images/
+        data_use_ratio: 1
+        use_udp: True
+        dataset_name: '3DHP'
+        data_cfg: {
+                      'image_size':[192, 256],
+                      'heatmap_size':[48, 64],
+                      'num_output_channels': 136,
+                      'num_joints': 17,
+                      'dataset_channel': [[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16],],
+                      'inference_channel': [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16,],
+                      'flip_pairs': [[2, 5], [3, 6], [4, 7], [8, 11], [9, 12], [10, 13], ],
+                      'upper_body_ids': [0, 1, 2, 3, 4, 5, 6, 7, 8, 11, 14, 15, 16,],
+                      'lower_body_ids': [9, 10, 12, 13],
+                      'use_different_joint_weights': False,
+                      'joint_weights': [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+
+                      'soft_nms': False,
+                      'nms_thr': 1.0,
+                      'oks_thr': 0.9,
+                      'vis_thr': 0.2,
+                      'use_gt_bbox': True,
+                      'det_bbox_thr': 0.0,
+                      'bbox_file': '/mnt/lustre/share/chencheng1/dataset/person_detection_results/COCO_val2017_detections_AP_H_56_person.json'
+        }
+
+    sampler:
+      batch_size: 128
+      shuffle_strategy: 1
+
+    neck:
+      type: LadderSideAttentionFPN
+      kwargs: 
+        lms_checkpoint_train: fairscale
+        layer_feat_nums: 12
+        hidden_dim: 768
+        reduct_ration: 8
+        transformer_block_nums: 1
+        transformer_block_num_heads: 2
+        gate_T: 1.0
+        gate_alpha: 0
+
+    decoder:
+      type: TopDownSimpleHead
+      kwargs:
+        layer_norm: True
+        use_sync_bn: False
+        bn_sync_stats: False
+        in_channels: 768
+        out_channels: 17
+        num_deconv_layers: 2
+        num_deconv_filters: [256, 256]
+        num_deconv_kernels: [4, 4]
+        upsample: 0
+        extra: {'final_conv_kernel': 1}
+        train_cfg: {}
+        test_cfg: {
+          'flip_test': True,
+          'post_process':'default',
+          'shift_heatmap': False,
+          'use_udp': True,
+          'modulate_kernel': 11}
+
+  9:
+    name: pose_h36m
+    loss_weight: 256000
+    gres_ratio: 1 # 32  # int, > 0| world/sum*ratio
+
+    backbone:
+      type: vit_large_patch16_ladder_attention_share_pos_embed
+      kwargs:
+        task_sp_list: ['rel_pos_h', 'rel_pos_w'] # wrong list would somehow cause .cuda() stuck without error
+        pretrained: True
+        img_size: [480, 480]  # deprecated by simple interpolate
+        lms_checkpoint_train: fairscale
+        window: False
+        test_pos_mode: learnable_simple_interpolate # to_do: ablation
+        pad_attn_mask: False  # to_do: ablation
+        round_padding: True
+        learnable_pos: True
+        drop_path_rate: 0.3
+
+    dataset:
+      type: MultiPoseDatasetDev
+      kwargs:
+        ann_file:  openmmlab:s3://openmmlab/datasets/pose/h36m/processed/annotation_body2d/h36m_coco_train.json
+        img_prefix: openmmlab:s3://openmmlab/datasets/pose/h36m/processed/images/
+        use_udp: True
+        data_use_ratio: 1
+        dataset_name: 'h36m'
+        data_cfg: {
+                      'image_size':[192, 256],
+                      'heatmap_size':[48, 64],
+                      'num_output_channels': 136,
+                      'num_joints': 17,
+                      'dataset_channel': [[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16],],
+                      'inference_channel': [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16,],
+                      'flip_pairs': [[1, 4], [2, 5], [3, 6], [11, 14], [12, 15], [13, 16], ],
+                      'upper_body_ids': [7, 8, 9, 10, 11, 12, 13, 14, 15, 16,],
+                      'lower_body_ids': [0, 1, 2, 3, 4, 5, 6],
+                      'use_different_joint_weights': False,
+                      'joint_weights': [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+
+                      'soft_nms': False,
+                      'nms_thr': 1.0,
+                      'oks_thr': 0.9,
+                      'vis_thr': 0.2,
+                      'use_gt_bbox': True,
+                      'det_bbox_thr': 0.0,
+                      'bbox_file': '/mnt/lustre/share/chencheng1/dataset/person_detection_results/COCO_val2017_detections_AP_H_56_person.json'
+        }
+
+    sampler:
+      batch_size: 128
+      shuffle_strategy: 1
+
+    neck:
+      type: LadderSideAttentionFPN
+      kwargs: 
+        lms_checkpoint_train: fairscale
+        layer_feat_nums: 12
+        hidden_dim: 768
+        reduct_ration: 8
+        transformer_block_nums: 1
+        transformer_block_num_heads: 2
+        gate_T: 1.0
+        gate_alpha: 0
+
+    decoder:
+      type: TopDownSimpleHead
+      kwargs:
+        layer_norm: True
+        use_sync_bn: False
+        bn_sync_stats: False
+        in_channels: 768
+        out_channels: 17
+        num_deconv_layers: 2
+        num_deconv_filters: [256, 256]
+        num_deconv_kernels: [4, 4]
+        upsample: 0
+        extra: {'final_conv_kernel': 1}
+        train_cfg: {}
+        test_cfg: {
+          'flip_test': True,
+          'post_process':'default',
+          'shift_heatmap': False,
+          'use_udp': True,
+          'modulate_kernel': 11}
+  
+  10:
+    name: pose_AIST
+    loss_weight: 256000
+    gres_ratio: 1
+
+    backbone:
+      type: vit_large_patch16_ladder_attention_share_pos_embed
+      kwargs:
+        task_sp_list: ['rel_pos_h', 'rel_pos_w'] # wrong list would somehow cause .cuda() stuck without error
+        pretrained: True
+        img_size: [480, 480]  # deprecated by simple interpolate
+        lms_checkpoint_train: fairscale
+        window: False
+        test_pos_mode: learnable_simple_interpolate # to_do: ablation
+        pad_attn_mask: False  # to_do: ablation
+        round_padding: True
+        learnable_pos: True
+        drop_path_rate: 0.3
+
+    dataset:
+      type: MultiPoseDatasetDev
+      kwargs:
+        ann_file: sh1424:s3://pose_public/aistplusplus/train.json
+        img_prefix: sh1424:s3://pose_public/aistplusplus/images/
+        use_udp: True
+        dataset_name: 'AIST'
+        data_cfg: {
+                      'image_size':[192, 256],
+                      'heatmap_size':[48, 64],
+                      'num_output_channels': 136,
+                      'num_joints': 17,
+                      'dataset_channel': [[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16],],
+                      'inference_channel': [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16],
+                      'flip_pairs': [[1, 2], [3, 4], [5, 6], [7, 8], [9, 10], [11, 12], [13, 14], [15, 16]],
+                      'upper_body_ids': [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+                      'lower_body_ids': [13, 14, 15, 16],
+                      'use_different_joint_weights': False,
+                      'joint_weights': [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+
+                      'soft_nms': False,
+                      'nms_thr': 1.0,
+                      'oks_thr': 0.9,
+                      'vis_thr': 0.2,
+                      'use_gt_bbox': True,
+                      'det_bbox_thr': 0.0,
+                      'bbox_file': '/mnt/lustre/share/chencheng1/dataset/person_detection_results/COCO_val2017_detections_AP_H_56_person.json'
+        }
+
+    sampler:
+      batch_size: 128
+      shuffle_strategy: 1
+
+    neck:
+      type: LadderSideAttentionFPN
+      kwargs: 
+        lms_checkpoint_train: fairscale
+        layer_feat_nums: 12
+        hidden_dim: 768
+        reduct_ration: 8
+        transformer_block_nums: 1
+        transformer_block_num_heads: 2
+        gate_T: 1.0
+        gate_alpha: 0
+
+    decoder:
+      type: TopDownSimpleHead
+      kwargs:
+        layer_norm: True
+        use_sync_bn: False
+        bn_sync_stats: False
+        in_channels: 768
+        out_channels: 17
+        num_deconv_layers: 2
+        num_deconv_filters: [256, 256]
+        num_deconv_kernels: [4, 4]
+        upsample: 0
+        extra: {'final_conv_kernel': 1}
+        train_cfg: {}
+        test_cfg: {
+          'flip_test': True,
+          'post_process':'default',
+          'shift_heatmap': False,
+          'use_udp': True,
+          'modulate_kernel': 11}
+
+## human parsing ## 
+  # human3.6m
+  11:
+    name: parsing_h36m
+    loss_weight: 1280
+    gres_ratio: 1
+    backbone:
+      type: vit_large_patch16_ladder_attention_share_pos_embed
+      kwargs:
+        task_sp_list: ['rel_pos_h', 'rel_pos_w'] # wrong list would somehow cause .cuda() stuck without error
+        pretrained: True
+        img_size: [480, 480]  # deprecated by simple interpolate
+        lms_checkpoint_train: fairscale
+        window: False
+        test_pos_mode: learnable_simple_interpolate # to_do: ablation
+        pad_attn_mask: False  # to_do: ablation
+        round_padding: True
+        learnable_pos: True
+        drop_path_rate: 0.3
+    
+    dataset:
+      type: Human3M6ParsingDataset
+      kwargs:
+        data_path: sh1424:s3://parsing_public/human3.6 # files in core/data/datasets/images/resources/* or absolute path
+        data_use_ratio: 1
+        cfg:
+          is_flip: True
+          crop_size: [480, 480]
+          is_multi_scale: True
+          scale_factor: 11
+          center_crop_test: False
+          base_size: 480
+          eval_crop_size: [480, 480]
+          ignore_value: 255
+          num_classes: 25
+          label_list: [0, 1, 2, 3, 6, 7, 8, 17, 18, 19, 25, 26, 27, 32, 33, 34, 38, 39, 43, 44, 46, 49, 50, 56, 58]
+
+    sampler:
+      batch_size: 64
+      shuffle_strategy: 1
+    
+    neck:
+      type: LadderSideAttentionFPN
+      kwargs: 
+        lms_checkpoint_train: fairscale
+        layer_feat_nums: 12
+        hidden_dim: 768
+        reduct_ration: 8
+        transformer_block_nums: 1
+        transformer_block_num_heads: 2
+        gate_T: 1.0
+        gate_alpha: 0
+
+    decoder:
+      type: ViT_SimpleUpSampling
+      kwargs:
+        task: par
+        input_size: [480,480]
+        in_channels: 768
+        num_classes: 25
+        bn_type: LN
+        loss_cfg:
+          type: FSCELoss
+          kwargs:
+            configer:
+              ce_reduction: elementwise_mean
+              ce_ignore_index: 255
+  
+  # lip
+  12:
+    name: parsing_lip
+    loss_weight: 720
+    gres_ratio: 1
+    backbone:
+      type: vit_large_patch16_ladder_attention_share_pos_embed
+      kwargs:
+        task_sp_list: ['rel_pos_h', 'rel_pos_w'] # wrong list would somehow cause .cuda() stuck without error
+        pretrained: True
+        img_size: [480, 480]  # deprecated by simple interpolate
+        lms_checkpoint_train: fairscale
+        window: False
+        test_pos_mode: learnable_simple_interpolate # to_do: ablation
+        pad_attn_mask: False  # to_do: ablation
+        round_padding: True
+        learnable_pos: True
+        drop_path_rate: 0.3
+    
+    dataset:
+      type: LIPParsingDataset
+      kwargs:
+        data_path: sh1424:s3://parsing_public/LIP # files in core/data/datasets/images/resources/* or absolute path
+        data_use_ratio: 1
+        cfg:
+          is_flip: True
+          crop_size: [480, 480]
+          is_multi_scale: True
+          scale_factor: 11
+          center_crop_test: False
+          base_size: 480
+          eval_crop_size: [480, 480]
+          ignore_value: 255 # duplicated with decoder.kwargs.ignore_value
+          num_classes: 20
+          label_list: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]
+
+    sampler:
+      batch_size: 36  # per card
+      shuffle_strategy: 1
+    
+    neck:
+      type: LadderSideAttentionFPN
+      kwargs: 
+        lms_checkpoint_train: fairscale
+        layer_feat_nums: 12
+        hidden_dim: 768
+        reduct_ration: 8
+        transformer_block_nums: 1
+        transformer_block_num_heads: 2
+        gate_T: 1.0
+        gate_alpha: 0
+
+    decoder:
+      type: ViT_SimpleUpSampling
+      kwargs:
+        task: par
+        input_size: [480,480]
+        in_channels: 768
+        num_classes: 20
+        bn_type: LN
+        loss_cfg:
+          type: FSCELoss
+          kwargs:
+            configer:
+              ce_reduction: elementwise_mean
+              ce_ignore_index: 255
+
+  # cihp
+  13:
+    name: parsing_cihp
+    loss_weight: 960
+    gres_ratio: 1
+    backbone:
+      type: vit_large_patch16_ladder_attention_share_pos_embed
+      kwargs:
+        task_sp_list: ['rel_pos_h', 'rel_pos_w'] # wrong list would somehow cause .cuda() stuck without error
+        pretrained: True
+        img_size: [480, 480]  # deprecated by simple interpolate
+        lms_checkpoint_train: fairscale
+        window: False
+        test_pos_mode: learnable_simple_interpolate # to_do: ablation
+        pad_attn_mask: False  # to_do: ablation
+        round_padding: True
+        learnable_pos: True
+        drop_path_rate: 0.3
+    
+    dataset:
+      type: CIHPParsingDataset
+      kwargs:
+        data_path: sh1424:s3://parsing_public/CIHP # files in core/data/datasets/images/resources/* or absolute path
+        data_use_ratio: 1
+        cfg:
+          is_flip: True
+          crop_size: [480, 480]
+          is_multi_scale: True
+          scale_factor: 11
+          center_crop_test: False
+          base_size: 480
+          eval_crop_size: [480, 480]
+          ignore_value: 255 # duplicated with decoder.kwargs.ignore_value
+          num_classes: 20
+          label_list: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]
+
+    sampler:
+      batch_size: 48
+      shuffle_strategy: 1
+    
+    neck:
+      type: LadderSideAttentionFPN
+      kwargs: 
+        lms_checkpoint_train: fairscale
+        layer_feat_nums: 12
+        hidden_dim: 768
+        reduct_ration: 8
+        transformer_block_nums: 1
+        transformer_block_num_heads: 2
+        gate_T: 1.0
+        gate_alpha: 0
+
+    decoder:
+      type: ViT_SimpleUpSampling
+      kwargs:
+        task: par
+        input_size: [480,480]
+        in_channels: 768
+        num_classes: 20
+        bn_type: LN
+        loss_cfg:
+          type: FSCELoss
+          kwargs:
+            configer:
+              ce_reduction: elementwise_mean
+              ce_ignore_index: 255
+
+  # vip_par
+  14:
+    name: parsing_vip
+    loss_weight: 320
+    gres_ratio: 1
+    backbone:
+      type: vit_large_patch16_ladder_attention_share_pos_embed
+      kwargs:
+        task_sp_list: ['rel_pos_h', 'rel_pos_w'] # wrong list would somehow cause .cuda() stuck without error
+        pretrained: True
+        img_size: [480, 480]  # deprecated by simple interpolate
+        lms_checkpoint_train: fairscale
+        window: False
+        test_pos_mode: learnable_simple_interpolate # to_do: ablation
+        pad_attn_mask: False  # to_do: ablation
+        round_padding: True
+        learnable_pos: True
+        drop_path_rate: 0.3
+
+    dataset:
+      type: VIPParsingDataset
+      kwargs:
+        data_path: sh1424:s3://parsing_public/VIP/
+        data_use_ratio: 1
+        cfg:
+          is_flip: True
+          crop_size: [480, 480]
+          is_multi_scale: True
+          scale_factor: 11
+          center_crop_test: False
+          base_size: 480
+          eval_crop_size: [480, 480]
+          ignore_value: 255 # duplicated with decoder.kwargs.ignore_value
+          num_classes: 20
+          label_list: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]
+
+    sampler:
+      batch_size: 16
+      shuffle_strategy: 1
+    
+    neck:
+      type: LadderSideAttentionFPN
+      kwargs: 
+        lms_checkpoint_train: fairscale
+        layer_feat_nums: 12
+        hidden_dim: 768
+        reduct_ration: 8
+        transformer_block_nums: 1
+        transformer_block_num_heads: 2
+        gate_T: 1.0
+        gate_alpha: 0
+
+    decoder:
+      type: ViT_SimpleUpSampling
+      kwargs:
+        task: par
+        input_size: [480,480]
+        in_channels: 768
+        num_classes: 20
+        bn_type: LN
+        loss_cfg:
+          type: FSCELoss
+          kwargs:
+            configer:
+              ce_reduction: elementwise_mean
+              ce_ignore_index: 255
+
+  # PaperRoll_parsing
+  15:
+    name: parsing_PaperRoll
+    loss_weight: 720
+    gres_ratio: 1
+    backbone:
+      type: vit_large_patch16_ladder_attention_share_pos_embed
+      kwargs:
+        task_sp_list: ['rel_pos_h', 'rel_pos_w'] # wrong list would somehow cause .cuda() stuck without error
+        pretrained: True
+        img_size: [480, 480]  # deprecated by simple interpolate
+        lms_checkpoint_train: fairscale
+        window: False
+        test_pos_mode: learnable_simple_interpolate 
+        pad_attn_mask: False  
+        round_padding: True
+        learnable_pos: True
+        drop_path_rate: 0.3
+
+    dataset:
+      type: PaperDollParsingDataset
+      kwargs:
+        data_path: sh1424:s3://parsing_public/PaperDoll/
+        cfg:
+          is_flip: True
+          crop_size: [480, 480]
+          is_multi_scale: True
+          scale_factor: 11
+          center_crop_test: False
+          base_size: 480
+          eval_crop_size: [480, 480]
+          ignore_value: 255
+          num_classes: 20
+          label_list: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]
+
+    sampler:
+      batch_size: 48
+      shuffle_strategy: 1
+    
+    neck:
+      type: LadderSideAttentionFPN
+      kwargs: 
+        lms_checkpoint_train: fairscale
+        layer_feat_nums: 12
+        hidden_dim: 768
+        reduct_ration: 8
+        transformer_block_nums: 1
+        transformer_block_num_heads: 2
+        gate_T: 1.0
+        gate_alpha: 0
+
+    decoder:
+      type: ViT_SimpleUpSampling
+      kwargs:
+        task: par
+        input_size: [480,480]
+        in_channels: 768
+        num_classes: 20
+        bn_type: LN
+        loss_cfg:
+          type: FSCELoss
+          kwargs:
+            configer:
+              ce_reduction: elementwise_mean
+              ce_ignore_index: 255
+
+## clothes parsing ## 
+  # deepfashion
+  16:
+    name: parsing_deepfashion
+    loss_weight: 960
+    gres_ratio: 1
+    backbone:
+      type: vit_large_patch16_ladder_attention_share_pos_embed
+      kwargs:
+        task_sp_list: ['rel_pos_h', 'rel_pos_w'] # wrong list would somehow cause .cuda() stuck without error
+        pretrained: True
+        img_size: [480, 480]  # deprecated by simple interpolate
+        lms_checkpoint_train: fairscale
+        window: False
+        test_pos_mode: learnable_simple_interpolate # to_do: ablation
+        pad_attn_mask: False  # to_do: ablation
+        round_padding: True
+        learnable_pos: True
+        drop_path_rate: 0.3
+    
+    dataset:
+      type: DeepFashionParsingDataset
+      kwargs:
+        data_path: sh1424:s3://parsing_public/deepfashion2/   # /mnt/lustrenew/share_data/chencheng1/data/deepfasion
+        data_use_ratio: 1
+        cfg:
+          is_flip: False
+          crop_size: [480, 480]
+          is_multi_scale: True
+          scale_factor: 11
+          center_crop_test: False
+          base_size: 480
+          eval_crop_size: [480, 480]
+          ignore_value: 255 # duplicated with decoder.kwargs.ignore_value
+          num_classes: 14
+          label_list: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
+
+    sampler:
+      batch_size: 64 
+      shuffle_strategy: 1
+    
+    neck:
+      type: LadderSideAttentionFPN
+      kwargs: 
+        lms_checkpoint_train: fairscale
+        layer_feat_nums: 12
+        hidden_dim: 768
+        reduct_ration: 8
+        transformer_block_nums: 1
+        transformer_block_num_heads: 2
+        gate_T: 1.0
+        gate_alpha: 0
+
+    decoder:
+      type: ViT_SimpleUpSampling
+      kwargs:
+        task: par
+        input_size: [480,480]
+        in_channels: 768
+        num_classes: 14
+        bn_type: LN
+        loss_cfg:
+          type: FSCELoss
+          kwargs:
+            configer:
+              ce_reduction: elementwise_mean
+              ce_ignore_index: 255
+
+  # madanet_parsing
+  17:
+    name: parsing_modanet
+    loss_weight: 480
+    gres_ratio: 1
+    backbone:
+      type: vit_large_patch16_ladder_attention_share_pos_embed
+      kwargs:
+        task_sp_list: ['rel_pos_h', 'rel_pos_w'] # wrong list would somehow cause .cuda() stuck without error
+        pretrained: True
+        img_size: [480, 480]  # deprecated by simple interpolate
+        lms_checkpoint_train: fairscale
+        window: False
+        test_pos_mode: learnable_simple_interpolate # to_do: ablation
+        pad_attn_mask: False  # to_do: ablation
+        round_padding: True
+        learnable_pos: True
+        drop_path_rate: 0.3
+
+    dataset:
+      type: ModaNetParsingDataset
+      kwargs:
+        data_path: sh1424:s3://parsing_public/ModaNet/
+        data_use_ratio: 1
+        cfg:
+          is_flip: False
+          crop_size: [480, 480]
+          is_multi_scale: True
+          scale_factor: 11
+          center_crop_test: False
+          base_size: 480
+          eval_crop_size: [480, 480]
+          ignore_value: 255 # duplicated with decoder.kwargs.ignore_value
+          num_classes: 14
+          label_list: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
+
+    sampler:
+      batch_size: 32
+      shuffle_strategy: 1
+    
+    neck:
+      type: LadderSideAttentionFPN
+      kwargs: 
+        lms_checkpoint_train: fairscale
+        layer_feat_nums: 12
+        hidden_dim: 768
+        reduct_ration: 8
+        transformer_block_nums: 1
+        transformer_block_num_heads: 2
+        gate_T: 1.0
+        gate_alpha: 0
+
+    decoder:
+      type: ViT_SimpleUpSampling
+      kwargs:
+        task: par
+        input_size: [480,480]
+        in_channels: 768
+        num_classes: 14
+        bn_type: LN
+        loss_cfg:
+          type: FSCELoss
+          kwargs:
+            configer:
+              ce_reduction: elementwise_mean
+              ce_ignore_index: 255
+
+## attribute ## 
+  # rap2
+  18:
+    name: attr_rap2_pa100k
+    loss_weight: 12.8
+    gres_ratio: 1
+    backbone:
+      type: vit_large_patch16_ladder_attention_share_pos_embed
+      kwargs:
+        task_sp_list: ['rel_pos_h', 'rel_pos_w'] # wrong list would somehow cause .cuda() stuck without error
+        pretrained: True
+        img_size: [480, 480]  # deprecated by simple interpolate
+        lms_checkpoint_train: fairscale
+        window: False
+        test_pos_mode: learnable_simple_interpolate # to_do: ablation
+        pad_attn_mask: False  # to_do: ablation
+        round_padding: True
+        learnable_pos: True
+        drop_path_rate: 0.1
+    
+    dataset:
+      type: MultiAttrDataset
+      kwargs:
+        data_use_ratio: 1
+        task_spec:
+          dataset: 
+            - rap2
+            - PA-100k
+          data_path:
+            - sh1424:s3://pedattr_public/rap2/dataset.pkl
+            - sh1424:s3://pedattr_public/PA-100k/dataset.pkl
+          root_path:
+            - sh1424:s3://pedattr_public/rap2/RAP_dataset/
+            - sh1424:s3://pedattr_public/PA-100k/data/
+        augmentation:
+          height: 256
+          width: 192
+          use_random_aug: False
+
+    sampler:
+      batch_size: 128
+      shuffle_strategy: 1
+    
+    neck:
+      type: LadderSideAttentionFPN
+      kwargs: 
+        lms_checkpoint_train: fairscale
+        layer_feat_nums: 12
+        hidden_dim: 768
+        reduct_ration: 8
+        transformer_block_nums: 1
+        transformer_block_num_heads: 2
+        gate_T: 1.0
+        gate_alpha: 0
+
+    decoder:
+      type: pedattr_cls_vit_A
+      kwargs:
+        out_feature: 768
+        nattr: 80
+        loss_cfg:
+          type: CEL_Sigmoid
+          kwargs:
+            sample_weight: [0.00575482, 0.19323551, 0.93186936, 0.01533638, 0.0663203 ,
+                            0.21637255, 0.07765333, 0.04739267, 0.23145872, 0.11599429,
+                            0.28473868, 0.03042256, 0.04175559, 0.09656624, 0.02725814,
+                            0.57574732, 0.02970137, 0.02045833, 0.02796462, 0.26612013,
+                            0.11776048, 0.26311761, 0.20243439, 0.0844973 , 0.01432083,
+                            0.22655756, 0.08448258, 0.0213267 , 0.0690726 , 0.02636033,
+                            0.03813491, 0.0274642 , 0.01036163, 0.02444696, 0.296631  ,
+                            0.00887509, 0.4031026 , 0.54734115, 0.03529429, 0.31651531,
+                            0.13645261, 0.77788735, 0.07419455, 0.93875749, 0.05350073,
+                            0.03379303, 0.02666941, 0.04840822, 0.02328422, 0.01050881,
+                            0.01789736, 0.0254478 , 0.13287609, 0.01022916,
+                            
+                            0.04354444,0.17997778,0.5834,0.4166,0.04947778,0.15104444,
+                            0.10775556,0.04191111,0.00472222,0.01688889, 0.03241111,
+                            0.71171111,0.17344444,0.11484444, 0.006,
+                            0.185, 0.19273333, 0.1601, 0.00952222, 0.01345556,
+                            0.92437778, 0.06216667, 0.46044444, 0.35266667, 0.29462222,
+                            0.35271111]
+            size_average: True
+  
+  # 5set_attr
+  19:
+    name: attr_5set
+    loss_weight: 11.6
+    gres_ratio: 1
+    backbone:
+      type: vit_large_patch16_ladder_attention_share_pos_embed
+      kwargs:
+        task_sp_list: ['rel_pos_h', 'rel_pos_w'] # wrong list would somehow cause .cuda() stuck without error
+        pretrained: True
+        img_size: [480, 480]  # deprecated by simple interpolate
+        lms_checkpoint_train: fairscale
+        window: False
+        test_pos_mode: learnable_simple_interpolate # to_do: ablation
+        pad_attn_mask: False  # to_do: ablation
+        round_padding: True
+        learnable_pos: True
+        drop_path_rate: 0.1
+    
+    dataset:
+      type: MultiAttrDataset
+      kwargs:
+        data_use_ratio: 1
+        task_spec:
+          dataset: 
+            - HARDHC 
+            - uavhuman
+            - parse27k
+            - duke
+            - market
+          data_path: 
+            - sh1424:s3://pedattr_public/HARDHC/dataset.pkl
+            - sh1424:s3://pedattr_public/UVA-Human/AttributeRecognition/uavhuman/dataset.pkl
+            - sh1424:s3://pedattr_public/Parse27k/parse27k/parse27k/dataset.pkl
+            - sh1424:s3://pedattr_public/DukeMTMC-reID/DukeMTMC-reID/dataset.pkl
+            - sh1424:s3://pedattr_public/market/dataset.pkl
+          root_path: 
+            - sh1424:s3://pedattr_public/HARDHC/croped_image/
+            - sh1424:s3://pedattr_public/UVA-Human/AttributeRecognition/uavhuman/train
+            - sh1424:s3://pedattr_public/Parse27k/parse27k/parse27k/images
+            - sh1424:s3://pedattr_public/DukeMTMC-reID/DukeMTMC-reID
+            - sh1424:s3://pedattr_public/market/bounding_box_train
+        augmentation:
+          height: 256
+          width: 192
+          use_random_aug: False
+
+    sampler:
+      batch_size: 116
+      shuffle_strategy: 1
+    
+    neck:
+      type: LadderSideAttentionFPN
+      kwargs: 
+        lms_checkpoint_train: fairscale
+        layer_feat_nums: 12
+        hidden_dim: 768
+        reduct_ration: 8
+        transformer_block_nums: 1
+        transformer_block_num_heads: 2
+        gate_T: 1.0
+        gate_alpha: 0
+
+    decoder:
+      type: pedattr_cls_vit_A
+      kwargs:
+        out_feature: 768
+        nattr: 154 # 14 + 43 + 44 + 23 + 30
+        loss_cfg:
+          type: CEL_Sigmoid
+          kwargs:
+            sample_weight: [0.56694664, 0.22444946, 0.0502188 , 0.22603755, 0.21919113,
+                            0.46474449, 0.06994636, 0.15422078, 0.08162761, 0.36204828,
+                            0.10057877, 0.0329616 , 0.26824534, 0.05424195,
+                            
+                            0.86300439, 0.12964222, 0.014645  , 0.08694309, 0.1215473 ,
+                            0.64722239, 0.13779892, 0.15837607, 0.12914787, 0.13860224,
+                            0.43607489, 0.04529444, 0.27090156, 0.07260706, 0.04702466,
+                            0.04782797, 0.11827226, 0.33034666, 0.01594266, 0.01952666,
+                            0.02280171, 0.00945437, 0.        , 0.20367052, 0.77130322,
+                            0.02502626, 0.        , 0.00154483, 0.59976519, 0.16826299,
+                            0.02273991, 0.0155101 , 0.08342087, 0.0164988 , 0.00593215,
+                            0.07439906, 0.0119261 , 0.        , 0.        , 0.58054749,
+                            0.37316938, 0.04152506, 0.00475808,
+
+                            0.00662252, 0.39000073, 0.46161124, 0.07161051, 0.07015501,
+                            0.00109162, 0.23855615, 0.09344298, 0.03846154, 0.07692308,
+                            0.34269704, 0.07692308, 0.03846154, 0.09344298, 0.10581472,
+                            0.42369551, 0.47048978, 0.06920894, 0.07845135, 0.85233971,
+                            0.39549523, 0.1432574 , 0.46124736, 0.39549523, 0.1432574 ,
+                            0.46124736, 0.40830362, 0.12226184, 0.46943454, 0.40830362,
+                            0.12226184, 0.46943454, 0.04250055, 0.00123717, 0.95626228,
+                            0.24532421, 0.02772724, 0.72694855, 0.04512044, 0.02416127,
+                            0.93071829, 0.26526454, 0.00720472, 0.72753075,
+
+                            0.5616242 , 0.16894363, 0.23578972, 0.43217389, 0.33191938,
+                            0.0451394 , 0.09624667, 0.00254512, 0.01690899, 0.07351608,
+                            0.39920428, 0.05300881, 0.22713044, 0.13152737, 0.14138607,
+                            0.61217564, 0.08951818, 0.01927859, 0.11180996, 0.02685545,
+                            0.00836673, 0.05189714, 0.06827955,
+
+                            0.27643785, 0.24134199, 0.11951144, 0.38265306, 0.14486704,
+                            0.10745207, 0.15978664, 0.0169295 , 0.0423624 , 0.00224181,
+                            0.08433828, 0.01607916, 0.13226654, 0.06068336, 0.08804886,
+                            0.11131725, 0.03849722, 0.12128942, 0.30248918, 0.04955164,
+                            0.85459184, 0.61897032, 0.95029375, 0.32189239, 0.02264997,
+                            0.41573902, 0.01646568, 0.78084416, 0.18831169, 0.01437848
+                            
+                            ]
+            size_average: True
+
+## reid ##
+  # 5set
+  20: 
+    name: reid_4sets
+    loss_weight: 560
+    gres_ratio: 1  # int, > 0, = Task_GPUs / (world_Size/sum(all_gres_ratios))
+    backbone:
+      type: vit_large_patch16_ladder_attention_share_pos_embed
+      kwargs:
+        task_sp_list: ['cls_token', 'cls_token_pos_embed', 'rel_pos_h', 'rel_pos_w'] # wrong list would somehow cause .cuda() stuck without error
+        pretrained: True
+        img_size: [480, 480]  # deprecated by simple interpolate
+        lms_checkpoint_train: fairscale
+        window: False
+        test_pos_mode: learnable_simple_interpolate # to_do: ablation
+        pad_attn_mask: False  # to_do: ablation
+        round_padding: True
+        learnable_pos: True
+        drop_path_rate: 0.
+        use_cls_token: True
+
+    dataset:
+      type: ReIDDataset
+      kwargs:
+        data_use_ratio: 1
+        task_spec:
+          list :
+            - sh1424:s3://pedreid_public/market1501/data_list/fileList.txt
+            - sh1424:s3://pedreid_public/dukemtmc-reid/data_list/fileList.txt
+            - sh1424:s3://pedreid_public/cuhk03_1/data_list/fileList.txt
+            - sh1424:s3://pedreid_public/MSMT17_V1/data_list/fileList.txt
+            # - sh1424:s3://pedreid_public/Mars/Mars.fileList.txt
+          meta :
+            - sh1424:s3://pedreid_public/market1501/data_list/metaList.txt
+            - sh1424:s3://pedreid_public/dukemtmc-reid/data_list/metaList.txt
+            - sh1424:s3://pedreid_public/cuhk03_1/data_list/metaList.txt
+            - sh1424:s3://pedreid_public/MSMT17_V1/data_list/metaList.txt
+            # - sh1424:s3://pedreid_public/Mars/Mars.metaList.txt
+          prefix :
+            - sh1424:s3://pedreid_public/
+            - sh1424:s3://pedreid_public/
+            - sh1424:s3://pedreid_public/
+            - sh1424:s3://pedreid_public/
+            # - sh1424:s3://pedreid_public/
+
+        augmentation:
+          height: 256
+          width : 128
+          earser: True
+          brightness: False
+          contrast: False
+          vit: True
+          split:
+            bg_type: 0
+            aug_type: 3
+            prob: 0.2
+        loader: pil
+
+    sampler:
+      type: RandomIdentity
+      batch_size: 112
+      shuffle_strategy: 6
+
+    neck:
+      type: LadderSideAttentionFPN
+      kwargs: 
+        lms_checkpoint_train: fairscale
+        layer_feat_nums: 12
+        hidden_dim: 768
+        reduct_ration: 8
+        transformer_block_nums: 1
+        transformer_block_num_heads: 2
+        gate_T: 1.0
+        gate_alpha: 0
+        use_cls_token: True
+
+    decoder:
+      type: reid_cls_vit_B
+      kwargs:
+        use_sync_bn: True
+        bn_sync_stats: False
+        bn_momentum: 0.1
+        bn_eps: 0.00001
+        feature_bn: True
+        feature_only: False
+        out_feature: 768
+        loss_cfg:
+          type: Softmax_TripletLoss
+          kwargs:
+            in_features: 768
+            out_features: 3261
+            tri_margin: ~
+            balance_weight: 1
+
+  # LaST_PRCC_DGMarket
+  21: 
+    name: reid_LaST_PRCC_DGMarket
+    loss_weight: 9.6
+    gres_ratio: 1  # int, > 0, = Task_GPUs / (world_Size/sum(all_gres_ratios))
+    backbone:
+      type: vit_large_patch16_ladder_attention_share_pos_embed
+      kwargs:
+        task_sp_list: ['cls_token', 'cls_token_pos_embed', 'rel_pos_h', 'rel_pos_w'] # wrong list would somehow cause .cuda() stuck without error
+        pretrained: True
+        img_size: [480, 480]  # deprecated by simple interpolate
+        lms_checkpoint_train: fairscale
+        window: False
+        test_pos_mode: learnable_simple_interpolate # to_do: ablation
+        pad_attn_mask: False  # to_do: ablation
+        round_padding: True
+        learnable_pos: True
+        drop_path_rate: 0.
+        use_cls_token: True
+
+    dataset:
+      type: ReIDDataset
+      kwargs:
+        data_use_ratio: 1
+        task_spec:
+          list :
+            - sh1424:s3://pedreid_public/DGMarket/DG-Market-fileLists.txt
+            - sh1424:s3://pedreid_public/PRCC/rgb/PRCC-train-fileLists.txt
+            - sh1424:s3://pedreid_public/LaST/LaST-fileLists.txt
+          meta :
+            - sh1424:s3://pedreid_public/DGMarket/DG-Market-metaLists.txt
+            - sh1424:s3://pedreid_public/PRCC/rgb/PRCC-train-metaLists.txt
+            - sh1424:s3://pedreid_public/LaST/LaST-metaLists.txt
+          prefix :
+            - sh1424:s3://pedreid_public/DGMarket/data/
+            - sh1424:s3://pedreid_public/PRCC/rgb/
+            - sh1424:s3://pedreid_public/LaST/
+        augmentation:
+          height: 256
+          width : 128
+          earser: True
+          brightness: False
+          contrast: False
+          vit: True
+          split:
+            bg_type: 0
+            aug_type: 3
+            prob: 0.2
+        loader: pil
+
+    sampler:
+      type: RandomIdentity
+      batch_size: 96
+      shuffle_strategy: 6
+
+    neck:
+      type: LadderSideAttentionFPN
+      kwargs: 
+        lms_checkpoint_train: fairscale
+        layer_feat_nums: 12
+        hidden_dim: 768
+        reduct_ration: 8
+        transformer_block_nums: 1
+        transformer_block_num_heads: 2
+        gate_T: 1.0
+        gate_alpha: 0
+        use_cls_token: True
+
+    decoder:
+      type: reid_cls_vit_B
+      kwargs:
+        use_sync_bn: True
+        bn_sync_stats: False
+        bn_momentum: 0.1
+        bn_eps: 0.00001
+        feature_bn: True
+        feature_only: False
+        out_feature: 768
+        loss_cfg:
+          type: Softmax_TripletLoss
+          kwargs:
+            in_features: 768
+            out_features: 5901 # 751+5150 
+            tri_margin: ~
+            balance_weight: 1
+
+  # LUPerson
+  22: 
+    name: reid_LUPerson
+    loss_weight: 384
+    gres_ratio: 1
+    backbone:
+      type: vit_large_patch16_ladder_attention_share_pos_embed
+      kwargs:
+        task_sp_list: ['cls_token', 'cls_token_pos_embed', 'rel_pos_h', 'rel_pos_w'] # wrong list would somehow cause .cuda() stuck without error
+        pretrained: True
+        img_size: [480, 480]  # deprecated by simple interpolate
+        lms_checkpoint_train: fairscale
+        window: False
+        test_pos_mode: learnable_simple_interpolate # to_do: ablation
+        pad_attn_mask: False  # to_do: ablation
+        round_padding: True
+        learnable_pos: True
+        drop_path_rate: 0.
+        use_cls_token: True
+
+    dataset:
+      type: ReIDDataset
+      kwargs:
+        data_use_ratio: 1
+        task_spec:
+          list :
+            - sh1424:s3://pedreid_public/LUP_NL/LUPerson_feat_imgnum_5178420_classnum_151595.processed_fileLists
+          meta :
+            - sh1424:s3://pedreid_public/LUP_NL/LUPerson_feat_imgnum_5178420_classnum_151595.processed_labels
+          prefix :
+            - sh1424:s3://pedreid_public/LUP_NL/
+        augmentation:
+          height: 256
+          width : 128
+          earser: True
+          brightness: False
+          contrast: False
+          vit: True
+          split:
+            bg_type: 0
+            aug_type: 3
+            prob: 0.2
+        loader: pil
+
+    sampler:
+      type: RandomIdentity
+      batch_size: 384
+      shuffle_strategy: 6
+
+    neck:
+      type: LadderSideAttentionFPN
+      kwargs: 
+        lms_checkpoint_train: fairscale
+        layer_feat_nums: 12
+        hidden_dim: 768
+        reduct_ration: 8
+        transformer_block_nums: 1
+        transformer_block_num_heads: 2
+        gate_T: 1.0
+        gate_alpha: 0
+        use_cls_token: True
+
+    decoder:
+      type: reid_cls_vit_B
+      kwargs:
+        use_sync_bn: True
+        bn_sync_stats: False
+        bn_momentum: 0.1
+        bn_eps: 0.00001
+        feature_bn: True
+        feature_only: False
+        out_feature: 768
+        loss_cfg:
+          type: Softmax_TripletLoss
+          kwargs:
+            in_features: 768
+            out_features: 151595
+            tri_margin: ~
+            balance_weight: 1
+
+## peddet ##
+  # crowdhuman
+  23:
+    name: ped_CrowdHuman
+    loss_weight: 320
+    gres_ratio: 8  # int, > 0| world/sum*ratio
+    backbone:
+      type: vit_large_patch16_ladder_attention_share_pos_embed
+      kwargs:
+        task_sp_list: ['rel_pos_h', 'rel_pos_w'] # wrong list would somehow cause .cuda() stuck without error
+        pretrained: True
+        img_size: [480, 480]  # deprecated by simple interpolate
+        lms_checkpoint_train: fairscale
+        window: False
+        test_pos_mode: learnable_simple_interpolate # to_do: ablation
+        pad_attn_mask: False  # to_do: ablation
+        round_padding: True
+        learnable_pos: True
+        drop_path_rate: 0.
+
+    dataset:
+      type: PedestrainDetectionDataset
+      kwargs:
+        dataset_name: 'CrowdHuman'
+        data_use_ratio: 1
+        nested: True
+        task_spec:
+          img_folder: 
+            - sh1424:s3://peddet_public/CrowdHuman/Images
+          ann_file: 
+            - sh1424:s3://peddet_public/CrowdHuman/annotations/train.json
+          return_masks: False
+        augmentation: {'max_size': 1333}
+        vit: True
+    sampler:
+      batch_size: 4  # per card
+      shuffle_strategy: 1
+
+    neck:
+      type: LadderSideAttentionFPN
+      kwargs:
+        lms_checkpoint_train: fairscale
+        layer_feat_nums: 12
+        hidden_dim: 768
+        reduct_ration: 8
+        transformer_block_nums: 1
+        transformer_block_num_heads: 2
+        gate_T: 1.0
+        gate_alpha: 0
+
+    decoder:
+      type: AIOHead
+      kwargs:
+        task: peddet
+        loss_weight: 1.0
+        peddet_mask_dim: False
+        transformer_predictor_cfg:
+          hidden_dim: 256
+          num_queries: 900  # 3 * 300
+          nheads: 8
+          dim_feedforward: 2048
+          dec_layers: 9
+          pre_norm: False
+          arch: fan_in
+          enforce_input_project: False
+          mask_on: False # no atten_mask for pedestrain detection
+          num_feature_levels: 1
+          cross_pos_embed: anchor
+          cls_out_dim: 1
+          peddet_cfgs:
+            share_content_query: 3
+            query_pe_dim: 2
+        loss_cfg:
+          type: DetFocalDiceLoss
+          kwargs:
+            cfg:
+              deep_supervision: True
+              focal_alpha: 0.25
+              class_weight: 2.0
+              bbox_weight: 5.0
+              giou_weight: 2.
+              ign_thr: 0.7
+              dec_layers: 9 # w/o init proposal
+
+  # 5set_det
+  24:
+    name: det_5set
+    loss_weight: 320
+    gres_ratio: 8  # int, > 0| world/sum*ratio
+    backbone:
+      type: vit_large_patch16_ladder_attention_share_pos_embed
+      kwargs:
+        task_sp_list: ['rel_pos_h', 'rel_pos_w'] # wrong list would somehow cause .cuda() stuck without error
+        pretrained: True
+        img_size: [480, 480]  # deprecated by simple interpolate
+        lms_checkpoint_train: fairscale
+        window: False
+        test_pos_mode: learnable_simple_interpolate # to_do: ablation
+        pad_attn_mask: False  # to_do: ablation
+        round_padding: True
+        learnable_pos: True
+        drop_path_rate: 0.
+
+    dataset:
+      type: PedestrainDetectionDataset
+      kwargs:
+        data_use_ratio: 1
+        nested: True
+        task_spec:
+          img_folder: 
+            - sh1424:s3://peddet_public/WiderPerson/Images/
+            - openmmlab:s3://openmmlab/datasets/detection/coco/train2017/
+            - sh1424:s3://peddet_public/ECP/
+            - sh1424:s3://peddet_public/CityPersons/
+            - sh1424:s3://peddet_public/WIDER_Pedestrian/Images/
+          ann_file: 
+            - sh1424:s3://peddet_public/WiderPerson/WiderPerson_remove_no_person_img.json
+            - sh1424:s3://peddet_public/cocopersons/coco_person_remove_no_person_img.json
+            - sh1424:s3://peddet_public/ECP/day/ECP_remove_no_person_img.json
+            - sh1424:s3://peddet_public/CityPersons/CityPersons_remove_no_person_img.json
+            - sh1424:s3://peddet_public/WIDER_Pedestrian/WIDER_Pedestrian_remove_no_person_img.json
+          return_masks: False
+        augmentation: {'max_size': 1333}
+        vit: True
+    sampler:
+      batch_size: 4  # per card
+      shuffle_strategy: 1
+
+    neck:
+      type: LadderSideAttentionFPN
+      kwargs:
+        lms_checkpoint_train: fairscale
+        layer_feat_nums: 12
+        hidden_dim: 768
+        reduct_ration: 8
+        transformer_block_nums: 1
+        transformer_block_num_heads: 2
+        gate_T: 1.0
+        gate_alpha: 0
+
+    decoder:
+      type: AIOHead
+      kwargs:
+        task: peddet
+        loss_weight: 1.0
+        peddet_mask_dim: False
+        transformer_predictor_cfg:
+          hidden_dim: 256
+          num_queries: 900  # 3 * 300
+          nheads: 8
+          dim_feedforward: 2048
+          dec_layers: 9
+          pre_norm: False
+          arch: fan_in
+          enforce_input_project: False
+          mask_on: False # no atten_mask for pedestrain detection
+          num_feature_levels: 1
+          cross_pos_embed: anchor
+          cls_out_dim: 1
+          peddet_cfgs:
+            share_content_query: 3
+            query_pe_dim: 2
+        loss_cfg:
+          type: DetFocalDiceLoss
+          kwargs:
+            cfg:
+              deep_supervision: True
+              focal_alpha: 0.25
+              class_weight: 2.0
+              bbox_weight: 5.0
+              giou_weight: 2.
+              ign_thr: 0.7
+              dec_layers: 9 # w/o init proposal
