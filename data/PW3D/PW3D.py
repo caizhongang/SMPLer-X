@@ -60,58 +60,48 @@ class PW3D(torch.utils.data.Dataset):
         meta_info = {}
         return inputs, targets, meta_info
         
+    
     def evaluate(self, outs, cur_sample_idx):
         annots = self.datalist
         sample_num = len(outs)
-        eval_result = {}
+        eval_result = {'mpjpe_body': [], 'pa_mpjpe_body': [], }
         for n in range(sample_num):
-            annot = annots[cur_sample_idx + n]
+
             out = outs[n]
 
-            vis = True
-            if vis:
-                from utils.vis import vis_keypoints, vis_mesh, save_obj
-                """
-                file_name = str(cur_sample_idx+n)
-                img = (out['img'].transpose(1,2,0)[:,:,::-1] * 255).copy()
-                cv2.imwrite(file_name + '.jpg', img)
-                save_obj(out['smplx_mesh_cam'], smpl_x.face, file_name + '.obj')
-                """
-                
-                """
-                img_path = annot['img_path']
-                img = load_img(img_path)[:,:,::-1]
-                bbox = annot['bbox']
-                focal = list(cfg.focal)
-                princpt = list(cfg.princpt)
-                focal[0] = focal[0] / cfg.input_body_shape[1] * bbox[2]
-                focal[1] = focal[1] / cfg.input_body_shape[0] * bbox[3]
-                princpt[0] = princpt[0] / cfg.input_body_shape[1] * bbox[2] + bbox[0]
-                princpt[1] = princpt[1] / cfg.input_body_shape[0] * bbox[3] + bbox[1]
-                img = render_mesh(img, out['smplx_mesh_cam'], smpl_x.face, {'focal': focal, 'princpt': princpt})
-                #img = cv2.resize(img, (512,512))
-                cv2.imwrite(img_id + '_' + str(ann_id) + '.jpg', img)
-                """
-                
-                ann_id = annot['ann_id']
-                bbox = annot['bbox']
-                focal = list(cfg.focal)
-                princpt = list(cfg.princpt)
-                focal[0] = focal[0] / cfg.input_body_shape[1] * bbox[2]
-                focal[1] = focal[1] / cfg.input_body_shape[0] * bbox[3]
-                princpt[0] = princpt[0] / cfg.input_body_shape[1] * bbox[2] + bbox[0]
-                princpt[1] = princpt[1] / cfg.input_body_shape[0] * bbox[3] + bbox[1]
-                param_save = {'smplx_param': {'root_pose': out['smplx_root_pose'].tolist(), 'body_pose': out['smplx_body_pose'].tolist(), 'lhand_pose': out['smplx_lhand_pose'].tolist(), 'rhand_pose': out['smplx_rhand_pose'].tolist(), 'jaw_pose': out['smplx_jaw_pose'].tolist(), 'shape': out['smplx_shape'].tolist(), 'expr': out['smplx_expr'].tolist(), 'trans': out['cam_trans'].tolist()},
-                        'cam_param': {'focal': focal, 'princpt': princpt}
-                        }
-                with open(str(ann_id) + '.json', 'w') as f:
-                    json.dump(param_save, f)
+            # MPVPE from all vertices
+            mesh_gt = out['smpl_mesh_cam_target']
+            mesh_out = out['smplx_mesh_cam']
 
+            # MPJPE from body joints
+            mesh_out_align = mesh_out - np.dot(smpl_x.J_regressor, mesh_out)[smpl_x.J_regressor_idx['pelvis'], None, :] \
+                                      + np.dot(smpl.joint_regressor, mesh_gt)[smpl.root_joint_idx, None, :]
+
+            # only eval point0-21 since only smpl gt is given
+            joint_gt_body = np.dot(smpl.joint_regressor, mesh_gt)[:22, :] 
+            joint_out_body = np.dot(smpl_x.J_regressor, mesh_out)[:22, :] 
+            joint_out_body_root_align = np.dot(smpl_x.J_regressor, mesh_out_align)[:22, :] 
+
+            eval_result['mpjpe_body'].append(
+                np.sqrt(np.sum((joint_out_body_root_align - joint_gt_body) ** 2, 1)).mean() * 1000)
+
+            # PAMPJPE from body joints
+            joint_out_body_pa_align = rigid_align(joint_out_body, joint_gt_body)
+            eval_result['pa_mpjpe_body'].append(
+                np.sqrt(np.sum((joint_out_body_pa_align - joint_gt_body) ** 2, 1)).mean() * 1000)
 
         return eval_result
 
     def print_eval_result(self, eval_result):
-        pass
+        print('======3DPW-test======')
+        print('MPJPE (Body): %.2f mm' % np.mean(eval_result['mpjpe_body']))
+        print('PA MPJPE (Body): %.2f mm' % np.mean(eval_result['pa_mpjpe_body']))
+
+        f = open(os.path.join(cfg.result_dir, 'result.txt'), 'w')
+        f.write(f'3DPW-test dataset: \n')
+        f.write('MPJPE (Body): %.2f mm\n' % np.mean(eval_result['mpjpe_body']))
+        f.write('PA MPJPE (Body): %.2f mm\n' % np.mean(eval_result['pa_mpjpe_body']))
+
 
 
 
