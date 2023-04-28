@@ -264,13 +264,17 @@ class Model(nn.Module):
 
             smplx_pose_weight = getattr(cfg, 'smplx_pose_weight', 1.0)
             smplx_shape_weight = getattr(cfg, 'smplx_loss_weight', 1.0)
-            smplx_orient_weight = getattr(cfg, 'smplx_orient_weight', smplx_pose_weight) # if not specified, use the same weight as pose
+            # smplx_orient_weight = getattr(cfg, 'smplx_orient_weight', smplx_pose_weight) # if not specified, use the same weight as pose
     
 
             # do not supervise root pose if original agora json is used
             if getattr(cfg, 'agora_fix_global_orient_transl', False):
-                loss['smplx_pose'] = self.param_loss(pose, targets['smplx_pose'], meta_info['smplx_pose_valid'])[:, 3:] * smplx_pose_weight
-                loss['smplx_orient'] = self.param_loss(pose, targets['smplx_pose'], meta_info['smplx_pose_valid'])[:, :3] * smplx_orient_weight
+                # loss['smplx_pose'] = self.param_loss(pose, targets['smplx_pose'], meta_info['smplx_pose_valid'])[:, 3:] * smplx_pose_weight
+                if hasattr(cfg, 'smplx_orient_weight'):
+                    smplx_orient_weight = getattr(cfg, 'smplx_orient_weight')
+                    loss['smplx_orient'] = self.param_loss(pose, targets['smplx_pose'], meta_info['smplx_pose_valid'])[:, :3] * smplx_orient_weight
+
+                loss['smplx_pose'] = self.param_loss(pose, targets['smplx_pose'], meta_info['smplx_pose_valid']) * smplx_pose_weight
             else:
                 loss['smplx_pose'] = self.param_loss(pose, targets['smplx_pose'], meta_info['smplx_pose_valid'])[:, 3:] * smplx_pose_weight
 
@@ -448,6 +452,14 @@ class Model(nn.Module):
                 out['smpl_mesh_cam_target'] = targets['smpl_mesh_cam']
             if 'bb2img_trans' in meta_info:
                 out['bb2img_trans'] = meta_info['bb2img_trans']
+            
+            # ### HARDCODE vis for debug
+            # import numpy as np
+            # for key in ['smplx_mesh_cam_target', 'smplx_mesh_cam']:
+            #         to_save = out[key].cpu().detach().numpy()
+            #         np.save(f'./vis/val_{key}.npy', to_save)
+            
+            # import pdb;pdb.set_trace()
 
             return out
 
