@@ -1,0 +1,37 @@
+project_name: pose_test
+common:
+  # backbone:
+  #   kwargs:
+  #     test_pos_mode: learnable # simple_interpolate
+  tester:
+    type: TesterMultiTaskDev
+  use_ceph: True
+  sync: True
+  collate: dev_collate
+
+# task_specific_param = ['backbone', 'neck', 'decoder', 'dataset', 'sampler', 'lr_scheduler', 'optimizer']
+tasks:
+  0:
+    name: COCOPoseTest # deprecated
+    loss_weight: 1.0  # *redundant*
+    gres_ratio: 1  # int, > 0| world/sum*ratio, *redundant*
+    dataset:
+      type: COCOPosDatasetDev
+      kwargs:
+        img_prefix: 'sh1424:s3://pose_public/coco/val2017/'
+        ann_file: 'sh1424:s3://pose_public/coco/annotations/person_keypoints_val2017.json'
+        use_dup: True
+        test_mode: True
+        data_use_ratio: 1
+    sampler:
+      batch_size: 40 # per card
+    evaluation:
+      cfg:
+        interval: 10
+        metric: mAP
+        key_indicator: AP
+
+        soft_nms: False
+        nms_thr: 1.0
+        oks_thr: 0.9
+        vis_thr: 0.2

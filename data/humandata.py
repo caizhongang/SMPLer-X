@@ -82,21 +82,24 @@ class HumanDataset(torch.utils.data.Dataset):
                 lhand_bbox = lhand_bbox[:4]
                 if hasattr(cfg, 'bbox_ratio'):
                     lhand_bbox = process_bbox(lhand_bbox, img_width=img_shape[1], img_height=img_shape[0], ratio=cfg.bbox_ratio)
-                lhand_bbox[2:] += lhand_bbox[:2]  # xywh -> xyxy
+                if lhand_bbox is not None:
+                    lhand_bbox[2:] += lhand_bbox[:2]  # xywh -> xyxy
             else:
                 lhand_bbox = None
             if rhand_bbox[-1] > 0:
                 rhand_bbox = rhand_bbox[:4]
                 if hasattr(cfg, 'bbox_ratio'):
                     rhand_bbox = process_bbox(rhand_bbox, img_width=img_shape[1], img_height=img_shape[0], ratio=cfg.bbox_ratio)
-                rhand_bbox[2:] += rhand_bbox[:2]  # xywh -> xyxy
+                if rhand_bbox is not None:
+                    rhand_bbox[2:] += rhand_bbox[:2]  # xywh -> xyxy
             else:
                 rhand_bbox = None
             if face_bbox[-1] > 0:
                 face_bbox = face_bbox[:4]
                 if hasattr(cfg, 'bbox_ratio'):
                     face_bbox = process_bbox(face_bbox, img_width=img_shape[1], img_height=img_shape[0], ratio=cfg.bbox_ratio)
-                face_bbox[2:] += face_bbox[:2]  # xywh -> xyxy
+                if face_bbox is not None:
+                    face_bbox[2:] += face_bbox[:2]  # xywh -> xyxy
             else:
                 face_bbox = None
 

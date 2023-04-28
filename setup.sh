@@ -29,6 +29,11 @@ cd main/transformer_utils
 pip install -v -e .
 cd ../..
 
+# install humanbench
+cd main/humanbench_utils
+pip install -v -e .
+cd ../..
+
 # add soft links
 ln -s /mnt/lustrenew/share_data/zoetrope/osx/data dataset
 ln -s /mnt/cache/share_data/zoetrope/body_models common/utils/human_model_files

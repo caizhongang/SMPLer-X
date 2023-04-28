@@ -1,0 +1,128 @@
+out_dir: /mnt/lustrenew/chencheng1/expr_files/vitruvian/devL2/L2_samll_setting_reid_FT
+
+common:  # prefix
+  project_name: L2_samll_setting_reid_FT
+  solver:
+    type: SolverMultiTaskDev
+
+  lr_scheduler:
+    type: 'WarmupCosine'
+    kwargs:
+      base_lr: 5e-4
+      warmup_factor: 0.01
+      warmup_iters: 1500
+      warmup_method: linear
+
+
+  backbone_multiplier: 0.5  # 0.8
+  optimizer:
+    type: AdamWWithClipDev
+    kwargs:
+      clip_norm: 0.01
+      norm_type: 2
+      betas: [0.9, 0.999]
+      weight_decay: 0.3
+
+  layer_decay:
+    # layer decay
+    num_layers: 12
+    layer_decay_rate: 0.75
+    lpe_lr: True
+      
+  auto_denan: False
+
+  workers: 2
+  max_iter: 30000 #61446  # 0.1628001628001628 * |61446 for 149813 // 512 * 210
+
+  deterministic: True   # seed control
+  cudnn_deterministic: False
+  worker_rank: True
+  random_seed: 42
+
+  print_freq: 10
+  vis_batch: False
+  save_interval: 40000
+
+  use_ceph: True
+  sync: True
+
+# task_specific_param = ['backbone', 'neck', 'decoder', 'dataset', 'sampler', 'lr_scheduler', 'optimizer']
+tasks :  # prefix
+  0: 
+    name: reid_5sets_256x128
+    loss_weight: 1.0
+    gres_ratio: 1  # int, > 0, = Task_GPUs / (world_Size/sum(all_gres_ratios))
+    backbone:
+      type: vit_base_patch16
+      kwargs:
+        task_sp_list: ['pos_embed', 'cls_token', 'rel_pos_h', 'rel_pos_w'] # wrong list would somehow cause .cuda() stuck without error
+        pretrained: True
+        pretrain_path: '/mnt/lustre/chencheng1/expr_files/vitruvian/devL2/transed_ckpt_for_pretrain/devL2_small_setting/reid/vitbase_lr1e3_StepLRx3_backboneclip_bmp08_ld75_pose_dpr03_dcLN_par_dpr03_dcBN_attr_dpr01_reid_clstoken_dpr0_LSA_10p_small_setting6_add_posetrack_DGMarket_deepfashion.pth'
+        load_pos_embed: True
+        pos_embed_interp: False
+        window: False
+        learnable_pos: True
+        drop_path_rate: 0
+        img_size: [256, 128]
+        use_cls_token: True
+    
+    dataset:
+      type: ReIDDataset
+      kwargs:
+        task_spec:
+          list :
+            - sh1986:s3://tangshixiang.reid_data_list/market1501/fileList.txt
+            - sh1986:s3://tangshixiang.reid_data_list/dukemtmc-reid/fileList.txt
+            - sh1986:s3://tangshixiang.reid_data_list/cuhk03_1/fileList.txt
+            - sh1986:s3://tangshixiang.reid_data_list/MSMT17_V1/fileList.txt
+            - shlg:s3://reid_public/Mars/Mars.fileList.txt
+          meta :
+            - sh1986:s3://tangshixiang.reid_data_list/market1501/metaList.txt
+            - sh1986:s3://tangshixiang.reid_data_list/dukemtmc-reid/metaList.txt
+            - sh1986:s3://tangshixiang.reid_data_list/cuhk03_1/metaList.txt
+            - sh1986:s3://tangshixiang.reid_data_list/MSMT17_V1/metaList.txt
+            - shlg:s3://reid_public/Mars/Mars.metaList.txt
+          prefix :
+            - sh40:s3://chendapeng.reid_data/datasets8/
+            - sh40:s3://chendapeng.reid_data/datasets8/
+            - sh40:s3://chendapeng.reid_data/datasets8/
+            - sh40:s3://chendapeng.reid_data/datasets8/
+            - shlg:s3://reid_public/
+        augmentation:
+          height: 256
+          width : 128
+          earser: True
+          brightness: False
+          contrast: False
+          vit: True
+          split:
+            bg_type: 0
+            aug_type: 3
+            prob: 0.2
+        loader: pil
+    sampler:
+      type: RandomIdentity
+      batch_size: 64
+      shuffle_strategy: 6
+
+    neck:
+      type: DoNothing
+      kwargs: {}
+
+    decoder:
+      type: reid_cls_vit_B
+      kwargs:
+        use_sync_bn: True
+        bn_sync_stats: True
+        bn_momentum: 0.1
+        bn_eps: 0.00001
+        feature_bn: True
+        feature_only: False
+        out_feature: 768
+        loss_cfg:
+          type: Softmax_TripletLoss
+          kwargs:
+            in_features: 768
+            out_features: 3886 #751 #3261
+            tri_margin: ~
+            balance_weight: 1

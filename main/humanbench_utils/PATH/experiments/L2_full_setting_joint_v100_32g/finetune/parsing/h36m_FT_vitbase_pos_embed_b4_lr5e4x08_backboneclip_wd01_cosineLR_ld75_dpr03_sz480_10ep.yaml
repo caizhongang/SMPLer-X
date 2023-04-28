@@ -1,0 +1,110 @@
+out_dir: /mnt/lustrenew/chencheng1/expr_files/vitruvian/devL2/L2_samll_setting_parsing_FT
+
+common:  # prefix
+  project_name: L2_samll_setting_parsing_FT
+  model_entry_type: backbone_aio_entry
+  solver:
+    type: SolverMultiTaskDev
+
+  lr_scheduler:
+    type: 'WarmupCosine'
+    kwargs:
+      base_lr: 5e-4
+      warmup_factor: 0.01
+      warmup_iters: 1500
+      warmup_method: linear
+
+  backbone_multiplier: 0.8
+  optimizer:
+    type: AdamWWithBackboneClipDev
+    kwargs:
+      clip_norm: 0.01
+      norm_type: 2
+      betas: [0.9, 0.999]
+      weight_decay: 0.1
+
+  layer_decay:
+    # layer decay
+    num_layers: 12
+    layer_decay_rate: 0.75
+    lpe_lr: True
+      
+  auto_denan: False
+
+  workers: 2
+  max_iter: 40000 # (10 * 62668) / (4 * 4) = 39167.5
+
+  deterministic: True   # seed control
+  cudnn_deterministic: False
+  worker_rank: True
+  random_seed: 42
+
+  print_freq: 10
+  vis_batch: False
+  save_interval: 70000
+
+  use_ceph: True
+  sync: True
+
+# task_specific_param = ['backbone', 'neck', 'decoder', 'dataset', 'sampler', 'lr_scheduler', 'optimizer']
+tasks :  # prefix
+  0:     # prefix
+    name: h36m_parsing
+    loss_weight: 1.0
+    gres_ratio: 1  # int, > 0, = Task_GPUs / (world_Size/sum(all_gres_ratios))
+    backbone:
+      type: vit_base_patch16
+      kwargs:
+        task_sp_list: ['pos_embed', 'rel_pos_h', 'rel_pos_w'] # wrong list would somehow cause .cuda() stuck without error
+        pretrained: True
+        pretrain_path: '/mnt/lustre/chencheng1/expr_files/vitruvian/devL2/transed_ckpt_for_pretrain/devL2_small_setting/parsing/vitbase_lr1e3_StepLRx3_backboneclip_bmp08_ld75_pose_dpr03_dcLN_par_dpr03_dcBN_attr_dpr01_reid_clstoken_dpr0_LSA_10p_small_setting6_add_posetrack_DGMarket_deepfashion.pth'
+        load_pos_embed: True
+        pos_embed_interp: False
+        learnable_pos: True
+        window: False
+        drop_path_rate: 0.3
+        img_size: 480
+    
+    dataset:
+      type: Human3M6ParsingDataset
+      kwargs:
+        data_path: shlg:s3://parsing_public/human3.6 # files in core/data/datasets/images/resources/* or absolute path
+        cfg:
+          is_flip: True
+          crop_size: [480, 480]
+          is_multi_scale: True
+          scale_factor: 11
+          center_crop_test: False
+          base_size: 480
+          eval_crop_size: [480, 480]
+          ignore_value: 255 # duplicated with decoder.kwargs.ignore_value
+          num_classes: 25
+          label_list: [0, 1, 2, 3, 6, 7, 8, 17, 18, 19, 25, 26, 27, 32, 33, 34, 38, 39, 43, 44,
+             46, 49, 50, 56, 58]
+
+
+    sampler:
+      batch_size: 4  # per card
+      shuffle_strategy: 1
+    
+    neck:
+      type: DoNothing
+      kwargs: {}
+
+    decoder:  # todo: coco instance seg config for now
+      type: ViT_OCR_V2
+      kwargs:
+        task: par
+        input_size: [ 480,480 ]
+        in_channels: 768
+        num_classes: 25
+        bn_type: torchbn
+        loss_cfg:
+          type: FSAuxCELoss
+          kwargs:
+            configer:
+              loss_weights:
+                aux_loss: 0.4
+                seg_loss: 1.0
+              ce_reduction: elementwise_mean
+              ce_ignore_index: 255

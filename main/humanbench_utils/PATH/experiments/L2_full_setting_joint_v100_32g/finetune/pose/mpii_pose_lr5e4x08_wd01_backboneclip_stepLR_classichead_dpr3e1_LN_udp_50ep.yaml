@@ -1,0 +1,108 @@
+out_dir: /mnt/lustrenew/chencheng1/expr_files/vitruvian/devL2/L2_samll_setting_pose_FT
+
+common:  # prefix
+  backbone:
+    project_name: L2_samll_setting_pose_FT
+    type: vit_base_patch16
+    kwargs:
+      task_sp_list: ['pos_embed', 'rel_pos_h', 'rel_pos_w'] # wrong list would somehow cause .cuda() stuck without error
+      pretrained: True
+      pretrain_path: '/mnt/lustre/chencheng1/expr_files/vitruvian/devL2/transed_ckpt_for_pretrain/devL2_small_setting/pose/vitbase_lr1e3_StepLRx3_backboneclip_bmp08_ld75_pose_dpr03_dcLN_par_dpr03_dcBN_attr_dpr01_reid_clstoken_dpr0_LSA_10p_small_setting6_add_posetrack_DGMarket_deepfashion.pth'
+      load_pos_embed: True
+      pos_embed_interp: False
+      learnable_pos: True
+      window: False
+      drop_path_rate: 0.3
+      img_size: [256, 192]
+
+  solver:
+    type: SolverMultiTaskDev
+
+  lr_scheduler:
+    type: 'Step'
+    kwargs:
+      base_lr: 1.0e-7  #5.0e-7
+      warmup_steps: 1000
+      warmup_lr: 5.0e-4  #5.0e-4
+      lr_mults: [0.1, 0.1]
+      lr_steps: [5250, 6300]  # 75%, 90%
+
+  optimizer:
+    type: AdamWWithBackboneClipDev
+    kwargs:
+      clip_norm: 0.01
+      norm_type: 2
+      betas: [0.9, 0.999]
+      weight_decay: 0.1
+  
+  backbone_multiplier: 0.8  # 0.8
+  layer_decay:
+    # layer decay
+    num_layers: 12
+    layer_decay_rate: 0.75
+    lpe_lr: True
+      
+  auto_denan: False
+
+  workers: 2
+  max_iter: 7000 # (50 * 22246) / (4 * 40) = 6951.875
+
+  deterministic: True   # seed control
+  cudnn_deterministic: False
+  worker_rank: True
+  random_seed: 42
+
+  print_freq: 10
+  vis_batch: False
+  save_interval: 70000
+
+  use_ceph: True
+  sync: True
+
+# task_specific_param = ['backbone', 'neck', 'decoder', 'dataset', 'sampler', 'lr_scheduler', 'optimizer']
+tasks :  # prefix
+  0:     # prefix
+    name: mpiipose
+    loss_weight: 1.0
+    gres_ratio: 1  # int, > 0| world/sum*ratio
+    dataset:
+      type: MPIIPosDatasetDev
+      kwargs:
+        ann_file: 'shlg:s3://pose_public/MPI/annotations/mpii_train.json'
+        img_prefix: 'shlg:s3://pose_public/MPI/images/'
+        use_udp: True
+        data_cfg: {
+                      'image_size':[192, 256],
+                      'heatmap_size':[48, 64],
+                      'num_output_channels': 16,
+                      'num_joints': 16,
+                      'dataset_channel': [[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],],
+                      'inference_channel': [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+        }
+    sampler:
+      batch_size: 40  # 16
+      shuffle_strategy: 1
+    neck:
+      type: DoNothing
+      kwargs: 
+        backbone: None
+    decoder:
+      type: TopDownSimpleHead
+      kwargs:
+        layer_norm: True
+        use_sync_bn: False
+        bn_sync_stats: False
+        in_channels: 768
+        out_channels: 16
+        num_deconv_layers: 2
+        num_deconv_filters: [256, 256]
+        num_deconv_kernels: [4, 4]
+        upsample: 0
+        extra: {'final_conv_kernel': 1}
+        train_cfg: {}
+        test_cfg: {
+          'flip_test': True,
+          'post_process':'default',
+          'shift_heatmap': False,
+          'modulate_kernel': 11,
+          'use_udp': True}
