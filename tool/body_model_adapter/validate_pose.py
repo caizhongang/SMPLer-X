@@ -185,5 +185,5 @@ def validate_agora():
 
 
 if __name__ == '__main__':
-    # validate_random()
-    validate_agora()
+    validate_random()
+    # validate_agora()
