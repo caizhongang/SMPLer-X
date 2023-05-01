@@ -1,0 +1,866 @@
+phoenix-srun: Job 88837 scheduled successfully!
+Current QUOTA_TYPE is [reserved], which means the job has occupied quota in RESERVED_TOTAL under your partition.
+Current PHX_PRIORITY is P0
+
+[_init_petrel]-   1  cur: 0.000s, avg(1): 0.000s
+[rank 0000]-[INFO]-[5805]-[2022-09-26 10:26:08]-[/spring/src/linklink/src/core.cc:220]: linklink init: world_size=1, rank=(0,0), device_num=1, thread_pool=1, buffer_pool=-1
+[rank 0] >> task_info.group[0] ranks [0]
+[rank 0] >> task_info.root_group ranks [0]
+[rank 0] >> task_info.backbone_share_group[[0]] ranks [0]
+[rank 0] >> task_info.neck_share_group[[0]] ranks [0]
+[rank 0] >> task_info.decoder_share_group[[0]] ranks [0]
+[rank 0] backbone of task0 has been overided to {'type': 'vit_base_patch16', 'kwargs': {'task_sp_list': ['pos_embed', 'rel_pos_h', 'rel_pos_w'], 'pretrained': True, 'pretrain_path': '/mnt/lustre/chencheng1/expr_files/vitruvian/devL2/transed_ckpt_for_pretrain/devL2_small_setting/parsing/vitbase_lr1e3_StepLRx3_backboneclip_bmp08_ld75_pose_dpr03_dcLN_par_dpr03_dcBN_attr_dpr01_reid_clstoken_dpr0_LSA_10p_small_setting4_add_DGMarket.pth', 'load_pos_embed': True, 'pos_embed_interp': False, 'learnable_pos': True, 'window': False, 'drop_path_rate': 0.3, 'img_size': 480}}
+[rank 0] neck of task0 has been overided to {'type': 'DoNothing', 'kwargs': {}}
+[rank 0] decoder of task0 has been overided to {'type': 'ViT_OCR_V2', 'kwargs': {'task': 'par', 'input_size': [480, 480], 'in_channels': 768, 'num_classes': 25, 'bn_type': 'torchbn', 'loss_cfg': {'type': 'FSAuxCELoss', 'kwargs': {'configer': {'loss_weights': {'aux_loss': 0.4, 'seg_loss': 1.0}, 'ce_reduction': 'elementwise_mean', 'ce_ignore_index': 255}}}}}
+[rank 0] dataset of task0 has been overided to {'type': 'Human3M6ParsingDataset', 'kwargs': {'data_path': 'shlg:s3://parsing_public/human3.6', 'cfg': {'is_flip': True, 'crop_size': [480, 480], 'is_multi_scale': True, 'scale_factor': 11, 'center_crop_test': False, 'base_size': 480, 'eval_crop_size': [480, 480], 'ignore_value': 255, 'num_classes': 25, 'label_list': [0, 1, 2, 3, 6, 7, 8, 17, 18, 19, 25, 26, 27, 32, 33, 34, 38, 39, 43, 44, 46, 49, 50, 56, 58]}}}
+[rank 0] sampler of task0 has been overided to {'batch_size': 4, 'shuffle_strategy': 1}
+[rank 0] >> task_info.group[0] ranks [0]
+[rank 0] >> task_info.root_group ranks [0]
+[rank 0] >> task_info.backbone_share_group[[0]] ranks [0]
+[rank 0] >> task_info.neck_share_group[[0]] ranks [0]
+[rank 0] >> task_info.decoder_share_group[[0]] ranks [0]
+[rank 0] dataset of task0 has been overided to {'type': 'Human3M6ParsingDataset', 'kwargs': {'data_path': 'shlg:s3://parsing_public/human3.6', 'dataset': 'val', 'is_train': False, 'cfg': {'eval_crop_size': [480, 480], 'is_flip': False, 'is_multi_scale': False, 'ignore_value': 255, 'num_classes': 25, 'label_list': [0, 1, 2, 3, 6, 7, 8, 17, 18, 19, 25, 26, 27, 32, 33, 34, 38, 39, 43, 44, 46, 49, 50, 56, 58]}}}
+[rank 0] sampler of task0 has been overided to {'batch_size': 4}
+2022-09-26 10:26:11 02763ca2 SUCCESS: (pavi2.training) SummaryWriter is initialized, remember to close the SummaryWriter at the end of your program.
+
+PAVI Info ###################################
+Training：h36m_FT_vitbase_pos_embed_b4_lr5e4x08_backboneclip_wd01_cosineLR_ld75_dpr03_sz480_10ep___SmallSetting___LSA_10p_small_setting4_add_DGMarket
+Project：L2_samll_setting_parsing_FT
+Training_id：114515
+Training_url：http://autolink.parrots.sensetime.com/pages/content/project/3882/training/114515
+Warning: If `Training_url` is not accessible, please upgrade your pavi version.
+#############################################
+
+sync_print: rank 0, override tensor.cuda() to preserve task_specific flag
+[2022-09-26 10:26:11,600][solver_multitask_dev.py][line: 575][    INFO] deterministic mode, seed: 42, worker_rank: True,                                   cudnn_deterministic: False
+[rank 0] config[kwargs] {'data_path': 'shlg:s3://parsing_public/human3.6', 'cfg': {'is_flip': False, 'crop_size': [480, 480], 'is_multi_scale': False, 'scale_factor': 11, 'center_crop_test': False, 'base_size': 480, 'eval_crop_size': [480, 480], 'ignore_value': 255, 'num_classes': 25, 'label_list': [0, 1, 2, 3, 6, 7, 8, 17, 18, 19, 25, 26, 27, 32, 33, 34, 38, 39, 43, 44, 46, 49, 50, 56, 58]}, 'dataset': 'val', 'is_train': False, 'ginfo': {'group': 1, 'task_size': 1, 'task_id': 0, 'task_rank': 0, 'task_root_rank': 0, 'root_group': 2, 'task_sizes': [1], 'task_root_ranks': [0], 'task_num': 1, 'backbone_share_group': 3, 'backbone_group_size': 1, 'backbone_task_size': 1, 'backbone_task_rank': 0, 'neck_share_group': 4, 'neck_group_size': 1, 'neck_task_size': 1, 'neck_task_rank': 0, 'decoder_share_group': 5, 'decoder_group_size': 1, 'decoder_task_size': 1, 'decoder_task_rank': 0, 'task_name': 'h36m_parsing', 'task_names': ['h36m_parsing'], 'task_weight': 1.0, 'task_type': 'normal', 'task_types': ['normal'], 'task_random_seed': 0}}
+[rank 0] Human3M6ParsingDatasetrank: 0 task: human3m6_parsing mode:inference dataset_len:22144 id_num:25 augmentation: Compose
+Missing keys: ['blocks.1.attn.rel_pos_h', 'blocks.1.attn.rel_pos_w', 'blocks.8.attn.rel_pos_h', 'blocks.0.attn.rel_pos_h', 'blocks.6.attn.rel_pos_h', 'blocks.7.attn.rel_pos_w', 'blocks.10.attn.rel_pos_h', 'blocks.3.attn.rel_pos_h', 'blocks.10.attn.rel_pos_w', 'blocks.4.attn.rel_pos_w', 'blocks.2.attn.rel_pos_h', 'blocks.5.attn.rel_pos_h', 'blocks.8.attn.rel_pos_w', 'blocks.3.attn.rel_pos_w', 'blocks.11.attn.rel_pos_w', 'blocks.5.attn.rel_pos_w', 'blocks.0.attn.rel_pos_w', 'blocks.4.attn.rel_pos_h', 'blocks.9.attn.rel_pos_w', 'blocks.6.attn.rel_pos_w', 'blocks.9.attn.rel_pos_h', 'blocks.2.attn.rel_pos_w', 'blocks.11.attn.rel_pos_h', 'blocks.7.attn.rel_pos_h']
+
+finish load
+sync_print: rank 0, Number of conv/bn params: 0.59M
+sync_print: rank 0, Number of linear params: 85.02M
+[rank 0] add param pos_embed as task_specific
+[rank 0] add param patch_embed.proj.weight as backbone_specific
+[rank 0] add param patch_embed.proj.bias as backbone_specific
+[rank 0] add param blocks.0.norm1.weight as backbone_specific
+[rank 0] add param blocks.0.norm1.bias as backbone_specific
+[rank 0] add param blocks.0.attn.rel_pos_h as task_specific
+[rank 0] add param blocks.0.attn.rel_pos_w as task_specific
+[rank 0] add param blocks.0.attn.qkv.weight as backbone_specific
+[rank 0] add param blocks.0.attn.qkv.bias as backbone_specific
+[rank 0] add param blocks.0.attn.proj.weight as backbone_specific
+[rank 0] add param blocks.0.attn.proj.bias as backbone_specific
+[rank 0] add param blocks.0.norm2.weight as backbone_specific
+[rank 0] add param blocks.0.norm2.bias as backbone_specific
+[rank 0] add param blocks.0.mlp.fc1.weight as backbone_specific
+[rank 0] add param blocks.0.mlp.fc1.bias as backbone_specific
+[rank 0] add param blocks.0.mlp.fc2.weight as backbone_specific
+[rank 0] add param blocks.0.mlp.fc2.bias as backbone_specific
+[rank 0] add param blocks.1.norm1.weight as backbone_specific
+[rank 0] add param blocks.1.norm1.bias as backbone_specific
+[rank 0] add param blocks.1.attn.rel_pos_h as task_specific
+[rank 0] add param blocks.1.attn.rel_pos_w as task_specific
+[rank 0] add param blocks.1.attn.qkv.weight as backbone_specific
+[rank 0] add param blocks.1.attn.qkv.bias as backbone_specific
+[rank 0] add param blocks.1.attn.proj.weight as backbone_specific
+[rank 0] add param blocks.1.attn.proj.bias as backbone_specific
+[rank 0] add param blocks.1.norm2.weight as backbone_specific
+[rank 0] add param blocks.1.norm2.bias as backbone_specific
+[rank 0] add param blocks.1.mlp.fc1.weight as backbone_specific
+[rank 0] add param blocks.1.mlp.fc1.bias as backbone_specific
+[rank 0] add param blocks.1.mlp.fc2.weight as backbone_specific
+[rank 0] add param blocks.1.mlp.fc2.bias as backbone_specific
+[rank 0] add param blocks.2.norm1.weight as backbone_specific
+[rank 0] add param blocks.2.norm1.bias as backbone_specific
+[rank 0] add param blocks.2.attn.rel_pos_h as task_specific
+[rank 0] add param blocks.2.attn.rel_pos_w as task_specific
+[rank 0] add param blocks.2.attn.qkv.weight as backbone_specific
+[rank 0] add param blocks.2.attn.qkv.bias as backbone_specific
+[rank 0] add param blocks.2.attn.proj.weight as backbone_specific
+[rank 0] add param blocks.2.attn.proj.bias as backbone_specific
+[rank 0] add param blocks.2.norm2.weight as backbone_specific
+[rank 0] add param blocks.2.norm2.bias as backbone_specific
+[rank 0] add param blocks.2.mlp.fc1.weight as backbone_specific
+[rank 0] add param blocks.2.mlp.fc1.bias as backbone_specific
+[rank 0] add param blocks.2.mlp.fc2.weight as backbone_specific
+[rank 0] add param blocks.2.mlp.fc2.bias as backbone_specific
+[rank 0] add param blocks.3.norm1.weight as backbone_specific
+[rank 0] add param blocks.3.norm1.bias as backbone_specific
+[rank 0] add param blocks.3.attn.rel_pos_h as task_specific
+[rank 0] add param blocks.3.attn.rel_pos_w as task_specific
+[rank 0] add param blocks.3.attn.qkv.weight as backbone_specific
+[rank 0] add param blocks.3.attn.qkv.bias as backbone_specific
+[rank 0] add param blocks.3.attn.proj.weight as backbone_specific
+[rank 0] add param blocks.3.attn.proj.bias as backbone_specific
+[rank 0] add param blocks.3.norm2.weight as backbone_specific
+[rank 0] add param blocks.3.norm2.bias as backbone_specific
+[rank 0] add param blocks.3.mlp.fc1.weight as backbone_specific
+[rank 0] add param blocks.3.mlp.fc1.bias as backbone_specific
+[rank 0] add param blocks.3.mlp.fc2.weight as backbone_specific
+[rank 0] add param blocks.3.mlp.fc2.bias as backbone_specific
+[rank 0] add param blocks.4.norm1.weight as backbone_specific
+[rank 0] add param blocks.4.norm1.bias as backbone_specific
+[rank 0] add param blocks.4.attn.rel_pos_h as task_specific
+[rank 0] add param blocks.4.attn.rel_pos_w as task_specific
+[rank 0] add param blocks.4.attn.qkv.weight as backbone_specific
+[rank 0] add param blocks.4.attn.qkv.bias as backbone_specific
+[rank 0] add param blocks.4.attn.proj.weight as backbone_specific
+[rank 0] add param blocks.4.attn.proj.bias as backbone_specific
+[rank 0] add param blocks.4.norm2.weight as backbone_specific
+[rank 0] add param blocks.4.norm2.bias as backbone_specific
+[rank 0] add param blocks.4.mlp.fc1.weight as backbone_specific
+[rank 0] add param blocks.4.mlp.fc1.bias as backbone_specific
+[rank 0] add param blocks.4.mlp.fc2.weight as backbone_specific
+[rank 0] add param blocks.4.mlp.fc2.bias as backbone_specific
+[rank 0] add param blocks.5.norm1.weight as backbone_specific
+[rank 0] add param blocks.5.norm1.bias as backbone_specific
+[rank 0] add param blocks.5.attn.rel_pos_h as task_specific
+[rank 0] add param blocks.5.attn.rel_pos_w as task_specific
+[rank 0] add param blocks.5.attn.qkv.weight as backbone_specific
+[rank 0] add param blocks.5.attn.qkv.bias as backbone_specific
+[rank 0] add param blocks.5.attn.proj.weight as backbone_specific
+[rank 0] add param blocks.5.attn.proj.bias as backbone_specific
+[rank 0] add param blocks.5.norm2.weight as backbone_specific
+[rank 0] add param blocks.5.norm2.bias as backbone_specific
+[rank 0] add param blocks.5.mlp.fc1.weight as backbone_specific
+[rank 0] add param blocks.5.mlp.fc1.bias as backbone_specific
+[rank 0] add param blocks.5.mlp.fc2.weight as backbone_specific
+[rank 0] add param blocks.5.mlp.fc2.bias as backbone_specific
+[rank 0] add param blocks.6.norm1.weight as backbone_specific
+[rank 0] add param blocks.6.norm1.bias as backbone_specific
+[rank 0] add param blocks.6.attn.rel_pos_h as task_specific
+[rank 0] add param blocks.6.attn.rel_pos_w as task_specific
+[rank 0] add param blocks.6.attn.qkv.weight as backbone_specific
+[rank 0] add param blocks.6.attn.qkv.bias as backbone_specific
+[rank 0] add param blocks.6.attn.proj.weight as backbone_specific
+[rank 0] add param blocks.6.attn.proj.bias as backbone_specific
+[rank 0] add param blocks.6.norm2.weight as backbone_specific
+[rank 0] add param blocks.6.norm2.bias as backbone_specific
+[rank 0] add param blocks.6.mlp.fc1.weight as backbone_specific
+[rank 0] add param blocks.6.mlp.fc1.bias as backbone_specific
+[rank 0] add param blocks.6.mlp.fc2.weight as backbone_specific
+[rank 0] add param blocks.6.mlp.fc2.bias as backbone_specific
+[rank 0] add param blocks.7.norm1.weight as backbone_specific
+[rank 0] add param blocks.7.norm1.bias as backbone_specific
+[rank 0] add param blocks.7.attn.rel_pos_h as task_specific
+[rank 0] add param blocks.7.attn.rel_pos_w as task_specific
+[rank 0] add param blocks.7.attn.qkv.weight as backbone_specific
+[rank 0] add param blocks.7.attn.qkv.bias as backbone_specific
+[rank 0] add param blocks.7.attn.proj.weight as backbone_specific
+[rank 0] add param blocks.7.attn.proj.bias as backbone_specific
+[rank 0] add param blocks.7.norm2.weight as backbone_specific
+[rank 0] add param blocks.7.norm2.bias as backbone_specific
+[rank 0] add param blocks.7.mlp.fc1.weight as backbone_specific
+[rank 0] add param blocks.7.mlp.fc1.bias as backbone_specific
+[rank 0] add param blocks.7.mlp.fc2.weight as backbone_specific
+[rank 0] add param blocks.7.mlp.fc2.bias as backbone_specific
+[rank 0] add param blocks.8.norm1.weight as backbone_specific
+[rank 0] add param blocks.8.norm1.bias as backbone_specific
+[rank 0] add param blocks.8.attn.rel_pos_h as task_specific
+[rank 0] add param blocks.8.attn.rel_pos_w as task_specific
+[rank 0] add param blocks.8.attn.qkv.weight as backbone_specific
+[rank 0] add param blocks.8.attn.qkv.bias as backbone_specific
+[rank 0] add param blocks.8.attn.proj.weight as backbone_specific
+[rank 0] add param blocks.8.attn.proj.bias as backbone_specific
+[rank 0] add param blocks.8.norm2.weight as backbone_specific
+[rank 0] add param blocks.8.norm2.bias as backbone_specific
+[rank 0] add param blocks.8.mlp.fc1.weight as backbone_specific
+[rank 0] add param blocks.8.mlp.fc1.bias as backbone_specific
+[rank 0] add param blocks.8.mlp.fc2.weight as backbone_specific
+[rank 0] add param blocks.8.mlp.fc2.bias as backbone_specific
+[rank 0] add param blocks.9.norm1.weight as backbone_specific
+[rank 0] add param blocks.9.norm1.bias as backbone_specific
+[rank 0] add param blocks.9.attn.rel_pos_h as task_specific
+[rank 0] add param blocks.9.attn.rel_pos_w as task_specific
+[rank 0] add param blocks.9.attn.qkv.weight as backbone_specific
+[rank 0] add param blocks.9.attn.qkv.bias as backbone_specific
+[rank 0] add param blocks.9.attn.proj.weight as backbone_specific
+[rank 0] add param blocks.9.attn.proj.bias as backbone_specific
+[rank 0] add param blocks.9.norm2.weight as backbone_specific
+[rank 0] add param blocks.9.norm2.bias as backbone_specific
+[rank 0] add param blocks.9.mlp.fc1.weight as backbone_specific
+[rank 0] add param blocks.9.mlp.fc1.bias as backbone_specific
+[rank 0] add param blocks.9.mlp.fc2.weight as backbone_specific
+[rank 0] add param blocks.9.mlp.fc2.bias as backbone_specific
+[rank 0] add param blocks.10.norm1.weight as backbone_specific
+[rank 0] add param blocks.10.norm1.bias as backbone_specific
+[rank 0] add param blocks.10.attn.rel_pos_h as task_specific
+[rank 0] add param blocks.10.attn.rel_pos_w as task_specific
+[rank 0] add param blocks.10.attn.qkv.weight as backbone_specific
+[rank 0] add param blocks.10.attn.qkv.bias as backbone_specific
+[rank 0] add param blocks.10.attn.proj.weight as backbone_specific
+[rank 0] add param blocks.10.attn.proj.bias as backbone_specific
+[rank 0] add param blocks.10.norm2.weight as backbone_specific
+[rank 0] add param blocks.10.norm2.bias as backbone_specific
+[rank 0] add param blocks.10.mlp.fc1.weight as backbone_specific
+[rank 0] add param blocks.10.mlp.fc1.bias as backbone_specific
+[rank 0] add param blocks.10.mlp.fc2.weight as backbone_specific
+[rank 0] add param blocks.10.mlp.fc2.bias as backbone_specific
+[rank 0] add param blocks.11.norm1.weight as backbone_specific
+[rank 0] add param blocks.11.norm1.bias as backbone_specific
+[rank 0] add param blocks.11.attn.rel_pos_h as task_specific
+[rank 0] add param blocks.11.attn.rel_pos_w as task_specific
+[rank 0] add param blocks.11.attn.qkv.weight as backbone_specific
+[rank 0] add param blocks.11.attn.qkv.bias as backbone_specific
+[rank 0] add param blocks.11.attn.proj.weight as backbone_specific
+[rank 0] add param blocks.11.attn.proj.bias as backbone_specific
+[rank 0] add param blocks.11.norm2.weight as backbone_specific
+[rank 0] add param blocks.11.norm2.bias as backbone_specific
+[rank 0] add param blocks.11.mlp.fc1.weight as backbone_specific
+[rank 0] add param blocks.11.mlp.fc1.bias as backbone_specific
+[rank 0] add param blocks.11.mlp.fc2.weight as backbone_specific
+[rank 0] add param blocks.11.mlp.fc2.bias as backbone_specific
+[rank 0] add param norm.weight as backbone_specific
+[rank 0] add param norm.bias as backbone_specific
+[rank 0] add param conv3x3.0.weight as decoder_specific
+[rank 0] add param conv3x3.0.bias as decoder_specific
+[rank 0] add param conv3x3.1.0.weight as decoder_specific
+[rank 0] add param conv3x3.1.0.bias as decoder_specific
+[rank 0] add param ocr_distri_head.object_context_block.f_pixel.0.weight as decoder_specific
+[rank 0] add param ocr_distri_head.object_context_block.f_pixel.0.bias as decoder_specific
+[rank 0] add param ocr_distri_head.object_context_block.f_pixel.1.0.weight as decoder_specific
+[rank 0] add param ocr_distri_head.object_context_block.f_pixel.1.0.bias as decoder_specific
+[rank 0] add param ocr_distri_head.object_context_block.f_pixel.2.weight as decoder_specific
+[rank 0] add param ocr_distri_head.object_context_block.f_pixel.2.bias as decoder_specific
+[rank 0] add param ocr_distri_head.object_context_block.f_pixel.3.0.weight as decoder_specific
+[rank 0] add param ocr_distri_head.object_context_block.f_pixel.3.0.bias as decoder_specific
+[rank 0] add param ocr_distri_head.object_context_block.f_object.0.weight as decoder_specific
+[rank 0] add param ocr_distri_head.object_context_block.f_object.0.bias as decoder_specific
+[rank 0] add param ocr_distri_head.object_context_block.f_object.1.0.weight as decoder_specific
+[rank 0] add param ocr_distri_head.object_context_block.f_object.1.0.bias as decoder_specific
+[rank 0] add param ocr_distri_head.object_context_block.f_object.2.weight as decoder_specific
+[rank 0] add param ocr_distri_head.object_context_block.f_object.2.bias as decoder_specific
+[rank 0] add param ocr_distri_head.object_context_block.f_object.3.0.weight as decoder_specific
+[rank 0] add param ocr_distri_head.object_context_block.f_object.3.0.bias as decoder_specific
+[rank 0] add param ocr_distri_head.object_context_block.f_down.0.weight as decoder_specific
+[rank 0] add param ocr_distri_head.object_context_block.f_down.0.bias as decoder_specific
+[rank 0] add param ocr_distri_head.object_context_block.f_down.1.0.weight as decoder_specific
+[rank 0] add param ocr_distri_head.object_context_block.f_down.1.0.bias as decoder_specific
+[rank 0] add param ocr_distri_head.object_context_block.f_up.0.weight as decoder_specific
+[rank 0] add param ocr_distri_head.object_context_block.f_up.0.bias as decoder_specific
+[rank 0] add param ocr_distri_head.object_context_block.f_up.1.0.weight as decoder_specific
+[rank 0] add param ocr_distri_head.object_context_block.f_up.1.0.bias as decoder_specific
+[rank 0] add param ocr_distri_head.conv_bn_dropout.0.weight as decoder_specific
+[rank 0] add param ocr_distri_head.conv_bn_dropout.0.bias as decoder_specific
+[rank 0] add param ocr_distri_head.conv_bn_dropout.1.0.weight as decoder_specific
+[rank 0] add param ocr_distri_head.conv_bn_dropout.1.0.bias as decoder_specific
+[rank 0] add param cls_head.weight as decoder_specific
+[rank 0] add param cls_head.bias as decoder_specific
+[rank 0] add param aux_head.0.weight as decoder_specific
+[rank 0] add param aux_head.0.bias as decoder_specific
+[rank 0] add param aux_head.1.0.weight as decoder_specific
+[rank 0] add param aux_head.1.0.bias as decoder_specific
+[rank 0] add param aux_head.2.weight as decoder_specific
+[rank 0] add param aux_head.2.bias as decoder_specific
+[rank 0] add buffer conv3x3.1.0.running_mean as decoder_specific
+[rank 0] add buffer conv3x3.1.0.running_var as decoder_specific
+[rank 0] add buffer conv3x3.1.0.num_batches_tracked as decoder_specific
+[rank 0] add buffer ocr_distri_head.object_context_block.f_pixel.1.0.running_mean as decoder_specific
+[rank 0] add buffer ocr_distri_head.object_context_block.f_pixel.1.0.running_var as decoder_specific
+[rank 0] add buffer ocr_distri_head.object_context_block.f_pixel.1.0.num_batches_tracked as decoder_specific
+[rank 0] add buffer ocr_distri_head.object_context_block.f_pixel.3.0.running_mean as decoder_specific
+[rank 0] add buffer ocr_distri_head.object_context_block.f_pixel.3.0.running_var as decoder_specific
+[rank 0] add buffer ocr_distri_head.object_context_block.f_pixel.3.0.num_batches_tracked as decoder_specific
+[rank 0] add buffer ocr_distri_head.object_context_block.f_object.1.0.running_mean as decoder_specific
+[rank 0] add buffer ocr_distri_head.object_context_block.f_object.1.0.running_var as decoder_specific
+[rank 0] add buffer ocr_distri_head.object_context_block.f_object.1.0.num_batches_tracked as decoder_specific
+[rank 0] add buffer ocr_distri_head.object_context_block.f_object.3.0.running_mean as decoder_specific
+[rank 0] add buffer ocr_distri_head.object_context_block.f_object.3.0.running_var as decoder_specific
+[rank 0] add buffer ocr_distri_head.object_context_block.f_object.3.0.num_batches_tracked as decoder_specific
+[rank 0] add buffer ocr_distri_head.object_context_block.f_down.1.0.running_mean as decoder_specific
+[rank 0] add buffer ocr_distri_head.object_context_block.f_down.1.0.running_var as decoder_specific
+[rank 0] add buffer ocr_distri_head.object_context_block.f_down.1.0.num_batches_tracked as decoder_specific
+[rank 0] add buffer ocr_distri_head.object_context_block.f_up.1.0.running_mean as decoder_specific
+[rank 0] add buffer ocr_distri_head.object_context_block.f_up.1.0.running_var as decoder_specific
+[rank 0] add buffer ocr_distri_head.object_context_block.f_up.1.0.num_batches_tracked as decoder_specific
+[rank 0] add buffer ocr_distri_head.conv_bn_dropout.1.0.running_mean as decoder_specific
+[rank 0] add buffer ocr_distri_head.conv_bn_dropout.1.0.running_var as decoder_specific
+[rank 0] add buffer ocr_distri_head.conv_bn_dropout.1.0.num_batches_tracked as decoder_specific
+[rank 0] add buffer aux_head.1.0.running_mean as decoder_specific
+[rank 0] add buffer aux_head.1.0.running_var as decoder_specific
+[rank 0] add buffer aux_head.1.0.num_batches_tracked as decoder_specific
+backbone_aio_entry(
+  (backbone_module): ViT(
+    (patch_embed): PatchEmbed(
+      (proj): Conv2d(3, 768, kernel_size=(16, 16), stride=(16, 16))
+    )
+    (pos_drop): Dropout(p=0.0, inplace=False)
+    (blocks): ModuleList(
+      (0): Block(
+        (norm1): LayerNorm((768,), eps=1e-06, elementwise_affine=True)
+        (attn): Attention(
+          (qkv): Linear(in_features=768, out_features=2304, bias=True)
+          (attn_drop): Dropout(p=0.0, inplace=False)
+          (proj): Linear(in_features=768, out_features=768, bias=True)
+          (proj_drop): Dropout(p=0.0, inplace=False)
+        )
+        (drop_path): Identity()
+        (norm2): LayerNorm((768,), eps=1e-06, elementwise_affine=True)
+        (mlp): Mlp(
+          (fc1): Linear(in_features=768, out_features=3072, bias=True)
+          (act): GELU()
+          (fc2): Linear(in_features=3072, out_features=768, bias=True)
+          (drop): Dropout(p=0.0, inplace=False)
+        )
+      )
+      (1): Block(
+        (norm1): LayerNorm((768,), eps=1e-06, elementwise_affine=True)
+        (attn): Attention(
+          (qkv): Linear(in_features=768, out_features=2304, bias=True)
+          (attn_drop): Dropout(p=0.0, inplace=False)
+          (proj): Linear(in_features=768, out_features=768, bias=True)
+          (proj_drop): Dropout(p=0.0, inplace=False)
+        )
+        (drop_path): DropPath(p=0.027272729203104973)
+        (norm2): LayerNorm((768,), eps=1e-06, elementwise_affine=True)
+        (mlp): Mlp(
+          (fc1): Linear(in_features=768, out_features=3072, bias=True)
+          (act): GELU()
+          (fc2): Linear(in_features=3072, out_features=768, bias=True)
+          (drop): Dropout(p=0.0, inplace=False)
+        )
+      )
+      (2): Block(
+        (norm1): LayerNorm((768,), eps=1e-06, elementwise_affine=True)
+        (attn): Attention(
+          (qkv): Linear(in_features=768, out_features=2304, bias=True)
+          (attn_drop): Dropout(p=0.0, inplace=False)
+          (proj): Linear(in_features=768, out_features=768, bias=True)
+          (proj_drop): Dropout(p=0.0, inplace=False)
+        )
+        (drop_path): DropPath(p=0.054545458406209946)
+        (norm2): LayerNorm((768,), eps=1e-06, elementwise_affine=True)
+        (mlp): Mlp(
+          (fc1): Linear(in_features=768, out_features=3072, bias=True)
+          (act): GELU()
+          (fc2): Linear(in_features=3072, out_features=768, bias=True)
+          (drop): Dropout(p=0.0, inplace=False)
+        )
+      )
+      (3): Block(
+        (norm1): LayerNorm((768,), eps=1e-06, elementwise_affine=True)
+        (attn): Attention(
+          (qkv): Linear(in_features=768, out_features=2304, bias=True)
+          (attn_drop): Dropout(p=0.0, inplace=False)
+          (proj): Linear(in_features=768, out_features=768, bias=True)
+          (proj_drop): Dropout(p=0.0, inplace=False)
+        )
+        (drop_path): DropPath(p=0.08181818574666977)
+        (norm2): LayerNorm((768,), eps=1e-06, elementwise_affine=True)
+        (mlp): Mlp(
+          (fc1): Linear(in_features=768, out_features=3072, bias=True)
+          (act): GELU()
+          (fc2): Linear(in_features=3072, out_features=768, bias=True)
+          (drop): Dropout(p=0.0, inplace=False)
+        )
+      )
+      (4): Block(
+        (norm1): LayerNorm((768,), eps=1e-06, elementwise_affine=True)
+        (attn): Attention(
+          (qkv): Linear(in_features=768, out_features=2304, bias=True)
+          (attn_drop): Dropout(p=0.0, inplace=False)
+          (proj): Linear(in_features=768, out_features=768, bias=True)
+          (proj_drop): Dropout(p=0.0, inplace=False)
+        )
+        (drop_path): DropPath(p=0.10909091681241989)
+        (norm2): LayerNorm((768,), eps=1e-06, elementwise_affine=True)
+        (mlp): Mlp(
+          (fc1): Linear(in_features=768, out_features=3072, bias=True)
+          (act): GELU()
+          (fc2): Linear(in_features=3072, out_features=768, bias=True)
+          (drop): Dropout(p=0.0, inplace=False)
+        )
+      )
+      (5): Block(
+        (norm1): LayerNorm((768,), eps=1e-06, elementwise_affine=True)
+        (attn): Attention(
+          (qkv): Linear(in_features=768, out_features=2304, bias=True)
+          (attn_drop): Dropout(p=0.0, inplace=False)
+          (proj): Linear(in_features=768, out_features=768, bias=True)
+          (proj_drop): Dropout(p=0.0, inplace=False)
+        )
+        (drop_path): DropPath(p=0.13636364042758942)
+        (norm2): LayerNorm((768,), eps=1e-06, elementwise_affine=True)
+        (mlp): Mlp(
+          (fc1): Linear(in_features=768, out_features=3072, bias=True)
+          (act): GELU()
+          (fc2): Linear(in_features=3072, out_features=768, bias=True)
+          (drop): Dropout(p=0.0, inplace=False)
+        )
+      )
+      (6): Block(
+        (norm1): LayerNorm((768,), eps=1e-06, elementwise_affine=True)
+        (attn): Attention(
+          (qkv): Linear(in_features=768, out_features=2304, bias=True)
+          (attn_drop): Dropout(p=0.0, inplace=False)
+          (proj): Linear(in_features=768, out_features=768, bias=True)
+          (proj_drop): Dropout(p=0.0, inplace=False)
+        )
+        (drop_path): DropPath(p=0.16363637149333954)
+        (norm2): LayerNorm((768,), eps=1e-06, elementwise_affine=True)
+        (mlp): Mlp(
+          (fc1): Linear(in_features=768, out_features=3072, bias=True)
+          (act): GELU()
+          (fc2): Linear(in_features=3072, out_features=768, bias=True)
+          (drop): Dropout(p=0.0, inplace=False)
+        )
+      )
+      (7): Block(
+        (norm1): LayerNorm((768,), eps=1e-06, elementwise_affine=True)
+        (attn): Attention(
+          (qkv): Linear(in_features=768, out_features=2304, bias=True)
+          (attn_drop): Dropout(p=0.0, inplace=False)
+          (proj): Linear(in_features=768, out_features=768, bias=True)
+          (proj_drop): Dropout(p=0.0, inplace=False)
+        )
+        (drop_path): DropPath(p=0.19090908765792847)
+        (norm2): LayerNorm((768,), eps=1e-06, elementwise_affine=True)
+        (mlp): Mlp(
+          (fc1): Linear(in_features=768, out_features=3072, bias=True)
+          (act): GELU()
+          (fc2): Linear(in_features=3072, out_features=768, bias=True)
+          (drop): Dropout(p=0.0, inplace=False)
+        )
+      )
+      (8): Block(
+        (norm1): LayerNorm((768,), eps=1e-06, elementwise_affine=True)
+        (attn): Attention(
+          (qkv): Linear(in_features=768, out_features=2304, bias=True)
+          (attn_drop): Dropout(p=0.0, inplace=False)
+          (proj): Linear(in_features=768, out_features=768, bias=True)
+          (proj_drop): Dropout(p=0.0, inplace=False)
+        )
+        (drop_path): DropPath(p=0.2181818187236786)
+        (norm2): LayerNorm((768,), eps=1e-06, elementwise_affine=True)
+        (mlp): Mlp(
+          (fc1): Linear(in_features=768, out_features=3072, bias=True)
+          (act): GELU()
+          (fc2): Linear(in_features=3072, out_features=768, bias=True)
+          (drop): Dropout(p=0.0, inplace=False)
+        )
+      )
+      (9): Block(
+        (norm1): LayerNorm((768,), eps=1e-06, elementwise_affine=True)
+        (attn): Attention(
+          (qkv): Linear(in_features=768, out_features=2304, bias=True)
+          (attn_drop): Dropout(p=0.0, inplace=False)
+          (proj): Linear(in_features=768, out_features=768, bias=True)
+          (proj_drop): Dropout(p=0.0, inplace=False)
+        )
+        (drop_path): DropPath(p=0.2454545497894287)
+        (norm2): LayerNorm((768,), eps=1e-06, elementwise_affine=True)
+        (mlp): Mlp(
+          (fc1): Linear(in_features=768, out_features=3072, bias=True)
+          (act): GELU()
+          (fc2): Linear(in_features=3072, out_features=768, bias=True)
+          (drop): Dropout(p=0.0, inplace=False)
+        )
+      )
+      (10): Block(
+        (norm1): LayerNorm((768,), eps=1e-06, elementwise_affine=True)
+        (attn): Attention(
+          (qkv): Linear(in_features=768, out_features=2304, bias=True)
+          (attn_drop): Dropout(p=0.0, inplace=False)
+          (proj): Linear(in_features=768, out_features=768, bias=True)
+          (proj_drop): Dropout(p=0.0, inplace=False)
+        )
+        (drop_path): DropPath(p=0.27272728085517883)
+        (norm2): LayerNorm((768,), eps=1e-06, elementwise_affine=True)
+        (mlp): Mlp(
+          (fc1): Linear(in_features=768, out_features=3072, bias=True)
+          (act): GELU()
+          (fc2): Linear(in_features=3072, out_features=768, bias=True)
+          (drop): Dropout(p=0.0, inplace=False)
+        )
+      )
+      (11): Block(
+        (norm1): LayerNorm((768,), eps=1e-06, elementwise_affine=True)
+        (attn): Attention(
+          (qkv): Linear(in_features=768, out_features=2304, bias=True)
+          (attn_drop): Dropout(p=0.0, inplace=False)
+          (proj): Linear(in_features=768, out_features=768, bias=True)
+          (proj_drop): Dropout(p=0.0, inplace=False)
+        )
+        (drop_path): DropPath(p=0.30000001192092896)
+        (norm2): LayerNorm((768,), eps=1e-06, elementwise_affine=True)
+        (mlp): Mlp(
+          (fc1): Linear(in_features=768, out_features=3072, bias=True)
+          (act): GELU()
+          (fc2): Linear(in_features=3072, out_features=768, bias=True)
+          (drop): Dropout(p=0.0, inplace=False)
+        )
+      )
+    )
+    (norm): LayerNorm((768,), eps=1e-06, elementwise_affine=True)
+  )
+  (neck_module): DoNothing()
+  (decoder_module): ViT_OCR_V2(
+    (conv3x3): Sequential(
+      (0): Conv2d(768, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      (1): Sequential(
+        (0): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (1): ReLU()
+      )
+    )
+    (ocr_gather_head): SpatialGather_Module(
+      (relu): ReLU(inplace=True)
+    )
+    (ocr_distri_head): SpatialOCR_Module(
+      (object_context_block): ObjectAttentionBlock2D(
+        (pool): MaxPool2d(kernel_size=(1, 1), stride=(1, 1), padding=0, dilation=1, ceil_mode=False)
+        (f_pixel): Sequential(
+          (0): Conv2d(512, 256, kernel_size=(1, 1), stride=(1, 1))
+          (1): Sequential(
+            (0): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (1): ReLU()
+          )
+          (2): Conv2d(256, 256, kernel_size=(1, 1), stride=(1, 1))
+          (3): Sequential(
+            (0): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (1): ReLU()
+          )
+        )
+        (f_object): Sequential(
+          (0): Conv2d(512, 256, kernel_size=(1, 1), stride=(1, 1))
+          (1): Sequential(
+            (0): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (1): ReLU()
+          )
+          (2): Conv2d(256, 256, kernel_size=(1, 1), stride=(1, 1))
+          (3): Sequential(
+            (0): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (1): ReLU()
+          )
+        )
+        (f_down): Sequential(
+          (0): Conv2d(512, 256, kernel_size=(1, 1), stride=(1, 1))
+          (1): Sequential(
+            (0): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (1): ReLU()
+          )
+        )
+        (f_up): Sequential(
+          (0): Conv2d(256, 512, kernel_size=(1, 1), stride=(1, 1))
+          (1): Sequential(
+            (0): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (1): ReLU()
+          )
+        )
+      )
+      (conv_bn_dropout): Sequential(
+        (0): Conv2d(1024, 512, kernel_size=(1, 1), stride=(1, 1))
+        (1): Sequential(
+          (0): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (1): ReLU()
+        )
+        (2): Dropout2d(p=0.05, inplace=False)
+      )
+    )
+    (cls_head): Conv2d(512, 25, kernel_size=(1, 1), stride=(1, 1))
+    (aux_head): Sequential(
+      (0): Conv2d(768, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      (1): Sequential(
+        (0): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (1): ReLU()
+      )
+      (2): Conv2d(512, 25, kernel_size=(1, 1), stride=(1, 1))
+    )
+    (loss): FSAuxCELoss(
+      (ce_loss): FSCELoss(
+        (ce_loss): CrossEntropyLoss()
+      )
+    )
+  )
+)
+[rank 0] broadcasting task-specific param module.backbone_module.pos_embed	group_idx=1
+[rank 0] broadcasting backbone-specific param module.backbone_module.patch_embed.proj.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.patch_embed.proj.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.0.norm1.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.0.norm1.bias	group_idx=3
+[rank 0] broadcasting task-specific param module.backbone_module.blocks.0.attn.rel_pos_h	group_idx=1
+[rank 0] broadcasting task-specific param module.backbone_module.blocks.0.attn.rel_pos_w	group_idx=1
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.0.attn.qkv.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.0.attn.qkv.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.0.attn.proj.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.0.attn.proj.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.0.norm2.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.0.norm2.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.0.mlp.fc1.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.0.mlp.fc1.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.0.mlp.fc2.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.0.mlp.fc2.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.1.norm1.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.1.norm1.bias	group_idx=3
+[rank 0] broadcasting task-specific param module.backbone_module.blocks.1.attn.rel_pos_h	group_idx=1
+[rank 0] broadcasting task-specific param module.backbone_module.blocks.1.attn.rel_pos_w	group_idx=1
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.1.attn.qkv.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.1.attn.qkv.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.1.attn.proj.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.1.attn.proj.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.1.norm2.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.1.norm2.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.1.mlp.fc1.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.1.mlp.fc1.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.1.mlp.fc2.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.1.mlp.fc2.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.2.norm1.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.2.norm1.bias	group_idx=3
+[rank 0] broadcasting task-specific param module.backbone_module.blocks.2.attn.rel_pos_h	group_idx=1
+[rank 0] broadcasting task-specific param module.backbone_module.blocks.2.attn.rel_pos_w	group_idx=1
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.2.attn.qkv.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.2.attn.qkv.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.2.attn.proj.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.2.attn.proj.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.2.norm2.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.2.norm2.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.2.mlp.fc1.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.2.mlp.fc1.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.2.mlp.fc2.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.2.mlp.fc2.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.3.norm1.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.3.norm1.bias	group_idx=3
+[rank 0] broadcasting task-specific param module.backbone_module.blocks.3.attn.rel_pos_h	group_idx=1
+[rank 0] broadcasting task-specific param module.backbone_module.blocks.3.attn.rel_pos_w	group_idx=1
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.3.attn.qkv.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.3.attn.qkv.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.3.attn.proj.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.3.attn.proj.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.3.norm2.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.3.norm2.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.3.mlp.fc1.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.3.mlp.fc1.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.3.mlp.fc2.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.3.mlp.fc2.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.4.norm1.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.4.norm1.bias	group_idx=3
+[rank 0] broadcasting task-specific param module.backbone_module.blocks.4.attn.rel_pos_h	group_idx=1
+[rank 0] broadcasting task-specific param module.backbone_module.blocks.4.attn.rel_pos_w	group_idx=1
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.4.attn.qkv.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.4.attn.qkv.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.4.attn.proj.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.4.attn.proj.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.4.norm2.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.4.norm2.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.4.mlp.fc1.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.4.mlp.fc1.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.4.mlp.fc2.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.4.mlp.fc2.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.5.norm1.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.5.norm1.bias	group_idx=3
+[rank 0] broadcasting task-specific param module.backbone_module.blocks.5.attn.rel_pos_h	group_idx=1
+[rank 0] broadcasting task-specific param module.backbone_module.blocks.5.attn.rel_pos_w	group_idx=1
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.5.attn.qkv.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.5.attn.qkv.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.5.attn.proj.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.5.attn.proj.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.5.norm2.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.5.norm2.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.5.mlp.fc1.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.5.mlp.fc1.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.5.mlp.fc2.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.5.mlp.fc2.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.6.norm1.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.6.norm1.bias	group_idx=3
+[rank 0] broadcasting task-specific param module.backbone_module.blocks.6.attn.rel_pos_h	group_idx=1
+[rank 0] broadcasting task-specific param module.backbone_module.blocks.6.attn.rel_pos_w	group_idx=1
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.6.attn.qkv.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.6.attn.qkv.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.6.attn.proj.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.6.attn.proj.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.6.norm2.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.6.norm2.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.6.mlp.fc1.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.6.mlp.fc1.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.6.mlp.fc2.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.6.mlp.fc2.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.7.norm1.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.7.norm1.bias	group_idx=3
+[rank 0] broadcasting task-specific param module.backbone_module.blocks.7.attn.rel_pos_h	group_idx=1
+[rank 0] broadcasting task-specific param module.backbone_module.blocks.7.attn.rel_pos_w	group_idx=1
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.7.attn.qkv.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.7.attn.qkv.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.7.attn.proj.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.7.attn.proj.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.7.norm2.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.7.norm2.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.7.mlp.fc1.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.7.mlp.fc1.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.7.mlp.fc2.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.7.mlp.fc2.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.8.norm1.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.8.norm1.bias	group_idx=3
+[rank 0] broadcasting task-specific param module.backbone_module.blocks.8.attn.rel_pos_h	group_idx=1
+[rank 0] broadcasting task-specific param module.backbone_module.blocks.8.attn.rel_pos_w	group_idx=1
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.8.attn.qkv.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.8.attn.qkv.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.8.attn.proj.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.8.attn.proj.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.8.norm2.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.8.norm2.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.8.mlp.fc1.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.8.mlp.fc1.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.8.mlp.fc2.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.8.mlp.fc2.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.9.norm1.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.9.norm1.bias	group_idx=3
+[rank 0] broadcasting task-specific param module.backbone_module.blocks.9.attn.rel_pos_h	group_idx=1
+[rank 0] broadcasting task-specific param module.backbone_module.blocks.9.attn.rel_pos_w	group_idx=1
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.9.attn.qkv.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.9.attn.qkv.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.9.attn.proj.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.9.attn.proj.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.9.norm2.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.9.norm2.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.9.mlp.fc1.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.9.mlp.fc1.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.9.mlp.fc2.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.9.mlp.fc2.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.10.norm1.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.10.norm1.bias	group_idx=3
+[rank 0] broadcasting task-specific param module.backbone_module.blocks.10.attn.rel_pos_h	group_idx=1
+[rank 0] broadcasting task-specific param module.backbone_module.blocks.10.attn.rel_pos_w	group_idx=1
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.10.attn.qkv.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.10.attn.qkv.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.10.attn.proj.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.10.attn.proj.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.10.norm2.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.10.norm2.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.10.mlp.fc1.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.10.mlp.fc1.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.10.mlp.fc2.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.10.mlp.fc2.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.11.norm1.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.11.norm1.bias	group_idx=3
+[rank 0] broadcasting task-specific param module.backbone_module.blocks.11.attn.rel_pos_h	group_idx=1
+[rank 0] broadcasting task-specific param module.backbone_module.blocks.11.attn.rel_pos_w	group_idx=1
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.11.attn.qkv.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.11.attn.qkv.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.11.attn.proj.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.11.attn.proj.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.11.norm2.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.11.norm2.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.11.mlp.fc1.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.11.mlp.fc1.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.11.mlp.fc2.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.blocks.11.mlp.fc2.bias	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.norm.weight	group_idx=3
+[rank 0] broadcasting backbone-specific param module.backbone_module.norm.bias	group_idx=3
+[rank 0] broadcasting decoder-specific param module.decoder_module.conv3x3.0.weight	group_idx=5
+[rank 0] broadcasting decoder-specific param module.decoder_module.conv3x3.0.bias	group_idx=5
+[rank 0] broadcasting decoder-specific param module.decoder_module.conv3x3.1.0.weight	group_idx=5
+[rank 0] broadcasting decoder-specific param module.decoder_module.conv3x3.1.0.bias	group_idx=5
+[rank 0] broadcasting decoder-specific param module.decoder_module.ocr_distri_head.object_context_block.f_pixel.0.weight	group_idx=5
+[rank 0] broadcasting decoder-specific param module.decoder_module.ocr_distri_head.object_context_block.f_pixel.0.bias	group_idx=5
+[rank 0] broadcasting decoder-specific param module.decoder_module.ocr_distri_head.object_context_block.f_pixel.1.0.weight	group_idx=5
+[rank 0] broadcasting decoder-specific param module.decoder_module.ocr_distri_head.object_context_block.f_pixel.1.0.bias	group_idx=5
+[rank 0] broadcasting decoder-specific param module.decoder_module.ocr_distri_head.object_context_block.f_pixel.2.weight	group_idx=5
+[rank 0] broadcasting decoder-specific param module.decoder_module.ocr_distri_head.object_context_block.f_pixel.2.bias	group_idx=5
+[rank 0] broadcasting decoder-specific param module.decoder_module.ocr_distri_head.object_context_block.f_pixel.3.0.weight	group_idx=5
+[rank 0] broadcasting decoder-specific param module.decoder_module.ocr_distri_head.object_context_block.f_pixel.3.0.bias	group_idx=5
+[rank 0] broadcasting decoder-specific param module.decoder_module.ocr_distri_head.object_context_block.f_object.0.weight	group_idx=5
+[rank 0] broadcasting decoder-specific param module.decoder_module.ocr_distri_head.object_context_block.f_object.0.bias	group_idx=5
+[rank 0] broadcasting decoder-specific param module.decoder_module.ocr_distri_head.object_context_block.f_object.1.0.weight	group_idx=5
+[rank 0] broadcasting decoder-specific param module.decoder_module.ocr_distri_head.object_context_block.f_object.1.0.bias	group_idx=5
+[rank 0] broadcasting decoder-specific param module.decoder_module.ocr_distri_head.object_context_block.f_object.2.weight	group_idx=5
+[rank 0] broadcasting decoder-specific param module.decoder_module.ocr_distri_head.object_context_block.f_object.2.bias	group_idx=5
+[rank 0] broadcasting decoder-specific param module.decoder_module.ocr_distri_head.object_context_block.f_object.3.0.weight	group_idx=5
+[rank 0] broadcasting decoder-specific param module.decoder_module.ocr_distri_head.object_context_block.f_object.3.0.bias	group_idx=5
+[rank 0] broadcasting decoder-specific param module.decoder_module.ocr_distri_head.object_context_block.f_down.0.weight	group_idx=5
+[rank 0] broadcasting decoder-specific param module.decoder_module.ocr_distri_head.object_context_block.f_down.0.bias	group_idx=5
+[rank 0] broadcasting decoder-specific param module.decoder_module.ocr_distri_head.object_context_block.f_down.1.0.weight	group_idx=5
+[rank 0] broadcasting decoder-specific param module.decoder_module.ocr_distri_head.object_context_block.f_down.1.0.bias	group_idx=5
+[rank 0] broadcasting decoder-specific param module.decoder_module.ocr_distri_head.object_context_block.f_up.0.weight	group_idx=5
+[rank 0] broadcasting decoder-specific param module.decoder_module.ocr_distri_head.object_context_block.f_up.0.bias	group_idx=5
+[rank 0] broadcasting decoder-specific param module.decoder_module.ocr_distri_head.object_context_block.f_up.1.0.weight	group_idx=5
+[rank 0] broadcasting decoder-specific param module.decoder_module.ocr_distri_head.object_context_block.f_up.1.0.bias	group_idx=5
+[rank 0] broadcasting decoder-specific param module.decoder_module.ocr_distri_head.conv_bn_dropout.0.weight	group_idx=5
+[rank 0] broadcasting decoder-specific param module.decoder_module.ocr_distri_head.conv_bn_dropout.0.bias	group_idx=5
+[rank 0] broadcasting decoder-specific param module.decoder_module.ocr_distri_head.conv_bn_dropout.1.0.weight	group_idx=5
+[rank 0] broadcasting decoder-specific param module.decoder_module.ocr_distri_head.conv_bn_dropout.1.0.bias	group_idx=5
+[rank 0] broadcasting decoder-specific param module.decoder_module.cls_head.weight	group_idx=5
+[rank 0] broadcasting decoder-specific param module.decoder_module.cls_head.bias	group_idx=5
+[rank 0] broadcasting decoder-specific param module.decoder_module.aux_head.0.weight	group_idx=5
+[rank 0] broadcasting decoder-specific param module.decoder_module.aux_head.0.bias	group_idx=5
+[rank 0] broadcasting decoder-specific param module.decoder_module.aux_head.1.0.weight	group_idx=5
+[rank 0] broadcasting decoder-specific param module.decoder_module.aux_head.1.0.bias	group_idx=5
+[rank 0] broadcasting decoder-specific param module.decoder_module.aux_head.2.weight	group_idx=5
+[rank 0] broadcasting decoder-specific param module.decoder_module.aux_head.2.bias	group_idx=5
+[rank 0] broadcasting decoder-specific buffer module.decoder_module.conv3x3.1.0.running_mean
+[rank 0] broadcasting decoder-specific buffer module.decoder_module.conv3x3.1.0.running_var
+[rank 0] broadcasting decoder-specific buffer module.decoder_module.conv3x3.1.0.num_batches_tracked
+[rank 0] broadcasting decoder-specific buffer module.decoder_module.ocr_distri_head.object_context_block.f_pixel.1.0.running_mean
+[rank 0] broadcasting decoder-specific buffer module.decoder_module.ocr_distri_head.object_context_block.f_pixel.1.0.running_var
+[rank 0] broadcasting decoder-specific buffer module.decoder_module.ocr_distri_head.object_context_block.f_pixel.1.0.num_batches_tracked
+[rank 0] broadcasting decoder-specific buffer module.decoder_module.ocr_distri_head.object_context_block.f_pixel.3.0.running_mean
+[rank 0] broadcasting decoder-specific buffer module.decoder_module.ocr_distri_head.object_context_block.f_pixel.3.0.running_var
+[rank 0] broadcasting decoder-specific buffer module.decoder_module.ocr_distri_head.object_context_block.f_pixel.3.0.num_batches_tracked
+[rank 0] broadcasting decoder-specific buffer module.decoder_module.ocr_distri_head.object_context_block.f_object.1.0.running_mean
+[rank 0] broadcasting decoder-specific buffer module.decoder_module.ocr_distri_head.object_context_block.f_object.1.0.running_var
+[rank 0] broadcasting decoder-specific buffer module.decoder_module.ocr_distri_head.object_context_block.f_object.1.0.num_batches_tracked
+[rank 0] broadcasting decoder-specific buffer module.decoder_module.ocr_distri_head.object_context_block.f_object.3.0.running_mean
+[rank 0] broadcasting decoder-specific buffer module.decoder_module.ocr_distri_head.object_context_block.f_object.3.0.running_var
+[rank 0] broadcasting decoder-specific buffer module.decoder_module.ocr_distri_head.object_context_block.f_object.3.0.num_batches_tracked
+[rank 0] broadcasting decoder-specific buffer module.decoder_module.ocr_distri_head.object_context_block.f_down.1.0.running_mean
+[rank 0] broadcasting decoder-specific buffer module.decoder_module.ocr_distri_head.object_context_block.f_down.1.0.running_var
+[rank 0] broadcasting decoder-specific buffer module.decoder_module.ocr_distri_head.object_context_block.f_down.1.0.num_batches_tracked
+[rank 0] broadcasting decoder-specific buffer module.decoder_module.ocr_distri_head.object_context_block.f_up.1.0.running_mean
+[rank 0] broadcasting decoder-specific buffer module.decoder_module.ocr_distri_head.object_context_block.f_up.1.0.running_var
+[rank 0] broadcasting decoder-specific buffer module.decoder_module.ocr_distri_head.object_context_block.f_up.1.0.num_batches_tracked
+[rank 0] broadcasting decoder-specific buffer module.decoder_module.ocr_distri_head.conv_bn_dropout.1.0.running_mean
+[rank 0] broadcasting decoder-specific buffer module.decoder_module.ocr_distri_head.conv_bn_dropout.1.0.running_var
+[rank 0] broadcasting decoder-specific buffer module.decoder_module.ocr_distri_head.conv_bn_dropout.1.0.num_batches_tracked
+[rank 0] broadcasting decoder-specific buffer module.decoder_module.aux_head.1.0.running_mean
+[rank 0] broadcasting decoder-specific buffer module.decoder_module.aux_head.1.0.running_var
+[rank 0] broadcasting decoder-specific buffer module.decoder_module.aux_head.1.0.num_batches_tracked
+[rank 0] Recovering from /mnt/lustrenew/chencheng1/expr_files/vitruvian/devL2/L2_samll_setting_parsing_FT/checkpoints/h36m_FT_vitbase_pos_embed_b4_lr5e4x08_backboneclip_wd01_cosineLR_ld75_dpr03_sz480_10ep___SmallSetting___LSA_10p_small_setting4_add_DGMarket/ckpt_task0_iter_newest.pth.tar, keys=['step', 'backbone_args', 'neck_args', 'decoder_args', 'state_dict', 'optimizer']
+[rank 0] ======= loading model state for task 0 ... =======
+[2022-09-26 10:26:33,618][solver_multitask_dev.py][line: 679][    INFO] Start inference on 5536 batches
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+  File "/mnt/cache/share/spring/conda_envs/miniconda3/envs/s0.3.4/lib/python3.6/multiprocessing/spawn.py", line 105, in spawn_main
+    exitcode = _main(fd)
+  File "/mnt/cache/share/spring/conda_envs/miniconda3/envs/s0.3.4/lib/python3.6/multiprocessing/spawn.py", line 114, in _main
+    prepare(preparation_data)
+  File "/mnt/cache/share/spring/conda_envs/miniconda3/envs/s0.3.4/lib/python3.6/multiprocessing/spawn.py", line 225, in prepare
+    _fixup_main_from_path(data['init_main_from_path'])
+  File "/mnt/cache/share/spring/conda_envs/miniconda3/envs/s0.3.4/lib/python3.6/multiprocessing/spawn.py", line 277, in _fixup_main_from_path
+    run_name="__mp_main__")
+  File "/mnt/cache/share/spring/conda_envs/miniconda3/envs/s0.3.4/lib/python3.6/runpy.py", line 263, in run_path
+    pkg_name=pkg_name, script_name=fname)
+  File "/mnt/cache/share/spring/conda_envs/miniconda3/envs/s0.3.4/lib/python3.6/runpy.py", line 96, in _run_module_code
+    mod_name, mod_spec, pkg_name, script_name)
+  File "/mnt/cache/share/spring/conda_envs/miniconda3/envs/s0.3.4/lib/python3.6/runpy.py", line 85, in _run_code
+    exec(code, run_globals)
+  File "/mnt/cache/chencheng1/cc_proj/vitruvian/development/devL2/vitruvian-multitask/test.py", line 9, in <module>
+    from core.testers import tester_entry
+  File "/mnt/cache/chencheng1/cc_proj/vitruvian/development/devL2/vitruvian-multitask/core/testers/__init__.py", line 1, in <module>
+    from .reid_tester import ReIDTester
+  File "/mnt/cache/chencheng1/cc_proj/vitruvian/development/devL2/vitruvian-multitask/core/testers/reid_tester.py", line 8, in <module>
+    import core.models.decoders as decoders
+  File "/mnt/cache/chencheng1/cc_proj/vitruvian/development/devL2/vitruvian-multitask/core/models/decoders/__init__.py", line 1, in <module>
+    from .classification_decoders.reid_decoders import *
+  File "/mnt/cache/chencheng1/cc_proj/vitruvian/development/devL2/vitruvian-multitask/core/models/decoders/classification_decoders/reid_decoders.py", line 11, in <module>
+    from ..losses import loss_entry
+  File "/mnt/cache/chencheng1/cc_proj/vitruvian/development/devL2/vitruvian-multitask/core/models/decoders/losses/__init__.py", line 3, in <module>
+    from .seg_losses import FSAuxCELoss, FocalDiceLoss, FSCELoss
+  File "/mnt/cache/chencheng1/cc_proj/vitruvian/development/devL2/vitruvian-multitask/core/models/decoders/losses/seg_losses.py", line 4, in <module>
+    from .matcher import HungarianMatcher
+  File "/mnt/cache/chencheng1/cc_proj/vitruvian/development/devL2/vitruvian-multitask/core/models/decoders/losses/matcher.py", line 11, in <module>
+    from .point_features import point_sample
+  File "/mnt/cache/chencheng1/cc_proj/vitruvian/development/devL2/vitruvian-multitask/core/models/decoders/losses/point_features.py", line 7, in <module>
+    from core.data.datasets.images.seg_dataset_dev import BitMasks
+  File "/mnt/cache/chencheng1/cc_proj/vitruvian/development/devL2/vitruvian-multitask/core/data/datasets/__init__.py", line 2, in <module>
+    from .images.pos_dataset import MSCoCoDataset
+  File "/mnt/cache/chencheng1/cc_proj/vitruvian/development/devL2/vitruvian-multitask/core/data/datasets/images/pos_dataset.py", line 15, in <module>
+    from xtcocotools.coco import COCO
+  File "/mnt/lustre/chencheng1/.local/lib/python3.6/site-packages/xtcocotools/coco.py", line 52, in <module>
+    import matplotlib.pyplot as plt
+  File "/mnt/cache/share/spring/conda_envs/miniconda3/envs/s0.3.4/lib/python3.6/site-packages/matplotlib/pyplot.py", line 32, in <module>
+    import matplotlib.colorbar
+  File "/mnt/cache/share/spring/conda_envs/miniconda3/envs/s0.3.4/lib/python3.6/site-packages/matplotlib/colorbar.py", line 31, in <module>
+    import matplotlib.contour as contour
+  File "/mnt/cache/share/spring/conda_envs/miniconda3/envs/s0.3.4/lib/python3.6/site-packages/matplotlib/contour.py", line 17, in <module>
+    import matplotlib.text as text
+ModuleNotFoundError: No module named 'matplotlib.text'
+[_init_petrel]-   1  cur: 0.000s, avg(1): 0.000s

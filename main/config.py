@@ -18,6 +18,7 @@ class Config:
 
         ## add some paths to the system root dir
         sys.path.insert(0, osp.join(self.root_dir, 'common'))
+        sys.path.insert(0, osp.join(self.cur_dir, 'humanbench_utils'))
         from utils.dir import add_pypath
         add_pypath(osp.join(self.data_dir))
         for i in range(len(self.dataset_list)):

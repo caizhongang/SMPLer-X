@@ -143,7 +143,7 @@ def render_mesh(img, mesh, face, cam_param, mesh_as_vertices=False):
     if mesh_as_vertices:
         # to run on cluster where headless pyrender is not supported for A100/V100
         vertices_2d = perspective_projection(mesh, cam_param)
-        img = vis_keypoints(img, vertices_2d, alpha=0.5, radius=1, color=(0, 0, 255))
+        img = vis_keypoints(img, vertices_2d, alpha=0.8, radius=2, color=(0, 0, 255))
     else:
         # mesh
         mesh = trimesh.Trimesh(mesh, face)

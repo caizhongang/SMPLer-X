@@ -1,0 +1,103 @@
+out_dir: /mnt/lustrenew/chencheng1/expr_files/vitruvian/devL2/L2_samll_setting_attr_FT
+
+common:  # prefix
+  project_name: L2_samll_setting_attr_FT
+
+  backbone:
+    type: vit_base_patch16
+    kwargs:
+      task_sp_list: ['pos_embed', 'rel_pos_h', 'rel_pos_w']
+      pretrained: True
+      pretrain_path: '/mnt/lustre/chencheng1/expr_files/vitruvian/devL2/transed_ckpt_for_pretrain/devL2_small_setting/reid/vitbase_lr1e3_StepLRx3_backboneclip_bmp08_ld75_pose_dpr03_dcLN_par_dpr03_dcBN_attr_dpr01_reid_clstoken_dpr0_LSA_10p_small_setting6_add_posetrack_DGMarket_deepfashion.pth'
+      load_pos_embed: True
+      pos_embed_interp: False
+      learnable_pos: True
+      window: False
+      drop_path_rate: 0.1
+      img_size: [256, 192]
+
+  solver:
+    type: SolverMultiTaskDev
+
+  lr_scheduler:
+    type: 'Step'
+    kwargs:
+      base_lr: 1.0e-4
+      warmup_steps: 500
+      warmup_lr: 1.0e-2  #5.0e-4
+      lr_mults: [0.1, 0.1]
+      lr_steps: [10687, 12825] # 75% 90%
+
+  backbone_multiplier: 1.0
+  optimizer:
+    type: SGD
+    kwargs:
+      weight_decay: 0.0001
+      nesterov: False
+
+  layer_decay:
+    # layer decay
+    num_layers: 12
+    layer_decay_rate: 0.75
+    lpe_lr: True
+
+  auto_denan: False
+
+  workers: 2
+  max_iter: 14250 # 60ep (11400 * 60) / 64
+
+  deterministic: True   # seed control
+  cudnn_deterministic: True
+  worker_rank: True
+  random_seed: 42
+
+  print_freq: 10
+  vis_batch: False
+  save_interval: 60000
+
+  use_ceph: True
+  sync: True
+
+# task_specific_param = ['backbone', 'neck', 'decoder', 'dataset', 'sampler', 'lr_scheduler', 'optimizer']
+tasks :  # prefix
+  0:     # prefix
+    name: pedattr
+    loss_weight: 1.0
+    gres_ratio: 1  # int, > 0| world/sum*ratio
+    dataset:
+      type: AttrDataset
+      kwargs:
+        task_spec:
+          dataset: 'peta'
+          data_path: shlg:s3://pedattr_public/peta/dataset.pkl
+          root_path: shlg:s3://pedattr_public/peta/images/
+        augmentation:
+          height: 256
+          width: 192
+          use_random_aug: False
+    sampler:
+      batch_size: 32  # per card
+      shuffle_strategy: 1
+    neck:
+      type: DoNothing
+      kwargs: {}
+#      kwargs:
+#        vis_token_dim: 256
+#        mask_dim: 256
+    decoder:  # todo: coco instance seg config for now
+      type: pedattr_cls_vit_A
+      kwargs:
+        out_feature: 768
+        nattr: 35
+        loss_cfg:
+          type: CEL_Sigmoid
+          kwargs:
+            sample_weight: [0.10570175, 0.08438596, 0.74526316, 0.02929825, 0.23763158,
+                            0.85192982, 0.13491228, 0.06842105, 0.04096491, 0.02649123,
+                            0.14078947, 0.01754386, 0.08421053, 0.45614035, 0.01263158,
+                            0.86052632, 0.13763158, 0.30701754, 0.035     , 0.045     ,
+                            0.51210526, 0.29938596, 0.02140351, 0.36210526, 0.21324561,
+                            0.19631579, 0.19807018, 0.29333333, 0.27649123, 0.07614035,
+                            0.4922807 , 0.33385965, 0.10219298, 0.06236842, 0.55035088]
+            size_average: True
+

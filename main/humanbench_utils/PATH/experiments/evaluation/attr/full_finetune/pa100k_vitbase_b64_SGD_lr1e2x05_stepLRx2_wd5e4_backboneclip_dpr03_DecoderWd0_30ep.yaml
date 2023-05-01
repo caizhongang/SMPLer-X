@@ -1,0 +1,104 @@
+out_dir: /mnt/lustrenew/chencheng1/expr_files/vitruvian/devL2/L2_pa100k_attr_ablation
+
+common:  # prefix
+  project_name: L2_pa100k_attr_ablation
+
+  backbone:
+    type: vit_base_patch16
+    kwargs:
+      task_sp_list: ['pos_embed', 'rel_pos_h', 'rel_pos_w'] # wrong list would somehow cause .cuda() stuck without error
+      pretrained: True
+      pretrain_path: /mnt/lustre/share/chencheng1/pretrain/L2_final_base/wo_cls_token/v100_32g_vitbase_size224_lr1e3_stepLRx3_bmp1_adafactor_wd01_clip05_layerdecay075_lpe_peddet_citypersons_LSA_reduct8_tbn1_heads2_gate1_peddetShareDecoder_exp3_setting_SharePosEmbed.pth
+      img_size: [224, 224]  # deprecated by simple interpolate
+      lms_checkpoint_train: fairscale
+      window: False
+      test_pos_mode: learnable_simple_interpolate # to_do: ablation
+      pad_attn_mask: False  # to_do: ablation
+      round_padding: True
+      learnable_pos: True
+      drop_path_rate: 0.3
+
+  solver:
+    type: SolverMultiTaskDev
+
+  lr_scheduler:
+    type: 'Step'
+    kwargs:
+      base_lr: 1.0e-4  
+      warmup_steps: 500
+      warmup_lr: 1.0e-2  #5.0e-4
+      lr_mults: [0.1, 0.1]
+      lr_steps: [31640, 40077] # 75% 95%
+
+  backbone_multiplier: 0.5
+  optimizer:
+    type: SGD
+    kwargs:
+      weight_decay: 0.0005
+      nesterov: False
+
+  layer_decay:
+    # layer decay
+    num_layers: 12
+    layer_decay_rate: 0.75
+    lpe_lr: True
+
+  auto_denan: False
+
+  workers: 2
+  max_iter: 42187 # (90000 * 30) / 64
+
+  deterministic: True   # seed control
+  cudnn_deterministic: True
+  worker_rank: True
+  random_seed: 42
+
+  print_freq: 10
+  vis_batch: False
+  save_interval: 60000
+  # save_iters: [36000]
+
+  use_ceph: True
+  sync: True
+  
+  decoder_wd: 0
+
+tasks :  
+  0: 
+    name: pedattr
+    loss_weight: 1.0
+    gres_ratio: 1  # int, > 0| world/sum*ratio
+    dataset:
+      type: AttrDataset
+      kwargs:
+        task_spec:
+          dataset: 'PA-100k'
+          data_path: sh1424:s3://pedattr_public/PA-100k/dataset.pkl
+          root_path: sh1424:s3://pedattr_public/PA-100k/data/
+        augmentation:
+          height: 256
+          width: 192
+          use_random_aug: False
+    sampler:
+      batch_size: 64  # per card
+      shuffle_strategy: 1
+
+    neck:
+      type: DoNothing
+      kwargs: {}
+
+    decoder:
+      type: pedattr_cls_vit_A
+      kwargs:
+        out_feature: 768
+        nattr: 26
+        loss_cfg:
+          type: CEL_Sigmoid
+          kwargs:
+            sample_weight: [0.04354444,0.17997778,0.5834,0.4166,0.04947778,0.15104444,
+                            0.10775556,0.04191111,0.00472222,0.01688889, 0.03241111,
+                            0.71171111,0.17344444,0.11484444, 0.006,
+                            0.185, 0.19273333, 0.1601, 0.00952222, 0.01345556,
+                            0.92437778, 0.06216667, 0.46044444, 0.35266667, 0.29462222,
+                            0.35271111]
+            size_average: True
