@@ -5,7 +5,10 @@ from human_body_prior.tools.model_loader import load_model
 from human_body_prior.models.vposer_model import VPoser
 from train_body_shape_adapter import create_body_model, compute_vertices, BetasAdapter, per_vertex_loss
 import torch
-import open3d as o3d
+try:
+    import open3d as o3d
+except:
+    print('open3d not installed.')
 import glob
 import pickle
 import numpy as np

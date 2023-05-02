@@ -1,13 +1,17 @@
+""" Ref: config_exp13 """
+
 import os
 import os.path as osp
+
+cur_dir = '/mnt/cache/yinwanqi/01-project/osx/main'
 
 # will be update in exp
 num_gpus = -1
 exp_name = 'output/exp1/pre_analysis'
 
 # quick access
-lr = 1e-4
-end_epoch = 14
+lr = 2e-5
+end_epoch = 140
 train_batch_size = 32
 
 # continue
@@ -15,24 +19,19 @@ continue_train = False
 pretrained_model_path = None
 
 # dataset setting
-dataset_list = ['Human36M', 'MSCOCO', 'MPII', 'AGORA', 'EHF', 'SynBody', 'GTA_Human2', 'EgoBody']
-trainset_3d = ['Human36M']
-trainset_2d = ['MSCOCO', 'MPII']
+dataset_list = ['Human36M', 'MSCOCO', 'MPII', 'AGORA', 'EHF', 'SynBody', 'GTA_Human2']
+trainset_3d = ['AGORA']
+trainset_2d = []
 trainset_humandata = []
 testset = 'EHF'
 
 # model
-smplx_loss_weight = 1 #2 for agora_model
+smplx_loss_weight = 1 # 2 for agora_model
 agora_benchmark = 'na' # 'agora_model', 'test_only'
 
-# model_type = 'osx_b'
-# encoder_config_file = 'transformer_utils/configs/osx/encoder/body_encoder_base.py'
-# encoder_pretrained_model_path = '../pretrained_models/osx_vit_b.pth'
-# feat_dim = 768
-
-model_type = 'osx_l'
-encoder_config_file = 'transformer_utils/configs/osx/encoder/body_encoder_large.py'
-encoder_pretrained_model_path = '../pretrained_models/osx_vit_l.pth'
+third_party_encoder = 'humanbench'
+third_party_encoder_type = 'vit_large_patch16_ladder_attention_share_pos_embed'
+encoder_pretrained_model_path = '../pretrained_models/humanbench/vitlarge_size224_lr5e4_stepLRx3_bmp1_adafactor_clip05_wd01_layerdecay08_lpe_LSA_reduct8_tbn1_heads2_gate1_peddetDPR02_peddetShareDecoder_exp3_setting_SharePosEmbed.pth'
 feat_dim = 1024
 
 ## =====FIXED ARGS============================================================
@@ -68,11 +67,15 @@ print_iters = 100
 lr_mult = 1
 
 ## testing config
-test_batch_size = 32
+test_batch_size = 16
 
 ## others
 num_thread = 16
 vis = False
 
 ## directory
+root_dir = osp.join(cur_dir, '..')
+data_dir = osp.join(root_dir, 'dataset')
+
 output_dir, model_dir, vis_dir, log_dir, result_dir, code_dir = None, None, None, None, None, None
+human_model_path = osp.join(root_dir, 'common', 'utils', 'human_model_files')

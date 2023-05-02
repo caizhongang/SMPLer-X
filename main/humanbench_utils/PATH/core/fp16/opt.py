@@ -10,7 +10,6 @@ from .utils import (model_grads_to_master_grads,
                     master_params_to_model_params, 
                     clip_grad_norm)
 
-
 # try:
 #     import spring.linklink as link
 # except:
