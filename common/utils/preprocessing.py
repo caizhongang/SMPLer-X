@@ -217,7 +217,7 @@ def process_db_coord(joint_img, joint_cam, joint_valid, do_flip, img_shape, flip
     return joint_img, joint_cam, joint_valid, joint_trunc
 
 
-def process_human_model_output(human_model_param, cam_param, do_flip, img_shape, img2bb_trans, rot, human_model_type):
+def process_human_model_output(human_model_param, cam_param, do_flip, img_shape, img2bb_trans, rot, human_model_type, joint_img=None):
     if human_model_type == 'smplx':
         human_model = smpl_x
         rotation_valid = np.ones((smpl_x.orig_joint_num), dtype=np.float32)
@@ -294,7 +294,10 @@ def process_human_model_output(human_model_param, cam_param, do_flip, img_shape,
         pose = torch.cat((root_pose, body_pose, lhand_pose, rhand_pose, jaw_pose))
 
         # joint coordinates
-        joint_img = cam2pixel(joint_cam, cam_param['focal'], cam_param['princpt'])
+        if 'focal' not in cam_param or 'princpt' not in cam_param:
+            assert joint_img is not None 
+        else:   
+            joint_img = cam2pixel(joint_cam, cam_param['focal'], cam_param['princpt'])
         joint_cam = joint_cam - joint_cam[smpl_x.root_joint_idx, None, :]  # root-relative
         joint_cam[smpl_x.joint_part['lhand'], :] = joint_cam[smpl_x.joint_part['lhand'], :] - joint_cam[
                                                                                               smpl_x.lwrist_idx, None,
@@ -352,7 +355,10 @@ def process_human_model_output(human_model_param, cam_param, do_flip, img_shape,
             mesh_cam = mesh_cam - root_cam + np.dot(R, root_cam.transpose(1, 0)).transpose(1, 0) + t
 
         # joint coordinates
-        joint_img = cam2pixel(joint_cam, cam_param['focal'], cam_param['princpt'])
+        if 'focal' not in cam_param or 'princpt' not in cam_param:
+            assert joint_img is not None 
+        else:   
+            joint_img = cam2pixel(joint_cam, cam_param['focal'], cam_param['princpt'])
         joint_cam = joint_cam - joint_cam[smpl.root_joint_idx, None, :]  # body root-relative
         joint_img[:, 2] = (joint_cam[:, 2].copy() / (cfg.body_3d_size / 2) + 1) / 2. * cfg.output_hm_shape[
             0]  # body depth discretize
@@ -392,7 +398,10 @@ def process_human_model_output(human_model_param, cam_param, do_flip, img_shape,
             mesh_cam = mesh_cam - root_cam + np.dot(R, root_cam.transpose(1, 0)).transpose(1, 0) + t
 
         # joint coordinates
-        joint_img = cam2pixel(joint_cam, cam_param['focal'], cam_param['princpt'])
+        if 'focal' not in cam_param or 'princpt' not in cam_param:
+            assert joint_img is not None 
+        else:   
+            joint_img = cam2pixel(joint_cam, cam_param['focal'], cam_param['princpt'])
         joint_cam = joint_cam - joint_cam[mano.root_joint_idx, None, :]  # hand root-relative
         joint_img[:, 2] = (joint_cam[:, 2].copy() / (cfg.hand_3d_size / 2) + 1) / 2. * cfg.output_hm_shape[
             0]  # hand depth discretize

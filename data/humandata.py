@@ -52,7 +52,12 @@ class HumanDataset(torch.utils.data.Dataset):
         lhand_bbox_xywh = content['lhand_bbox_xywh']
         rhand_bbox_xywh = content['rhand_bbox_xywh']
         face_bbox_xywh = content['face_bbox_xywh']
-        keypoints3d = content['keypoints3d_cam'][:, self.SMPLX_137_MAPPING, :3]
+        
+        if 'keypoints3d_cam' in content:
+            keypoints3d = content['keypoints3d_cam'][:, self.SMPLX_137_MAPPING, :3]  # root-align
+        else:
+            keypoints3d = content['keypoints3d'][:, self.SMPLX_137_MAPPING, :3]  # wo root-align
+        
         keypoints3d_mask = content['keypoints3d_mask'][self.SMPLX_137_MAPPING]
         keypoints2d = content['keypoints2d'][:, self.SMPLX_137_MAPPING, :2]
         keypoints2d_mask = content['keypoints2d_mask'][self.SMPLX_137_MAPPING]
@@ -158,7 +163,10 @@ class HumanDataset(torch.utils.data.Dataset):
             smplx_param = data['smplx_param']
             smplx_joint_img, smplx_joint_cam, smplx_joint_trunc, smplx_pose, smplx_shape, smplx_expr, \
             smplx_pose_valid, smplx_joint_valid, smplx_expr_valid, smplx_mesh_cam_orig = process_human_model_output(
-                smplx_param, self.cam_param, do_flip, img_shape, img2bb_trans, rot, 'smplx')
+                smplx_param, self.cam_param, do_flip, img_shape, img2bb_trans, rot, 'smplx',
+                joint_img=None if self.cam_param else joint_img  # if cam not provided, we take joint_img as smplx joint 2d, which is commonly the case for our processed humandata
+            )
+        
 
             # SMPLX pose parameter validity
             # for name in ('L_Ankle', 'R_Ankle', 'L_Wrist', 'R_Wrist'):

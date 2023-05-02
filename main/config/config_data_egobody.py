@@ -16,9 +16,9 @@ pretrained_model_path = None
 
 # dataset setting
 dataset_list = ['Human36M', 'MSCOCO', 'MPII', 'AGORA', 'EHF', 'SynBody', 'GTA_Human2', 'EgoBody']
-trainset_3d = ['Human36M']
-trainset_2d = ['MSCOCO', 'MPII']
-trainset_humandata = []
+trainset_3d = []
+trainset_2d = []
+trainset_humandata = ['EgoBody']
 testset = 'EHF'
 
 # model

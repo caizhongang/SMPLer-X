@@ -87,13 +87,24 @@ class AGORA(torch.utils.data.Dataset):
     def load_data(self):
         datalist = []
         if self.data_split == 'train' or (self.data_split == 'test' and self.test_set == 'val'):
+            print('dataset settings:')
+            print('agora_fix_betas', getattr(cfg, 'agora_fix_betas', False))
+            print('agora_fix_global_orient_transl', getattr(cfg, 'agora_fix_global_orient_transl', False))
+            print('agora_valid_root_pose', getattr(cfg, 'agora_valid_root_pose', False))
+
             if self.data_split == 'train':
-                if getattr(cfg, 'agora_fix_global_orient_transl', False):
+                if getattr(cfg, 'agora_fix_betas', False):
+                    assert getattr(cfg, 'agora_fix_global_orient_transl')
+                    db = COCO(osp.join(self.data_path, 'AGORA_train_fix_betas.json'))
+                elif getattr(cfg, 'agora_fix_global_orient_transl', False):
                     db = COCO(osp.join(self.data_path, 'AGORA_train_fix_global_orient_transl.json'))
                 else:
                     db = COCO(osp.join(self.data_path, 'AGORA_train.json'))
             else:
-                if getattr(cfg, 'agora_fix_global_orient_transl', False):
+                if getattr(cfg, 'agora_fix_betas', False):
+                    assert getattr(cfg, 'agora_fix_global_orient_transl')
+                    db = COCO(osp.join(self.data_path, 'AGORA_train_fix_betas.json'))
+                elif getattr(cfg, 'agora_fix_global_orient_transl', False):
                     db = COCO(osp.join(self.data_path, 'AGORA_validation_fix_global_orient_transl.json'))
                 else:
                     db = COCO(osp.join(self.data_path, 'AGORA_validation.json'))
@@ -113,6 +124,8 @@ class AGORA(torch.utils.data.Dataset):
                 joints_3d_path = osp.join(self.data_path, ann['smplx_joints_3d_path'])
                 verts_path = osp.join(self.data_path, ann['smplx_verts_path'])
                 smplx_param_path = osp.join(self.data_path, ann['smplx_param_path'])
+                kid = ann['kid']
+                gender = ann['gender']
                 if not osp.exists(smplx_param_path): print(smplx_param_path)
 
                 if self.resolution == (720, 1280):
@@ -159,7 +172,7 @@ class AGORA(torch.utils.data.Dataset):
                     data_dict = {'img_path': img_path, 'img_shape': img_shape, 'bbox': bbox, 'lhand_bbox': lhand_bbox,
                                  'rhand_bbox': rhand_bbox, 'face_bbox': face_bbox, 'joints_2d_path': joints_2d_path,
                                  'joints_3d_path': joints_3d_path, 'verts_path': verts_path,
-                                 'smplx_param_path': smplx_param_path, 'ann_id': str(aid)}
+                                 'smplx_param_path': smplx_param_path, 'ann_id': str(aid), 'kid': kid, 'gender': gender}
                     datalist.append(data_dict)
 
                 elif self.resolution == (2160,
@@ -224,7 +237,7 @@ class AGORA(torch.utils.data.Dataset):
                                  'rhand_bbox': rhand_bbox, 'face_bbox': face_bbox,
                                  'img2bb_trans_from_orig': img2bb_trans_from_orig, 'joints_2d_path': joints_2d_path,
                                  'joints_3d_path': joints_3d_path, 'verts_path': verts_path,
-                                 'smplx_param_path': smplx_param_path, 'ann_id': str(aid)}
+                                 'smplx_param_path': smplx_param_path, 'ann_id': str(aid), 'kid': kid, 'gender': gender}
                     datalist.append(data_dict)
 
         elif self.data_split == 'test' and self.test_set == 'test':
@@ -441,7 +454,13 @@ class AGORA(torch.utils.data.Dataset):
             root_pose = np.array(smplx_param['global_orient'], dtype=np.float32).reshape(
                 -1)  # rotation to world coordinate
             body_pose = np.array(smplx_param['body_pose'], dtype=np.float32).reshape(-1)
-            shape = np.array(smplx_param['betas'], dtype=np.float32).reshape(-1)[:10]  # bug?
+            
+            # use adapted shape for adults
+            if getattr(cfg, 'agora_fix_betas', False) and not data['kid']:
+                shape = np.array(smplx_param['betas_neutral'], dtype=np.float32).reshape(-1)[:10]
+            else:
+                shape = np.array(smplx_param['betas'], dtype=np.float32).reshape(-1)[:10]  # bug?
+            
             lhand_pose = np.array(smplx_param['left_hand_pose'], dtype=np.float32).reshape(-1)
             rhand_pose = np.array(smplx_param['right_hand_pose'], dtype=np.float32).reshape(-1)
             jaw_pose = np.array(smplx_param['jaw_pose'], dtype=np.float32).reshape(-1)
