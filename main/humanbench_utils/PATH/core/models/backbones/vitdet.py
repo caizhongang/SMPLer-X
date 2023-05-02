@@ -21,9 +21,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torch.utils.checkpoint import checkpoint as checkpoint_train
 from PATH.core import distributed_utils as dist
-
 from timm.models.layers import drop_path, to_2tuple, trunc_normal_
-
 from PATH.core.utils import NestedTensor
 from ..ckpt import checkpoint_wrapper
 

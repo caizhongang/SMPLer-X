@@ -5,7 +5,10 @@ import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import Dataset
 import smplx
-import open3d as o3d
+try:
+    import open3d as o3d
+except:
+    print('open3d not installed.')
 torch.manual_seed(2023)
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 

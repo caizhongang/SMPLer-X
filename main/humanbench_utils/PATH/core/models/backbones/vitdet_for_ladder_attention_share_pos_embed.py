@@ -351,6 +351,7 @@ class ViT(nn.Module):
         self.round_padding = round_padding
         self.task_tokens_num = task_tokens_num
 
+
         global COMPAT
         COMPAT = compat
 
