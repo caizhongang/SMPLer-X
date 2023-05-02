@@ -15,8 +15,15 @@ from humandata import HumanDataset
 
 
 class EgoBody(HumanDataset):
-    def __init__(self, transform, data_split, filename='egobody_egocentric_train_230425_065.npz'):
+    def __init__(self, transform, data_split):
         super(EgoBody, self).__init__(transform, data_split)
+
+        if self.data_split == 'train':
+            filename = getattr(cfg, 'filename', 'egobody_egocentric_train_230425_065_fix_betas.npz')
+        else:
+            filename = getattr(cfg, 'filename', 'egobody_egocentric_test_230425_043_fix_betas.npz')
+
+        self.use_betas_neutral = getattr(cfg, 'egobody_fix_betas', False)
 
         self.img_dir = osp.join(cfg.data_dir, 'EgoBody')
         self.annot_path = osp.join(cfg.data_dir, 'preprocessed_datasets', filename)

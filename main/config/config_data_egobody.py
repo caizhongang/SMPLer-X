@@ -10,6 +10,9 @@ lr = 1e-4
 end_epoch = 14
 train_batch_size = 32
 
+# dataset setting
+egobody_fix_betas = True
+
 # continue
 continue_train = False
 pretrained_model_path = None
@@ -71,7 +74,7 @@ lr_mult = 1
 test_batch_size = 32
 
 ## others
-num_thread = 16
+num_thread = 16  # num workers
 vis = False
 
 ## directory
