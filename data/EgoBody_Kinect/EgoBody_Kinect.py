@@ -14,14 +14,14 @@ from utils.transforms import world2cam, cam2pixel, rigid_align
 from humandata import HumanDataset
 
 
-class EgoBody(HumanDataset):
+class EgoBody_Kinect(HumanDataset):
     def __init__(self, transform, data_split):
-        super(EgoBody, self).__init__(transform, data_split)
+        super(EgoBody_Kinect, self).__init__(transform, data_split)
 
         if self.data_split == 'train':
-            filename = getattr(cfg, 'filename', 'egobody_egocentric_train_230425_065_fix_betas.npz')
+            filename = getattr(cfg, 'filename', 'egobody_kinect_train_230503_065_fix_betas.npz')
         else:
-            filename = getattr(cfg, 'filename', 'egobody_egocentric_test_230425_043_fix_betas.npz')
+            filename = getattr(cfg, 'filename', 'egobody_kinect_test_230503_065_fix_betas.npz')
 
         self.use_betas_neutral = getattr(cfg, 'egobody_fix_betas', False)
 
