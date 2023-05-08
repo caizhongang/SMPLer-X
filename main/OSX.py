@@ -502,8 +502,18 @@ def get_model(mode):
             load_checkpoint(backbone, checkpoint, load_pos_embed=True, strict=False)
             print(f"Initialize backbone from {cfg.encoder_pretrained_model_path}")
         encoder = backbone
+    
+    elif third_party_encoder == 'dinov2':
+        from dinov2_utils import get_backbone, load_checkpoint
+
+        backbone = get_backbone(cfg.third_party_encoder_type)
+        if mode == 'train':
+            load_checkpoint(backbone, cfg.encoder_pretrained_model_path)
+            print(f"Initialize backbone from {cfg.encoder_pretrained_model_path}")
+        encoder = backbone
 
     elif third_party_encoder == 'motionbert':
+        raise NotImplementedError('MotionBert not supported yet.')
         from motionbert_utils import get_backbone
 
         backbone = get_backbone(cfg.third_party_encoder_type)
