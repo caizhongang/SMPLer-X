@@ -34,6 +34,7 @@ class HumanDataset(torch.utils.data.Dataset):
         self.annot_path = None
         self.img_shape = None  # (h, w)
         self.cam_param = None  # {'focal_length': (fx, fy), 'princpt': (cx, cy)}
+        self.use_betas_neutral = False
 
         self.joint_set = {
             'joint_num': smpl_x.joint_num,
@@ -164,10 +165,16 @@ class HumanDataset(torch.utils.data.Dataset):
             smplx_joint_img, smplx_joint_cam, smplx_joint_trunc, smplx_pose, smplx_shape, smplx_expr, \
             smplx_pose_valid, smplx_joint_valid, smplx_expr_valid, smplx_mesh_cam_orig = process_human_model_output(
                 smplx_param, self.cam_param, do_flip, img_shape, img2bb_trans, rot, 'smplx',
-                joint_img=None if self.cam_param else joint_img  # if cam not provided, we take joint_img as smplx joint 2d, which is commonly the case for our processed humandata
+                joint_img=None if self.cam_param else joint_img,  # if cam not provided, we take joint_img as smplx joint 2d, which is commonly the case for our processed humandata
             )
-        
 
+            # change smplx_shape if use_betas_neutral
+            # processing follows that in process_human_model_output
+            if self.use_betas_neutral:
+                smplx_shape = smplx_param['betas_neutral'].reshape(1, -1)
+                smplx_shape[(np.abs(smplx_shape) > 3).any(axis=1)] = 0.
+                smplx_shape = smplx_shape.reshape(-1)
+                
             # SMPLX pose parameter validity
             # for name in ('L_Ankle', 'R_Ankle', 'L_Wrist', 'R_Wrist'):
             #     smplx_pose_valid[smpl_x.orig_joints_name.index(name)] = 0
