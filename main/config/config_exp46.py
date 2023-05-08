@@ -1,5 +1,3 @@
-""" Ref: config_exp13 """
-
 import os
 import os.path as osp
 
@@ -8,16 +6,21 @@ num_gpus = -1
 exp_name = 'output/exp1/pre_analysis'
 
 # quick access
-lr = 2e-5
+save_epoch = 5
+lr = 1e-5
 end_epoch = 50
 train_batch_size = 32
 
 syncbn = True
+bbox_ratio = 1.2
+
 # continue
-continue_train = False
-pretrained_model_path = None
+continue_train = True
+start_over = False
+pretrained_model_path = '../output/train_exp11_1_20230411_155840/model_dump/snapshot_13.pth.tar'
 
 # dataset setting
+
 dataset_list = ['Human36M', 'MSCOCO', 'MPII', 'AGORA', 'EHF', 'SynBody', 'GTA_Human2']
 trainset_3d = ['Human36M']
 trainset_2d = ['MSCOCO', 'MPII']
@@ -28,16 +31,21 @@ testset = 'EHF'
 smplx_loss_weight = 1.0 #2 for agora_model for smplx shape
 smplx_pose_weight = 10.0
 
-smplx_kps_3d_weight = 100.0
-smplx_kps_2d_weight = 1.0
+smplx_kps_3d_weight = 1.0
+smplx_kps_2d_weight = 100.0
 net_kps_2d_weight = 1.0
 
-agora_benchmark = 'na' # 'agora_model', 'test_only'
+agora_benchmark = 'agora_model' # 'agora_model', 'test_only'
 
-third_party_encoder = 'humanbench'
-third_party_encoder_type = 'vit_base_patch16_ladder_attention_share_pos_embed'
-# encoder_pretrained_model_path = '../pretrained_models/humanbench/v100_32g_vitbase_size224_lr1e3_stepLRx3_bmp1_adafactor_wd01_clip05_layerdecay075_lpe_peddet_citypersons_LSA_reduct8_tbn1_heads2_gate1_peddetShareDecoder_exp3_setting_SharePosEmbed.pth'
+model_type = 'osx_b'
+encoder_config_file = 'transformer_utils/configs/osx/encoder/body_encoder_base.py'
+encoder_pretrained_model_path = '../pretrained_models/osx_vit_b.pth'
 feat_dim = 768
+
+# model_type = 'osx_l'
+# encoder_config_file = 'transformer_utils/configs/osx/encoder/body_encoder_large.py'
+# encoder_pretrained_model_path = '../pretrained_models/osx_vit_l.pth'
+# feat_dim = 1024
 
 ## =====FIXED ARGS============================================================
 ## model setting

@@ -331,10 +331,10 @@ class MSCOCO(torch.utils.data.Dataset):
                          'smplx_joint_trunc': smplx_joint_trunc,
                          'smplx_pose_valid': smplx_pose_valid, 'smplx_shape_valid': float(smplx_shape_valid),
                          'smplx_expr_valid': float(smplx_expr_valid), 'is_3D': float(False),
-                         'lhand_bbox_valid': float(False), 'rhand_bbox_valid': float(False), 
-                        'face_bbox_valid': float(False)}
-                        #  'lhand_bbox_valid': lhand_bbox_valid,
-                        #  'rhand_bbox_valid': rhand_bbox_valid, 'face_bbox_valid': face_bbox_valid}
+                        #  'lhand_bbox_valid': float(False), 'rhand_bbox_valid': float(False), 
+                        # 'face_bbox_valid': float(False)}
+                         'lhand_bbox_valid': lhand_bbox_valid,
+                         'rhand_bbox_valid': rhand_bbox_valid, 'face_bbox_valid': face_bbox_valid}
             return inputs, targets, meta_info
 
         # test mode

@@ -498,10 +498,12 @@ def get_model(mode):
         from humanbench_utils import get_backbone, load_checkpoint
 
         backbone = get_backbone(cfg.third_party_encoder_type)
-        if mode == 'train':
+        if mode == 'train' and hasattr(cfg, 'encoder_pretrained_model_path'):
             checkpoint = torch.load(cfg.encoder_pretrained_model_path)['model']
             load_checkpoint(backbone, checkpoint, load_pos_embed=True, strict=False)
             print(f"Initialize backbone from {cfg.encoder_pretrained_model_path}")
+        else:
+            print(f"Initialize backbone from random weights")
         encoder = backbone
     
     elif third_party_encoder == 'dinov2':
