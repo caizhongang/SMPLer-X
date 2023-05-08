@@ -156,6 +156,7 @@ class Trainer(Base):
         self.itr_per_epoch = math.ceil(len(trainset_loader) / cfg.num_gpus / cfg.train_batch_size)
 
         if self.distributed:
+            self.logger_info(f"Total data length {len(trainset_loader)}.")
             rank, world_size = get_dist_info()
             self.logger_info("Using distributed data sampler.")
             

@@ -134,7 +134,18 @@ class MPII(torch.utils.data.Dataset):
         dummy_size = np.zeros((2), dtype=np.float32)
 
         inputs = {'img': img}
-        targets = {'joint_img': joint_img, 'smplx_joint_img': smplx_joint_img, 'joint_cam': joint_cam, 'smplx_joint_cam': smplx_joint_cam, 'smplx_pose': smplx_pose, 'smplx_shape': smplx_shape, 'smplx_expr': smplx_expr, 'lhand_bbox_center': dummy_center, 'lhand_bbox_size': dummy_size, 'rhand_bbox_center': dummy_center, 'rhand_bbox_size': dummy_size, 'face_bbox_center': dummy_center, 'face_bbox_size': dummy_size}
-        meta_info = {'joint_valid': joint_valid, 'joint_trunc': joint_trunc, 'smplx_joint_valid': smplx_joint_valid, 'smplx_joint_trunc': smplx_joint_trunc, 'smplx_pose_valid': smplx_pose_valid, 'smplx_shape_valid': float(smplx_shape_valid), 'smplx_expr_valid': float(smplx_expr_valid), 'is_3D': float(False), 'lhand_bbox_valid': float(False), 'rhand_bbox_valid': float(False), 'face_bbox_valid': float(False)}
+        targets = {'joint_img': joint_img, 'smplx_joint_img': smplx_joint_img, 
+                   'joint_cam': joint_cam, 'smplx_joint_cam': smplx_joint_cam, 
+                   'smplx_pose': smplx_pose, 'smplx_shape': smplx_shape, 'smplx_expr': smplx_expr, 
+                   'lhand_bbox_center': dummy_center, 'lhand_bbox_size': dummy_size, 
+                   'rhand_bbox_center': dummy_center, 'rhand_bbox_size': dummy_size, 
+                   'face_bbox_center': dummy_center, 'face_bbox_size': dummy_size}
+        meta_info = {'joint_valid': joint_valid, 'joint_trunc': joint_trunc, 
+                     'smplx_joint_valid': smplx_joint_valid, 
+                     'smplx_joint_trunc': smplx_joint_trunc, 'smplx_pose_valid': smplx_pose_valid, 
+                     'smplx_shape_valid': float(smplx_shape_valid), 
+                     'smplx_expr_valid': float(smplx_expr_valid), 'is_3D': float(False), 
+                     'lhand_bbox_valid': float(False), 'rhand_bbox_valid': float(False), 
+                     'face_bbox_valid': float(False)}
         return inputs, targets, meta_info
 

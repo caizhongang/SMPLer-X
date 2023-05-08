@@ -192,105 +192,139 @@ class Model(nn.Module):
         pose = torch.cat((root_pose, body_pose, lhand_pose, rhand_pose, jaw_pose), 1)
         joint_img = torch.cat((body_joint_img, lhand_joint_img, rhand_joint_img), 1)
 
+        if mode == 'test' and 'smplx_pose' in targets:
+            mesh_pseudo_gt = self.generate_mesh_gt(targets, mode)
+
         if mode == 'train':
             # loss functions
             loss = {}
-            loss['smplx_pose'] = self.param_loss(pose, targets['smplx_pose'], meta_info['smplx_pose_valid']) * cfg.smplx_loss_weight
-            loss['smplx_shape'] = self.param_loss(shape, targets['smplx_shape'],
-                                                  meta_info['smplx_shape_valid'][:, None]) * cfg.smplx_loss_weight
-            loss['smplx_expr'] = self.param_loss(expr, targets['smplx_expr'], meta_info['smplx_expr_valid'][:, None]) * cfg.smplx_loss_weight
-            loss['joint_cam'] = self.coord_loss(joint_cam, targets['joint_cam'],
-                                                meta_info['joint_valid'] * meta_info['is_3D'][:, None, None]) * cfg.smplx_loss_weight
-            loss['smplx_joint_cam'] = self.coord_loss(joint_cam, targets['smplx_joint_cam'],
-                                                      meta_info['smplx_joint_valid']) * cfg.smplx_loss_weight
-            loss['lhand_bbox'] = (self.coord_loss(lhand_bbox_center, targets['lhand_bbox_center'],
-                                                  meta_info['lhand_bbox_valid'][:, None]) + self.coord_loss(
-                lhand_bbox_size, targets['lhand_bbox_size'], meta_info['lhand_bbox_valid'][:, None]))
-            loss['rhand_bbox'] = (self.coord_loss(rhand_bbox_center, targets['rhand_bbox_center'],
-                                                  meta_info['rhand_bbox_valid'][:, None]) + self.coord_loss(
-                rhand_bbox_size, targets['rhand_bbox_size'], meta_info['rhand_bbox_valid'][:, None]))
-            loss['face_bbox'] = (self.coord_loss(face_bbox_center, targets['face_bbox_center'],
-                                                 meta_info['face_bbox_valid'][:, None]) + self.coord_loss(
-                face_bbox_size, targets['face_bbox_size'], meta_info['face_bbox_valid'][:, None]))
 
-            # change hand target joint_img and joint_trunc according to hand bbox (cfg.output_hm_shape -> downsampled hand bbox space)
-            for part_name, bbox in (('lhand', lhand_bbox), ('rhand', rhand_bbox)):
-                for coord_name, trunc_name in (('joint_img', 'joint_trunc'), ('smplx_joint_img', 'smplx_joint_trunc')):
-                    x = targets[coord_name][:, smpl_x.joint_part[part_name], 0]
-                    y = targets[coord_name][:, smpl_x.joint_part[part_name], 1]
-                    z = targets[coord_name][:, smpl_x.joint_part[part_name], 2]
-                    trunc = meta_info[trunc_name][:, smpl_x.joint_part[part_name], 0]
+            smplx_kps_3d_weight = getattr(cfg, 'smplx_kps_3d_weight', 1.0)
+            smplx_kps_3d_weight = getattr(cfg, 'smplx_kps_weight', smplx_kps_3d_weight) # old config
+
+            smplx_kps_2d_weight = getattr(cfg, 'smplx_kps_2d_weight', 1.0)
+            net_kps_2d_weight = getattr(cfg, 'net_kps_2d_weight', 1.0)
+
+            smplx_pose_weight = getattr(cfg, 'smplx_pose_weight', 1.0)
+            smplx_shape_weight = getattr(cfg, 'smplx_loss_weight', 1.0)
+            # smplx_orient_weight = getattr(cfg, 'smplx_orient_weight', smplx_pose_weight) # if not specified, use the same weight as pose
+    
+
+            # do not supervise root pose if original agora json is used
+            if getattr(cfg, 'agora_fix_global_orient_transl', False):
+                # loss['smplx_pose'] = self.param_loss(pose, targets['smplx_pose'], meta_info['smplx_pose_valid'])[:, 3:] * smplx_pose_weight
+                if hasattr(cfg, 'smplx_orient_weight'):
+                    smplx_orient_weight = getattr(cfg, 'smplx_orient_weight')
+                    loss['smplx_orient'] = self.param_loss(pose, targets['smplx_pose'], meta_info['smplx_pose_valid'])[:, :3] * smplx_orient_weight
+
+                loss['smplx_pose'] = self.param_loss(pose, targets['smplx_pose'], meta_info['smplx_pose_valid']) * smplx_pose_weight
+            else:
+                loss['smplx_pose'] = self.param_loss(pose, targets['smplx_pose'], meta_info['smplx_pose_valid'])[:, 3:] * smplx_pose_weight
+
+            loss['smplx_shape'] = self.param_loss(shape, targets['smplx_shape'],
+                                                  meta_info['smplx_shape_valid'][:, None]) * smplx_shape_weight 
+            loss['smplx_expr'] = self.param_loss(expr, targets['smplx_expr'], meta_info['smplx_expr_valid'][:, None])
+
+            loss['joint_cam'] = self.coord_loss(joint_cam, targets['joint_cam'], meta_info['joint_valid'] * meta_info['is_3D'][:, None, None]) * smplx_kps_3d_weight
+            loss['smplx_joint_cam'] = self.coord_loss(joint_cam, targets['smplx_joint_cam'], meta_info['smplx_joint_valid']) * smplx_kps_3d_weight
+            # import pdb; pdb.set_trace()
+
+            if not (meta_info['lhand_bbox_valid'] == 0).all():
+                loss['lhand_bbox'] = (self.coord_loss(lhand_bbox_center, targets['lhand_bbox_center'], meta_info['lhand_bbox_valid'][:, None]) +
+                                    self.coord_loss(lhand_bbox_size, targets['lhand_bbox_size'], meta_info['lhand_bbox_valid'][:, None]))
+            if not (meta_info['rhand_bbox_valid'] == 0).all():
+                loss['rhand_bbox'] = (self.coord_loss(rhand_bbox_center, targets['rhand_bbox_center'], meta_info['rhand_bbox_valid'][:, None]) +
+                                    self.coord_loss(rhand_bbox_size, targets['rhand_bbox_size'], meta_info['rhand_bbox_valid'][:, None]))
+            if not (meta_info['face_bbox_valid'] == 0).all():
+                loss['face_bbox'] = (self.coord_loss(face_bbox_center, targets['face_bbox_center'], meta_info['face_bbox_valid'][:, None]) +
+                                 self.coord_loss(face_bbox_size, targets['face_bbox_size'], meta_info['face_bbox_valid'][:, None]))
+            
+            # if (meta_info['face_bbox_valid'] == 0).all():
+            #     out = {}
+            #     targets['original_joint_img'] = targets['joint_img'].clone()
+            #     out['original_joint_proj'] = joint_proj.clone()
+            if not (meta_info['lhand_bbox_valid'] + meta_info['rhand_bbox_valid'] == 0).all():
+
+                # change hand target joint_img and joint_trunc according to hand bbox (cfg.output_hm_shape -> downsampled hand bbox space)
+                for part_name, bbox in (('lhand', lhand_bbox), ('rhand', rhand_bbox)):
+                    for coord_name, trunc_name in (('joint_img', 'joint_trunc'), ('smplx_joint_img', 'smplx_joint_trunc')):
+                        x = targets[coord_name][:, smpl_x.joint_part[part_name], 0]
+                        y = targets[coord_name][:, smpl_x.joint_part[part_name], 1]
+                        z = targets[coord_name][:, smpl_x.joint_part[part_name], 2]
+                        trunc = meta_info[trunc_name][:, smpl_x.joint_part[part_name], 0]
+
+                        x -= (bbox[:, None, 0] / cfg.input_body_shape[1] * cfg.output_hm_shape[2])
+                        x *= (cfg.output_hand_hm_shape[2] / (
+                                (bbox[:, None, 2] - bbox[:, None, 0]) / cfg.input_body_shape[1] * cfg.output_hm_shape[
+                            2]))
+                        y -= (bbox[:, None, 1] / cfg.input_body_shape[0] * cfg.output_hm_shape[1])
+                        y *= (cfg.output_hand_hm_shape[1] / (
+                                (bbox[:, None, 3] - bbox[:, None, 1]) / cfg.input_body_shape[0] * cfg.output_hm_shape[
+                            1]))
+                        z *= cfg.output_hand_hm_shape[0] / cfg.output_hm_shape[0]
+                        trunc *= ((x >= 0) * (x < cfg.output_hand_hm_shape[2]) * (y >= 0) * (
+                                y < cfg.output_hand_hm_shape[1]))
+
+                        coord = torch.stack((x, y, z), 2)
+                        trunc = trunc[:, :, None]
+                        targets[coord_name] = torch.cat((targets[coord_name][:, :smpl_x.joint_part[part_name][0], :], coord,
+                                                        targets[coord_name][:, smpl_x.joint_part[part_name][-1] + 1:, :]),
+                                                        1)
+                        meta_info[trunc_name] = torch.cat((meta_info[trunc_name][:, :smpl_x.joint_part[part_name][0], :],
+                                                        trunc,
+                                                        meta_info[trunc_name][:, smpl_x.joint_part[part_name][-1] + 1:,
+                                                        :]), 1)
+
+                # change hand projected joint coordinates according to hand bbox (cfg.output_hm_shape -> hand bbox space)
+                for part_name, bbox in (('lhand', lhand_bbox), ('rhand', rhand_bbox)):
+                    x = joint_proj[:, smpl_x.joint_part[part_name], 0]
+                    y = joint_proj[:, smpl_x.joint_part[part_name], 1]
 
                     x -= (bbox[:, None, 0] / cfg.input_body_shape[1] * cfg.output_hm_shape[2])
                     x *= (cfg.output_hand_hm_shape[2] / (
-                            (bbox[:, None, 2] - bbox[:, None, 0]) / cfg.input_body_shape[1] * cfg.output_hm_shape[
-                        2]))
+                            (bbox[:, None, 2] - bbox[:, None, 0]) / cfg.input_body_shape[1] * cfg.output_hm_shape[2]))
                     y -= (bbox[:, None, 1] / cfg.input_body_shape[0] * cfg.output_hm_shape[1])
                     y *= (cfg.output_hand_hm_shape[1] / (
-                            (bbox[:, None, 3] - bbox[:, None, 1]) / cfg.input_body_shape[0] * cfg.output_hm_shape[
-                        1]))
-                    z *= cfg.output_hand_hm_shape[0] / cfg.output_hm_shape[0]
-                    trunc *= ((x >= 0) * (x < cfg.output_hand_hm_shape[2]) * (y >= 0) * (
-                            y < cfg.output_hand_hm_shape[1]))
+                            (bbox[:, None, 3] - bbox[:, None, 1]) / cfg.input_body_shape[0] * cfg.output_hm_shape[1]))
 
-                    coord = torch.stack((x, y, z), 2)
-                    trunc = trunc[:, :, None]
-                    targets[coord_name] = torch.cat((targets[coord_name][:, :smpl_x.joint_part[part_name][0], :], coord,
-                                                     targets[coord_name][:, smpl_x.joint_part[part_name][-1] + 1:, :]),
-                                                    1)
-                    meta_info[trunc_name] = torch.cat((meta_info[trunc_name][:, :smpl_x.joint_part[part_name][0], :],
-                                                       trunc,
-                                                       meta_info[trunc_name][:, smpl_x.joint_part[part_name][-1] + 1:,
-                                                       :]), 1)
+                    coord = torch.stack((x, y), 2)
+                    trans = []
+                    for bid in range(coord.shape[0]):
+                        mask = meta_info['joint_trunc'][bid, smpl_x.joint_part[part_name], 0] == 1
+                        if torch.sum(mask) == 0:
+                            trans.append(torch.zeros((2)).float().cuda())
+                        else:
+                            trans.append((-coord[bid, mask, :2] + targets['joint_img'][:, smpl_x.joint_part[part_name], :][
+                                                                bid, mask, :2]).mean(0))
+                    trans = torch.stack(trans)[:, None, :]
+                    coord = coord + trans  # global translation alignment
+                    joint_proj = torch.cat((joint_proj[:, :smpl_x.joint_part[part_name][0], :], coord,
+                                            joint_proj[:, smpl_x.joint_part[part_name][-1] + 1:, :]), 1)
 
-            # change hand projected joint coordinates according to hand bbox (cfg.output_hm_shape -> hand bbox space)
-            for part_name, bbox in (('lhand', lhand_bbox), ('rhand', rhand_bbox)):
-                x = joint_proj[:, smpl_x.joint_part[part_name], 0]
-                y = joint_proj[:, smpl_x.joint_part[part_name], 1]
-
-                x -= (bbox[:, None, 0] / cfg.input_body_shape[1] * cfg.output_hm_shape[2])
-                x *= (cfg.output_hand_hm_shape[2] / (
-                        (bbox[:, None, 2] - bbox[:, None, 0]) / cfg.input_body_shape[1] * cfg.output_hm_shape[2]))
-                y -= (bbox[:, None, 1] / cfg.input_body_shape[0] * cfg.output_hm_shape[1])
-                y *= (cfg.output_hand_hm_shape[1] / (
-                        (bbox[:, None, 3] - bbox[:, None, 1]) / cfg.input_body_shape[0] * cfg.output_hm_shape[1]))
-
-                coord = torch.stack((x, y), 2)
+            if not (meta_info['face_bbox_valid'] == 0).all():
+                # change face projected joint coordinates according to face bbox (cfg.output_hm_shape -> face bbox space)
+                coord = joint_proj[:, smpl_x.joint_part['face'], :]
                 trans = []
                 for bid in range(coord.shape[0]):
-                    mask = meta_info['joint_trunc'][bid, smpl_x.joint_part[part_name], 0] == 1
+                    mask = meta_info['joint_trunc'][bid, smpl_x.joint_part['face'], 0] == 1
                     if torch.sum(mask) == 0:
                         trans.append(torch.zeros((2)).float().cuda())
                     else:
-                        trans.append((-coord[bid, mask, :2] + targets['joint_img'][:, smpl_x.joint_part[part_name], :][
-                                                              bid, mask, :2]).mean(0))
+                        trans.append((-coord[bid, mask, :2] + targets['joint_img'][:, smpl_x.joint_part['face'], :][bid,
+                                                            mask, :2]).mean(0))
                 trans = torch.stack(trans)[:, None, :]
                 coord = coord + trans  # global translation alignment
-                joint_proj = torch.cat((joint_proj[:, :smpl_x.joint_part[part_name][0], :], coord,
-                                        joint_proj[:, smpl_x.joint_part[part_name][-1] + 1:, :]), 1)
-
-            # change face projected joint coordinates according to face bbox (cfg.output_hm_shape -> face bbox space)
-            coord = joint_proj[:, smpl_x.joint_part['face'], :]
-            trans = []
-            for bid in range(coord.shape[0]):
-                mask = meta_info['joint_trunc'][bid, smpl_x.joint_part['face'], 0] == 1
-                if torch.sum(mask) == 0:
-                    trans.append(torch.zeros((2)).float().cuda())
-                else:
-                    trans.append((-coord[bid, mask, :2] + targets['joint_img'][:, smpl_x.joint_part['face'], :][bid,
-                                                          mask, :2]).mean(0))
-            trans = torch.stack(trans)[:, None, :]
-            coord = coord + trans  # global translation alignment
-            joint_proj = torch.cat((joint_proj[:, :smpl_x.joint_part['face'][0], :], coord,
-                                    joint_proj[:, smpl_x.joint_part['face'][-1] + 1:, :]), 1)
-            loss['joint_proj'] = self.coord_loss(joint_proj, targets['joint_img'][:, :, :2], meta_info['joint_trunc'])
+                joint_proj = torch.cat((joint_proj[:, :smpl_x.joint_part['face'][0], :], coord,
+                                        joint_proj[:, smpl_x.joint_part['face'][-1] + 1:, :]), 1)
+            
+            loss['joint_proj'] = self.coord_loss(joint_proj, targets['joint_img'][:, :, :2], meta_info['joint_trunc']) * smplx_kps_2d_weight
             loss['joint_img'] = self.coord_loss(joint_img, smpl_x.reduce_joint_set(targets['joint_img']),
-                                                smpl_x.reduce_joint_set(meta_info['joint_trunc']), meta_info['is_3D'])
+                                                smpl_x.reduce_joint_set(meta_info['joint_trunc']), meta_info['is_3D']) * net_kps_2d_weight
+            
             loss['smplx_joint_img'] = self.coord_loss(joint_img, smpl_x.reduce_joint_set(targets['smplx_joint_img']),
-                                                      smpl_x.reduce_joint_set(meta_info['smplx_joint_trunc']))
+                                                      smpl_x.reduce_joint_set(meta_info['smplx_joint_trunc'])) * net_kps_2d_weight
             return loss
         else:
-            mesh_pseudo_gt = self.generate_mesh_gt(targets, mode)
             # change hand output joint_img according to hand bbox
             for part_name, bbox in (('lhand', lhand_bbox), ('rhand', rhand_bbox)):
                 joint_img[:, smpl_x.pos_joint_part[part_name], 0] *= (
@@ -328,7 +362,8 @@ class Model(nn.Module):
             out['lhand_bbox'] = lhand_bbox
             out['rhand_bbox'] = rhand_bbox
             out['face_bbox'] = face_bbox
-            out['smplx_mesh_cam_pseudo_gt'] = mesh_pseudo_gt
+            if 'smplx_pose' in targets:
+                out['smplx_mesh_cam_pseudo_gt'] = mesh_pseudo_gt
             if 'smplx_mesh_cam' in targets:
                 out['smplx_mesh_cam_target'] = targets['smplx_mesh_cam']
             if 'smpl_mesh_cam' in targets:

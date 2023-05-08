@@ -103,7 +103,7 @@ class AGORA(torch.utils.data.Dataset):
             else:
                 if getattr(cfg, 'agora_fix_betas', False):
                     assert getattr(cfg, 'agora_fix_global_orient_transl')
-                    db = COCO(osp.join(self.data_path, 'AGORA_train_fix_betas.json'))
+                    db = COCO(osp.join(self.data_path, 'AGORA_validation_fix_betas.json'))
                 elif getattr(cfg, 'agora_fix_global_orient_transl', False):
                     db = COCO(osp.join(self.data_path, 'AGORA_validation_fix_global_orient_transl.json'))
                 else:
