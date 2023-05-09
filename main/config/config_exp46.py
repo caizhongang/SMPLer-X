@@ -35,7 +35,7 @@ smplx_kps_3d_weight = 1.0
 smplx_kps_2d_weight = 100.0
 net_kps_2d_weight = 1.0
 
-agora_benchmark = 'agora_model' # 'agora_model', 'test_only'
+agora_benchmark = 'na' # 'agora_model', 'test_only'
 
 model_type = 'osx_b'
 encoder_config_file = 'transformer_utils/configs/osx/encoder/body_encoder_base.py'

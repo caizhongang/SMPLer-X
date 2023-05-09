@@ -78,9 +78,15 @@ class PW3D(torch.utils.data.Dataset):
                                       + np.dot(smpl.joint_regressor, mesh_gt)[smpl.root_joint_idx, None, :]
 
             # only eval point0-21 since only smpl gt is given
-            joint_gt_body = np.dot(smpl.joint_regressor, mesh_gt)[:22, :] 
-            joint_out_body = np.dot(smpl_x.J_regressor, mesh_out)[:22, :] 
-            joint_out_body_root_align = np.dot(smpl_x.J_regressor, mesh_out_align)[:22, :]
+            # joint_gt_body = np.dot(smpl.joint_regressor, mesh_gt)[:22, :] 
+            # joint_out_body = np.dot(smpl_x.J_regressor, mesh_out)[:22, :] 
+            # joint_out_body_root_align = np.dot(smpl_x.J_regressor, mesh_out_align)[:22, :]
+
+            # only test 14 keypoints
+            joint_mapper = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 18]
+            joint_gt_body = np.dot(smpl.joint_regressor, mesh_gt)[joint_mapper, :] 
+            joint_out_body = np.dot(smpl_x.J_regressor, mesh_out)[joint_mapper, :] 
+            joint_out_body_root_align = np.dot(smpl_x.J_regressor, mesh_out_align)[joint_mapper, :]
 
             eval_result['mpjpe_body'].append(
                 np.sqrt(np.sum((joint_out_body_root_align - joint_gt_body) ** 2, 1)).mean() * 1000)

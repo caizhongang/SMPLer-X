@@ -525,5 +525,3 @@ def load_ply(file_name):
     z = plydata['vertex']['z']
     v = np.stack((x, y, z), 1)
     return v
-
-
