@@ -18,10 +18,10 @@ continue_train = False
 pretrained_model_path = None
 
 # dataset setting
-dataset_list = ['Human36M', 'MSCOCO', 'MPII', 'AGORA', 'EHF', 'SynBody', 'GTA_Human2', 'EgoBody']
+dataset_list = ['Human36M', 'MSCOCO', 'MPII', 'AGORA', 'EHF', 'SynBody', 'GTA_Human2', 'EgoBody_Kinect']
 trainset_3d = []
 trainset_2d = []
-trainset_humandata = ['EgoBody']
+trainset_humandata = ['EgoBody_Kinect']
 testset = 'EHF'
 
 # model

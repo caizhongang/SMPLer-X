@@ -77,7 +77,7 @@ def fix_agora():
             with open(new_smplx_save_path, 'wb') as f:
                 pickle.dump(new_smplx_params, f)
 
-        new_ann_save_path = osp.join(work_dir, f'AGORA_{split}_fix_betas.json') 
+        new_ann_save_path = osp.join(work_dir, f'AGORA_{split}_fix_betas.json')
         new_data = {
             'images': data['images'],
             'annotations': new_annotations,
@@ -133,5 +133,5 @@ def fix_egobody():
 
 
 if __name__ == '__main__':
-    # fix_agora()
+    fix_agora()
     fix_egobody()
