@@ -443,155 +443,155 @@ def main():
                 person_num = len(data_smplx['gt_path_smplx'][i])
                 for j in range(person_num):
 
-                    if split == 'validation' and imgPath in (
-                            'ag_validationset_renderpeople_bfh_flowers_5_15_00000.png',
-                            'ag_validationset_renderpeople_bfh_flowers_5_15_00001.png',
-                            'ag_validationset_renderpeople_bfh_flowers_5_15_00002.png',
-                            'ag_validationset_renderpeople_bfh_flowers_5_15_00003.png',
-                    ):  # TODO: debug only, to skip train. Note to comment all dump!
+                    # if split == 'validation' and imgPath in (
+                    #         'ag_validationset_renderpeople_bfh_flowers_5_15_00000.png',
+                    #         'ag_validationset_renderpeople_bfh_flowers_5_15_00001.png',
+                    #         'ag_validationset_renderpeople_bfh_flowers_5_15_00002.png',
+                    #         'ag_validationset_renderpeople_bfh_flowers_5_15_00003.png',
+                    # ):  # TODO: debug only, to skip train. Note to comment all dump!
 
-                        # set paths
-                        smplx_param_path = data_smplx['gt_path_smplx'][i][j][:-4] + '.pkl'
-                        smplx_load_path = osp.join(load_dir, smplx_param_path)
+                    # set paths
+                    smplx_param_path = data_smplx['gt_path_smplx'][i][j][:-4] + '.pkl'
+                    smplx_load_path = osp.join(load_dir, smplx_param_path)
 
-                        stem, _ = osp.splitext(osp.basename(smplx_load_path))
-                        new_stem = stem + f'_{ann_id:08d}'
-                        new_smplx_save_path = smplx_load_path.replace('smplx_gt', 'smplx_gt_fix_global_orient_transl')  # change save dir
-                        new_smplx_save_path = new_smplx_save_path.replace(stem, new_stem)  # to avoid duplicates
+                    stem, _ = osp.splitext(osp.basename(smplx_load_path))
+                    new_stem = stem + f'_{ann_id:08d}'
+                    new_smplx_save_path = smplx_load_path.replace('smplx_gt', 'smplx_gt_fix_global_orient_transl')  # change save dir
+                    new_smplx_save_path = new_smplx_save_path.replace(stem, new_stem)  # to avoid duplicates
 
-                        # print('smplx', smplx_load_path, '->', new_smplx_save_path)
-                        os.makedirs(osp.dirname(new_smplx_save_path), exist_ok=True)
-                        # if osp.exists(new_smplx_save_path):  # skip existed
-                        #     continue
+                    # print('smplx', smplx_load_path, '->', new_smplx_save_path)
+                    os.makedirs(osp.dirname(new_smplx_save_path), exist_ok=True)
+                    # if osp.exists(new_smplx_save_path):  # skip existed
+                    #     continue
 
-                        # load smplx params (world frame)
-                        with open(smplx_load_path, 'rb') as f:
-                            smplx_params = pickle.load(f, encoding='latin1')
+                    # load smplx params (world frame)
+                    with open(smplx_load_path, 'rb') as f:
+                        smplx_params = pickle.load(f, encoding='latin1')
 
-                        ground_plane, scene3d, focalLength, camPosWorld, camYaw, camPitch, yawSMPL, trans3d = \
-                            get_scene_info(imgPath, df=data_smplx, i=i, pNum=j)
+                    ground_plane, scene3d, focalLength, camPosWorld, camYaw, camPitch, yawSMPL, trans3d = \
+                        get_scene_info(imgPath, df=data_smplx, i=i, pNum=j)
 
-                        # get world2cam transformation
-                        T_world2cam = compute_world2cam(trans3d, camPosWorld, yawSMPL, camYaw, camPitch, scene3d, ground_plane)
+                    # get world2cam transformation
+                    T_world2cam = compute_world2cam(trans3d, camPosWorld, yawSMPL, camYaw, camPitch, scene3d, ground_plane)
 
-                        # compute pelvis position
-                        kid_flag = data_smplx['kid'][i][j]
-                        gender = data_smplx['gender'][i][j]
-                        num_betas = 10
+                    # compute pelvis position
+                    kid_flag = data_smplx['kid'][i][j]
+                    gender = data_smplx['gender'][i][j]
+                    num_betas = 10
 
-                        joints, vertices = get_smplx_vertices(num_betas, kid_flag, smplx_params, gender,
-                                                                    smplx_male_kid_gt=model_male_kid,
-                                                                    smplx_female_kid_gt=model_female_kid,
-                                                                    smplx_neutral_kid=model_neutral_kid,
-                                                                    smplx_male_gt=model_male,
-                                                                    smplx_female_gt=model_female,
-                                                                    smplx_neutral=model_neutral)
-                        pelvis = joints[0]
+                    joints, vertices = get_smplx_vertices(num_betas, kid_flag, smplx_params, gender,
+                                                                smplx_male_kid_gt=model_male_kid,
+                                                                smplx_female_kid_gt=model_female_kid,
+                                                                smplx_neutral_kid=model_neutral_kid,
+                                                                smplx_male_gt=model_male,
+                                                                smplx_female_gt=model_female,
+                                                                smplx_neutral=model_neutral)
+                    pelvis = joints[0]
 
-                        # compute new global orient and transl
-                        global_orient = smplx_params['global_orient']
-                        transl = smplx_params['transl']
-                        new_global_orient, new_transl = transform_to_camera_frame(global_orient, transl, pelvis, extrinsic=T_world2cam)
+                    # compute new global orient and transl
+                    global_orient = smplx_params['global_orient']
+                    transl = smplx_params['transl']
+                    new_global_orient, new_transl = transform_to_camera_frame(global_orient, transl, pelvis, extrinsic=T_world2cam)
 
-                        # create new params
-                        new_smplx_params = {
-                            k: v for k, v in smplx_params.items() if k not in ('global_orient', 'transl', 'keypoints_3d', 'pose_embedding', 'v')
-                        }
-                        new_smplx_params['global_orient'] = new_global_orient.reshape(1, 3)
-                        new_smplx_params['transl'] = new_transl.reshape(1, 3)
+                    # create new params
+                    new_smplx_params = {
+                        k: v for k, v in smplx_params.items() if k not in ('global_orient', 'transl', 'keypoints_3d', 'pose_embedding', 'v')
+                    }
+                    new_smplx_params['global_orient'] = new_global_orient.reshape(1, 3)
+                    new_smplx_params['transl'] = new_transl.reshape(1, 3)
 
-                        # validate
-                        new_joints, new_vertices = get_smplx_vertices(num_betas, kid_flag, new_smplx_params, gender,
-                                        smplx_male_kid_gt=model_male_kid,
-                                        smplx_female_kid_gt=model_female_kid,
-                                        smplx_neutral_kid=model_neutral_kid,
-                                        smplx_male_gt=model_male,
-                                        smplx_female_gt=model_female,
-                                        smplx_neutral=model_neutral)
-                        gt_joints_3d = data_smplx['gt_joints_3d'][i][j]
-                        gt_verts = data_smplx['gt_verts'][i][j]
-                        try:
-                            assert np.allclose(gt_joints_3d, new_joints, atol=1e-5)
-                            assert np.allclose(gt_verts, new_vertices, atol=1e-5)
-                        except:
-                            print('error')
-                            import pdb; pdb.set_trace()
+                    # validate
+                    new_joints, new_vertices = get_smplx_vertices(num_betas, kid_flag, new_smplx_params, gender,
+                                    smplx_male_kid_gt=model_male_kid,
+                                    smplx_female_kid_gt=model_female_kid,
+                                    smplx_neutral_kid=model_neutral_kid,
+                                    smplx_male_gt=model_male,
+                                    smplx_female_gt=model_female,
+                                    smplx_neutral=model_neutral)
+                    gt_joints_3d = data_smplx['gt_joints_3d'][i][j]
+                    gt_verts = data_smplx['gt_verts'][i][j]
+                    try:
+                        assert np.allclose(gt_joints_3d, new_joints, atol=1e-5)
+                        assert np.allclose(gt_verts, new_vertices, atol=1e-5)
+                    except:
+                        print('error')
+                        import pdb; pdb.set_trace()
 
-                        # validate 2D
-                        imgHeight, imgWidth = (2160, 3840)
-                        new_joints_2d = get_2d(new_joints, focalLength, imgHeight, imgWidth)
-                        new_verts_2d = get_2d(new_vertices, focalLength, imgHeight, imgWidth)
+                    # # TODO: visualize only. Validate 2D
+                    # imgHeight, imgWidth = (2160, 3840)
+                    # new_joints_2d = get_2d(new_joints, focalLength, imgHeight, imgWidth)
+                    # new_verts_2d = get_2d(new_vertices, focalLength, imgHeight, imgWidth)
+                    #
+                    # gt_joints_2d = data_smplx['gt_joints_2d'][i][j]
+                    # try:
+                    #     assert np.allclose(gt_joints_2d, new_joints_2d, atol=1e-3)
+                    # except:
+                    #     print('error: 2d joints')
+                    #     import pdb; pdb.set_trace()
+                    # # visualize
+                    # img_load_dir = '/mnt/cache/caizhongang/osx/dataset/AGORA/data/3840x2160'
+                    # img_load_path = osp.join(img_load_dir, img_folder_name, imgPath)
+                    # img_gt_joints_2d_path = osp.basename(img_load_path.replace('.png', '_gt.png'))
+                    # img_new_joints_2d_path = osp.basename(img_load_path.replace('.png', '_new_joints.png'))
+                    # img_new_verts_2d_path = osp.basename(img_load_path.replace('.png', '_new_verts.png'))
+                    #
+                    # if osp.isfile(img_gt_joints_2d_path):
+                    #     img_gt_joints_2d = cv2.imread(img_gt_joints_2d_path)
+                    #     img_new_joints_2d = cv2.imread(img_new_joints_2d_path)
+                    #     img_new_verts_2d = cv2.imread(img_new_verts_2d_path)
+                    #
+                    #     img_gt_joints_2d = vis_2d(img_gt_joints_2d, gt_joints_2d, color=(0, 255, 0))
+                    #     img_new_joints_2d = vis_2d(img_new_joints_2d, new_joints_2d, color=(0, 0, 255))
+                    #     img_new_verts_2d = vis_2d(img_new_verts_2d, new_verts_2d, color=(0, 0, 255))
+                    # else:
+                    #     img = cv2.imread(img_load_path)
+                    #     img_gt_joints_2d = vis_2d(img.copy(), gt_joints_2d, color=(0, 255, 0))
+                    #     img_new_joints_2d = vis_2d(img.copy(), new_joints_2d, color=(0, 0, 255))
+                    #     img_new_verts_2d = vis_2d(img.copy(), new_verts_2d, color=(0, 0, 255))
+                    #
+                    # cv2.imwrite(img_gt_joints_2d_path, img_gt_joints_2d)
+                    # cv2.imwrite(img_new_joints_2d_path, img_new_joints_2d)
+                    # cv2.imwrite(img_new_verts_2d_path, img_new_verts_2d)
+                    # continue
 
-                        gt_joints_2d = data_smplx['gt_joints_2d'][i][j]
-                        try:
-                            assert np.allclose(gt_joints_2d, new_joints_2d, atol=1e-3)
-                        except:
-                            print('error: 2d joints')
-                            import pdb; pdb.set_trace()
-                        # visualize
-                        img_load_dir = '/mnt/cache/caizhongang/osx/dataset/AGORA/data/3840x2160'
-                        img_load_path = osp.join(img_load_dir, img_folder_name, imgPath)
-                        img_gt_joints_2d_path = osp.basename(img_load_path.replace('.png', '_gt.png'))
-                        img_new_joints_2d_path = osp.basename(img_load_path.replace('.png', '_new_joints.png'))
-                        img_new_verts_2d_path = osp.basename(img_load_path.replace('.png', '_new_verts.png'))
+                    # update annotations
+                    ann = annotations[ann_id - val_id_offset]
+                    new_ann = {}
+                    for k, v in ann.items():
+                        if k in ('smplx_param_path', 'smpl_param_path'):
+                            continue
+                        new_ann[k] = v
+                    new_ann['smplx_param_path'] = new_smplx_save_path
 
-                        if osp.isfile(img_gt_joints_2d_path):
-                            img_gt_joints_2d = cv2.imread(img_gt_joints_2d_path)
-                            img_new_joints_2d = cv2.imread(img_new_joints_2d_path)
-                            img_new_verts_2d = cv2.imread(img_new_verts_2d_path)
+                    # check paths
+                    ann_smplx_param_path = ann['smplx_param_path']
+                    try:
+                        ann_smplx_param_path_stem, _ = osp.splitext(osp.basename(ann_smplx_param_path))
+                        new_ann_smplx_param_path_stem, _ = osp.splitext(osp.basename(new_smplx_save_path))
+                        assert '_'.join(new_ann_smplx_param_path_stem.split('_')[:-1]) == ann_smplx_param_path_stem   # make sure param is aligned
 
-                            img_gt_joints_2d = vis_2d(img_gt_joints_2d, gt_joints_2d, color=(0, 255, 0))
-                            img_new_joints_2d = vis_2d(img_new_joints_2d, new_joints_2d, color=(0, 0, 255))
-                            img_new_verts_2d = vis_2d(img_new_verts_2d, new_verts_2d, color=(0, 0, 255))
-                        else:
-                            img = cv2.imread(img_load_path)
-                            img_gt_joints_2d = vis_2d(img.copy(), gt_joints_2d, color=(0, 255, 0))
-                            img_new_joints_2d = vis_2d(img.copy(), new_joints_2d, color=(0, 0, 255))
-                            img_new_verts_2d = vis_2d(img.copy(), new_verts_2d, color=(0, 0, 255))
+                        gt_joints_3d_path = osp.join(load_dir, 'gt_joints_3d', 'smplx', str(ann_id) + '.json')
+                        assert new_ann['smplx_joints_3d_path'].split('/')[-3:] == gt_joints_3d_path.split('/')[-3:]
 
-                        cv2.imwrite(img_gt_joints_2d_path, img_gt_joints_2d)
-                        cv2.imwrite(img_new_joints_2d_path, img_new_joints_2d)
-                        cv2.imwrite(img_new_verts_2d_path, img_new_verts_2d)
-                        continue
+                        gt_verts_path = osp.join(load_dir, 'gt_verts', 'smplx', str(ann_id) + '.json')
+                        assert new_ann['smplx_verts_path'].split('/')[-3:] == gt_verts_path.split('/')[-3:]
+                    except:
+                        print('error: unmatch paths')
+                        import pdb; pdb.set_trace()
 
-                        # update annotations
-                        ann = annotations[ann_id - val_id_offset]
-                        new_ann = {}
-                        for k, v in ann.items():
-                            if k in ('smplx_param_path', 'smpl_param_path'):
-                                continue
-                            new_ann[k] = v
-                        new_ann['smplx_param_path'] = new_smplx_save_path
+                    new_annotations.append(new_ann)
 
-                        # check paths
-                        ann_smplx_param_path = ann['smplx_param_path']
-                        try:
-                            ann_smplx_param_path_stem, _ = osp.splitext(osp.basename(ann_smplx_param_path))
-                            new_ann_smplx_param_path_stem, _ = osp.splitext(osp.basename(new_smplx_save_path))
-                            assert '_'.join(new_ann_smplx_param_path_stem.split('_')[:-1]) == ann_smplx_param_path_stem   # make sure param is aligned
+                    # save new params
+                    try:
+                        assert new_smplx_save_path not in used_new_smplx_save_paths
+                    except:
+                        print('error: used name')
+                        import pdb; pdb.set_trace()
+                    # with open(new_smplx_save_path, 'wb') as f:
+                    #     pickle.dump(new_smplx_params, f)
+                    # print(new_smplx_save_path, 'saved.')
 
-                            gt_joints_3d_path = osp.join(load_dir, 'gt_joints_3d', 'smplx', str(ann_id) + '.json')
-                            assert new_ann['smplx_joints_3d_path'].split('/')[-3:] == gt_joints_3d_path.split('/')[-3:]
-
-                            gt_verts_path = osp.join(load_dir, 'gt_verts', 'smplx', str(ann_id) + '.json')
-                            assert new_ann['smplx_verts_path'].split('/')[-3:] == gt_verts_path.split('/')[-3:]
-                        except:
-                            print('error: unmatch paths')
-                            import pdb; pdb.set_trace()
-
-                        new_annotations.append(new_ann)
-
-                        # save new params
-                        try:
-                            assert new_smplx_save_path not in used_new_smplx_save_paths
-                        except:
-                            print('error: used name')
-                            import pdb; pdb.set_trace()
-                        # with open(new_smplx_save_path, 'wb') as f:
-                        #     pickle.dump(new_smplx_params, f)
-                        # print(new_smplx_save_path, 'saved.')
-
-                        used_new_smplx_save_paths.add(new_smplx_save_path)
+                    used_new_smplx_save_paths.add(new_smplx_save_path)
 
                     ann_id += 1
                 image_id += 1
