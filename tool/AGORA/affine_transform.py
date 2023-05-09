@@ -168,16 +168,17 @@ class AGORA(torch.utils.data.Dataset):
         return 1
 
 
-from torch.utils.data import DataLoader
+if __name__ == '__main__':
+    from torch.utils.data import DataLoader
 
-# argument parse
-args = parse_args()
-dataset = AGORA(args.dataset_path, int(args.out_height), int(args.out_width))
-batch_size = 128
-num_workers = 32
-batch_generator = DataLoader(dataset=dataset, batch_size=batch_size, shuffle=False, num_workers=num_workers)
-for _ in tqdm(batch_generator):
-    pass
+    # argument parse
+    args = parse_args()
+    dataset = AGORA(args.dataset_path, int(args.out_height), int(args.out_width))
+    batch_size = 128
+    num_workers = 32
+    batch_generator = DataLoader(dataset=dataset, batch_size=batch_size, shuffle=False, num_workers=num_workers)
+    for _ in tqdm(batch_generator):
+        pass
 
     
 
