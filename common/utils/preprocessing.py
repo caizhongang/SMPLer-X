@@ -525,3 +525,18 @@ def load_ply(file_name):
     z = plydata['vertex']['z']
     v = np.stack((x, y, z), 1)
     return v
+
+def resize_bbox(bbox, scale=1.2):
+    if isinstance(bbox, list):
+        x1, y1, x2, y2 = bbox[0], bbox[1], bbox[2], bbox[3]
+    else:
+        x1, y1, x2, y2 = bbox
+    x_center = (x1+x2)/2.0
+    y_center = (y1+y2)/2.0
+    x_size, y_size = x2-x1, y2-y1
+    x1_resize = x_center-x_size/2.0*scale
+    x2_resize = x_center+x_size/2.0*scale
+    y1_resize = y_center - y_size / 2.0 * scale
+    y2_resize = y_center + y_size / 2.0 * scale
+    bbox[0], bbox[1], bbox[2], bbox[3] = x1_resize, y1_resize, x2_resize, y2_resize
+    return bbox

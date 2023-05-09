@@ -454,11 +454,12 @@ class Model(nn.Module):
             if 'bb2img_trans' in meta_info:
                 out['bb2img_trans'] = meta_info['bb2img_trans']
             
-            # ### HARDCODE vis for debug
+            ### HARDCODE vis for debug
             # import numpy as np
-            # for key in ['smplx_mesh_cam_target', 'smplx_mesh_cam']:
+            # np.save('./vis/val_0509_out.npy', out)
+            # for key in ['smpl_mesh_cam_target', 'smplx_mesh_cam']:
             #         to_save = out[key].cpu().detach().numpy()
-            #         np.save(f'./vis/val_{key}.npy', to_save)
+            #         np.save(f'./vis/val_0509_{key}.npy', to_save)
             
             # import pdb;pdb.set_trace()
 

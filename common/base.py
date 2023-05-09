@@ -241,7 +241,7 @@ class Tester(Base):
         self.logger.info("Creating dataset...")
         testset_loader = eval(cfg.testset)(transforms.ToTensor(), "test")
         batch_generator = DataLoader(dataset=testset_loader, batch_size=cfg.num_gpus * cfg.test_batch_size,
-                                     shuffle=False, num_workers=cfg.num_thread, pin_memory=True)
+                                     shuffle=True, num_workers=cfg.num_thread, pin_memory=True) # TODO temp shuffle
 
         self.testset = testset_loader
         self.batch_generator = batch_generator
