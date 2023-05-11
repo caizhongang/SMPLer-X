@@ -17,6 +17,7 @@ import time
 
 class HumanDataset(torch.utils.data.Dataset):
 
+    # same mapping for 144->137 and 190->137
     SMPLX_137_MAPPING = [
         0, 1, 2, 4, 5, 7, 8, 12, 16, 17, 18, 19, 20, 21, 60, 61, 62, 63, 64, 65, 59, 58, 57, 56, 55, 37, 38, 39, 66,
         25, 26, 27, 67, 28, 29, 30, 68, 34, 35, 36, 69, 31, 32, 33, 70, 52, 53, 54, 71, 40, 41, 42, 72, 43, 44, 45,
@@ -50,20 +51,43 @@ class HumanDataset(torch.utils.data.Dataset):
         print('Start loading humandata', self.annot_path, 'into memory...'); tic = time.time()
         image_path = content['image_path']
         bbox_xywh = content['bbox_xywh']
-        lhand_bbox_xywh = content['lhand_bbox_xywh']
-        rhand_bbox_xywh = content['rhand_bbox_xywh']
-        face_bbox_xywh = content['face_bbox_xywh']
-        
-        if 'keypoints3d_cam' in content:
-            keypoints3d = content['keypoints3d_cam'][:, self.SMPLX_137_MAPPING, :3]  # root-align
+
+        if 'lhand_bbox_xywh' in content and 'rhand_bbox_xywh' in content:
+            lhand_bbox_xywh = content['lhand_bbox_xywh']
+            rhand_bbox_xywh = content['rhand_bbox_xywh']
         else:
-            keypoints3d = content['keypoints3d'][:, self.SMPLX_137_MAPPING, :3]  # wo root-align
+            lhand_bbox_xywh = np.zeros_like(bbox_xywh)
+            rhand_bbox_xywh = np.zeros_like(bbox_xywh)
+
+        if 'face_bbox_xywh' in content:
+            face_bbox_xywh = content['face_bbox_xywh']
+        else:
+            face_bbox_xywh = np.zeros_like(bbox_xywh)
         
-        keypoints3d_mask = content['keypoints3d_mask'][self.SMPLX_137_MAPPING]
-        keypoints2d = content['keypoints2d'][:, self.SMPLX_137_MAPPING, :2]
+        decompressed = False
+        if content['__keypoints_compressed__']:
+            decompressed_kps = self.decompress_keypoints(content)
+            decompressed = True
+
+        if 'keypoints3d_cam' in content:
+            keypoints3d = decompressed_kps['keypoints3d_cam'][:, self.SMPLX_137_MAPPING, :3] if decompressed \
+                else content['keypoints3d_cam'][:, self.SMPLX_137_MAPPING, :3]  # root-align
+        elif 'keypoints3d' in content:
+            keypoints3d = decompressed_kps['keypoints3d'][:, self.SMPLX_137_MAPPING, :3] if decompressed \
+                 else content['keypoints3d'][:, self.SMPLX_137_MAPPING, :3] # wo root-align
+        else:
+            keypoints3d = None
+
+        keypoints2d = decompressed_kps['keypoints2d'][:, self.SMPLX_137_MAPPING, :2] if decompressed \
+            else content['keypoints2d'][:, self.SMPLX_137_MAPPING, :2]
         keypoints2d_mask = content['keypoints2d_mask'][self.SMPLX_137_MAPPING]
+        
+        if 'keypoints3d_mask' in content:
+            keypoints3d_mask = content['keypoints3d_mask'][self.SMPLX_137_MAPPING]
+            assert (keypoints3d_mask == keypoints2d_mask).all()
+        else:
+            keypoints3d_mask = None
         print('Done. Time: {:.2f}s'.format(time.time() - tic))
-        assert (keypoints3d_mask == keypoints2d_mask).all()
 
         datalist = []
         for i in tqdm.tqdm(range(int(num_examples))):
@@ -109,11 +133,12 @@ class HumanDataset(torch.utils.data.Dataset):
             else:
                 face_bbox = None
 
-            joint_cam = keypoints3d[i]
-            joint_img = keypoints2d[i]
+            joint_cam = keypoints3d[i] if keypoints3d is not None else None
+            joint_img = keypoints2d[i] if keypoints2d is not None else None
             # num_joints = joint_cam.shape[0]
             # joint_valid = np.ones((num_joints, 1))
-            joint_valid = keypoints3d_mask.reshape(-1, 1)
+            joint_valid = keypoints3d_mask.reshape(-1, 1) if keypoints3d_mask is not None \
+                else keypoints2d_mask.reshape(-1, 1)
 
             smplx_param = {k: v[i] for k, v in smplx.items()}
             smplx_param['root_pose'] = smplx_param.pop('global_orient')
@@ -134,7 +159,6 @@ class HumanDataset(torch.utils.data.Dataset):
 
         # save memory
         del content, image_path, bbox_xywh, lhand_bbox_xywh, rhand_bbox_xywh, face_bbox_xywh, keypoints3d, keypoints2d
-
         return datalist
 
     def __len__(self):
@@ -152,10 +176,18 @@ class HumanDataset(torch.utils.data.Dataset):
         if self.data_split == 'train':
             # h36m gt
             joint_cam = data['joint_cam']
-            joint_cam = joint_cam - joint_cam[self.joint_set['root_joint_idx'], None, :]  # root-relative
+            if joint_cam is not None:
+                joint_cam = joint_cam - joint_cam[self.joint_set['root_joint_idx'], None, :]  # root-relative
+            else:
+                # dummy cord as joint_cam
+                dummy_cord = True
+                joint_cam = np.zeros((self.joint_set['joint_num'],3), dtype=np.float32)
+
             joint_img = data['joint_img']
             joint_img = np.concatenate((joint_img[:, :2], joint_cam[:, 2:]), 1)  # x, y, depth
-            joint_img[:, 2] = (joint_img[:, 2] / (cfg.body_3d_size / 2) + 1) / 2. * cfg.output_hm_shape[0]  # discretize depth
+            if not dummy_cord: 
+                joint_img[:, 2] = (joint_img[:, 2] / (cfg.body_3d_size / 2) + 1) / 2. * cfg.output_hm_shape[0]  # discretize depth
+            
             joint_img, joint_cam, joint_valid, joint_trunc = process_db_coord(
                 joint_img, joint_cam, data['joint_valid'], do_flip, img_shape,
                 self.joint_set['flip_pairs'], img2bb_trans, rot, self.joint_set['joints_name'], smpl_x.joints_name)
@@ -222,9 +254,30 @@ class HumanDataset(torch.utils.data.Dataset):
                          'rhand_bbox_valid': rhand_bbox_valid, 'face_bbox_valid': face_bbox_valid}
             return inputs, targets, meta_info
         else:
+            joint_cam = data['joint_cam']
+            joint_cam = joint_cam - joint_cam[self.joint_set['root_joint_idx'], None, :]  # root-relative
+            joint_img = data['joint_img']
+            joint_img = np.concatenate((joint_img[:, :2], joint_cam[:, 2:]), 1)  # x, y, depth
+            joint_img[:, 2] = (joint_img[:, 2] / (cfg.body_3d_size / 2) + 1) / 2. * cfg.output_hm_shape[0]  # discretize depth
+            joint_img, joint_cam, joint_valid, joint_trunc = process_db_coord(
+                joint_img, joint_cam, data['joint_valid'], do_flip, img_shape,
+                self.joint_set['flip_pairs'], img2bb_trans, rot, self.joint_set['joints_name'], smpl_x.joints_name)
+            # smplx coordinates and parameters
+            smplx_param = data['smplx_param']
+            smplx_cam_trans = np.array(smplx_param['trans'])
+            smplx_joint_img, smplx_joint_cam, smplx_joint_trunc, smplx_pose, smplx_shape, smplx_expr, \
+            smplx_pose_valid, smplx_joint_valid, smplx_expr_valid, smplx_mesh_cam_orig = process_human_model_output(
+                smplx_param, self.cam_param, do_flip, img_shape, img2bb_trans, rot, 'smplx',
+                joint_img=None if self.cam_param else joint_img
+                )  # if cam not provided, we take joint_img as smplx joint 2d, which is commonly the case for our processed humandata
+
             inputs = {'img': img}
-            targets = {}
-            meta_info = {}
+            targets = {'smplx_pose': smplx_pose,
+                       'smplx_shape': smplx_shape,
+                       'smplx_expr': smplx_expr,
+                       'smplx_cam_trans' : smplx_cam_trans
+                       }
+            meta_info = {'bb2img_trans': bb2img_trans}
             return inputs, targets, meta_info
 
     def process_hand_face_bbox(self, bbox, do_flip, img_shape, img2bb_trans):
@@ -262,3 +315,174 @@ class HumanDataset(torch.utils.data.Dataset):
             bbox = bbox.reshape(2, 2)
 
         return bbox, bbox_valid
+
+    def evaluate(self, outs, cur_sample_idx=None):
+        sample_num = len(outs)
+        eval_result = {'pa_mpvpe_all': [], 'pa_mpvpe_l_hand': [], 'pa_mpvpe_r_hand': [], 'pa_mpvpe_hand': [], 'pa_mpvpe_face': [], 
+                       'mpvpe_all': [], 'mpvpe_l_hand': [], 'mpvpe_r_hand': [], 'mpvpe_hand': [], 'mpvpe_face': [], 
+                       'pa_mpjpe_body': [], 'pa_mpjpe_l_hand': [], 'pa_mpjpe_r_hand': [], 'pa_mpjpe_hand': []}
+
+        for n in range(sample_num):
+            out = outs[n]
+            mesh_gt = out['smplx_mesh_cam_pseudo_gt']
+            mesh_out = out['smplx_mesh_cam']
+
+            # MPVPE from all vertices
+            mesh_out_align = mesh_out - np.dot(smpl_x.J_regressor, mesh_out)[smpl_x.J_regressor_idx['pelvis'], None,
+                                        :] + np.dot(smpl_x.J_regressor, mesh_gt)[smpl_x.J_regressor_idx['pelvis'], None,
+                                             :]
+            eval_result['mpvpe_all'].append(np.sqrt(np.sum((mesh_out_align - mesh_gt) ** 2, 1)).mean() * 1000)
+            mesh_out_align = rigid_align(mesh_out, mesh_gt)
+            eval_result['pa_mpvpe_all'].append(np.sqrt(np.sum((mesh_out_align - mesh_gt) ** 2, 1)).mean() * 1000)
+
+            # MPVPE from hand vertices
+            mesh_gt_lhand = mesh_gt[smpl_x.hand_vertex_idx['left_hand'], :]
+            mesh_out_lhand = mesh_out[smpl_x.hand_vertex_idx['left_hand'], :]
+            mesh_gt_rhand = mesh_gt[smpl_x.hand_vertex_idx['right_hand'], :]
+            mesh_out_rhand = mesh_out[smpl_x.hand_vertex_idx['right_hand'], :]
+            mesh_out_lhand_align = mesh_out_lhand - np.dot(smpl_x.J_regressor, mesh_out)[
+                                                    smpl_x.J_regressor_idx['lwrist'], None, :] + np.dot(
+                smpl_x.J_regressor, mesh_gt)[smpl_x.J_regressor_idx['lwrist'], None, :]
+            mesh_out_rhand_align = mesh_out_rhand - np.dot(smpl_x.J_regressor, mesh_out)[
+                                                    smpl_x.J_regressor_idx['rwrist'], None, :] + np.dot(
+                smpl_x.J_regressor, mesh_gt)[smpl_x.J_regressor_idx['rwrist'], None, :]
+            eval_result['mpvpe_l_hand'].append(np.sqrt(
+                np.sum((mesh_out_lhand_align - mesh_gt_lhand) ** 2, 1)).mean() * 1000)
+            eval_result['mpvpe_r_hand'].append(np.sqrt(
+                np.sum((mesh_out_rhand_align - mesh_gt_rhand) ** 2, 1)).mean() * 1000)
+            eval_result['mpvpe_hand'].append((np.sqrt(
+                np.sum((mesh_out_lhand_align - mesh_gt_lhand) ** 2, 1)).mean() * 1000 + np.sqrt(
+                np.sum((mesh_out_rhand_align - mesh_gt_rhand) ** 2, 1)).mean() * 1000) / 2.)
+            mesh_out_lhand_align = rigid_align(mesh_out_lhand, mesh_gt_lhand)
+            mesh_out_rhand_align = rigid_align(mesh_out_rhand, mesh_gt_rhand)
+            eval_result['pa_mpvpe_l_hand'].append(np.sqrt(
+                np.sum((mesh_out_lhand_align - mesh_gt_lhand) ** 2, 1)).mean() * 1000)
+            eval_result['pa_mpvpe_r_hand'].append(np.sqrt(
+                np.sum((mesh_out_rhand_align - mesh_gt_rhand) ** 2, 1)).mean() * 1000)
+            eval_result['pa_mpvpe_hand'].append((np.sqrt(
+                np.sum((mesh_out_lhand_align - mesh_gt_lhand) ** 2, 1)).mean() * 1000 + np.sqrt(
+                np.sum((mesh_out_rhand_align - mesh_gt_rhand) ** 2, 1)).mean() * 1000) / 2.)
+
+            # MPVPE from face vertices
+            mesh_gt_face = mesh_gt[smpl_x.face_vertex_idx, :]
+            mesh_out_face = mesh_out[smpl_x.face_vertex_idx, :]
+            mesh_out_face_align = mesh_out_face - np.dot(smpl_x.J_regressor, mesh_out)[smpl_x.J_regressor_idx['neck'],
+                                                  None, :] + np.dot(smpl_x.J_regressor, mesh_gt)[
+                                                             smpl_x.J_regressor_idx['neck'], None, :]
+            eval_result['mpvpe_face'].append(
+                np.sqrt(np.sum((mesh_out_face_align - mesh_gt_face) ** 2, 1)).mean() * 1000)
+            mesh_out_face_align = rigid_align(mesh_out_face, mesh_gt_face)
+            eval_result['pa_mpvpe_face'].append(
+                np.sqrt(np.sum((mesh_out_face_align - mesh_gt_face) ** 2, 1)).mean() * 1000)
+
+            # MPJPE from body joints
+            joint_gt_body = np.dot(smpl_x.j14_regressor, mesh_gt)
+            joint_out_body = np.dot(smpl_x.j14_regressor, mesh_out)
+            joint_out_body_align = rigid_align(joint_out_body, joint_gt_body)
+            eval_result['pa_mpjpe_body'].append(
+                np.sqrt(np.sum((joint_out_body_align - joint_gt_body) ** 2, 1)).mean() * 1000)
+
+            # MPJPE from hand joints
+            joint_gt_lhand = np.dot(smpl_x.orig_hand_regressor['left'], mesh_gt)
+            joint_out_lhand = np.dot(smpl_x.orig_hand_regressor['left'], mesh_out)
+            joint_out_lhand_align = rigid_align(joint_out_lhand, joint_gt_lhand)
+            joint_gt_rhand = np.dot(smpl_x.orig_hand_regressor['right'], mesh_gt)
+            joint_out_rhand = np.dot(smpl_x.orig_hand_regressor['right'], mesh_out)
+            joint_out_rhand_align = rigid_align(joint_out_rhand, joint_gt_rhand)
+            eval_result['pa_mpjpe_l_hand'].append(np.sqrt(
+                np.sum((joint_out_lhand_align - joint_gt_lhand) ** 2, 1)).mean() * 1000)
+            eval_result['pa_mpjpe_r_hand'].append(np.sqrt(
+                np.sum((joint_out_rhand_align - joint_gt_rhand) ** 2, 1)).mean() * 1000)
+            eval_result['pa_mpjpe_hand'].append((np.sqrt(
+                np.sum((joint_out_lhand_align - joint_gt_lhand) ** 2, 1)).mean() * 1000 + np.sqrt(
+                np.sum((joint_out_rhand_align - joint_gt_rhand) ** 2, 1)).mean() * 1000) / 2.)
+        return eval_result
+            
+    def print_eval_result(self, eval_result):
+        print(f'======{cfg.testset}======')
+        print('PA MPVPE (All): %.2f mm' % np.mean(eval_result['pa_mpvpe_all']))
+        print('PA MPVPE (L-Hands): %.2f mm' % np.mean(eval_result['pa_mpvpe_l_hand']))
+        print('PA MPVPE (R-Hands): %.2f mm' % np.mean(eval_result['pa_mpvpe_r_hand']))
+        print('PA MPVPE (Hands): %.2f mm' % np.mean(eval_result['pa_mpvpe_hand']))
+        print('PA MPVPE (Face): %.2f mm' % np.mean(eval_result['pa_mpvpe_face']))
+        print()
+
+        print('MPVPE (All): %.2f mm' % np.mean(eval_result['mpvpe_all']))
+        print('MPVPE (L-Hands): %.2f mm' % np.mean(eval_result['mpvpe_l_hand']))
+        print('MPVPE (R-Hands): %.2f mm' % np.mean(eval_result['mpvpe_r_hand']))
+        print('MPVPE (Hands): %.2f mm' % np.mean(eval_result['mpvpe_hand']))
+        print('MPVPE (Face): %.2f mm' % np.mean(eval_result['mpvpe_face']))
+        print()
+
+        print('PA MPJPE (Body): %.2f mm' % np.mean(eval_result['pa_mpjpe_body']))
+        print('PA MPJPE (L-Hands): %.2f mm' % np.mean(eval_result['pa_mpjpe_l_hand']))
+        print('PA MPJPE (R-Hands): %.2f mm' % np.mean(eval_result['pa_mpjpe_r_hand']))
+        print('PA MPJPE (Hands): %.2f mm' % np.mean(eval_result['pa_mpjpe_hand']))
+
+        f = open(os.path.join(cfg.result_dir, 'result.txt'), 'w')
+        f.write(f'{cfg.testset} dataset \n')
+        f.write('PA MPVPE (All): %.2f mm\n' % np.mean(eval_result['pa_mpvpe_all']))
+        f.write('PA MPVPE (L-Hands): %.2f mm' % np.mean(eval_result['pa_mpvpe_l_hand']))
+        f.write('PA MPVPE (R-Hands): %.2f mm' % np.mean(eval_result['pa_mpvpe_r_hand']))
+        f.write('PA MPVPE (Hands): %.2f mm\n' % np.mean(eval_result['pa_mpvpe_hand']))
+        f.write('PA MPVPE (Face): %.2f mm\n' % np.mean(eval_result['pa_mpvpe_face']))
+        f.write('MPVPE (All): %.2f mm\n' % np.mean(eval_result['mpvpe_all']))
+        f.write('MPVPE (L-Hands): %.2f mm' % np.mean(eval_result['mpvpe_l_hand']))
+        f.write('MPVPE (R-Hands): %.2f mm' % np.mean(eval_result['mpvpe_r_hand']))
+        f.write('MPVPE (Hands): %.2f mm' % np.mean(eval_result['mpvpe_hand']))
+        f.write('MPVPE (Face): %.2f mm\n' % np.mean(eval_result['mpvpe_face']))
+        f.write('PA MPJPE (Body): %.2f mm\n' % np.mean(eval_result['pa_mpjpe_body']))
+        f.write('PA MPJPE (L-Hands): %.2f mm' % np.mean(eval_result['pa_mpjpe_l_hand']))
+        f.write('PA MPJPE (R-Hands): %.2f mm' % np.mean(eval_result['pa_mpjpe_r_hand']))
+        f.write('PA MPJPE (Hands): %.2f mm\n' % np.mean(eval_result['pa_mpjpe_hand']))
+
+    def decompress_keypoints(self, humandata) -> None:
+        """If a key contains 'keypoints', and f'{key}_mask' is in self.keys(),
+        invalid zeros will be inserted to the right places and f'{key}_mask'
+        will be unlocked.
+
+        Raises:
+            KeyError:
+                A key contains 'keypoints' has been found
+                but its corresponding mask is missing.
+        """
+        assert bool(humandata['__keypoints_compressed__']) is True
+        key_pairs = []
+        for key in humandata.files:
+            if key not in ['keypoints2d', 'keypoints3d','keypoints3d_cam']:
+                continue
+            mask_key = f'{key}_mask'
+            if mask_key in humandata.files:
+                print(f'Decompress {key}...')
+                key_pairs.append([key, mask_key])
+        decompressed_dict = {}
+        for kpt_key, mask_key in key_pairs:
+            mask_array = np.asarray(humandata[mask_key])
+            compressed_kpt = humandata[kpt_key]
+            kpt_array = \
+                self.add_zero_pad(compressed_kpt, mask_array)
+            decompressed_dict[kpt_key] = kpt_array
+        return decompressed_dict
+
+    def add_zero_pad(self, compressed_array: np.ndarray,
+                         mask_array: np.ndarray) -> np.ndarray:
+        """Pad zeros to a compressed keypoints array.
+
+        Args:
+            compressed_array (np.ndarray):
+                A compressed keypoints array.
+            mask_array (np.ndarray):
+                The mask records compression relationship.
+
+        Returns:
+            np.ndarray:
+                A keypoints array in full-size.
+        """
+        assert mask_array.sum() == compressed_array.shape[1]
+        data_len, _, dim = compressed_array.shape
+        mask_len = mask_array.shape[0]
+        ret_value = np.zeros(
+            shape=[data_len, mask_len, dim], dtype=compressed_array.dtype)
+        valid_mask_index = np.where(mask_array == 1)[0]
+        ret_value[:, valid_mask_index, :] = compressed_array
+        return ret_value

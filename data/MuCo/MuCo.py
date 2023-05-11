@@ -14,20 +14,18 @@ from utils.transforms import world2cam, cam2pixel, rigid_align
 from humandata import HumanDataset
 
 
-class EgoBody_Kinect(HumanDataset):
+class MuCo(HumanDataset):
     def __init__(self, transform, data_split):
-        super(EgoBody_Kinect, self).__init__(transform, data_split)
+        super(MuCo, self).__init__(transform, data_split)
 
         if self.data_split == 'train':
-            filename = getattr(cfg, 'filename', 'egobody_kinect_train_230503_065_fix_betas.npz')
+            filename = getattr(cfg, 'filename', 'muco3dhp_train.npz')
         else:
-            filename = getattr(cfg, 'filename', 'egobody_kinect_test_230503_043_fix_betas.npz')
+            raise ValueError('MoCo test set is not support')
 
-        self.use_betas_neutral = getattr(cfg, 'egobody_fix_betas', False)
-
-        self.img_dir = osp.join(cfg.data_dir, 'EgoBody')
+        self.img_dir = osp.join(cfg.data_dir, 'MuCo')
         self.annot_path = osp.join(cfg.data_dir, 'preprocessed_datasets', filename)
-        self.img_shape = (1080, 1920)  # (h, w)
+        self.img_shape = (1024, 1024)  # (h, w)
         self.cam_param = {}
 
         # check image shape

@@ -7,11 +7,12 @@ import json
 import cv2
 import torch
 from pycocotools.coco import COCO
-from common.utils.human_models import smpl_x
-from common.utils.preprocessing import load_img, process_bbox, augmentation, process_db_coord, process_human_model_output, resize_bbox
-from common.utils.transforms import rigid_align
+from utils.human_models import smpl_x
+from utils.preprocessing import load_img, process_bbox, augmentation, process_db_coord, process_human_model_output, resize_bbox
+from utils.transforms import rigid_align
 from torch.utils.data.dataset import Dataset
 import random
+import tqdm
 
 class UBody_Part(torch.utils.data.Dataset):
     def __init__(self, transform, data_split, scene):
@@ -84,7 +85,6 @@ class UBody_Part(torch.utils.data.Dataset):
             datalist = []
             i = 0
             for aid in db.anns.keys():
-                # import pdb;pdb.set_trace()
                 i = i + 1
                 if i % cfg.train_sample_interval != 0:
                     continue
@@ -165,7 +165,6 @@ class UBody_Part(torch.utils.data.Dataset):
                              'joint_img': joint_img, 'joint_valid': joint_valid, 'smplx_param': smplx_param,
                              'lhand_bbox': lhand_bbox, 'rhand_bbox': rhand_bbox, 'face_bbox': face_bbox}
                 datalist.append(data_dict)
-                # import pdb;pdb.set_trace()
 
             return datalist
 
@@ -186,6 +185,9 @@ class UBody_Part(torch.utils.data.Dataset):
                 video_name = file_name.split('/')[-2]
                 if 'Trim' in video_name:
                     video_name = video_name.split('_Trim')[0]
+                # if video_name in test_video_list:
+                #     # data to use in test
+                #     import pdb; pdb.set_trace()
                 if video_name not in test_video_list: continue  # exclude the train video
                 img_path = osp.join(self.img_path, file_name)
                 if not os.path.exists(img_path): continue
@@ -512,12 +514,11 @@ class UBody(Dataset):
         self.parts = []
         self.datalist = []
         folder = osp.join(cfg.data_dir, 'UBody', 'images')
-        # import pdb;pdb.set_trace()
-        for scene in os.listdir(folder):
+        for scene in tqdm.tqdm(os.listdir(folder)):
             db = UBody_Part(transform, mode, scene=scene)
             self.dbs.append(db)
             self.datalist += db.datalist
-            break
+            # break
 
         self.db_num = len(self.dbs)
         self.max_db_data_num = max([len(db) for db in self.dbs])
@@ -737,6 +738,7 @@ class UBody(Dataset):
         return eval_result
 
     def print_eval_result(self, eval_result):
+        print('======UBody======')
         print('PA MPVPE (All): %.2f mm' % np.mean(eval_result['pa_mpvpe_all']))
         print('PA MPVPE (Hands): %.2f mm' % np.mean(eval_result['pa_mpvpe_hand']))
         print('PA MPVPE (Face): %.2f mm' % np.mean(eval_result['pa_mpvpe_face']))

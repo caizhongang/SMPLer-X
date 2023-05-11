@@ -24,10 +24,11 @@ agora_fix_betas = True
 agora_fix_global_orient_transl = True
 agora_valid_root_pose = True
 
-dataset_list = ['Human36M', 'MSCOCO', 'MPII', 'AGORA', 'EHF', 'SynBody', 'GTA_Human2','EgoBody_Egocentric', 'EgoBody_Kinect', 'UBody', 'PW3D']
-trainset_3d = ['Human36M']
-trainset_2d = ['MSCOCO', 'MPII', 'UBody', 'AGORA']
-trainset_humandata = ['SynBody', 'GTA_Human2', 'EgoBody_Egocentric']
+dataset_list = ['Human36M', 'MSCOCO', 'MPII', 'AGORA', 'EHF', 'SynBody', 'GTA_Human2', \
+    'EgoBody_Egocentric', 'EgoBody_Kinect', 'UBody', 'PW3D', 'MuCo', 'PROX']
+trainset_3d = []
+trainset_2d = []
+trainset_humandata = ['PROX']
 testset = 'EHF'
 
 # model

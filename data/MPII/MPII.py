@@ -8,7 +8,8 @@ import cv2
 import torch
 from pycocotools.coco import COCO
 from utils.human_models import smpl_x
-from utils.preprocessing import load_img, process_bbox, augmentation, process_db_coord, process_human_model_output
+from utils.preprocessing import load_img, process_bbox, augmentation, process_db_coord, \
+    process_human_model_output
 # from utils.vis import vis_keypoints, vis_mesh, save_obj
 
 class MPII(torch.utils.data.Dataset):
