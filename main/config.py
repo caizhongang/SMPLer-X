@@ -22,8 +22,9 @@ class Config:
         sys.path.insert(0, osp.join(self.cur_dir, 'dinov2_utils'))
         from utils.dir import add_pypath
         add_pypath(osp.join(self.data_dir))
-        for i in range(len(self.dataset_list)):
-            add_pypath(osp.join(self.root_dir, 'data', self.dataset_list[i]))
+        for dataset in os.listdir(self.data_dir):
+            if dataset not in ['preprocessed_datasets', '__pycache__', 'dataset.py']:
+                add_pypath(osp.join(self.root_dir, 'data', dataset))
         add_pypath(osp.join(self.root_dir, 'data'))
         add_pypath(self.data_dir)
                 

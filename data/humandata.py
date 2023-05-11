@@ -46,11 +46,20 @@ class HumanDataset(torch.utils.data.Dataset):
     def load_data(self):
         content = np.load(self.annot_path, allow_pickle=True)
         num_examples = len(content['image_path'])
-        smplx = content['smplx'].item()
 
         print('Start loading humandata', self.annot_path, 'into memory...'); tic = time.time()
         image_path = content['image_path']
         bbox_xywh = content['bbox_xywh']
+
+        if 'smplx' in content:
+            smplx = content['smplx'].item()
+            smpl_as_smplx = False
+        elif 'smpl' in content:
+            smplx = content['smpl'].item()
+            smpl_as_smplx = True
+        else:
+            raise KeyError('No SMPL for SMPLX available, please check keys:\n'
+                        f'{content.files}')
 
         if 'lhand_bbox_xywh' in content and 'rhand_bbox_xywh' in content:
             lhand_bbox_xywh = content['lhand_bbox_xywh']
@@ -72,11 +81,14 @@ class HumanDataset(torch.utils.data.Dataset):
         if 'keypoints3d_cam' in content:
             keypoints3d = decompressed_kps['keypoints3d_cam'][:, self.SMPLX_137_MAPPING, :3] if decompressed \
                 else content['keypoints3d_cam'][:, self.SMPLX_137_MAPPING, :3]  # root-align
+            valid_kps3d = True
         elif 'keypoints3d' in content:
             keypoints3d = decompressed_kps['keypoints3d'][:, self.SMPLX_137_MAPPING, :3] if decompressed \
                  else content['keypoints3d'][:, self.SMPLX_137_MAPPING, :3] # wo root-align
+            valid_kps3d = True
         else:
             keypoints3d = None
+            valid_kps3d = False
 
         keypoints2d = decompressed_kps['keypoints2d'][:, self.SMPLX_137_MAPPING, :2] if decompressed \
             else content['keypoints2d'][:, self.SMPLX_137_MAPPING, :2]
@@ -133,17 +145,28 @@ class HumanDataset(torch.utils.data.Dataset):
             else:
                 face_bbox = None
 
-            joint_cam = keypoints3d[i] if keypoints3d is not None else None
-            joint_img = keypoints2d[i] if keypoints2d is not None else None
+            
+            joint_img = keypoints2d[i]
+            joint_valid = keypoints2d_mask.reshape(-1, 1)
             # num_joints = joint_cam.shape[0]
             # joint_valid = np.ones((num_joints, 1))
-            joint_valid = keypoints3d_mask.reshape(-1, 1) if keypoints3d_mask is not None \
-                else keypoints2d_mask.reshape(-1, 1)
-
+            if valid_kps3d:
+                joint_cam = keypoints3d[i]
+            
             smplx_param = {k: v[i] for k, v in smplx.items()}
             smplx_param['root_pose'] = smplx_param.pop('global_orient')
             smplx_param['shape'] = smplx_param.pop('betas')
-            smplx_param['trans'] = smplx_param.pop('transl')
+            smplx_param['trans'] = smplx_param.pop('transl', np.zeros(3))
+
+            if smpl_as_smplx:
+                smplx_param['shape'] = np.zeros(10, dtype=np.float32) # drop smpl betas for smplx
+                smplx_param['body_pose'] = smplx_param['body_pose'][:21, :] # use smpl body_pose on smplx
+
+                smplx_param['expression'] = np.zeros(10, dtype=np.float32) # dummy
+                smplx_param['leye_pose'] = np.zeros(3, dtype=np.float32) # dummy
+                smplx_param['reye_pose'] = np.zeros(3, dtype=np.float32) # dummy
+                smplx_param['jaw_pose'] = np.zeros(3, dtype=np.float32) # dummy
+                
 
             datalist.append({
                 'img_path': img_path,
@@ -174,9 +197,11 @@ class HumanDataset(torch.utils.data.Dataset):
         img = self.transform(img.astype(np.float32)) / 255.
 
         if self.data_split == 'train':
+            
             # h36m gt
             joint_cam = data['joint_cam']
             if joint_cam is not None:
+                dummy_cord = False
                 joint_cam = joint_cam - joint_cam[self.joint_set['root_joint_idx'], None, :]  # root-relative
             else:
                 # dummy cord as joint_cam
@@ -463,6 +488,7 @@ class HumanDataset(torch.utils.data.Dataset):
             kpt_array = \
                 self.add_zero_pad(compressed_kpt, mask_array)
             decompressed_dict[kpt_key] = kpt_array
+        del humandata
         return decompressed_dict
 
     def add_zero_pad(self, compressed_array: np.ndarray,

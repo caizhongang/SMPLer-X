@@ -31,8 +31,6 @@ for i in range(len(cfg.trainset_humandata)):
     exec('from ' + cfg.trainset_humandata[i] + ' import ' + cfg.trainset_humandata[i])
 exec('from ' + cfg.testset + ' import ' + cfg.testset)
 
-if 'PW3D' not in cfg.dataset_list and cfg.testset == 'PW3D':
-    from PW3D.PW3D import PW3D
 
 class Base(object):
     __metaclass__ = abc.ABCMeta
