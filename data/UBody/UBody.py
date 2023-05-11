@@ -82,11 +82,19 @@ class UBody_Part(torch.utils.data.Dataset):
         # train mode
         if self.data_split == 'train':
             datalist = []
+
+            if hasattr(cfg, 'test_sample_interval'):
+                train_sample_interval = getattr(cfg, 'train_sample_interval')
+            elif hasattr(cfg, f'UBody_test_sample_interval'):
+                train_sample_interval = getattr(cfg, 'UBody_train_sample_interval')
+            else:
+                train_sample_interval = 1
+
             i = 0
             for aid in db.anns.keys():
                 # import pdb;pdb.set_trace()
                 i = i + 1
-                if i % cfg.train_sample_interval != 0:
+                if i % train_sample_interval != 0:
                     continue
                 ann = db.anns[aid]
                 img = db.loadImgs(ann['image_id'])[0]
@@ -160,22 +168,32 @@ class UBody_Part(torch.utils.data.Dataset):
                     smplx_param['smplx_param']['rhand_valid'] = ann['righthand_valid']
                     smplx_param['smplx_param']['face_valid'] = ann['face_valid']
 
-
                 data_dict = {'img_path': img_path, 'img_shape': (img['height'], img['width']), 'bbox': bbox,
                              'joint_img': joint_img, 'joint_valid': joint_valid, 'smplx_param': smplx_param,
                              'lhand_bbox': lhand_bbox, 'rhand_bbox': rhand_bbox, 'face_bbox': face_bbox}
                 datalist.append(data_dict)
                 # import pdb;pdb.set_trace()
 
+            print('[UBody train] original size:', len(db.anns.keys()),
+                  '. Sample interval:', train_sample_interval,
+                  '. Sampled size:', len(datalist))
+
             return datalist
 
         # test mode
         else:
+            if hasattr(cfg, 'test_sample_interval'):
+                test_sample_interval = getattr(cfg, 'test_sample_interval')
+            elif hasattr(cfg, f'UBody_test_sample_interval'):
+                test_sample_interval = getattr(cfg, 'UBody_test_sample_interval')
+            else:
+                test_sample_interval = 1
+
             datalist = []
             i = 0
             for aid in db.anns.keys():
                 i = i + 1
-                if i % cfg.test_sample_interval != 0:
+                if i % test_sample_interval != 0:
                     continue
                 ann = db.anns[aid]
                 img = db.loadImgs(ann['image_id'])[0]
@@ -254,6 +272,11 @@ class UBody_Part(torch.utils.data.Dataset):
                              'joint_img': joint_img, 'joint_valid': joint_valid, 'smplx_param': smplx_param,
                              'lhand_bbox': lhand_bbox, 'rhand_bbox': rhand_bbox, 'face_bbox': face_bbox}
                 datalist.append(data_dict)
+
+            print('[UBody test] original size:', len(db.anns.keys()),
+                  '. Sample interval:', test_sample_interval,
+                  '. Sampled size:', len(datalist))
+
             return datalist
 
     def process_hand_face_bbox(self, bbox, do_flip, img_shape, img2bb_trans):

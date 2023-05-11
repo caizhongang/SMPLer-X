@@ -99,7 +99,9 @@ def get_aug_config():
 
 
 def augmentation(img, bbox, data_split):
-    if data_split == 'train':
+    if getattr(cfg, 'no_aug', False):
+        scale, rot, color_scale, do_flip = 1.0, 0.0, np.array([1, 1, 1]), False
+    elif data_split == 'train':
         scale, rot, color_scale, do_flip = get_aug_config()
     else:
         scale, rot, color_scale, do_flip = 1.0, 0.0, np.array([1, 1, 1]), False

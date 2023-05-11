@@ -32,7 +32,13 @@ class MPII(torch.utils.data.Dataset):
             smplx_params = json.load(f)
 
         datalist = []
+        i = 0
         for aid in db.anns.keys():
+
+            i += 1
+            if self.data_split == 'train' and i % getattr(cfg, 'MPII_train_sample_interval', 1) != 0:
+                continue
+
             ann = db.anns[aid]
             img = db.loadImgs(ann['image_id'])[0]
             imgname = img['file_name']
@@ -61,6 +67,12 @@ class MPII(torch.utils.data.Dataset):
                 'joint_valid': joint_valid,
                 'smplx_param': smplx_param
             })
+
+        if self.data_split == 'train':
+            print('[MPII train] original size:', len(db.anns.keys()),
+                  '. Sample interval:', getattr(cfg, 'MPII_train_sample_interval', 1),
+                  '. Sampled size:', len(datalist))
+
         return datalist
     
     def __len__(self):
