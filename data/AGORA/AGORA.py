@@ -116,6 +116,7 @@ class AGORA(torch.utils.data.Dataset):
             for aid in tqdm.tqdm(db.anns.keys()):
                 # if getattr(cfg, 'exp33', False) and count > 500:
                 #     continue
+                count += 1
 
                 i += 1
                 if self.data_split == 'train' and i % getattr(cfg, 'AGORA_train_sample_interval', 1) != 0:
