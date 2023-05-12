@@ -25,7 +25,7 @@ class MuCo(HumanDataset):
 
         self.img_dir = osp.join(cfg.data_dir, 'MuCo')
         self.annot_path = osp.join(cfg.data_dir, 'preprocessed_datasets', filename)
-        self.img_shape = (1024, 1024)  # (h, w)
+        self.img_shape = (1024, 1024)  # (h, w) 
         self.cam_param = {}
 
         # check image shape
