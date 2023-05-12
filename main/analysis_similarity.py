@@ -23,6 +23,8 @@ from torch.utils.data import Dataset, DataLoader
 import torchvision.transforms as transforms
 from common.utils.distribute_utils import set_seed
 import umap
+from sklearn.manifold import TSNE
+from sklearn.decomposition import PCA
 import matplotlib.pyplot as plt
 
 
@@ -218,6 +220,9 @@ def analyse_appearance():
         img_feat_all = img_feat_all.reshape(img_feat_all.shape[0], -1)
         img_embedding = umap.UMAP(n_neighbors=15, min_dist=0.1, metric='correlation').fit_transform(img_feat_all)
 
+        # sort idxs such that draw datasets with most number of examples first
+        idxs = sorted(idxs, key=lambda x : x[2]-x[1], reverse=True)
+
         # plot
         fig, axs = plt.subplots(1, 1, figsize=(20, 20))
         axs.set_title(f'{encoder_type}')
@@ -292,45 +297,55 @@ def analyse_parameters():
         
         idxs.append([dataset_name, len(factors_all['global_orient']), len(factors_all['global_orient']) + len(global_orient)])
 
-    # position-based
-    for factor in ['joints']:
+    # sort idxs such that draw datasets with most number of examples first
+    idxs = sorted(idxs, key=lambda x : x[2]-x[1], reverse=True)
 
-        feat_all = factors_all[factor]
-        feat_all = np.concatenate(feat_all, axis=0)
-        feat_all = feat_all.reshape(feat_all.shape[0], -1)
-        embedding = umap.UMAP(n_neighbors=15, min_dist=0.1, metric='correlation').fit_transform(feat_all)
+    # # position-based
+    # for factor in ['joints']:
 
-        # plot
-        fig, axs = plt.subplots(1, 1, figsize=(20, 20))
-        axs.set_title(f'{factor}')
-        for dataset_name, start, end in idxs:
-            xs = embedding[start:end, 0]
-            ys = embedding[start:end, 1]
-            axs.scatter(xs, ys, label=dataset_name)
-        axs.legend(loc='upper right')
-        save_path = f'vis_analysis_similarity/factor_{factor}.png'
-        plt.savefig(save_path)
-        print(f'{save_path} saved.')
+    #     feat_all = factors_all[factor]
+    #     feat_all = np.concatenate(feat_all, axis=0)
+    #     feat_all = feat_all.reshape(feat_all.shape[0], -1)
+    #     embedding_umap = umap.UMAP(n_neighbors=15, min_dist=0.1, metric='correlation').fit_transform(feat_all)
+    #     embedding_pca = PCA(n_components=2).fit_transform(feat_all)
+    #     embedding_tsne = TSNE(n_components=2).fit_transform(feat_all)
 
-    # PCA-based
-    for factor in ['betas', 'expression']:
+    #     for embed_name, embedding in [('umap', embedding_umap), ('pca', embedding_pca), ('tsne', embedding_tsne)]:
+    #         # plot
+    #         fig, axs = plt.subplots(1, 1, figsize=(20, 20))
+    #         axs.set_title(f'{factor}({embed_name})')
+    #         for dataset_name, start, end in idxs:
+    #             xs = embedding[start:end, 0]
+    #             ys = embedding[start:end, 1]
+    #             axs.scatter(xs, ys, label=dataset_name)
+    #         axs.legend(loc='upper right')
+    #         save_path = f'vis_analysis_similarity/factor_{factor}_{embed_name}.png'
+    #         plt.savefig(save_path)
+    #         print(f'{save_path} saved.')
 
-        feat_all = factors_all[factor]
-        feat_all = np.concatenate(feat_all, axis=0)
-        feat_all = feat_all.reshape(feat_all.shape[0], -1)
-        embedding = umap.UMAP(n_neighbors=15, min_dist=0.1, metric='correlation').fit_transform(feat_all)
+    # # PCA-based
+    # for factor in ['betas', 'expression']:
 
-        # plot
-        fig, axs = plt.subplots(1, 1, figsize=(20, 20))
-        axs.set_title(f'{factor}')
-        for dataset_name, start, end in idxs:
-            xs = embedding[start:end, 0]
-            ys = embedding[start:end, 1]
-            axs.scatter(xs, ys, label=dataset_name)
-        axs.legend(loc='upper right')
-        save_path = f'vis_analysis_similarity/factor_{factor}.png'
-        plt.savefig(save_path)
-        print(f'{save_path} saved.')
+    #     feat_all = factors_all[factor]
+    #     feat_all = np.concatenate(feat_all, axis=0)
+    #     feat_all = feat_all.reshape(feat_all.shape[0], -1)
+    #     embedding_umap = umap.UMAP(n_neighbors=15, min_dist=0.1, metric='correlation').fit_transform(feat_all)
+    #     embedding_pca = PCA(n_components=2).fit_transform(feat_all)
+    #     embedding_tsne = TSNE(n_components=2).fit_transform(feat_all)
+
+    #     # plot
+    #     for embed_name, embedding in [('umap', embedding_umap), ('pca', embedding_pca), ('tsne', embedding_tsne)]:
+    #         # plot
+    #         fig, axs = plt.subplots(1, 1, figsize=(20, 20))
+    #         axs.set_title(f'{factor}({embed_name})')
+    #         for dataset_name, start, end in idxs:
+    #             xs = embedding[start:end, 0]
+    #             ys = embedding[start:end, 1]
+    #             axs.scatter(xs, ys, label=dataset_name)
+    #         axs.legend(loc='upper right')
+    #         save_path = f'vis_analysis_similarity/factor_{factor}_{embed_name}.png'
+    #         plt.savefig(save_path)
+    #         print(f'{save_path} saved.')
 
     # rotation-based
     for factor in ['global_orient', 'body_pose', 'left_hand_pose', 'right_hand_pose']:
@@ -338,19 +353,23 @@ def analyse_parameters():
         feat_all = factors_all[factor]
         feat_all = np.concatenate(feat_all, axis=0)
         feat_all = feat_all.reshape(feat_all.shape[0], -1)
-        embedding = umap.UMAP(n_neighbors=15, min_dist=0.1, metric='correlation').fit_transform(feat_all)
+        embedding_umap = umap.UMAP(n_neighbors=15, min_dist=0.1, metric='correlation').fit_transform(feat_all)
+        embedding_pca = PCA(n_components=2).fit_transform(feat_all)
+        embedding_tsne = TSNE(n_components=2).fit_transform(feat_all)
 
         # plot
-        fig, axs = plt.subplots(1, 1, figsize=(20, 20))
-        axs.set_title(f'{factor}')
-        for dataset_name, start, end in idxs:
-            xs = embedding[start:end, 0]
-            ys = embedding[start:end, 1]
-            axs.scatter(xs, ys, label=dataset_name)
-        axs.legend(loc='upper right')
-        save_path = f'vis_analysis_similarity/factor_{factor}.png'
-        plt.savefig(save_path)
-        print(f'{save_path} saved.')
+        for embed_name, embedding in [('umap', embedding_umap), ('pca', embedding_pca), ('tsne', embedding_tsne)]:
+            # plot
+            fig, axs = plt.subplots(1, 1, figsize=(20, 20))
+            axs.set_title(f'{factor}({embed_name})')
+            for dataset_name, start, end in idxs:
+                xs = embedding[start:end, 0]
+                ys = embedding[start:end, 1]
+                axs.scatter(xs, ys, label=dataset_name)
+            axs.legend(loc='upper right')
+            save_path = f'vis_analysis_similarity/factor_{factor}_{embed_name}.png'
+            plt.savefig(save_path)
+            print(f'{save_path} saved.')
 
     # COMMENTS:
     # leftover problem: betas has gender, how to compare fairly?
