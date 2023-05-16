@@ -14,18 +14,16 @@ from utils.transforms import world2cam, cam2pixel, rigid_align
 from humandata import HumanDataset
 
 
-class EgoBody_Kinect(HumanDataset):
+class PROX(HumanDataset):
     def __init__(self, transform, data_split):
-        super(EgoBody_Kinect, self).__init__(transform, data_split)
+        super(PROX, self).__init__(transform, data_split)
 
         if self.data_split == 'train':
-            filename = getattr(cfg, 'filename', 'egobody_kinect_train_230503_065_fix_betas.npz')
+            filename = getattr(cfg, 'filename', 'prox_train_smplx.npz')
         else:
-            filename = getattr(cfg, 'filename', 'egobody_kinect_test_230503_043_fix_betas.npz')
+            raise ValueError('PROX test set is not support')
 
-        self.use_betas_neutral = getattr(cfg, 'egobody_fix_betas', False)
-
-        self.img_dir = osp.join(cfg.data_dir, 'EgoBody')
+        self.img_dir = osp.join(cfg.data_dir, 'PROX')
         self.annot_path = osp.join(cfg.data_dir, 'preprocessed_datasets', filename)
         self.img_shape = (1080, 1920)  # (h, w)
         self.cam_param = {}
@@ -36,4 +34,4 @@ class EgoBody_Kinect(HumanDataset):
         assert self.img_shape == img_shape, 'image shape is incorrect: {} vs {}'.format(self.img_shape, img_shape)
 
         # load data
-        self.datalist = self.load_data(train_sample_interval=getattr(cfg, 'EgoBody_Kinect_train_sample_interval', 1))
+        self.datalist = self.load_data()

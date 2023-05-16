@@ -30,7 +30,7 @@ for i in range(len(cfg.trainset_2d)):
 for i in range(len(cfg.trainset_humandata)):
     exec('from ' + cfg.trainset_humandata[i] + ' import ' + cfg.trainset_humandata[i])
 exec('from ' + cfg.testset + ' import ' + cfg.testset)
-from PW3D.PW3D import PW3D
+
 
 class Base(object):
     __metaclass__ = abc.ABCMeta

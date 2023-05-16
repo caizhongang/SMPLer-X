@@ -370,6 +370,15 @@ class Model(nn.Module):
                 out['smpl_mesh_cam_target'] = targets['smpl_mesh_cam']
             if 'bb2img_trans' in meta_info:
                 out['bb2img_trans'] = meta_info['bb2img_trans']
+
+            ### save result for vis and debug
+            # import numpy as np
+            # np.save('./vis/val_exp38_wo_bbox_sup_out.npy', out)
+            # # for key in ['smpl_mesh_cam_target', 'smplx_mesh_cam']:
+            # #         to_save = out[key].cpu().detach().numpy()
+            # #         np.save(f'./vis/val_0509_{key}.npy', to_save)
+            
+            # import pdb;pdb.set_trace()
             return out
 
 def init_weights(m):
