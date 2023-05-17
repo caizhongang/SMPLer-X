@@ -530,6 +530,13 @@ def get_model(mode):
     else:
         raise NotImplementedError('Undefined third party encoder: {}'.format(third_party_encoder))
 
+    # apply adapters
+    adapter_name = getattr(cfg, 'adapter_name', None)
+    if adapter_name is not None:
+        from adapter_utils import apply_adapter
+        encoder = apply_adapter(encoder, adapter_name)
+        print(f"Apply adapter {adapter_name}.")
+
     # body
     body_position_net = PositionNet('body', feat_dim=cfg.feat_dim)
     body_rotation_net = BodyRotationNet(feat_dim=cfg.feat_dim)

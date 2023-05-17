@@ -29,7 +29,12 @@ class PW3D(torch.utils.data.Dataset):
         db = COCO(osp.join(self.data_path, '3DPW_' + self.data_split + '.json'))
 
         datalist = []
+        i = 0
         for aid in db.anns.keys():
+            i += 1
+            if self.data_split == 'train' and i % getattr(cfg, 'PW3D_train_sample_interval', 1) != 0:
+                continue
+
             ann = db.anns[aid]
             image_id = ann['image_id']
             img = db.loadImgs(image_id)[0]
@@ -44,6 +49,11 @@ class PW3D(torch.utils.data.Dataset):
             data_dict = {'img_path': img_path, 'ann_id': aid, 'img_shape': (img['height'], img['width']), 
                 'bbox': bbox, 'smpl_param': smpl_param, 'cam_param': cam_param}
             datalist.append(data_dict)
+
+        if self.data_split == 'train':
+            print('[PW3D train] original size:', len(db.anns.keys()),
+                  '. Sample interval:', getattr(cfg, 'PW3D_train_sample_interval', 1),
+                  '. Sampled size:', len(datalist))
 
         return datalist
 

@@ -83,7 +83,13 @@ class MSCOCO(torch.utils.data.Dataset):
         # train mode
         if self.data_split == 'train':
             datalist = []
+            i = 0
             for aid in db.anns.keys():
+
+                i += 1
+                if self.data_split == 'train' and i % getattr(cfg, 'MSCOCO_train_sample_interval', 1) != 0:
+                    continue
+
                 ann = db.anns[aid]
                 img = db.loadImgs(ann['image_id'])[0]
                 imgname = osp.join('train2017', img['file_name'])
@@ -155,6 +161,10 @@ class MSCOCO(torch.utils.data.Dataset):
                              'joint_img': joint_img, 'joint_valid': joint_valid, 'smplx_param': smplx_param,
                              'lhand_bbox': lhand_bbox, 'rhand_bbox': rhand_bbox, 'face_bbox': face_bbox}
                 datalist.append(data_dict)
+
+            print('[MSCOCO train] original size:', len(db.anns.keys()),
+                  '. Sample interval:', getattr(cfg, 'MSCOCO_train_sample_interval', 1),
+                  '. Sampled size:', len(datalist))
 
             return datalist
 

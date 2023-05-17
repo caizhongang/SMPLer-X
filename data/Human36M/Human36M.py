@@ -80,7 +80,13 @@ class Human36M(torch.utils.data.Dataset):
         db.createIndex()
 
         datalist = []
+        i = 0
         for aid in db.anns.keys():
+
+            i += 1
+            if self.data_split == 'train' and i % getattr(cfg, 'Human36M_train_sample_interval', 1) != 0:
+                continue
+
             ann = db.anns[aid]
             image_id = ann['image_id']
             img = db.loadImgs(image_id)[0]
@@ -123,6 +129,11 @@ class Human36M(torch.utils.data.Dataset):
                 'joint_valid': joint_valid,
                 'smplx_param': smplx_param,
                 'cam_param': cam_param})
+
+        if self.data_split == 'train':
+            print('[Human36M train] original size:', len(db.anns.keys()),
+                  '. Sample interval:', getattr(cfg, 'Human36M_train_sample_interval', 1),
+                  '. Sampled size:', len(datalist))
 
         return datalist
 

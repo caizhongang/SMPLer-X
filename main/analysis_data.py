@@ -1,3 +1,5 @@
+""" Visualize camera pitch distribution of various datasets """
+
 import argparse
 import torch
 import torch.backends.cudnn as cudnn

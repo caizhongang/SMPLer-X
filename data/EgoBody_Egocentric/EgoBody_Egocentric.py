@@ -36,4 +36,4 @@ class EgoBody_Egocentric(HumanDataset):
         assert self.img_shape == img_shape, 'image shape is incorrect: {} vs {}'.format(self.img_shape, img_shape)
 
         # load data
-        self.datalist = self.load_data()
+        self.datalist = self.load_data(train_sample_interval=getattr(cfg, 'EgoBody_Egocentric_train_sample_interval', 1))

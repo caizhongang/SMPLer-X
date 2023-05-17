@@ -16,10 +16,11 @@ from utils.transforms import rigid_align
 import tqdm
 
 class AGORA(torch.utils.data.Dataset):
-    def __init__(self, transform, data_split):
+    def __init__(self, transform, data_split, downsample=None):
         self.transform = transform
         self.data_split = data_split
         self.data_path = osp.join(cfg.data_dir, 'AGORA', 'data')
+        self.downsample = downsample
         self.resolution = (2160, 3840)  # height, width. one of (720, 1280) and (2160, 3840)
         if cfg.agora_benchmark == 'agora_model_test' or cfg.agora_benchmark == 'test_only':
             self.test_set = 'test'
@@ -108,12 +109,19 @@ class AGORA(torch.utils.data.Dataset):
                     db = COCO(osp.join(self.data_path, 'AGORA_validation_fix_global_orient_transl.json'))
                 else:
                     db = COCO(osp.join(self.data_path, 'AGORA_validation.json'))
+
             ### HARDCODE vis for debug
             # count = 0
+            i = 0
             for aid in tqdm.tqdm(db.anns.keys()):
                 # if count > 50:
                 #     continue
                 # count += 1
+
+                i += 1
+                if self.data_split == 'train' and i % getattr(cfg, 'AGORA_train_sample_interval', 1) != 0:
+                    continue
+
                 ann = db.anns[aid]
                 image_id = ann['image_id']
                 img = db.loadImgs(image_id)[0]
@@ -239,6 +247,10 @@ class AGORA(torch.utils.data.Dataset):
                                  'joints_3d_path': joints_3d_path, 'verts_path': verts_path,
                                  'smplx_param_path': smplx_param_path, 'ann_id': str(aid), 'kid': kid, 'gender': gender}
                     datalist.append(data_dict)
+
+            print('[AGORA train] original size:', len(db.anns.keys()),
+                  '. Sample interval:', getattr(cfg, 'AGORA_train_sample_interval', 1),
+                  '. Sampled size:', len(datalist))
 
         elif self.data_split == 'test' and self.test_set == 'test':
             with open(osp.join(self.data_path, 'AGORA_test_bbox.json')) as f:

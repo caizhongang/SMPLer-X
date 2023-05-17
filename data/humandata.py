@@ -48,7 +48,7 @@ class HumanDataset(torch.utils.data.Dataset):
             'flip_pairs': smpl_x.flip_pairs}
         self.joint_set['root_joint_idx'] = self.joint_set['joints_name'].index('Pelvis')
 
-    def load_data(self, is_3d=True):
+    def load_data(self, train_sample_interval=1):
         content = np.load(self.annot_path, allow_pickle=True)
         num_examples = len(content['image_path'])
 
@@ -119,6 +119,8 @@ class HumanDataset(torch.utils.data.Dataset):
 
         datalist = []
         for i in tqdm.tqdm(range(int(num_examples))):
+            if self.data_split == 'train' and i % train_sample_interval != 0:
+                continue
 
             img_path = osp.join(self.img_dir, image_path[i])
             img_shape = self.img_shape
@@ -201,6 +203,12 @@ class HumanDataset(torch.utils.data.Dataset):
 
         # save memory
         del content, image_path, bbox_xywh, lhand_bbox_xywh, rhand_bbox_xywh, face_bbox_xywh, keypoints3d, keypoints2d
+
+        if self.data_split == 'train':
+            print(f'[{self.__class__.__name__} train] original size:', int(num_examples),
+                  '. Sample interval:', train_sample_interval,
+                  '. Sampled size:', len(datalist))
+
         return datalist
 
     def __len__(self):

@@ -34,6 +34,22 @@ cd main/humanbench_utils
 pip install -v -e .
 cd ../..
 
+# install dinov2
+cd main/dinov2_utils
+pip install -v -e .
+cd ../..
+
+# install adapters
+cd main/adapter_utils
+pip install -v -e .
+cd ../..
+pip install pyyaml transformers accelerate
+
+# install shapy-related
+cd data/SHAPY/mesh-mesh-intersection
+srun -p Zoetrope pip install -v -e .
+cd ../../..
+
 # add soft links
 ln -s /mnt/lustrenew/share_data/zoetrope/osx/data dataset
 ln -s /mnt/cache/share_data/zoetrope/body_models common/utils/human_model_files
