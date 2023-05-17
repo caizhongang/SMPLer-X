@@ -111,7 +111,7 @@ class AGORA(torch.utils.data.Dataset):
             ### HARDCODE vis for debug
             # count = 0
             for aid in tqdm.tqdm(db.anns.keys()):
-                # if getattr(cfg, 'exp33', False) and count > 500:
+                # if count > 50:
                 #     continue
                 # count += 1
                 ann = db.anns[aid]

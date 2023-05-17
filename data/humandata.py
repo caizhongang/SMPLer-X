@@ -14,6 +14,11 @@ from utils.transforms import world2cam, cam2pixel, rigid_align
 import tqdm
 import time
 
+KPS2D_KEYS = ['keypoints2d', 'keypoints2d_smplx']
+KPS3D_KEYS = ['keypoints3d_cam', 'keypoints3d', 'keypoints3d_smplx', 'keypoints3d_original'] 
+# keypoints3d_cam with root-align has higher priority, followed by old version key keypoints3d
+# when there is keypoints3d_smplx, use this rather than keypoints3d_original
+
 
 class HumanDataset(torch.utils.data.Dataset):
 
@@ -43,11 +48,11 @@ class HumanDataset(torch.utils.data.Dataset):
             'flip_pairs': smpl_x.flip_pairs}
         self.joint_set['root_joint_idx'] = self.joint_set['joints_name'].index('Pelvis')
 
-    def load_data(self):
+    def load_data(self, is_3d=True):
         content = np.load(self.annot_path, allow_pickle=True)
         num_examples = len(content['image_path'])
 
-        print('Start loading humandata', self.annot_path, 'into memory...'); tic = time.time()
+        print(f'Start loading humandata {self.annot_path} into memory...\nDataset includes: {content.files}'); tic = time.time()
         image_path = content['image_path']
         bbox_xywh = content['bbox_xywh']
 
@@ -78,27 +83,38 @@ class HumanDataset(torch.utils.data.Dataset):
             decompressed_kps = self.decompress_keypoints(content)
             decompressed = True
 
-        if 'keypoints3d_cam' in content:
-            keypoints3d = decompressed_kps['keypoints3d_cam'][:, self.SMPLX_137_MAPPING, :3] if decompressed \
-                else content['keypoints3d_cam'][:, self.SMPLX_137_MAPPING, :3]  # root-align
-            valid_kps3d = True
-        elif 'keypoints3d' in content:
-            keypoints3d = decompressed_kps['keypoints3d'][:, self.SMPLX_137_MAPPING, :3] if decompressed \
-                 else content['keypoints3d'][:, self.SMPLX_137_MAPPING, :3] # wo root-align
-            valid_kps3d = True
-        else:
-            keypoints3d = None
-            valid_kps3d = False
-
-        keypoints2d = decompressed_kps['keypoints2d'][:, self.SMPLX_137_MAPPING, :2] if decompressed \
-            else content['keypoints2d'][:, self.SMPLX_137_MAPPING, :2]
-        keypoints2d_mask = content['keypoints2d_mask'][self.SMPLX_137_MAPPING]
+        keypoints3d = None
+        valid_kps3d = False
+        keypoints3d_mask = None
+        valid_kps3d_mask = False 
+        for kps3d_key in KPS3D_KEYS:
+            if kps3d_key in content:
+                keypoints3d = decompressed_kps[kps3d_key][:, self.SMPLX_137_MAPPING, :3] if decompressed \
+                else content[kps3d_key][:, self.SMPLX_137_MAPPING, :3]
+                valid_kps3d = True
+                
+                if f'{kps3d_key}_mask' in content:
+                    keypoints3d_mask = content[f'{kps3d_key}_mask'][self.SMPLX_137_MAPPING]
+                    valid_kps3d_mask = True
+                elif 'keypoints3d_mask' in content:
+                    keypoints3d_mask = content['keypoints3d_mask'][self.SMPLX_137_MAPPING]
+                    valid_kps3d_mask = True
+                break
         
-        if 'keypoints3d_mask' in content:
-            keypoints3d_mask = content['keypoints3d_mask'][self.SMPLX_137_MAPPING]
-            assert (keypoints3d_mask == keypoints2d_mask).all()
-        else:
-            keypoints3d_mask = None
+        for kps2d_key in KPS2D_KEYS:
+            if kps2d_key in content:
+                keypoints2d = decompressed_kps[kps2d_key][:, self.SMPLX_137_MAPPING, :2] if decompressed \
+                    else content[kps2d_key][:, self.SMPLX_137_MAPPING, :2]
+                
+                if f'{kps2d_key}_mask' in content:
+                    keypoints2d_mask = content[f'{kps2d_key}_mask'][self.SMPLX_137_MAPPING]
+                elif 'keypoints2d_mask' in content:
+                    keypoints2d_mask = content['keypoints2d_mask'][self.SMPLX_137_MAPPING]
+                break
+                
+        mask = keypoints3d_mask if valid_kps3d_mask \
+                else keypoints2d_mask
+        
         print('Done. Time: {:.2f}s'.format(time.time() - tic))
 
         datalist = []
@@ -147,7 +163,7 @@ class HumanDataset(torch.utils.data.Dataset):
 
             
             joint_img = keypoints2d[i]
-            joint_valid = keypoints2d_mask.reshape(-1, 1)
+            joint_valid = mask.reshape(-1, 1)
             # num_joints = joint_cam.shape[0]
             # joint_valid = np.ones((num_joints, 1))
             if valid_kps3d:
@@ -162,11 +178,14 @@ class HumanDataset(torch.utils.data.Dataset):
                 smplx_param['shape'] = np.zeros(10, dtype=np.float32) # drop smpl betas for smplx
                 smplx_param['body_pose'] = smplx_param['body_pose'][:21, :] # use smpl body_pose on smplx
 
-                smplx_param['expression'] = np.zeros(10, dtype=np.float32) # dummy
-                smplx_param['leye_pose'] = np.zeros(3, dtype=np.float32) # dummy
-                smplx_param['reye_pose'] = np.zeros(3, dtype=np.float32) # dummy
-                smplx_param['jaw_pose'] = np.zeros(3, dtype=np.float32) # dummy
+                ### do not give key so later xx_valid will be set false
+                # smplx_param['expression'] = np.zeros(10, dtype=np.float32) # dummy
+                # smplx_param['leye_pose'] = np.zeros(3, dtype=np.float32) # dummy
+                # smplx_param['reye_pose'] = np.zeros(3, dtype=np.float32) # dummy
+                # smplx_param['jaw_pose'] = np.zeros(3, dtype=np.float32) # dummy
                 
+            if np.any(np.isnan(joint_cam)):
+                continue
 
             datalist.append({
                 'img_path': img_path,
@@ -258,8 +277,8 @@ class HumanDataset(torch.utils.data.Dataset):
             face_bbox_size = face_bbox[1] - face_bbox[0]
 
             inputs = {'img': img}
-            targets = {'joint_img': joint_img,
-                       'smplx_joint_img': smplx_joint_img,
+            targets = {'joint_img': joint_img, # keypoints2d
+                       'smplx_joint_img': smplx_joint_img, # projected smplx if valid cam_param, else same as keypoints2d
                        'joint_cam': joint_cam,
                        'smplx_joint_cam': smplx_joint_cam,
                        'smplx_pose': smplx_pose,
@@ -475,7 +494,7 @@ class HumanDataset(torch.utils.data.Dataset):
         assert bool(humandata['__keypoints_compressed__']) is True
         key_pairs = []
         for key in humandata.files:
-            if key not in ['keypoints2d', 'keypoints3d','keypoints3d_cam']:
+            if key not in KPS2D_KEYS + KPS3D_KEYS:
                 continue
             mask_key = f'{key}_mask'
             if mask_key in humandata.files:
