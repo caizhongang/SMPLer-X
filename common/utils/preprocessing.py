@@ -180,6 +180,7 @@ def gen_trans_from_patch_cv(c_x, c_y, src_width, src_height, dst_width, dst_heig
 
 def process_db_coord(joint_img, joint_cam, joint_valid, do_flip, img_shape, flip_pairs, img2bb_trans, rot,
                      src_joints_name, target_joints_name):
+    joint_img_original = joint_img.copy()
     joint_img, joint_cam, joint_valid = joint_img.copy(), joint_cam.copy(), joint_valid.copy()
 
     # flip augmentation
@@ -205,9 +206,10 @@ def process_db_coord(joint_img, joint_cam, joint_valid, do_flip, img_shape, flip
     joint_img[:, 1] = joint_img[:, 1] / cfg.input_img_shape[0] * cfg.output_hm_shape[1]
 
     # check truncation
-    joint_trunc = joint_valid * ((joint_img[:, 0] >= 0) * (joint_img[:, 0] < cfg.output_hm_shape[2]) * \
-                                 (joint_img[:, 1] >= 0) * (joint_img[:, 1] < cfg.output_hm_shape[1]) * \
-                                 (joint_img[:, 2] >= 0) * (joint_img[:, 2] < cfg.output_hm_shape[0])).reshape(-1,
+    # TODO
+    joint_trunc = joint_valid * ((joint_img_original[:, 0] > 0) * (joint_img[:, 0] >= 0) * (joint_img[:, 0] < cfg.output_hm_shape[2]) * \
+                                 (joint_img_original[:, 1] > 0) *(joint_img[:, 1] >= 0) * (joint_img[:, 1] < cfg.output_hm_shape[1]) * \
+                                 (joint_img_original[:, 2] > 0) *(joint_img[:, 2] >= 0) * (joint_img[:, 2] < cfg.output_hm_shape[0])).reshape(-1,
                                                                                                               1).astype(
         np.float32)
 
@@ -300,6 +302,9 @@ def process_human_model_output(human_model_param, cam_param, do_flip, img_shape,
             assert joint_img is not None 
         else:   
             joint_img = cam2pixel(joint_cam, cam_param['focal'], cam_param['princpt'])
+
+        joint_img_original = joint_img.copy()
+
         joint_cam = joint_cam - joint_cam[smpl_x.root_joint_idx, None, :]  # root-relative
         joint_cam[smpl_x.joint_part['lhand'], :] = joint_cam[smpl_x.joint_part['lhand'], :] - joint_cam[
                                                                                               smpl_x.lwrist_idx, None,
@@ -361,6 +366,8 @@ def process_human_model_output(human_model_param, cam_param, do_flip, img_shape,
             assert joint_img is not None 
         else:   
             joint_img = cam2pixel(joint_cam, cam_param['focal'], cam_param['princpt'])
+        
+        joint_img_original = joint_img.copy()
         joint_cam = joint_cam - joint_cam[smpl.root_joint_idx, None, :]  # body root-relative
         joint_img[:, 2] = (joint_cam[:, 2].copy() / (cfg.body_3d_size / 2) + 1) / 2. * cfg.output_hm_shape[
             0]  # body depth discretize
@@ -430,9 +437,10 @@ def process_human_model_output(human_model_param, cam_param, do_flip, img_shape,
     joint_img[:, 1] = joint_img[:, 1] / cfg.input_img_shape[0] * cfg.output_hm_shape[1]
 
     # check truncation
-    joint_trunc = ((joint_img[:, 0] >= 0) * (joint_img[:, 0] < cfg.output_hm_shape[2]) * \
-                   (joint_img[:, 1] >= 0) * (joint_img[:, 1] < cfg.output_hm_shape[1]) * \
-                   (joint_img[:, 2] >= 0) * (joint_img[:, 2] < cfg.output_hm_shape[0])).reshape(-1, 1).astype(
+    # TODO
+    joint_trunc = ((joint_img_original[:, 0] > 0) * (joint_img[:, 0] >= 0) * (joint_img[:, 0] < cfg.output_hm_shape[2]) * \
+                   (joint_img_original[:, 1] > 0) * (joint_img[:, 1] >= 0) * (joint_img[:, 1] < cfg.output_hm_shape[1]) * \
+                   (joint_img_original[:, 2] > 0) * (joint_img[:, 2] >= 0) * (joint_img[:, 2] < cfg.output_hm_shape[0])).reshape(-1, 1).astype(
         np.float32)
 
     # 3D data rotation augmentation

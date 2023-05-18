@@ -19,7 +19,7 @@ class PROX(HumanDataset):
         super(PROX, self).__init__(transform, data_split)
 
         if self.data_split == 'train':
-            filename = getattr(cfg, 'filename', 'prox_train_smplx.npz')
+            filename = getattr(cfg, 'filename', 'prox_train_smplx_new.npz')
         else:
             raise ValueError('PROX test set is not support')
 

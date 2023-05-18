@@ -8,14 +8,21 @@ import copy
 from pycocotools.coco import COCO
 from config import cfg
 from utils.human_models import smpl_x, smpl
-from utils.preprocessing import load_img, process_bbox, augmentation, process_human_model_output
+from utils.preprocessing import load_img, process_bbox, augmentation, process_human_model_output, process_db_coord
 from utils.transforms import rigid_align
+import numpy as np
+
 
 class PW3D(torch.utils.data.Dataset):
     def __init__(self, transform, data_split):
         self.transform = transform
         self.data_split = data_split
         self.data_path = osp.join(cfg.data_dir, 'PW3D', 'data')
+        # 3dpw skeleton
+        self.joint_set = {
+            'joint_num': smpl_x.joint_num,
+            'joints_name': smpl_x.joints_name,
+            'flip_pairs': smpl_x.flip_pairs}
         self.datalist = self.load_data()
 
     def load_data(self):
@@ -39,7 +46,8 @@ class PW3D(torch.utils.data.Dataset):
             smpl_param = ann['smpl_param']
             bbox = process_bbox(np.array(ann['bbox']), img['width'], img['height'], ratio=getattr(cfg, 'bbox_ratio', 1.25))
             if bbox is None: continue
-            data_dict = {'img_path': img_path, 'ann_id': aid, 'img_shape': (img['height'], img['width']), 'bbox': bbox, 'smpl_param': smpl_param, 'cam_param': cam_param}
+            data_dict = {'img_path': img_path, 'ann_id': aid, 'img_shape': (img['height'], img['width']), 
+                'bbox': bbox, 'smpl_param': smpl_param, 'cam_param': cam_param}
             datalist.append(data_dict)
 
         if self.data_split == 'train':
@@ -61,15 +69,71 @@ class PW3D(torch.utils.data.Dataset):
         bbox, smpl_param, cam_param = data['bbox'], data['smpl_param'], data['cam_param']
         img, img2bb_trans, bb2img_trans, rot, do_flip = augmentation(img, bbox, self.data_split)
         img = self.transform(img.astype(np.float32))/255.
-
-        # smpl coordinates
-        smpl_joint_img, smpl_joint_cam, smpl_joint_trunc, smpl_pose, smpl_shape, smpl_mesh_cam_orig = process_human_model_output(smpl_param, cam_param, do_flip, img_shape, img2bb_trans, rot, 'smpl')
-
-        inputs = {'img': img}
-        targets = {'smpl_mesh_cam': smpl_mesh_cam_orig}
-        meta_info = {}
-        return inputs, targets, meta_info
+        cam_param = data['cam_param']
         
+        if self.data_split == 'train':
+
+            smplx_param = {}
+            smplx_param['root_pose'] = np.array(smpl_param['pose']).reshape(-1,3)[:1, :]
+            smplx_param['body_pose'] = np.array(smpl_param['pose']).reshape(-1,3)[1:22, :]
+            smplx_param['trans'] = np.array(smpl_param['trans']).reshape(-1,3)
+            smplx_param['shape'] = np.zeros(10, dtype=np.float32) # drop smpl betas for smplx
+
+
+            # smpl coordinates
+            smplx_joint_img, smplx_joint_cam, smplx_joint_trunc, smplx_pose, smplx_shape, smplx_expr, \
+                smplx_pose_valid, smplx_joint_valid, smplx_expr_valid, smplx_mesh_cam_orig = process_human_model_output(
+                    smplx_param, cam_param, do_flip, img_shape, img2bb_trans, rot, 'smplx',
+                    joint_img=None)
+        
+            smplx_pose_valid = np.tile(smplx_pose_valid[:, None], (1, 3)).reshape(-1)
+            smplx_joint_valid = smplx_joint_valid[:, None]
+            smplx_joint_trunc = smplx_joint_valid * smplx_joint_trunc
+
+            # smpl coordinates
+            smpl_joint_img, _, _, _, _, _ = process_human_model_output(
+                    smpl_param, cam_param, do_flip, img_shape, img2bb_trans, rot, 'smpl',
+                    joint_img=None)
+
+            joint_img = np.zeros_like(smplx_joint_img)
+            joint_img[:22] = smpl_joint_img[:22, :]
+            # joint_img[smpl_x.joint_part['face'], :] = \
+            #     smplx_joint_img[smpl_x.joint_part['face'], :] - smpl_joint_img[9, :]
+            # joint_img[smpl_x.joint_part['lhand'], :] = \
+            #     smplx_joint_img[smpl_x.joint_part['lhand'], :] - smpl_joint_img[22, :]
+            # joint_img[smpl_x.joint_part['rhand'], :] = \
+            #     smplx_joint_img[smpl_x.joint_part['rhand'], :] - smpl_joint_img[23, :]
+
+            # dummy hand/face bbox
+            dummy_center = np.zeros((2), dtype=np.float32)
+            dummy_size = np.zeros((2), dtype=np.float32)
+
+
+            inputs = {'img': img}
+            targets = {'joint_img': joint_img, 'smplx_joint_img': joint_img, 
+                        'joint_cam': smplx_joint_cam, 'smplx_joint_cam': smplx_joint_cam, 
+                        'smplx_pose': smplx_pose, 'smplx_shape': smplx_shape, 'smplx_expr': smplx_expr, 
+                        'lhand_bbox_center': dummy_center, 'lhand_bbox_size': dummy_size, 
+                        'rhand_bbox_center': dummy_center, 'rhand_bbox_size': dummy_size, 
+                        'face_bbox_center': dummy_center, 'face_bbox_size': dummy_size}
+            meta_info = {'joint_valid': smplx_joint_valid, 'joint_trunc': smplx_joint_trunc, 
+                            'smplx_joint_valid': smplx_joint_valid, 'smplx_joint_trunc': smplx_joint_trunc, 
+                            'smplx_pose_valid': smplx_pose_valid, 'smplx_shape_valid': float(False), 
+                            'smplx_expr_valid': float(smplx_expr_valid), 'is_3D': float(True), 
+                            'lhand_bbox_valid': float(False), 'rhand_bbox_valid': float(False), 
+                            'face_bbox_valid': float(False)}
+            return inputs, targets, meta_info
+    
+        else:
+
+            # smpl coordinates
+            smpl_joint_img, smpl_joint_cam, smpl_joint_trunc, smpl_pose, smpl_shape, smpl_mesh_cam_orig = process_human_model_output(smpl_param, cam_param, do_flip, img_shape, img2bb_trans, rot, 'smpl')
+
+            inputs = {'img': img}
+            targets = {'smpl_mesh_cam': smpl_mesh_cam_orig}
+            meta_info = {}
+            return inputs, targets, meta_info
+
     
     def evaluate(self, outs, cur_sample_idx):
         annots = self.datalist

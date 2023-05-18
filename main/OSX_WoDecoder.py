@@ -218,6 +218,12 @@ class Model(nn.Module):
                     loss['smplx_orient'] = self.param_loss(pose, targets['smplx_pose'], meta_info['smplx_pose_valid'])[:, :3] * smplx_orient_weight
 
                 loss['smplx_pose'] = self.param_loss(pose, targets['smplx_pose'], meta_info['smplx_pose_valid']) * smplx_pose_weight
+                ### debug
+                # import numpy as np
+                # check = torch.isnan(loss['smplx_pose']).cpu()
+                # pause = np.any(check.numpy())
+                # if pause:
+                #     import pdb; pdb.set_trace()
             else:
                 loss['smplx_pose'] = self.param_loss(pose, targets['smplx_pose'], meta_info['smplx_pose_valid'])[:, 3:] * smplx_pose_weight
 
@@ -225,7 +231,8 @@ class Model(nn.Module):
                                                   meta_info['smplx_shape_valid'][:, None]) * smplx_shape_weight 
             loss['smplx_expr'] = self.param_loss(expr, targets['smplx_expr'], meta_info['smplx_expr_valid'][:, None])
 
-            loss['joint_cam'] = self.coord_loss(joint_cam, targets['joint_cam'], meta_info['joint_valid'] * meta_info['is_3D'][:, None, None]) * smplx_kps_3d_weight
+            # import pdb;pdb.set_trace()
+            # loss['joint_cam'] = self.coord_loss(joint_cam, targets['joint_cam'], meta_info['joint_valid'] * meta_info['is_3D'][:, None, None]) * smplx_kps_3d_weight
             loss['smplx_joint_cam'] = self.coord_loss(joint_cam, targets['smplx_joint_cam'], meta_info['smplx_joint_valid']) * smplx_kps_3d_weight
             # import pdb; pdb.set_trace()
 
@@ -323,6 +330,18 @@ class Model(nn.Module):
             
             loss['smplx_joint_img'] = self.coord_loss(joint_img, smpl_x.reduce_joint_set(targets['smplx_joint_img']),
                                                       smpl_x.reduce_joint_set(meta_info['smplx_joint_trunc'])) * net_kps_2d_weight
+            
+            # import numpy as np
+            # out = {}
+            # out['img'] = inputs['img']
+            # np.save('./vis/train_pw3d.npy', targets)
+            # np.save('./vis/train_pw3d_out.npy', out)
+            # for key in ['joint_cam', 'smplx_joint_cam']:
+            #     to_save = targets[key].cpu().detach().numpy()
+            #     np.save(f'./vis/val_0517_{key}.npy', to_save)
+        
+            # import pdb;pdb.set_trace()
+
             return loss
         else:
             # change hand output joint_img according to hand bbox
@@ -373,10 +392,10 @@ class Model(nn.Module):
 
             ### save result for vis and debug
             # import numpy as np
-            # np.save('./vis/val_exp38_wo_bbox_sup_out.npy', out)
-            # # for key in ['smpl_mesh_cam_target', 'smplx_mesh_cam']:
-            # #         to_save = out[key].cpu().detach().numpy()
-            # #         np.save(f'./vis/val_0509_{key}.npy', to_save)
+            # # np.save('./vis/val_exp38_wo_bbox_sup_out.npy', out)
+            # for key in ['joint_cam', 'smplx_joint_cam']:
+            #         to_save = targets[key].cpu().detach().numpy()
+            #         np.save(f'./vis/val_0517_{key}.npy', to_save)
             
             # import pdb;pdb.set_trace()
             return out
