@@ -1,0 +1,160 @@
+BackBellyButton:
+  bc:
+  - 0.0
+  - 0.0
+  - 1.0
+  closest_points:
+  - 0.0
+  - -0.261382
+  - -0.102003
+  face_idx: 7861
+BellyButton:
+  bc:
+  - 0.0
+  - 1.0
+  - 0.0
+  closest_points:
+  - -0.0
+  - -0.271119
+  - 0.144329
+  face_idx: 19229
+Crotch:
+  bc:
+  - 0.0
+  - 0.0
+  - 1.0
+  closest_points:
+  - 0.0
+  - -0.53204
+  - 0.036471
+  face_idx: 6194
+ElbowLeft:
+  bc:
+  - 0.0
+  - 1.0
+  - 0.0
+  closest_points:
+  - 0.447234
+  - 0.075995
+  - -0.099974
+  face_idx: 3959
+ElbowRight:
+  bc:
+  - 0.0
+  - 1.0
+  - 0.0
+  closest_points:
+  - -0.447233
+  - 0.075995
+  - -0.099973
+  face_idx: 7846
+FingerTipLeft:
+  bc:
+  - 0.0
+  - 0.0
+  - 1.0
+  closest_points:
+  - 0.918755
+  - 0.085413
+  - -0.084745
+  face_idx: 3469
+FingerTipRight:
+  bc:
+  - 1.3918288479186636e-05
+  - 0.9998084353210817
+  - 0.00017764639043920215
+  closest_points:
+  - -0.9187545563631815
+  - 0.08541207136535614
+  - -0.08474471930198169
+  face_idx: 17602
+HeadTop:
+  bc:
+  - 0.8277337276382795
+  - 0.1422200962169292
+  - 0.030046176144791284
+  closest_points:
+  - -0.0017716260945737938
+  - 0.4363661265424736
+  - -0.015488867245138805
+  face_idx: 2581
+HeelLeft:
+  bc:
+  - 0.0
+  - 1.0
+  - 0.0
+  closest_points:
+  - 0.103005
+  - -1.346656
+  - -0.082664
+  face_idx: 15605
+NippleLeft:
+  bc:
+  - 1.0
+  - 0.0
+  - 0.0
+  closest_points:
+  - 0.09747
+  - -0.032798
+  - 0.103687
+  face_idx: 16306
+NippleRight:
+  bc:
+  - 0.0
+  - 0.0
+  - 1.0
+  closest_points:
+  - -0.09747
+  - -0.032798
+  - 0.103687
+  face_idx: 18402
+ShoulderApose:
+  bc:
+  - 1.0
+  - 0.0
+  - 0.0
+  closest_points:
+  - -0.013092
+  - 0.117681
+  - 0.03777
+  face_idx: 18412
+ShoulderLeft:
+  bc:
+  - 0.0
+  - 0.0
+  - 1.0
+  closest_points:
+  - 0.183378
+  - 0.139588
+  - -0.066495
+  face_idx: 3865
+ShoulderRight:
+  bc:
+  - 0.0
+  - 0.0
+  - 1.0
+  closest_points:
+  - -0.196498
+  - 0.140399
+  - -0.063292
+  face_idx: 18186
+WristLeft:
+  bc:
+  - 1.0
+  - 0.0
+  - 0.0
+  closest_points:
+  - 0.72226
+  - 0.065775
+  - -0.070361
+  face_idx: 3363
+WristRight:
+  bc:
+  - 0.0
+  - 0.0
+  - 1.0
+  closest_points:
+  - -0.72226
+  - 0.065775
+  - -0.070361
+  face_idx: 6722

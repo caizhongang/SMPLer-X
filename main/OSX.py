@@ -438,6 +438,7 @@ class Model(nn.Module):
             # test output
             out = {}
             out['img'] = inputs['img']
+            out['img_path'] = meta_info['img_path']
             out['joint_img'] = joint_img
             out['smplx_joint_proj'] = joint_proj
             out['smplx_mesh_cam'] = mesh_cam
@@ -454,6 +455,8 @@ class Model(nn.Module):
             out['face_bbox'] = face_bbox
             if 'smplx_pose' in targets:
                 out['smplx_mesh_cam_pseudo_gt'] = mesh_pseudo_gt
+            if 'smplx_shape' in targets:
+                out['smplx_shape_target'] = targets['smplx_shape']
             if 'smplx_mesh_cam' in targets:
                 out['smplx_mesh_cam_target'] = targets['smplx_mesh_cam']
             if 'smpl_mesh_cam' in targets:
@@ -468,8 +471,6 @@ class Model(nn.Module):
             #         to_save = out[key].cpu().detach().numpy()
             #         np.save(f'./vis/val_0509_{key}.npy', to_save)
             
-            # import pdb;pdb.set_trace()
-
             return out
 
 def init_weights(m):
