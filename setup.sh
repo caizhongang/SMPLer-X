@@ -1,4 +1,4 @@
-# Setup script on 1988
+# Setup script on 1988, with Zoetrope partition
 # Note you have to setup conda and pip sources first
 
 # set gcc environment
@@ -35,7 +35,7 @@ pip install -v -e .
 cd ../..
 
 # install dinov2
-cd main/dinov2_utils
+cd main/dinov2
 pip install -v -e .
 cd ../..
 
@@ -59,3 +59,4 @@ ln -s /mnt/cache/share_data/zoetrope/osx/pretrained_models/osx_l.pth.tar pretrai
 ln -s /mnt/cache/share_data/zoetrope/osx/pretrained_models/osx_l_agora.pth.tar pretrained_models/osx_l_agora.pth.tar
 ln -s /mnt/cache/share_data/zoetrope/osx/pretrained_models/motionbert/ pretrained_models/motionbert
 ln -s /mnt/cache/share_data/zoetrope/osx/pretrained_models/humanbench/ pretrained_models/humanbench
+ln -s /mnt/cache/share_data/zoetrope/osx/pretrained_models/dinov2/ pretrained_models/dinov2

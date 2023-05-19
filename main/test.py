@@ -14,6 +14,7 @@ def parse_args():
     parser.add_argument('--ckpt_idx', type=int, default=0)
     parser.add_argument('--testset', type=str, default='EHF')
     parser.add_argument('--agora_benchmark', type=str, default='na')
+    parser.add_argument('--shapy_eval_split', type=str, default='val')
     args = parser.parse_args()
     return args
 
@@ -27,7 +28,7 @@ def main():
     # ckpt_path = '/mnt/cache/yinwanqi/01-project/osx/pretrained_models/osx_l_agora.pth.tar'
 
     cfg.get_config_fromfile(config_path)
-    cfg.update_test_config(args.testset, args.agora_benchmark, ckpt_path)
+    cfg.update_test_config(args.testset, args.agora_benchmark, args.shapy_eval_split, ckpt_path)
     cfg.update_config(args.num_gpus, args.exp_name)
 
     cudnn.benchmark = True
@@ -42,11 +43,20 @@ def main():
 
         # forward
         with torch.no_grad():
-            out = tester.model(inputs, targets, meta_info, 'test')
+            model_out = tester.model(inputs, targets, meta_info, 'test')
 
         # save output
-        out = {k: v.cpu().numpy() for k, v in out.items()}
-        for k, v in out.items(): batch_size = out[k].shape[0]
+        batch_size = model_out['img'].shape[0]
+        out = {}
+        for k, v in model_out.items():
+            if isinstance(v, torch.Tensor):
+                out[k] = v.cpu().numpy()
+            elif isinstance(v, list):
+                out[k] = v
+            else:
+                raise ValueError('Undefined type in out. Key: {}; Type: {}.'.format(k, type(v)))
+        # out = {k: v.cpu().numpy() for k, v in out.items()}
+        # for k, v in out.items(): batch_size = out[k].shape[0]
         out = [{k: v[bid] for k, v in out.items()} for bid in range(batch_size)]
 
         # evaluate

@@ -15,11 +15,13 @@ continue_train = False
 pretrained_model_path = None
 
 # dataset setting
-dataset_list = ['Human36M', 'MSCOCO', 'MPII', 'AGORA', 'EHF', 'SynBody', 'GTA_Human2', 'EgoBody']
+dataset_list = ['Human36M', 'MSCOCO', 'MPII', 'AGORA', 'EHF', 'SynBody', 'GTA_Human2', 'EgoBody', 'SHAPY']
 trainset_3d = ['Human36M']
 trainset_2d = ['MSCOCO', 'MPII']
 trainset_humandata = []
-testset = 'EHF'
+# testset = 'EHF'
+testset = 'SHAPY'
+shapy_eval_split = 'test'  # val, test. This can be overwritten by args of test.py
 
 # model
 smplx_loss_weight = 1 #2 for agora_model
