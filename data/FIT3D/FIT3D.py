@@ -41,5 +41,3 @@ class FIT3D(HumanDataset):
             # load data
             datalist_slice = self.load_data()
             self.datalist.extend(datalist_slice)
-
-        import pdb;pdb.set_trace()

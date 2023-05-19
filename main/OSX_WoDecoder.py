@@ -86,6 +86,7 @@ class Model(nn.Module):
         root_cam = joint_cam[:, smpl_x.root_joint_idx, None, :]
         joint_cam = joint_cam - root_cam
         mesh_cam = mesh_cam + cam_trans[:, None, :]  # for rendering
+        joint_cam_wo_ra = joint_cam.clone()
 
         # left hand root (left wrist)-relative 3D coordinatese
         lhand_idx = smpl_x.joint_part['lhand']
@@ -108,7 +109,7 @@ class Model(nn.Module):
         face_cam = face_cam - neck_cam
         joint_cam = torch.cat((joint_cam[:, :face_idx[0], :], face_cam, joint_cam[:, face_idx[-1] + 1:, :]), 1)
 
-        return joint_proj, joint_cam, mesh_cam
+        return joint_proj, joint_cam, joint_cam_wo_ra, mesh_cam
 
     def generate_mesh_gt(self, targets, mode):
         if 'smplx_mesh_cam' in targets:
@@ -130,7 +131,7 @@ class Model(nn.Module):
         cam_trans = targets['smplx_cam_trans']
 
         # final output
-        joint_proj, joint_cam, mesh_cam = self.get_coord(root_pose, body_pose, lhand_pose, rhand_pose, jaw_pose, shape,
+        joint_proj, joint_cam, joint_cam_wo_ra, mesh_cam = self.get_coord(root_pose, body_pose, lhand_pose, rhand_pose, jaw_pose, shape,
                                                          expr, cam_trans, mode)
 
         return mesh_cam
@@ -188,7 +189,7 @@ class Model(nn.Module):
         jaw_pose = rot6d_to_axis_angle(jaw_pose)
 
         # final output
-        joint_proj, joint_cam, mesh_cam = self.get_coord(root_pose, body_pose, lhand_pose, rhand_pose, jaw_pose, shape, expr, cam_trans, mode)
+        joint_proj, joint_cam, joint_cam_wo_ra, mesh_cam = self.get_coord(root_pose, body_pose, lhand_pose, rhand_pose, jaw_pose, shape, expr, cam_trans, mode)
         pose = torch.cat((root_pose, body_pose, lhand_pose, rhand_pose, jaw_pose), 1)
         joint_img = torch.cat((body_joint_img, lhand_joint_img, rhand_joint_img), 1)
 
@@ -231,10 +232,10 @@ class Model(nn.Module):
                                                   meta_info['smplx_shape_valid'][:, None]) * smplx_shape_weight 
             loss['smplx_expr'] = self.param_loss(expr, targets['smplx_expr'], meta_info['smplx_expr_valid'][:, None])
 
-            # import pdb;pdb.set_trace()
-            # loss['joint_cam'] = self.coord_loss(joint_cam, targets['joint_cam'], meta_info['joint_valid'] * meta_info['is_3D'][:, None, None]) * smplx_kps_3d_weight
+            # supervision for keypoints3d wo/ ra
+            loss['joint_cam'] = self.coord_loss(joint_cam_wo_ra, targets['joint_cam'], meta_info['joint_valid'] * meta_info['is_3D'][:, None, None]) * smplx_kps_3d_weight
+            # supervision for keypoints3d w/ ra
             loss['smplx_joint_cam'] = self.coord_loss(joint_cam, targets['smplx_joint_cam'], meta_info['smplx_joint_valid']) * smplx_kps_3d_weight
-            # import pdb; pdb.set_trace()
 
             if not (meta_info['lhand_bbox_valid'] == 0).all():
                 loss['lhand_bbox'] = (self.coord_loss(lhand_bbox_center, targets['lhand_bbox_center'], meta_info['lhand_bbox_valid'][:, None]) +
@@ -248,8 +249,9 @@ class Model(nn.Module):
             
             # if (meta_info['face_bbox_valid'] == 0).all():
             #     out = {}
-            #     targets['original_joint_img'] = targets['joint_img'].clone()
-            #     out['original_joint_proj'] = joint_proj.clone()
+            targets['original_joint_img'] = targets['joint_img'].clone()
+            targets['original_smplx_joint_img'] = targets['smplx_joint_img'].clone()
+            # out['original_joint_proj'] = joint_proj.clone()
             if not (meta_info['lhand_bbox_valid'] + meta_info['rhand_bbox_valid'] == 0).all():
 
                 # change hand target joint_img and joint_trunc according to hand bbox (cfg.output_hm_shape -> downsampled hand bbox space)
@@ -330,16 +332,53 @@ class Model(nn.Module):
             
             loss['smplx_joint_img'] = self.coord_loss(joint_img, smpl_x.reduce_joint_set(targets['smplx_joint_img']),
                                                       smpl_x.reduce_joint_set(meta_info['smplx_joint_trunc'])) * net_kps_2d_weight
-            
+            ### save vis for keypoints checking
+            # import pdb; pdb.set_trace()
             # import numpy as np
+            # import cv2
             # out = {}
+            # datalist = cfg.trainset_humandata + cfg.trainset_2d + cfg.trainset_3d
+            # dataset = datalist[0]
             # out['img'] = inputs['img']
-            # np.save('./vis/train_pw3d.npy', targets)
-            # np.save('./vis/train_pw3d_out.npy', out)
+            # np.save(f'./vis/train_{dataset}.npy', targets)
+            # np.save(f'./vis/train_{dataset}_out.npy', out)
             # for key in ['joint_cam', 'smplx_joint_cam']:
             #     to_save = targets[key].cpu().detach().numpy()
-            #     np.save(f'./vis/val_0517_{key}.npy', to_save)
-        
+            #     np.save(f'./vis/train_{dataset}_{key}.npy', to_save)
+
+            # for sample_id in range(5):
+            #     print(sample_id)
+            #     vis_joint_img = targets['original_joint_img'][sample_id,...].cpu().detach().numpy()
+            #     vis_smplx_joint_img = targets['original_smplx_joint_img'][sample_id,...].cpu().detach().numpy() 
+
+            #     # get image
+            #     image = out['img'][sample_id].cpu().numpy().transpose(1, 2, 0) * 255
+            #     image = image.astype(np.uint8).copy() 
+            #     image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
+
+            #     color = [(0, 0, 255), (0, 255, 0)] # R: pred, G: gt
+            #     for set_id, joint_proj in enumerate([vis_joint_img, vis_smplx_joint_img]): #, joint_2d_gt]):
+            #         th = 3 - set_id
+            #     # restore kps
+            #         joint_proj[:, 0] = joint_proj[:, 0] / cfg.output_hm_shape[2] * cfg.input_img_shape[1] # 
+            #         joint_proj[:, 1] = joint_proj[:, 1] / cfg.output_hm_shape[1] * cfg.input_img_shape[0] # 
+            #         # R: pred, G: gt
+            #         n_kps = joint_proj.shape[0]
+
+            #         for i in range (n_kps):
+            #             # import pdb; pdb.set_trace()
+            #             kps = joint_proj[i]
+            #             # import pdb;pdb.set_trace()
+            #             image = cv2.circle(image, (int(kps[0]),int(kps[1])), radius=th, color=color[set_id], thickness=th)
+
+            #     #     image = cv2.rectangle(image, (int(lhand_bbox[0]),int(lhand_bbox[1])), 
+            #     #             (int(lhand_bbox[2]),int(lhand_bbox[3])), (0, 255, 0), thickness=th)
+            #     #     image = cv2.rectangle(image, (int(rhand_bbox[0]),int(rhand_bbox[1])), 
+            #     #             (int(rhand_bbox[2]),int(rhand_bbox[3])), (0, 0, 255), thickness=th)
+            #     #     image = cv2.rectangle(image, (int(face_bbox[0]),int(face_bbox[1])), 
+            #     #             (int(face_bbox[2]),int(face_bbox[3])), (255, 0, 0), thickness=th)
+            #     cv2.imwrite(f'./vis/joint_img/{dataset}_{sample_id}.jpg',image)
+                    
             # import pdb;pdb.set_trace()
 
             return loss

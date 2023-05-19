@@ -163,6 +163,7 @@ class UBody_Part(torch.utils.data.Dataset):
                 if ann['valid_label'] == 0 or str(aid) not in smplx_params: continue
 
                 smplx_param = smplx_params[str(aid)]
+
                 if 'lhand_valid' not in smplx_param['smplx_param']:
                     smplx_param['smplx_param']['lhand_valid'] = ann['lefthand_valid']
                     smplx_param['smplx_param']['rhand_valid'] = ann['righthand_valid']
@@ -354,7 +355,7 @@ class UBody_Part(torch.utils.data.Dataset):
             dummy_coord = np.zeros((self.joint_set['joint_num'], 3), dtype=np.float32)
             joint_img = data['joint_img']
             joint_img = np.concatenate((joint_img[:, :2], np.zeros_like(joint_img[:, :1])), 1)  # x, y, dummy depth
-            joint_img, joint_cam, joint_valid, joint_trunc = process_db_coord(joint_img, dummy_coord,
+            joint_img, joint_cam, joint_cam_ra ,joint_valid, joint_trunc = process_db_coord(joint_img, dummy_coord,
                                                                               data['joint_valid'], do_flip, img_shape,
                                                                               self.joint_set['flip_pairs'],
                                                                               img2bb_trans, rot,
@@ -364,9 +365,10 @@ class UBody_Part(torch.utils.data.Dataset):
             # smplx coordinates and parameters
             smplx_param = data['smplx_param']
             if smplx_param is not None:
-                smplx_joint_img, smplx_joint_cam, smplx_joint_trunc, smplx_pose, smplx_shape, smplx_expr, smplx_pose_valid, smplx_joint_valid, smplx_expr_valid, smplx_mesh_cam_orig = process_human_model_output(
-                    smplx_param['smplx_param'], smplx_param['cam_param'], do_flip, img_shape, img2bb_trans, rot,
-                    'smplx')
+                smplx_joint_img, smplx_joint_cam, smplx_joint_trunc, smplx_pose, smplx_shape, smplx_expr, \
+                    smplx_pose_valid, smplx_joint_valid, smplx_expr_valid, smplx_mesh_cam_orig = \
+                        process_human_model_output(smplx_param['smplx_param'], smplx_param['cam_param'], 
+                                                   do_flip, img_shape, img2bb_trans, rot, 'smplx')
                 is_valid_fit = True
 
                 """
@@ -378,6 +380,15 @@ class UBody_Part(torch.utils.data.Dataset):
                 _img = vis_keypoints(_img, _tmp)
                 cv2.imwrite('coco_' + str(idx) + '.jpg', _img)
                 """
+                # reverse ra
+                smplx_joint_cam_wo_ra = smplx_joint_cam.copy()
+                smplx_joint_cam_wo_ra[smpl_x.joint_part['lhand'], :] = smplx_joint_cam_wo_ra[smpl_x.joint_part['lhand'], :] \
+                                                                + smplx_joint_cam_wo_ra[smpl_x.lwrist_idx, None, :]  # left hand root-relative
+                smplx_joint_cam_wo_ra[smpl_x.joint_part['rhand'], :] = smplx_joint_cam_wo_ra[smpl_x.joint_part['rhand'], :] \
+                                                                + smplx_joint_cam_wo_ra[smpl_x.rwrist_idx, None, :]  # right hand root-relative
+                smplx_joint_cam_wo_ra[smpl_x.joint_part['face'], :] = smplx_joint_cam_wo_ra[smpl_x.joint_part['face'], :] \
+                                                                + smplx_joint_cam_wo_ra[smpl_x.neck_idx, None,: ]  # face root-relative
+
 
             else:
                 # dummy values
@@ -408,15 +419,16 @@ class UBody_Part(torch.utils.data.Dataset):
                 smplx_shape_valid = True
 
             inputs = {'img': img, }
-            targets = {'joint_img': joint_img, 'joint_cam': joint_cam, 'smplx_joint_img': smplx_joint_img,
-                       'smplx_joint_cam': smplx_joint_cam, 'smplx_pose': smplx_pose, 'smplx_shape': smplx_shape,
-                       'smplx_expr': smplx_expr, 'lhand_bbox_center': lhand_bbox_center,
-                       'lhand_bbox_size': lhand_bbox_size, 'rhand_bbox_center': rhand_bbox_center,
-                       'rhand_bbox_size': rhand_bbox_size, 'face_bbox_center': face_bbox_center,
-                       'face_bbox_size': face_bbox_size}
-            meta_info = {'joint_valid': joint_valid, 'joint_trunc': joint_trunc, 'smplx_joint_valid': smplx_joint_valid,
-                         'smplx_joint_trunc': smplx_joint_trunc, 'smplx_pose_valid': smplx_pose_valid,
-                         'smplx_shape_valid': float(smplx_shape_valid), 'smplx_expr_valid': float(smplx_expr_valid),
+            targets = {'joint_img': smplx_joint_img, 'joint_cam': smplx_joint_cam_wo_ra, 
+                       'smplx_joint_img': smplx_joint_img,'smplx_joint_cam': smplx_joint_cam, 
+                       'smplx_pose': smplx_pose, 'smplx_shape': smplx_shape, 'smplx_expr': smplx_expr, 
+                       'lhand_bbox_center': lhand_bbox_center,'lhand_bbox_size': lhand_bbox_size, 
+                       'rhand_bbox_center': rhand_bbox_center, 'rhand_bbox_size': rhand_bbox_size, 
+                       'face_bbox_center': face_bbox_center, 'face_bbox_size': face_bbox_size}
+            meta_info = {'joint_valid': smplx_joint_valid, 'joint_trunc': smplx_joint_trunc, 
+                         'smplx_joint_valid': smplx_joint_valid,'smplx_joint_trunc': smplx_joint_trunc, 
+                         'smplx_pose_valid': smplx_pose_valid, 'smplx_shape_valid': float(smplx_shape_valid), 
+                         'smplx_expr_valid': float(smplx_expr_valid),
                          'is_3D': float(False), 'lhand_bbox_valid': lhand_bbox_valid,
                          'rhand_bbox_valid': rhand_bbox_valid, 'face_bbox_valid': face_bbox_valid}
             return inputs, targets, meta_info
@@ -452,13 +464,13 @@ class UBody_Part(torch.utils.data.Dataset):
             dummy_coord = np.zeros((self.joint_set['joint_num'], 3), dtype=np.float32)
             joint_img = data['joint_img']
             joint_img = np.concatenate((joint_img[:, :2], np.zeros_like(joint_img[:, :1])), 1)  # x, y, dummy depth
-            joint_img, joint_cam, joint_valid, joint_trunc = process_db_coord(joint_img, dummy_coord,
+            joint_img, joint_cam, joint_cam_ra, joint_valid, joint_trunc = process_db_coord(joint_img, dummy_coord,
                                                                               data['joint_valid'], do_flip, img_shape,
                                                                               self.joint_set['flip_pairs'],
                                                                               img2bb_trans, rot,
                                                                               self.joint_set['joints_name'],
                                                                               smpl_x.joints_name)
-
+            
 
             # smplx coordinates and parameters
             smplx_param = data['smplx_param']
@@ -481,6 +493,14 @@ class UBody_Part(torch.utils.data.Dataset):
                 _img = vis_keypoints(_img, _tmp)
                 cv2.imwrite('coco_' + str(idx) + '.jpg', _img)
                 """
+                # reverse ra
+                smplx_joint_cam_wo_ra = smplx_joint_cam.copy()
+                smplx_joint_cam_wo_ra[smpl_x.joint_part['lhand'], :] = smplx_joint_cam_wo_ra[smpl_x.joint_part['lhand'], :] \
+                                                                + smplx_joint_cam_wo_ra[smpl_x.lwrist_idx, None, :]  # left hand root-relative
+                smplx_joint_cam_wo_ra[smpl_x.joint_part['rhand'], :] = smplx_joint_cam_wo_ra[smpl_x.joint_part['rhand'], :] \
+                                                                + smplx_joint_cam_wo_ra[smpl_x.rwrist_idx, None, :]  # right hand root-relative
+                smplx_joint_cam_wo_ra[smpl_x.joint_part['face'], :] = smplx_joint_cam_wo_ra[smpl_x.joint_part['face'], :] \
+                                                                + smplx_joint_cam_wo_ra[smpl_x.neck_idx, None,: ]  # face root-relative
 
             else:
                 # dummy values
@@ -513,17 +533,18 @@ class UBody_Part(torch.utils.data.Dataset):
                 smplx_shape_valid = True
 
             inputs = {'img': img, }
-            targets = {'joint_img': joint_img, 'joint_cam': joint_cam, 'smplx_joint_img': smplx_joint_img,
-                       'smplx_joint_cam': smplx_joint_cam, 'smplx_pose': smplx_pose, 'smplx_shape': smplx_shape,
-                       'smplx_expr': smplx_expr, 'smplx_cam_trans': smplx_cam_trans,
-                       'lhand_bbox_center': lhand_bbox_center,
+            targets = {'joint_img': smplx_joint_img, 'joint_cam': smplx_joint_cam_wo_ra, 
+                       'smplx_joint_img': smplx_joint_img, 'smplx_joint_cam': smplx_joint_cam, 
+                       'smplx_pose': smplx_pose, 'smplx_shape': smplx_shape, 'smplx_expr': smplx_expr, 
+                       'smplx_cam_trans': smplx_cam_trans, 'lhand_bbox_center': lhand_bbox_center,
                        'lhand_bbox_size': lhand_bbox_size, 'rhand_bbox_center': rhand_bbox_center,
                        'rhand_bbox_size': rhand_bbox_size, 'face_bbox_center': face_bbox_center,
                        'face_bbox_size': face_bbox_size}
-            meta_info = {'joint_valid': joint_valid, 'joint_trunc': joint_trunc, 'smplx_joint_valid': smplx_joint_valid,
-                         'smplx_joint_trunc': smplx_joint_trunc, 'smplx_pose_valid': smplx_pose_valid,
-                         'smplx_shape_valid': float(smplx_shape_valid), 'smplx_expr_valid': float(smplx_expr_valid),
-                         'is_3D': float(False), 'lhand_bbox_valid': lhand_bbox_valid,
+            meta_info = {'joint_valid': smplx_joint_valid, 'joint_trunc': smplx_joint_trunc, 
+                         'smplx_joint_valid': smplx_joint_valid, 'smplx_joint_trunc': smplx_joint_trunc, 
+                         'smplx_pose_valid': smplx_pose_valid, 'smplx_shape_valid': float(smplx_shape_valid), 
+                         'smplx_expr_valid': float(smplx_expr_valid),
+                         'is_3D': float(True), 'lhand_bbox_valid': lhand_bbox_valid,
                          'rhand_bbox_valid': rhand_bbox_valid, 'face_bbox_valid': face_bbox_valid,
                          'bb2img_trans': bb2img_trans}
             return inputs, targets, meta_info

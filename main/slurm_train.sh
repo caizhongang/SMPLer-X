@@ -23,6 +23,6 @@ srun -p ${PARTITION} \
     python train.py \
         --num_gpus ${GPUS} \
         --exp_name output/train_${JOB_NAME} \
-        --master_port 45678 \
+        --master_port $(( $RANDOM % 50 + 45600 )) \
         --config ${CONFIG}
 

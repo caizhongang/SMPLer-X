@@ -14,8 +14,8 @@ from utils.transforms import world2cam, cam2pixel, rigid_align
 import tqdm
 import time
 
-KPS2D_KEYS = ['keypoints2d', 'keypoints2d_smplx']
-KPS3D_KEYS = ['keypoints3d_cam', 'keypoints3d', 'keypoints3d_smplx', 'keypoints3d_original'] 
+KPS2D_KEYS = ['keypoints2d', 'keypoints2d_smplx', 'keypoints2d_smpl', 'keypoints2d_original']
+KPS3D_KEYS = ['keypoints3d_cam', 'keypoints3d', 'keypoints3d_smplx','keypoints3d_smpl' ,'keypoints3d_original'] 
 # keypoints3d_cam with root-align has higher priority, followed by old version key keypoints3d
 # when there is keypoints3d_smplx, use this rather than keypoints3d_original
 
@@ -51,20 +51,39 @@ class HumanDataset(torch.utils.data.Dataset):
     def load_data(self, train_sample_interval=1):
         content = np.load(self.annot_path, allow_pickle=True)
         num_examples = len(content['image_path'])
+        if 'meta' in content:
+            meta = content['meta'].item()
+        else:
+            meta = None
 
         print(f'Start loading humandata {self.annot_path} into memory...\nDataset includes: {content.files}'); tic = time.time()
         image_path = content['image_path']
+
+        if meta is not None and 'height' in meta:
+            height = np.array(meta['height'])
+            width = np.array(meta['width'])
+            image_shape = np.stack([height, width], axis=-1)
+        else:
+            image_shape = None
+        
+        # import pdb;pdb.set_trace()
+
         bbox_xywh = content['bbox_xywh']
 
         if 'smplx' in content:
             smplx = content['smplx'].item()
-            smpl_as_smplx = False
+            as_smplx = 'smplx'
         elif 'smpl' in content:
             smplx = content['smpl'].item()
-            smpl_as_smplx = True
+            as_smplx = 'smpl'
+        elif 'smplh' in content:
+            smplx = content['smplh'].item()
+            as_smplx = 'smplh'
         else:
             raise KeyError('No SMPL for SMPLX available, please check keys:\n'
                         f'{content.files}')
+
+        print('Smplx param', smplx.keys())
 
         if 'lhand_bbox_xywh' in content and 'rhand_bbox_xywh' in content:
             lhand_bbox_xywh = content['lhand_bbox_xywh']
@@ -111,7 +130,7 @@ class HumanDataset(torch.utils.data.Dataset):
                 elif 'keypoints2d_mask' in content:
                     keypoints2d_mask = content['keypoints2d_mask'][self.SMPLX_137_MAPPING]
                 break
-                
+
         mask = keypoints3d_mask if valid_kps3d_mask \
                 else keypoints2d_mask
         
@@ -123,7 +142,7 @@ class HumanDataset(torch.utils.data.Dataset):
                 continue
 
             img_path = osp.join(self.img_dir, image_path[i])
-            img_shape = self.img_shape
+            img_shape = image_shape[i] if image_shape is not None else self.img_shape
 
             bbox = bbox_xywh[i][:4]
             if hasattr(cfg, 'bbox_ratio'):
@@ -175,19 +194,39 @@ class HumanDataset(torch.utils.data.Dataset):
             smplx_param['root_pose'] = smplx_param.pop('global_orient')
             smplx_param['shape'] = smplx_param.pop('betas')
             smplx_param['trans'] = smplx_param.pop('transl', np.zeros(3))
+            smplx_param['lhand_pose'] = smplx_param.pop('left_hand_pose', None)
+            smplx_param['rhand_pose'] = smplx_param.pop('right_hand_pose', None)
+            smplx_param['expr'] = smplx_param.pop('expression', None)
 
-            if smpl_as_smplx:
+            # TODO do not fix betas, give up shape supervision
+            if 'betas_neutral' in smplx_param:
+                smplx_param['shape'] = smplx_param.pop('betas_neutral')
+                # smplx_param['shape'] = np.zeros(10, dtype=np.float32)
+
+            if as_smplx == 'smpl':
                 smplx_param['shape'] = np.zeros(10, dtype=np.float32) # drop smpl betas for smplx
                 smplx_param['body_pose'] = smplx_param['body_pose'][:21, :] # use smpl body_pose on smplx
 
-                ### do not give key so later xx_valid will be set false
-                # smplx_param['expression'] = np.zeros(10, dtype=np.float32) # dummy
-                # smplx_param['leye_pose'] = np.zeros(3, dtype=np.float32) # dummy
-                # smplx_param['reye_pose'] = np.zeros(3, dtype=np.float32) # dummy
-                # smplx_param['jaw_pose'] = np.zeros(3, dtype=np.float32) # dummy
-                
+            if as_smplx == 'smplh':
+                smplx_param['shape'] = np.zeros(10, dtype=np.float32) # drop smpl betas for smplx
+
+    
+            if smplx_param['lhand_pose'] is None:
+                smplx_param['lhand_valid'] = False
+            else:
+                smplx_param['lhand_valid'] = True
+            if smplx_param['rhand_pose'] is None:
+                smplx_param['rhand_valid'] = False
+            else:
+                smplx_param['rhand_valid'] = True
+            if smplx_param['expr'] is None:
+                smplx_param['face_valid'] = False
+            else:
+                smplx_param['face_valid'] = True
+
             if np.any(np.isnan(joint_cam)):
                 continue
+            # import pdb; pdb.set_trace()
 
             datalist.append({
                 'img_path': img_path,
@@ -240,10 +279,10 @@ class HumanDataset(torch.utils.data.Dataset):
             if not dummy_cord: 
                 joint_img[:, 2] = (joint_img[:, 2] / (cfg.body_3d_size / 2) + 1) / 2. * cfg.output_hm_shape[0]  # discretize depth
             
-            joint_img, joint_cam, joint_valid, joint_trunc = process_db_coord(
+            joint_img_aug, joint_cam_wo_ra, joint_cam_ra, joint_valid, joint_trunc = process_db_coord(
                 joint_img, joint_cam, data['joint_valid'], do_flip, img_shape,
                 self.joint_set['flip_pairs'], img2bb_trans, rot, self.joint_set['joints_name'], smpl_x.joints_name)
-
+            
             # smplx coordinates and parameters
             smplx_param = data['smplx_param']
             smplx_joint_img, smplx_joint_cam, smplx_joint_trunc, smplx_pose, smplx_shape, smplx_expr, \
@@ -268,7 +307,10 @@ class HumanDataset(torch.utils.data.Dataset):
             #     smplx_joint_valid[smpl_x.joints_name.index(name)] = 0
             smplx_joint_valid = smplx_joint_valid[:, None]
             smplx_joint_trunc = smplx_joint_valid * smplx_joint_trunc
-            smplx_shape_valid = True
+            if not (smplx_shape == 0).all():
+                smplx_shape_valid = True
+            else: 
+                smplx_shape_valid = False
 
             # hand and face bbox transform
             lhand_bbox, lhand_bbox_valid = self.process_hand_face_bbox(data['lhand_bbox'], do_flip, img_shape, img2bb_trans)
@@ -285,10 +327,10 @@ class HumanDataset(torch.utils.data.Dataset):
             face_bbox_size = face_bbox[1] - face_bbox[0]
 
             inputs = {'img': img}
-            targets = {'joint_img': joint_img, # keypoints2d
-                       'smplx_joint_img': smplx_joint_img, # projected smplx if valid cam_param, else same as keypoints2d
-                       'joint_cam': joint_cam,
-                       'smplx_joint_cam': smplx_joint_cam,
+            targets = {'joint_img': joint_img_aug, # keypoints2d
+                       'smplx_joint_img': joint_img_aug, #smplx_joint_img, # projected smplx if valid cam_param, else same as keypoints2d
+                       'joint_cam': joint_cam_wo_ra, # joint_cam actually not used in any loss, # raw kps3d probably without ra
+                       'smplx_joint_cam': smplx_joint_cam if dummy_cord else joint_cam_ra, # kps3d with body, face, hand ra
                        'smplx_pose': smplx_pose,
                        'smplx_shape': smplx_shape,
                        'smplx_expr': smplx_expr,
@@ -297,8 +339,8 @@ class HumanDataset(torch.utils.data.Dataset):
                        'face_bbox_center': face_bbox_center, 'face_bbox_size': face_bbox_size}
             meta_info = {'joint_valid': joint_valid,
                          'joint_trunc': joint_trunc,
-                         'smplx_joint_valid': smplx_joint_valid,
-                         'smplx_joint_trunc': smplx_joint_trunc,
+                         'smplx_joint_valid': smplx_joint_valid if dummy_cord else joint_valid,
+                         'smplx_joint_trunc': smplx_joint_trunc if dummy_cord else joint_trunc,
                          'smplx_pose_valid': smplx_pose_valid,
                          'smplx_shape_valid': float(smplx_shape_valid),
                          'smplx_expr_valid': float(smplx_expr_valid),
@@ -312,7 +354,7 @@ class HumanDataset(torch.utils.data.Dataset):
             joint_img = data['joint_img']
             joint_img = np.concatenate((joint_img[:, :2], joint_cam[:, 2:]), 1)  # x, y, depth
             joint_img[:, 2] = (joint_img[:, 2] / (cfg.body_3d_size / 2) + 1) / 2. * cfg.output_hm_shape[0]  # discretize depth
-            joint_img, joint_cam, joint_valid, joint_trunc = process_db_coord(
+            joint_img, joint_cam, joint_cam_ra, joint_valid, joint_trunc = process_db_coord(
                 joint_img, joint_cam, data['joint_valid'], do_flip, img_shape,
                 self.joint_set['flip_pairs'], img2bb_trans, rot, self.joint_set['joints_name'], smpl_x.joints_name)
             # smplx coordinates and parameters

@@ -215,10 +215,24 @@ def process_db_coord(joint_img, joint_cam, joint_valid, do_flip, img_shape, flip
 
     # transform joints to target db joints
     joint_img = transform_joint_to_other_db(joint_img, src_joints_name, target_joints_name)
-    joint_cam = transform_joint_to_other_db(joint_cam, src_joints_name, target_joints_name)
+    joint_cam_wo_ra = transform_joint_to_other_db(joint_cam, src_joints_name, target_joints_name)
     joint_valid = transform_joint_to_other_db(joint_valid, src_joints_name, target_joints_name)
     joint_trunc = transform_joint_to_other_db(joint_trunc, src_joints_name, target_joints_name)
-    return joint_img, joint_cam, joint_valid, joint_trunc
+
+    # root-alignment, for joint_cam input wo ra
+    joint_cam_ra = joint_cam_wo_ra.copy()
+    joint_cam_ra = joint_cam_ra - joint_cam_ra[smpl_x.root_joint_idx, None, :]  # root-relative
+    joint_cam_ra[smpl_x.joint_part['lhand'], :] = joint_cam_ra[smpl_x.joint_part['lhand'], :] - joint_cam_ra[
+                                                                                            smpl_x.lwrist_idx, None,
+                                                                                            :]  # left hand root-relative
+    joint_cam_ra[smpl_x.joint_part['rhand'], :] = joint_cam_ra[smpl_x.joint_part['rhand'], :] - joint_cam_ra[
+                                                                                            smpl_x.rwrist_idx, None,
+                                                                                            :]  # right hand root-relative
+    joint_cam_ra[smpl_x.joint_part['face'], :] = joint_cam_ra[smpl_x.joint_part['face'], :] - joint_cam_ra[smpl_x.neck_idx,
+                                                                                        None,
+                                                                                        :]  # face root-relative
+
+    return joint_img, joint_cam_wo_ra, joint_cam_ra, joint_valid, joint_trunc
 
 
 def process_human_model_output(human_model_param, cam_param, do_flip, img_shape, img2bb_trans, rot, human_model_type, joint_img=None):

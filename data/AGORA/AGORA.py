@@ -435,12 +435,22 @@ class AGORA(torch.utils.data.Dataset):
                                                                               cfg.face_3d_size / 2) + 1) / 2. * \
                                                                  cfg.output_hm_shape[0]  # face depth discretize
             joint_valid = np.ones_like(joint_img[:, :1])
-            joint_img, joint_cam, joint_valid, joint_trunc = process_db_coord(joint_img, joint_cam, joint_valid,
+            # alr ra when passed into this function
+            joint_img, joint_cam_ra, _, joint_valid, joint_trunc = process_db_coord(joint_img, joint_cam, joint_valid,
                                                                               do_flip, img_shape,
                                                                               self.joint_set['flip_pairs'],
                                                                               img2bb_trans, rot,
                                                                               self.joint_set['joints_name'],
                                                                               smpl_x.joints_name)
+            # reverse ra
+            joint_cam_wo_ra = joint_cam_ra.copy()
+            joint_cam_wo_ra[smpl_x.joint_part['lhand'], :] = joint_cam_wo_ra[smpl_x.joint_part['lhand'], :] \
+                                                            + joint_cam_wo_ra[smpl_x.lwrist_idx, None, :]  # left hand root-relative
+            joint_cam_wo_ra[smpl_x.joint_part['rhand'], :] = joint_cam_wo_ra[smpl_x.joint_part['rhand'], :] \
+                                                            + joint_cam_wo_ra[smpl_x.rwrist_idx, None, :]  # right hand root-relative
+            joint_cam_wo_ra[smpl_x.joint_part['face'], :] = joint_cam_wo_ra[smpl_x.joint_part['face'], :] \
+                                                            + joint_cam_wo_ra[smpl_x.neck_idx, None,: ]  # face root-relative
+
 
             """
             # for debug
@@ -496,22 +506,17 @@ class AGORA(torch.utils.data.Dataset):
                 smplx_pose_valid[:3] = 0  # global orient of the provided parameter is a rotation to world coordinate system. I want camera coordinate system.
             smplx_shape_valid = True
             inputs = {'img': img}
-            targets = {'joint_img': joint_img, 'joint_cam': joint_cam, 'smplx_joint_img': joint_img,
-                       'smplx_joint_cam': joint_cam, 'smplx_pose': smplx_pose, 'smplx_shape': smplx_shape,
-                       'smplx_expr': smplx_expr, 'lhand_bbox_center': lhand_bbox_center,
-                       'lhand_bbox_size': lhand_bbox_size, 'rhand_bbox_center': rhand_bbox_center,
-                       'rhand_bbox_size': rhand_bbox_size, 'face_bbox_center': face_bbox_center,
-                       'face_bbox_size': face_bbox_size,
-                        }   
-                        ### HARDCODE vis for debug
-                        # 'mesh_rot_': mesh_rot_, 'joint_cam_': joint_cam_, 'mesh_orig': mesh_orig, 'joint_cam_orig': joint_cam_orig, 'joint_cam_orig_': joint_cam_orig_}
-            meta_info = {'joint_valid': joint_valid, 'joint_trunc': joint_trunc,
-                         'smplx_joint_valid': np.zeros_like(joint_valid),
-                         'smplx_joint_trunc': np.zeros_like(joint_trunc), 'smplx_pose_valid': smplx_pose_valid,
-                         'smplx_shape_valid': float(smplx_shape_valid), 'smplx_expr_valid': float(smplx_expr_valid),
-                         'is_3D': float(True), 'lhand_bbox_valid': lhand_bbox_valid,
-                         'rhand_bbox_valid': rhand_bbox_valid, 'face_bbox_valid': face_bbox_valid,
-                         }
+            targets = {'joint_img': joint_img, 'joint_cam': joint_cam_wo_ra, #from annot
+                       'smplx_joint_img': joint_img, 'smplx_joint_cam': joint_cam_ra, #_smplx_joint_cam, # from smplx param w/ ra
+                       'smplx_pose': smplx_pose, 'smplx_shape': smplx_shape, 'smplx_expr': smplx_expr, 
+                       'lhand_bbox_center': lhand_bbox_center, 'lhand_bbox_size': lhand_bbox_size, 
+                       'rhand_bbox_center': rhand_bbox_center, 'rhand_bbox_size': rhand_bbox_size, 
+                       'face_bbox_center': face_bbox_center, 'face_bbox_size': face_bbox_size}
+            meta_info = {'joint_valid': joint_valid, 'joint_trunc': joint_trunc, 
+                         'smplx_joint_valid': joint_valid, 'smplx_joint_trunc': joint_trunc, 
+                         'smplx_pose_valid': smplx_pose_valid, 'smplx_shape_valid': float(smplx_shape_valid), 
+                         'smplx_expr_valid': float(smplx_expr_valid), 'is_3D': float(True), 
+                         'lhand_bbox_valid': lhand_bbox_valid, 'rhand_bbox_valid': rhand_bbox_valid, 'face_bbox_valid': face_bbox_valid}
                         ### HARDCODE vis for debug
                         #  'gt_3d_path': data['joints_3d_path'], 'smplx_path': data['smplx_param_path'], 'id': idx}
             return inputs, targets, meta_info

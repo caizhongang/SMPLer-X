@@ -276,7 +276,7 @@ class MSCOCO(torch.utils.data.Dataset):
             dummy_coord = np.zeros((self.joint_set['joint_num'], 3), dtype=np.float32)
             joint_img = data['joint_img']
             joint_img = np.concatenate((joint_img[:, :2], np.zeros_like(joint_img[:, :1])), 1)  # x, y, dummy depth
-            joint_img, joint_cam, joint_valid, joint_trunc = process_db_coord(joint_img, dummy_coord,
+            joint_img, joint_cam, joint_cam_ra, joint_valid, joint_trunc = process_db_coord(joint_img, dummy_coord,
                                                                               data['joint_valid'], do_flip, img_shape,
                                                                               self.joint_set['flip_pairs'],
                                                                               img2bb_trans, rot,

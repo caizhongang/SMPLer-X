@@ -85,6 +85,17 @@ class PW3D(torch.utils.data.Dataset):
                 smplx_pose_valid, smplx_joint_valid, smplx_expr_valid, smplx_mesh_cam_orig = process_human_model_output(
                     smplx_param, cam_param, do_flip, img_shape, img2bb_trans, rot, 'smplx',
                     joint_img=None)
+            
+            # reverse ra
+            smplx_joint_cam_wo_ra = smplx_joint_cam.copy()
+            smplx_joint_cam_wo_ra[smpl_x.joint_part['lhand'], :] = smplx_joint_cam_wo_ra[smpl_x.joint_part['lhand'], :] \
+                                                            + smplx_joint_cam_wo_ra[smpl_x.lwrist_idx, None, :]  # left hand root-relative
+            smplx_joint_cam_wo_ra[smpl_x.joint_part['rhand'], :] = smplx_joint_cam_wo_ra[smpl_x.joint_part['rhand'], :] \
+                                                            + smplx_joint_cam_wo_ra[smpl_x.rwrist_idx, None, :]  # right hand root-relative
+            smplx_joint_cam_wo_ra[smpl_x.joint_part['face'], :] = smplx_joint_cam_wo_ra[smpl_x.joint_part['face'], :] \
+                                                            + smplx_joint_cam_wo_ra[smpl_x.neck_idx, None,: ]  # face root-relative
+
+
         
             smplx_pose_valid = np.tile(smplx_pose_valid[:, None], (1, 3)).reshape(-1)
             smplx_joint_valid = smplx_joint_valid[:, None]
@@ -97,12 +108,6 @@ class PW3D(torch.utils.data.Dataset):
 
             joint_img = np.zeros_like(smplx_joint_img)
             joint_img[:22] = smpl_joint_img[:22, :]
-            # joint_img[smpl_x.joint_part['face'], :] = \
-            #     smplx_joint_img[smpl_x.joint_part['face'], :] - smpl_joint_img[9, :]
-            # joint_img[smpl_x.joint_part['lhand'], :] = \
-            #     smplx_joint_img[smpl_x.joint_part['lhand'], :] - smpl_joint_img[22, :]
-            # joint_img[smpl_x.joint_part['rhand'], :] = \
-            #     smplx_joint_img[smpl_x.joint_part['rhand'], :] - smpl_joint_img[23, :]
 
             # dummy hand/face bbox
             dummy_center = np.zeros((2), dtype=np.float32)
@@ -111,7 +116,7 @@ class PW3D(torch.utils.data.Dataset):
 
             inputs = {'img': img}
             targets = {'joint_img': joint_img, 'smplx_joint_img': joint_img, 
-                        'joint_cam': smplx_joint_cam, 'smplx_joint_cam': smplx_joint_cam, 
+                        'joint_cam': smplx_joint_cam_wo_ra, 'smplx_joint_cam': smplx_joint_cam, 
                         'smplx_pose': smplx_pose, 'smplx_shape': smplx_shape, 'smplx_expr': smplx_expr, 
                         'lhand_bbox_center': dummy_center, 'lhand_bbox_size': dummy_size, 
                         'rhand_bbox_center': dummy_center, 'rhand_bbox_size': dummy_size, 
