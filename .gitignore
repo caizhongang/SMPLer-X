@@ -7,6 +7,11 @@ output
 *.npy
 *.tar
 main/vis
+main/vis*
+tool/AGORA/vis*
+tool/SHAPY/vis*
 demo/
 *egg-info/
 .idea/
+data/SHAPY/mesh-mesh-intersection/build/
+data/SHAPY/mesh-mesh-intersection/mesh_mesh_intersect_cuda.cpython-38-x86_64-linux-gnu.so

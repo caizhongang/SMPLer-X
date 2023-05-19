@@ -1,0 +1,111 @@
+A:
+- FingerTipRight
+- FingerTipLeft
+- 0
+- - 0
+  - 0
+  - 0.2
+BW:
+- BellyButton
+- 0
+- - 0.0
+  - 0
+  - 0.15
+BW_p:
+- BellyButton
+- 0
+- - 0.0
+  - 0
+  - 0
+CW:
+- NippleRight
+- 0
+- - 0.0
+  - 0
+  - 0.2
+CW_p:
+- NippleRight
+- 0
+- - 0.0
+  - 0
+  - 0
+DBB:
+- BackBellyButton
+- BellyButton
+- 2
+- - 0.15
+  - 0
+  - 0
+H:
+- HeelLeft
+- HeadTop
+- 1
+- - -0.15
+  - 0
+  - 0.0
+HB:
+- HeelLeft
+- NippleRight
+- NippleLeft
+- 1
+- - -0.1
+  - 0
+  - 0.0
+HBB:
+- HeelLeft
+- BellyButton
+- 1
+- - -0.05
+  - 0
+  - 0.0
+HI:
+- HeelLeft
+- Crotch
+- 1
+- - 0
+  - 0
+  - 0
+IW:
+- Crotch
+- 0
+- - 0.0
+  - 0
+  - 0.15
+IW_p:
+- Crotch
+- 0
+- - 0.0
+  - 0
+  - 0
+SW:
+- ShoulderApose
+- 0
+- - 0
+  - 0
+  - 0.1
+V: []
+W2E:
+- ElbowRight
+- WristRight
+- ElbowLeft
+- WristLeft
+- 0
+- - 0
+  - 0.0
+  - 0.1
+W2S:
+- ShoulderRight
+- WristRight
+- ShoulderLeft
+- WristLeft
+- 0
+- - 0
+  - 0.0
+  - 0.1
+W2W:
+- WristRight
+- WristLeft
+- 0
+- - 0
+  - -0.0
+  - 0.15

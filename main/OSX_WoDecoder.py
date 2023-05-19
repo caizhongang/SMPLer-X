@@ -367,6 +367,7 @@ class Model(nn.Module):
             # test output
             out = {}
             out['img'] = inputs['img']
+            out['img_path'] = meta_info['img_path']
             out['joint_img'] = joint_img
             out['smplx_joint_proj'] = joint_proj
             out['smplx_mesh_cam'] = mesh_cam
