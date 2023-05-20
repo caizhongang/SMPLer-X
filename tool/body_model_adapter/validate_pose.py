@@ -187,6 +187,13 @@ def validate_agora():
         print(gender, 'to neutral, pve =', np.array(res).mean(), '; wo adapt, pve =', np.array(res_wo_adapt).mean())
 
 
+def validate_egobody():
+    """ on 1988 """
+    
+
+
+
 if __name__ == '__main__':
-    validate_random()
+    # validate_random()
     # validate_agora()
+    validate_egobody()
