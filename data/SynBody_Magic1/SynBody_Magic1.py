@@ -33,5 +33,5 @@ class SynBody_Magic1(HumanDataset):
         assert self.img_shape == img_shape, 'image shape is incorrect: {} vs {}'.format(self.img_shape, img_shape)
 
         # load data
-        self.datalist = self.load_data(train_sample_interval=getattr(cfg, 
+        self.datalist = self.load_data(train_sample_interval=getattr(cfg,
                 'SynBody_Magic1_train_sample_interval', 1))
