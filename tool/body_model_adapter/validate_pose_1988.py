@@ -10,6 +10,7 @@ import tqdm
 import os
 import os.path as osp
 import smplx
+import matplotlib.pyplot as plt
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 model_path = '/mnt/cache/caizhongang/body_models'
@@ -74,7 +75,7 @@ def validate_humandata(load_path):
     smplx = {k: torch.from_numpy(v[:1000]).float().to(device) for k, v in smplx.items()}
 
     meta = ann['meta'].item()
-    gender = meta['gender']
+    gender = np.array(meta['gender'])[:1000]
     female_idx = gender == 'female'
     male_idx = gender == 'male'
 
@@ -116,6 +117,43 @@ def validate_humandata(load_path):
     print('mpjpe:', mpjpe.item())
 
 
+def analyse_humandata_betas_distribution(load_path, save_path):
+    """ Ref: train_body_shape_adapter.py """
+    print('load_path:', load_path)
+    ann = np.load(load_path, allow_pickle=True)
+    smplx = ann['smplx'].item()
+    smplx = {k: torch.from_numpy(v).float().to(device) for k, v in smplx.items()}
+
+    meta = ann['meta'].item()
+    gender = np.array(meta['gender'])
+    female_idx = gender == 'female'
+    male_idx = gender == 'male'
+
+    betas = smplx['betas']
+    betas_all_male = betas[male_idx]
+    betas_all_female = betas[female_idx]
+
+    fig, axs = plt.subplots(2, 5, figsize=(10, 10))
+    for i in range(2):
+        for j in range(5):
+            idx = i * 5 + j
+            beta_male, beta_female = betas_all_male[:, idx], betas_all_female[:, idx]
+            male_min, male_max = beta_male.min(), beta_male.max()
+            female_min, female_max = beta_female.min(), beta_female.max()
+
+            bins = np.histogram(np.hstack((beta_male, beta_female)), bins=100)[1]  # get the bin edges
+            axs[i, j].hist(beta_male, bins=bins, alpha=0.5, density=False, label='male')
+            axs[i, j].hist(beta_female, bins=bins, alpha=0.5, density=False, label='female')
+
+            print(f'smplx betas', idx, 'male:[', male_min, ',', male_max,']; female:[', female_min, ',', female_max, ']')
+            axs[i, j].set_title(f'beta {idx}')
+            axs[i, j].legend()
+
+    plt.savefig(save_path)
+
+
 if __name__ == '__main__':
-    validate_humandata('/mnt/cache/share_data/caizhongang/data/preprocessed_datasets/egobody_egocentric_train_230425_065_fix_betas.npz')
-    validate_humandata('/mnt/cache/share_data/caizhongang/data/preprocessed_datasets/egobody_egocentric_train_230425_065_fix_betas.npz')
+    egobody_load_path = '/mnt/cache/share_data/caizhongang/data/preprocessed_datasets/egobody_egocentric_train_230425_065_fix_betas.npz'
+    egobody_save_path = '/mnt/cache/caizhongang/osx/tool/body_model_adapter/vis_betas_distribution/egobody.png'
+    validate_humandata(egobody_load_path)
+    analyse_humandata_betas_distribution(egobody_load_path, egobody_save_path)
