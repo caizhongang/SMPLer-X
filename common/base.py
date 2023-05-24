@@ -132,21 +132,6 @@ class Trainer(Base):
         trainset_humandata_loader = []
         for i in range(len(cfg.trainset_humandata)):
             trainset_humandata_loader.append(eval(cfg.trainset_humandata[i])(transforms.ToTensor(), "train"))
-
-        valid_loader_num = 0
-        if len(trainset3d_loader) > 0:
-            trainset3d_loader = [MultipleDatasets(trainset3d_loader, make_same_len=False)]
-            valid_loader_num += 1
-        else:
-            trainset3d_loader = []
-        if len(trainset2d_loader) > 0:
-            trainset2d_loader = [MultipleDatasets(trainset2d_loader, make_same_len=False)]
-            valid_loader_num += 1
-        else:
-            trainset2d_loader = []
-        if len(trainset_humandata_loader) > 0:
-            trainset_humandata_loader = [MultipleDatasets(trainset_humandata_loader, make_same_len=False)]
-            valid_loader_num += 1
         
         data_strategy = getattr(cfg, 'data_strategy', None)
         if data_strategy == 'concat':
@@ -159,7 +144,22 @@ class Trainer(Base):
             trainset_loader = MultipleDatasets(trainset3d_loader + trainset2d_loader + trainset_humandata_loader, 
                                                  make_same_len=True, total_len=total_len, verbose=True)
         else:
-        # original strategy implementation
+            # original strategy implementation
+            valid_loader_num = 0
+            if len(trainset3d_loader) > 0:
+                trainset3d_loader = [MultipleDatasets(trainset3d_loader, make_same_len=False)]
+                valid_loader_num += 1
+            else:
+                trainset3d_loader = []
+            if len(trainset2d_loader) > 0:
+                trainset2d_loader = [MultipleDatasets(trainset2d_loader, make_same_len=False)]
+                valid_loader_num += 1
+            else:
+                trainset2d_loader = []
+            if len(trainset_humandata_loader) > 0:
+                trainset_humandata_loader = [MultipleDatasets(trainset_humandata_loader, make_same_len=False)]
+                valid_loader_num += 1
+                
             if valid_loader_num > 1:
                 trainset_loader = MultipleDatasets(trainset3d_loader + trainset2d_loader + trainset_humandata_loader, make_same_len=True)
             else:

@@ -43,7 +43,7 @@ class MultipleDatasets(Dataset):
             else:
                 db_idx = index // self.per_db_len 
                 data_idx = index % self.per_db_len 
-                if db_idx > self.db_num:
+                if db_idx > (self.db_num - 1):
                     # last batch: randomly choose one dataset
                     db_idx = random.randint(0,self.db_num - 1)
 

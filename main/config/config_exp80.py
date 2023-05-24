@@ -34,7 +34,7 @@ testset = 'EHF'
 
 # strategy 
 data_strategy = 'balance' # 'balance' need to define total_data_len
-total_data_len = 1489374
+total_data_len = 1515988
 
 EgoBody_Kinect_train_sample_interval = 10
 
