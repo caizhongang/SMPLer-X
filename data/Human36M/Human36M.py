@@ -10,6 +10,7 @@ from config import cfg
 from utils.human_models import smpl_x
 from utils.preprocessing import load_img, process_bbox, augmentation, process_db_coord, process_human_model_output, get_fitting_error_3D
 from utils.transforms import world2cam, cam2pixel, rigid_align
+import random
 
 class Human36M(torch.utils.data.Dataset):
     def __init__(self, transform, data_split):
@@ -134,6 +135,10 @@ class Human36M(torch.utils.data.Dataset):
             print('[Human36M train] original size:', len(db.anns.keys()),
                   '. Sample interval:', getattr(cfg, 'Human36M_train_sample_interval', 1),
                   '. Sampled size:', len(datalist))
+
+        if getattr(cfg, 'data_strategy', None) == 'balance' and self.data_split == 'train':
+            print(f'[Human36M]Using [balance] strategy with datalist shuffled...')
+            random.shuffle(datalist)
 
         return datalist
 

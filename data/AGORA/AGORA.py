@@ -14,6 +14,7 @@ from utils.preprocessing import load_img, sanitize_bbox, process_bbox, augmentat
     process_human_model_output, load_ply, load_obj
 from utils.transforms import rigid_align
 import tqdm
+import random
 
 class AGORA(torch.utils.data.Dataset):
     def __init__(self, transform, data_split, downsample=None):
@@ -296,6 +297,10 @@ class AGORA(torch.utils.data.Dataset):
                         datalist.append({'img_path': img_path, 'img_shape': img_shape,
                                          'img2bb_trans_from_orig': img2bb_trans_from_orig, 'bbox': bbox,
                                          'person_idx': pid})
+        
+        if getattr(cfg, 'data_strategy', None) == 'balance' and self.data_split == 'train':
+            print(f"[Agora]Using [balance] strategy with datalist shuffled...")
+            random.shuffle(datalist)
 
         return datalist
 

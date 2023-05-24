@@ -147,11 +147,23 @@ class Trainer(Base):
         if len(trainset_humandata_loader) > 0:
             trainset_humandata_loader = [MultipleDatasets(trainset_humandata_loader, make_same_len=False)]
             valid_loader_num += 1
-
-        if valid_loader_num > 1:
-            trainset_loader = MultipleDatasets(trainset3d_loader + trainset2d_loader + trainset_humandata_loader, make_same_len=True)
+        
+        data_strategy = getattr(cfg, 'data_strategy', None)
+        if data_strategy == 'concat':
+            print("Using [concat] strategy...")
+            trainset_loader = MultipleDatasets(trainset3d_loader + trainset2d_loader + trainset_humandata_loader, 
+                                                make_same_len=False, verbose=True)
+        elif data_strategy == 'balance':
+            total_len = cfg.total_data_len
+            print(f"Using [balance] strategy with total_data_len : {total_len}...")
+            trainset_loader = MultipleDatasets(trainset3d_loader + trainset2d_loader + trainset_humandata_loader, 
+                                                 make_same_len=True, total_len=total_len, verbose=True)
         else:
-            trainset_loader = MultipleDatasets(trainset3d_loader + trainset2d_loader + trainset_humandata_loader, make_same_len=False)
+        # original strategy implementation
+            if valid_loader_num > 1:
+                trainset_loader = MultipleDatasets(trainset3d_loader + trainset2d_loader + trainset_humandata_loader, make_same_len=True)
+            else:
+                trainset_loader = MultipleDatasets(trainset3d_loader + trainset2d_loader + trainset_humandata_loader, make_same_len=False)
 
         self.itr_per_epoch = math.ceil(len(trainset_loader) / cfg.num_gpus / cfg.train_batch_size)
 
@@ -163,7 +175,7 @@ class Trainer(Base):
             sampler_train = DistributedSampler(trainset_loader, world_size, rank, shuffle=True)
             self.batch_generator = DataLoader(dataset=trainset_loader, batch_size=cfg.train_batch_size,
                                           shuffle=False, num_workers=cfg.num_thread, sampler=sampler_train,
-                                          pin_memory=True, drop_last=True) 
+                                          pin_memory=True, persistent_workers=True, drop_last=True) 
         else:
             self.batch_generator = DataLoader(dataset=trainset_loader, batch_size=cfg.num_gpus * cfg.train_batch_size,
                                           shuffle=True, num_workers=cfg.num_thread,
@@ -253,19 +265,22 @@ class Tester(Base):
         self.logger.info("Creating graph...")
         model = get_model('test')
         model = DataParallel(model).cuda()
-        ckpt = torch.load(cfg.pretrained_model_path)
+        if not getattr(cfg, 'random_init', False):
+            ckpt = torch.load(cfg.pretrained_model_path)
 
-        from collections import OrderedDict
-        new_state_dict = OrderedDict()
-        for k, v in ckpt['network'].items():
-            if 'module' not in k:
-                k = 'module.' + k
-            k = k.replace('backbone', 'encoder').replace('body_rotation_net', 'body_regressor').replace(
-                'hand_rotation_net', 'hand_regressor')
-            new_state_dict[k] = v
-        self.logger.warning("Attention: Strict=False is set for checkpoint loading. Please check manually.")
-        model.load_state_dict(new_state_dict, strict=False)
-        model.eval()
+            from collections import OrderedDict
+            new_state_dict = OrderedDict()
+            for k, v in ckpt['network'].items():
+                if 'module' not in k:
+                    k = 'module.' + k
+                k = k.replace('backbone', 'encoder').replace('body_rotation_net', 'body_regressor').replace(
+                    'hand_rotation_net', 'hand_regressor')
+                new_state_dict[k] = v
+            self.logger.warning("Attention: Strict=False is set for checkpoint loading. Please check manually.")
+            model.load_state_dict(new_state_dict, strict=False)
+            model.eval()
+        else:
+            print('Random init!!!!!!!')
 
         self.model = model
 

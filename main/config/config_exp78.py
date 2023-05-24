@@ -6,7 +6,7 @@ num_gpus = -1
 exp_name = 'output/exp1/pre_analysis'
 
 # quick access
-save_epoch = 5
+save_epoch = 1
 lr = 1e-5
 end_epoch = 20
 train_batch_size = 32
@@ -15,20 +15,28 @@ syncbn = True
 bbox_ratio = 1.2
 
 # continue
-continue_train = True
-start_over = False
-pretrained_model_path = '../output/train_exp41_20230502_121910/model_dump/snapshot_15.pth.tar'
+continue_train = False
+start_over = True
+# pretrained_model_path = '../output/train_gta_synbody_ft_20230410_132110/model_dump/snapshot_2.pth.tar'
 
 # dataset setting
 agora_fix_betas = True
 agora_fix_global_orient_transl = True
 agora_valid_root_pose = True
 
-dataset_list = ['Human36M', 'MSCOCO', 'MPII', 'AGORA', 'EHF', 'SynBody', 'GTA_Human2']
-trainset_3d = []
+dataset_list = ['Human36M', 'MSCOCO', 'MPII', 'AGORA', 'EHF', 'SynBody', 'GTA_Human2', \
+    'EgoBody_Egocentric', 'EgoBody_Kinect', 'UBody', 'PW3D', 'MuCo', 'PROX']
+trainset_3d = ['MSCOCO', 'AGORA']
 trainset_2d = []
-trainset_humandata = ['GTA_Human2']
+trainset_humandata = ['PoseTrack', 'GTA_Human2', 'SPEC', 'SynBody', 
+    'EgoBody_Egocentric', 'PROX', 'EgoBody_Kinect', 'CrowdPose', 'SynBody_Magic1']
 testset = 'EHF'
+
+# strategy 
+data_strategy = 'balance' # 'balance' need to define total_data_len
+total_data_len = 1489374
+
+EgoBody_Kinect_train_sample_interval = 10
 
 # model
 smplx_loss_weight = 1.0 #2 for agora_model for smplx shape

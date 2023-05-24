@@ -334,52 +334,53 @@ class Model(nn.Module):
                                                       smpl_x.reduce_joint_set(meta_info['smplx_joint_trunc'])) * net_kps_2d_weight
             ### save vis for keypoints checking
             # import pdb; pdb.set_trace()
-            # import numpy as np
-            # import cv2
-            # out = {}
-            # datalist = cfg.trainset_humandata + cfg.trainset_2d + cfg.trainset_3d
-            # dataset = datalist[0]
-            # out['img'] = inputs['img']
-            # np.save(f'./vis/train_{dataset}.npy', targets)
-            # np.save(f'./vis/train_{dataset}_out.npy', out)
-            # for key in ['joint_cam', 'smplx_joint_cam']:
-            #     to_save = targets[key].cpu().detach().numpy()
-            #     np.save(f'./vis/train_{dataset}_{key}.npy', to_save)
+            if getattr(cfg, 'debug', False):
+                import numpy as np
+                import cv2
+                out = {}
+                datalist = cfg.trainset_humandata + cfg.trainset_2d + cfg.trainset_3d
+                dataset = datalist[0]
+                out['img'] = inputs['img']
+                np.save(f'./vis/train_{dataset}.npy', targets)
+                np.save(f'./vis/train_{dataset}_out.npy', out)
+                for key in ['joint_cam', 'smplx_joint_cam']:
+                    to_save = targets[key].cpu().detach().numpy()
+                    np.save(f'./vis/train_{dataset}_{key}.npy', to_save)
 
-            # for sample_id in range(5):
-            #     print(sample_id)
-            #     vis_joint_img = targets['original_joint_img'][sample_id,...].cpu().detach().numpy()
-            #     vis_smplx_joint_img = targets['original_smplx_joint_img'][sample_id,...].cpu().detach().numpy() 
+                for sample_id in range(5):
+                    print(sample_id)
+                    vis_joint_img = targets['original_joint_img'][sample_id,...].cpu().detach().numpy()
+                    vis_smplx_joint_img = targets['original_smplx_joint_img'][sample_id,...].cpu().detach().numpy() 
 
-            #     # get image
-            #     image = out['img'][sample_id].cpu().numpy().transpose(1, 2, 0) * 255
-            #     image = image.astype(np.uint8).copy() 
-            #     image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
+                    # get image
+                    image = out['img'][sample_id].cpu().numpy().transpose(1, 2, 0) * 255
+                    image = image.astype(np.uint8).copy() 
+                    image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
 
-            #     color = [(0, 0, 255), (0, 255, 0)] # R: pred, G: gt
-            #     for set_id, joint_proj in enumerate([vis_joint_img, vis_smplx_joint_img]): #, joint_2d_gt]):
-            #         th = 3 - set_id
-            #     # restore kps
-            #         joint_proj[:, 0] = joint_proj[:, 0] / cfg.output_hm_shape[2] * cfg.input_img_shape[1] # 
-            #         joint_proj[:, 1] = joint_proj[:, 1] / cfg.output_hm_shape[1] * cfg.input_img_shape[0] # 
-            #         # R: pred, G: gt
-            #         n_kps = joint_proj.shape[0]
+                    color = [(0, 0, 255), (0, 255, 0)] # R: pred, G: gt
+                    for set_id, joint_proj in enumerate([vis_joint_img, vis_smplx_joint_img]): #, joint_2d_gt]):
+                        th = 3 - set_id
+                    # restore kps
+                        joint_proj[:, 0] = joint_proj[:, 0] / cfg.output_hm_shape[2] * cfg.input_img_shape[1] # 
+                        joint_proj[:, 1] = joint_proj[:, 1] / cfg.output_hm_shape[1] * cfg.input_img_shape[0] # 
+                        # R: pred, G: gt
+                        n_kps = joint_proj.shape[0]
 
-            #         for i in range (n_kps):
-            #             # import pdb; pdb.set_trace()
-            #             kps = joint_proj[i]
-            #             # import pdb;pdb.set_trace()
-            #             image = cv2.circle(image, (int(kps[0]),int(kps[1])), radius=th, color=color[set_id], thickness=th)
+                        for i in range (n_kps):
+                            # import pdb; pdb.set_trace()
+                            kps = joint_proj[i]
+                            # import pdb;pdb.set_trace()
+                            image = cv2.circle(image, (int(kps[0]),int(kps[1])), radius=th, color=color[set_id], thickness=th)
 
-            #     #     image = cv2.rectangle(image, (int(lhand_bbox[0]),int(lhand_bbox[1])), 
-            #     #             (int(lhand_bbox[2]),int(lhand_bbox[3])), (0, 255, 0), thickness=th)
-            #     #     image = cv2.rectangle(image, (int(rhand_bbox[0]),int(rhand_bbox[1])), 
-            #     #             (int(rhand_bbox[2]),int(rhand_bbox[3])), (0, 0, 255), thickness=th)
-            #     #     image = cv2.rectangle(image, (int(face_bbox[0]),int(face_bbox[1])), 
-            #     #             (int(face_bbox[2]),int(face_bbox[3])), (255, 0, 0), thickness=th)
-            #     cv2.imwrite(f'./vis/joint_img/{dataset}_{sample_id}.jpg',image)
-                    
-            # import pdb;pdb.set_trace()
+                    #     image = cv2.rectangle(image, (int(lhand_bbox[0]),int(lhand_bbox[1])), 
+                    #             (int(lhand_bbox[2]),int(lhand_bbox[3])), (0, 255, 0), thickness=th)
+                    #     image = cv2.rectangle(image, (int(rhand_bbox[0]),int(rhand_bbox[1])), 
+                    #             (int(rhand_bbox[2]),int(rhand_bbox[3])), (0, 0, 255), thickness=th)
+                    #     image = cv2.rectangle(image, (int(face_bbox[0]),int(face_bbox[1])), 
+                    #             (int(face_bbox[2]),int(face_bbox[3])), (255, 0, 0), thickness=th)
+                    cv2.imwrite(f'./vis/joint_img/{dataset}_{sample_id}.jpg',image)
+                        
+                import pdb;pdb.set_trace()
 
             return loss
         else:
@@ -406,7 +407,6 @@ class Model(nn.Module):
             # test output
             out = {}
             out['img'] = inputs['img']
-            out['img_path'] = meta_info['img_path']
             out['joint_img'] = joint_img
             out['smplx_joint_proj'] = joint_proj
             out['smplx_mesh_cam'] = mesh_cam
@@ -421,6 +421,8 @@ class Model(nn.Module):
             out['lhand_bbox'] = lhand_bbox
             out['rhand_bbox'] = rhand_bbox
             out['face_bbox'] = face_bbox
+            if 'img_path' in meta_info:
+                out['img_path'] = meta_info['img_path']
             if 'smplx_pose' in targets:
                 out['smplx_mesh_cam_pseudo_gt'] = mesh_pseudo_gt
             if 'smplx_mesh_cam' in targets:
@@ -476,9 +478,12 @@ def get_model(mode):
 
     if mode == 'train':
         # body
-        encoder_pretrained_model = torch.load(cfg.encoder_pretrained_model_path)['state_dict']
-        vit.load_state_dict(encoder_pretrained_model, strict=False)
-        print(f"Initialize encoder from {cfg.encoder_pretrained_model_path}")
+        if not getattr(cfg, 'random_init', False):
+            encoder_pretrained_model = torch.load(cfg.encoder_pretrained_model_path)['state_dict']
+            vit.load_state_dict(encoder_pretrained_model, strict=False)
+            print(f"Initialize encoder from {cfg.encoder_pretrained_model_path}")
+        else:
+            print('Random init!!!!!!!')
 
         body_position_net.apply(init_weights)
         body_rotation_net.apply(init_weights)

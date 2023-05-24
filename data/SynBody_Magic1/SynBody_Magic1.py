@@ -14,22 +14,18 @@ from utils.transforms import world2cam, cam2pixel, rigid_align
 from humandata import HumanDataset
 
 
-class InstaVariety(HumanDataset):
+class SynBody_Magic1(HumanDataset):
     def __init__(self, transform, data_split):
-        super(InstaVariety, self).__init__(transform, data_split)
+        super(SynBody_Magic1, self).__init__(transform, data_split)
 
-        self.datalist = []
-
-        pre_prc_file = 'insta_variety_neural_annot_train.npz'
-        if self.data_split == 'train':
-            filename = getattr(cfg, 'filename', pre_prc_file)
-        else:
-            raise ValueError('InstaVariety test set is not support')
-
-        self.img_dir = osp.join(cfg.data_dir, 'InstaVariety')
-        self.annot_path = osp.join(cfg.data_dir, 'preprocessed_datasets', filename)
-        self.img_shape = (224,224)  # (h, w)
-        self.cam_param = {}
+        self.img_dir = osp.join(cfg.data_dir, 'SynBody')
+        self.annot_path = osp.join(cfg.data_dir, 'preprocessed_datasets', 
+                                'synbody_amass_230328_02172.npz')
+        self.img_shape = (1200, 1600)  # (h, w)
+        self.cam_param = {
+            'focal': (540, 540),  # (fx, fy)
+            'princpt': (640, 360)  # (cx, cy)
+        }
 
         # check image shape
         img_path = osp.join(self.img_dir, np.load(self.annot_path)['image_path'][0])
@@ -37,4 +33,5 @@ class InstaVariety(HumanDataset):
         assert self.img_shape == img_shape, 'image shape is incorrect: {} vs {}'.format(self.img_shape, img_shape)
 
         # load data
-        self.datalist = self.load_data(getattr(cfg, 'InstaVariety_Kinect_train_sample_interval', 1))
+        self.datalist = self.load_data(train_sample_interval=getattr(cfg, 
+                'SynBody_Magic1_train_sample_interval', 1))

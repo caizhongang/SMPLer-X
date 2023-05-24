@@ -10,6 +10,7 @@ from pycocotools.coco import COCO
 from utils.human_models import smpl_x
 from utils.preprocessing import load_img, process_bbox, augmentation, process_db_coord, \
     process_human_model_output
+import random
 # from utils.vis import vis_keypoints, vis_mesh, save_obj
 
 class MPII(torch.utils.data.Dataset):
@@ -73,6 +74,10 @@ class MPII(torch.utils.data.Dataset):
             print('[MPII train] original size:', len(db.anns.keys()),
                   '. Sample interval:', getattr(cfg, 'MPII_train_sample_interval', 1),
                   '. Sampled size:', len(datalist))
+        
+        if getattr(cfg, 'data_strategy', None) == 'balance' and self.data_split == 'train':
+            print(f'[MPII]Using [balance] strategy with datalist shuffled...')
+            random.shuffle(datalist)
 
         return datalist
     

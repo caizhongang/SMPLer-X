@@ -438,7 +438,6 @@ class Model(nn.Module):
             # test output
             out = {}
             out['img'] = inputs['img']
-            out['img_path'] = meta_info['img_path']
             out['joint_img'] = joint_img
             out['smplx_joint_proj'] = joint_proj
             out['smplx_mesh_cam'] = mesh_cam
@@ -453,6 +452,8 @@ class Model(nn.Module):
             out['lhand_bbox'] = lhand_bbox
             out['rhand_bbox'] = rhand_bbox
             out['face_bbox'] = face_bbox
+            if 'img_path' in meta_info:
+                out['img_path'] = meta_info['img_path']
             if 'smplx_pose' in targets:
                 out['smplx_mesh_cam_pseudo_gt'] = mesh_pseudo_gt
             if 'smplx_shape' in targets:

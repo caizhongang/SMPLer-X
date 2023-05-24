@@ -11,6 +11,7 @@ from utils.human_models import smpl_x, smpl
 from utils.preprocessing import load_img, process_bbox, augmentation, process_human_model_output, process_db_coord
 from utils.transforms import rigid_align
 import numpy as np
+import random
 
 
 class PW3D(torch.utils.data.Dataset):
@@ -54,6 +55,10 @@ class PW3D(torch.utils.data.Dataset):
             print('[PW3D train] original size:', len(db.anns.keys()),
                   '. Sample interval:', getattr(cfg, 'PW3D_train_sample_interval', 1),
                   '. Sampled size:', len(datalist))
+        
+        if getattr(cfg, 'data_strategy', None) == 'balance' and self.data_split == 'train':
+            print(f'[PW3D]Using [balance] strategy with datalist shuffled...')
+            random.shuffle(datalist)
 
         return datalist
 

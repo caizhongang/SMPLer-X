@@ -178,6 +178,10 @@ class UBody_Part(torch.utils.data.Dataset):
                   '. Sample interval:', train_sample_interval,
                   '. Sampled size:', len(datalist))
 
+            if getattr(cfg, 'data_strategy', None) == 'balance':
+                print(f"[UBody]Using [balance] strategy with datalist shuffled...")
+                random.shuffle(datalist)
+
             return datalist
 
         # test mode
@@ -429,7 +433,7 @@ class UBody_Part(torch.utils.data.Dataset):
                          'smplx_joint_valid': smplx_joint_valid,'smplx_joint_trunc': smplx_joint_trunc, 
                          'smplx_pose_valid': smplx_pose_valid, 'smplx_shape_valid': float(smplx_shape_valid), 
                          'smplx_expr_valid': float(smplx_expr_valid),
-                         'is_3D': float(False), 'lhand_bbox_valid': lhand_bbox_valid,
+                         'is_3D': float(True), 'lhand_bbox_valid': lhand_bbox_valid,
                          'rhand_bbox_valid': rhand_bbox_valid, 'face_bbox_valid': face_bbox_valid}
             return inputs, targets, meta_info
 

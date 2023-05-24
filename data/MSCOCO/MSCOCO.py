@@ -9,6 +9,7 @@ import torch
 from pycocotools.coco import COCO
 from utils.human_models import smpl_x
 from utils.preprocessing import load_img, process_bbox, augmentation, process_db_coord, process_human_model_output
+import random
 
 class MSCOCO(torch.utils.data.Dataset):
     def __init__(self, transform, data_split):
@@ -165,6 +166,10 @@ class MSCOCO(torch.utils.data.Dataset):
             print('[MSCOCO train] original size:', len(db.anns.keys()),
                   '. Sample interval:', getattr(cfg, 'MSCOCO_train_sample_interval', 1),
                   '. Sampled size:', len(datalist))
+            
+            if getattr(cfg, 'data_strategy', None) == 'balance':
+                print(f"[MSCOCO]Using [balance] strategy with datalist shuffled...")
+                random.shuffle(datalist)
 
             return datalist
 

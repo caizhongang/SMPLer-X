@@ -8,7 +8,7 @@ exp_name = 'output/exp1/pre_analysis'
 # quick access
 save_epoch = 5
 lr = 1e-5
-end_epoch = 20
+end_epoch = 50
 train_batch_size = 32
 
 syncbn = True
@@ -26,9 +26,9 @@ agora_valid_root_pose = True
 
 dataset_list = ['Human36M', 'MSCOCO', 'MPII', 'AGORA', 'EHF', 'SynBody', 'GTA_Human2', \
     'EgoBody_Egocentric', 'EgoBody_Kinect', 'UBody', 'PW3D', 'MuCo', 'PROX']
-trainset_3d = ['AGORA']
+trainset_3d = []
 trainset_2d = []
-trainset_humandata = []
+trainset_humandata = ['OCHuman']
 testset = 'EHF'
 
 # model

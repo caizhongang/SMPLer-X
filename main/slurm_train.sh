@@ -19,6 +19,7 @@ srun -p ${PARTITION} \
     --ntasks-per-node=${GPUS_PER_NODE} \
     --cpus-per-task=${CPUS_PER_TASK} \
     --kill-on-bad-exit=1 \
+    --exclusive \
     ${SRUN_ARGS} \
     python train.py \
         --num_gpus ${GPUS} \

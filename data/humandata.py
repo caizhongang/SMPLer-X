@@ -13,6 +13,7 @@ from utils.preprocessing import load_img, process_bbox, augmentation, process_db
 from utils.transforms import world2cam, cam2pixel, rigid_align
 import tqdm
 import time
+import random
 
 KPS2D_KEYS = ['keypoints2d', 'keypoints2d_smplx', 'keypoints2d_smpl', 'keypoints2d_original']
 KPS3D_KEYS = ['keypoints3d_cam', 'keypoints3d', 'keypoints3d_smplx','keypoints3d_smpl' ,'keypoints3d_original'] 
@@ -51,26 +52,18 @@ class HumanDataset(torch.utils.data.Dataset):
     def load_data(self, train_sample_interval=1):
         content = np.load(self.annot_path, allow_pickle=True)
         num_examples = len(content['image_path'])
+        
         if 'meta' in content:
             meta = content['meta'].item()
+            print('meta keys:', meta.keys())
         else:
             meta = None
-        meta = content['meta'].item()
+            print('No meta info provided! Please give height and width manually')
 
         print(f'Start loading humandata {self.annot_path} into memory...\nDataset includes: {content.files}'); tic = time.time()
         image_path = content['image_path']
 
         if meta is not None and 'height' in meta:
-            height = np.array(meta['height'])
-            width = np.array(meta['width'])
-            image_shape = np.stack([height, width], axis=-1)
-        else:
-            image_shape = None
-        
-        # import pdb;pdb.set_trace()
-
-
-        if 'height' in meta:
             height = np.array(meta['height'])
             width = np.array(meta['width'])
             image_shape = np.stack([height, width], axis=-1)
@@ -154,14 +147,13 @@ class HumanDataset(torch.utils.data.Dataset):
         for i in tqdm.tqdm(range(int(num_examples))):
             if self.data_split == 'train' and i % train_sample_interval != 0:
                 continue
-
             img_path = osp.join(self.img_dir, image_path[i])
-            img_shape = image_shape[i] if image_shape is not None else self.img_shape
             img_shape = image_shape[i] if image_shape is not None else self.img_shape
 
             bbox = bbox_xywh[i][:4]
+
             if hasattr(cfg, 'bbox_ratio'):
-                bbox_ratio = cfg.bbox_ratio * 0.833 # agora preprocess is giving 1.2 box padding
+                bbox_ratio = cfg.bbox_ratio * 0.833 # preprocess body bbox is giving 1.2 box padding
             else:
                 bbox_ratio = 1.25
             bbox = process_bbox(bbox, img_width=img_shape[1], img_height=img_shape[0], ratio=bbox_ratio)
@@ -221,6 +213,13 @@ class HumanDataset(torch.utils.data.Dataset):
                 smplx_param['shape'] = smplx_param.pop('betas_neutral')
                 # smplx_param['shape'] = np.zeros(10, dtype=np.float32)
 
+            # # TODO fix shape of poses
+            if self.__class__.__name__  == 'Talkshow':
+                smplx_param['body_pose'] = smplx_param['body_pose'].reshape(-1, 3)
+                smplx_param['lhand_pose'] = smplx_param['lhand_pose'].reshape(-1, 3)
+                smplx_param['rhand_pose'] = smplx_param['lhand_pose'].reshape(-1, 3)
+                smplx_param['expr'] = smplx_param['expr'][:10]
+
             if as_smplx == 'smpl':
                 smplx_param['shape'] = np.zeros(10, dtype=np.float32) # drop smpl betas for smplx
                 smplx_param['body_pose'] = smplx_param['body_pose'][:21, :] # use smpl body_pose on smplx
@@ -244,7 +243,6 @@ class HumanDataset(torch.utils.data.Dataset):
 
             if joint_cam is not None and np.any(np.isnan(joint_cam)):
                 continue
-            # import pdb; pdb.set_trace()
 
             datalist.append({
                 'img_path': img_path,
@@ -265,6 +263,10 @@ class HumanDataset(torch.utils.data.Dataset):
             print(f'[{self.__class__.__name__} train] original size:', int(num_examples),
                   '. Sample interval:', train_sample_interval,
                   '. Sampled size:', len(datalist))
+        
+        if getattr(cfg, 'data_strategy', None) == 'balance' and self.data_split == 'train':
+            print(f'[{self.__class__.__name__}]Using [balance] strategy with datalist shuffled...')
+            random.shuffle(datalist)
 
         return datalist
 
@@ -308,6 +310,17 @@ class HumanDataset(torch.utils.data.Dataset):
                 smplx_param, self.cam_param, do_flip, img_shape, img2bb_trans, rot, 'smplx',
                 joint_img=None if self.cam_param else joint_img,  # if cam not provided, we take joint_img as smplx joint 2d, which is commonly the case for our processed humandata
             )
+
+            # TODO temp fix keypoints3d for renbody
+            if 'RenBody' in self.__class__.__name__:
+                joint_cam_ra = smplx_joint_cam.copy()
+                joint_cam_wo_ra = smplx_joint_cam.copy()
+                joint_cam_wo_ra[smpl_x.joint_part['lhand'], :] = joint_cam_wo_ra[smpl_x.joint_part['lhand'], :] \
+                                                                + joint_cam_wo_ra[smpl_x.lwrist_idx, None, :]  # left hand root-relative
+                joint_cam_wo_ra[smpl_x.joint_part['rhand'], :] = joint_cam_wo_ra[smpl_x.joint_part['rhand'], :] \
+                                                                + joint_cam_wo_ra[smpl_x.rwrist_idx, None, :]  # right hand root-relative
+                joint_cam_wo_ra[smpl_x.joint_part['face'], :] = joint_cam_wo_ra[smpl_x.joint_part['face'], :] \
+                                                                + joint_cam_wo_ra[smpl_x.neck_idx, None,: ]  # face root-relative
 
             # change smplx_shape if use_betas_neutral
             # processing follows that in process_human_model_output
@@ -355,8 +368,7 @@ class HumanDataset(torch.utils.data.Dataset):
                        'lhand_bbox_center': lhand_bbox_center, 'lhand_bbox_size': lhand_bbox_size,
                        'rhand_bbox_center': rhand_bbox_center, 'rhand_bbox_size': rhand_bbox_size,
                        'face_bbox_center': face_bbox_center, 'face_bbox_size': face_bbox_size}
-            meta_info = {'img_path': img_path,
-                         'joint_valid': joint_valid,
+            meta_info = {'joint_valid': joint_valid,
                          'joint_trunc': joint_trunc,
                          'smplx_joint_valid': smplx_joint_valid if dummy_cord else joint_valid,
                          'smplx_joint_trunc': smplx_joint_trunc if dummy_cord else joint_trunc,
@@ -366,6 +378,10 @@ class HumanDataset(torch.utils.data.Dataset):
                          'is_3D': float(False) if dummy_cord else float(True), 
                          'lhand_bbox_valid': lhand_bbox_valid,
                          'rhand_bbox_valid': rhand_bbox_valid, 'face_bbox_valid': face_bbox_valid}
+            
+            if self.__class__.__name__  == 'SHAPY':
+                meta_info['img_path'] = img_path
+            
             return inputs, targets, meta_info
 
         # TODO: temp solution, should be more general. But SHAPY is very special

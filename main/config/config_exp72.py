@@ -15,19 +15,20 @@ syncbn = True
 bbox_ratio = 1.2
 
 # continue
-continue_train = True
-start_over = False
-pretrained_model_path = '../output/train_exp41_20230502_121910/model_dump/snapshot_15.pth.tar'
+continue_train = False
+start_over = True
+# pretrained_model_path = '../output/train_gta_synbody_ft_20230410_132110/model_dump/snapshot_2.pth.tar'
 
 # dataset setting
 agora_fix_betas = True
 agora_fix_global_orient_transl = True
 agora_valid_root_pose = True
 
-dataset_list = ['Human36M', 'MSCOCO', 'MPII', 'AGORA', 'EHF', 'SynBody', 'GTA_Human2']
+dataset_list = ['Human36M', 'MSCOCO', 'MPII', 'AGORA', 'EHF', 'SynBody', 'GTA_Human2', \
+    'EgoBody_Egocentric', 'EgoBody_Kinect', 'UBody', 'PW3D', 'MuCo', 'PROX']
 trainset_3d = []
 trainset_2d = []
-trainset_humandata = ['GTA_Human2']
+trainset_humandata = ['SSP3D']
 testset = 'EHF'
 
 # model

@@ -14,21 +14,18 @@ from utils.transforms import world2cam, cam2pixel, rigid_align
 from humandata import HumanDataset
 
 
-class InstaVariety(HumanDataset):
+class SSP3D(HumanDataset):
     def __init__(self, transform, data_split):
-        super(InstaVariety, self).__init__(transform, data_split)
+        super(SSP3D, self).__init__(transform, data_split)
 
-        self.datalist = []
-
-        pre_prc_file = 'insta_variety_neural_annot_train.npz'
         if self.data_split == 'train':
-            filename = getattr(cfg, 'filename', pre_prc_file)
+            filename = getattr(cfg, 'filename', 'ssp3d_230508_311.npz')
         else:
-            raise ValueError('InstaVariety test set is not support')
+            raise ValueError('SSP3D test set is not support')
 
-        self.img_dir = osp.join(cfg.data_dir, 'InstaVariety')
+        self.img_dir = osp.join(cfg.data_dir, 'SSP3D')
         self.annot_path = osp.join(cfg.data_dir, 'preprocessed_datasets', filename)
-        self.img_shape = (224,224)  # (h, w)
+        self.img_shape = (512, 512) # (h, w)
         self.cam_param = {}
 
         # check image shape
@@ -37,4 +34,4 @@ class InstaVariety(HumanDataset):
         assert self.img_shape == img_shape, 'image shape is incorrect: {} vs {}'.format(self.img_shape, img_shape)
 
         # load data
-        self.datalist = self.load_data(getattr(cfg, 'InstaVariety_Kinect_train_sample_interval', 1))
+        self.datalist = self.load_data()

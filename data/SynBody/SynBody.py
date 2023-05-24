@@ -15,11 +15,12 @@ from humandata import HumanDataset
 
 
 class SynBody(HumanDataset):
-    def __init__(self, transform, data_split, filename='synbody_rc_230301_04000.npz'):
+    def __init__(self, transform, data_split):
         super(SynBody, self).__init__(transform, data_split)
 
         self.img_dir = osp.join(cfg.data_dir, 'SynBody')
-        self.annot_path = osp.join(cfg.data_dir, 'preprocessed_datasets', filename)
+        self.annot_path = osp.join(cfg.data_dir, 'preprocessed_datasets', 
+                                'synbody_train_230521_04000_fix_betas.npz')
         self.img_shape = (720, 1280)  # (h, w)
         self.cam_param = {
             'focal': (540, 540),  # (fx, fy)
