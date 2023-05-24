@@ -30,4 +30,5 @@ class UP3D(HumanDataset):
         self.cam_param = {}
 
         # load data
-        self.datalist = self.load_data()
+        self.datalist = self.load_data(
+            train_sample_interval=getattr(cfg, f'{self.__class__.__name__}_train_sample_interval', 1))

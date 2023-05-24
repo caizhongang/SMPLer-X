@@ -33,5 +33,6 @@ class OCHuman(HumanDataset):
         print("Various image shape in OCHuman dataset.")
 
         # load data
-        datalist_slice = self.load_data()
+        datalist_slice = self.load_data(
+            train_sample_interval=getattr(cfg, f'{self.__class__.__name__}_train_sample_interval', 1))
         self.datalist.extend(datalist_slice)

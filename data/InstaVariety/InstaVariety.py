@@ -37,4 +37,5 @@ class InstaVariety(HumanDataset):
         assert self.img_shape == img_shape, 'image shape is incorrect: {} vs {}'.format(self.img_shape, img_shape)
 
         # load data
-        self.datalist = self.load_data(getattr(cfg, 'InstaVariety_Kinect_train_sample_interval', 1))
+        self.datalist = self.load_data(
+            train_sample_interval=getattr(cfg, f'{self.__class__.__name__}_train_sample_interval', 1))
