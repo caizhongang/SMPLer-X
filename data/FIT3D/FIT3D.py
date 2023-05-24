@@ -39,5 +39,6 @@ class FIT3D(HumanDataset):
             assert self.img_shape == img_shape, 'image shape is incorrect: {} vs {}'.format(self.img_shape, img_shape)
 
             # load data
-            datalist_slice = self.load_data()
+            datalist_slice = self.load_data(
+                train_sample_interval=getattr(cfg, f'{self.__class__.__name__}_train_sample_interval', 1))
             self.datalist.extend(datalist_slice)

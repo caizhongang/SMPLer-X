@@ -86,52 +86,71 @@ def fix_agora():
             json.dump(new_data, f)
 
 
-def fix_egobody():
-    work_dir = '/mnt/cache/share_data/caizhongang/data/preprocessed_datasets'
-    load_paths = sorted(glob.glob(osp.join(work_dir, 'egobody_*.npz')))
-    
-    for load_path in load_paths:
-        human_data = np.load(load_path, allow_pickle=True)
-        gender = human_data['meta'].item()['gender']
-        smplx = human_data['smplx'].item()
-        betas = smplx['betas']
+def fix_humandata(load_path):
+    human_data = np.load(load_path, allow_pickle=True)
+    gender = human_data['meta'].item()['gender']
+    smplx = human_data['smplx'].item()
+    betas = smplx['betas']
 
-        new_betas = []
-        assert len(gender) == len(betas)
-        for gen, bet in tqdm.tqdm(zip(gender, betas), total=len(gender)):
-            assert gen in ('male', 'female')
+    new_betas = []
+    assert len(gender) == len(betas)
+    for gen, bet in tqdm.tqdm(zip(gender, betas), total=len(gender)):
+        assert gen in ('male', 'female', 'neutral'), f'gen: {gen}'
 
-            with torch.no_grad():
-                if gender == 'male':
-                    new_bet = smplx_male_to_smplx_neutral(torch.tensor(bet.reshape(1, 10), device=device))
-                else:
-                    new_bet = smplx_female_to_smplx_neutral(torch.tensor(bet.reshape(1, 10), device=device))
-            new_bet = new_bet.detach().cpu().numpy().reshape(10)
-            assert not np.allclose(bet, new_bet)
-            
-            new_betas.append(new_bet)
-
-        new_betas = np.stack(new_betas, axis=0)
-        assert new_betas.shape == betas.shape
-
-        new_smplx = { k: v for k, v in smplx.items() }
-        new_smplx['betas_neutral'] = new_betas
-
-        new_human_data = {}
-        for k, v in human_data.items():
-            if len(v.shape) == 0:
-                new_human_data[k] = v.item()
+        with torch.no_grad():
+            if gen == 'male':
+                new_bet = smplx_male_to_smplx_neutral(torch.tensor(bet.reshape(1, 10), device=device))
+                new_bet = new_bet.detach().cpu().numpy().reshape(10)
+                assert not np.allclose(bet, new_bet)
+            elif gen == 'female':
+                new_bet = smplx_female_to_smplx_neutral(torch.tensor(bet.reshape(1, 10), device=device))
+                new_bet = new_bet.detach().cpu().numpy().reshape(10)
+                assert not np.allclose(bet, new_bet)
             else:
-                new_human_data[k] = v
-        new_human_data['smplx'] = new_smplx
+                new_bet = bet.copy()
 
-        stem, _ = osp.splitext(osp.basename(load_path))
-        save_stem = stem + '_fix_betas'
-        save_path = load_path.replace(stem, save_stem)
-        np.savez_compressed(save_path, **new_human_data)
-        print(load_path, '->', save_path)
+        new_betas.append(new_bet)
+
+    new_betas = np.stack(new_betas, axis=0)
+    assert new_betas.shape == betas.shape
+
+    new_smplx = { k: v for k, v in smplx.items() }
+    new_smplx['betas_neutral'] = new_betas
+
+    new_human_data = {}
+    for k, v in human_data.items():
+        if len(v.shape) == 0:
+            new_human_data[k] = v.item()
+        else:
+            new_human_data[k] = v
+    new_human_data['smplx'] = new_smplx
+
+    stem, _ = osp.splitext(osp.basename(load_path))
+    save_stem = stem + '_fix_betas'
+    save_path = load_path.replace(stem, save_stem)
+    np.savez_compressed(save_path, **new_human_data)
+    print(load_path, '->', save_path)
 
 
 if __name__ == '__main__':
-    fix_agora()
-    fix_egobody()
+    # fix_agora()
+
+    work_dir = '/mnt/cache/share_data/caizhongang/data/preprocessed_datasets'
+
+    # # egobody
+    # load_paths = sorted(glob.glob(osp.join(work_dir, 'egobody_*.npz')))
+    # load_paths = [p for p in load_paths if 'fix_betas' not in p]
+    # for load_path in load_paths:
+    #     fix_humandata(load_path)
+
+    # # synbody
+    # load_paths = [osp.join(work_dir, 'synbody_train_230521_04000.npz')]
+    # load_paths = [p for p in load_paths if 'fix_betas' not in p]
+    # for load_path in load_paths:
+    #     fix_humandata(load_path)
+
+    # renbody
+    load_paths = sorted(glob.glob(osp.join(work_dir, 'renbody_*highrescam*.npz')))
+    load_paths = [p for p in load_paths if 'fix_betas' not in p and 'highrescam' not in p]
+    for load_path in load_paths:
+        fix_humandata(load_path)
