@@ -11,6 +11,7 @@ from utils.human_models import smpl_x
 from utils.preprocessing import load_img, process_bbox, augmentation, process_db_coord, \
     process_human_model_output
 import random
+from humandata import Cache
 # from utils.vis import vis_keypoints, vis_mesh, save_obj
 
 class MPII(torch.utils.data.Dataset):
@@ -26,7 +27,32 @@ class MPII(torch.utils.data.Dataset):
                         'joints_name': ('R_Ankle', 'R_Knee', 'R_Hip', 'L_Hip', 'L_Knee', 'L_Ankle', 'Pelvis', 'Thorax', 'Neck', 'Head_top', 'R_Wrist', 'R_Elbow', 'R_Shoulder', 'L_Shoulder', 'L_Elbow', 'L_Wrist'),
                         'flip_pairs': ( (0,5), (1,4), (2,3), (10,15), (11,14), (12,13) ),
                         }
-        self.datalist = self.load_data()
+
+        # self.datalist = self.load_data()
+
+        # load data or cache
+        self.use_cache = getattr(cfg, 'use_cache', False)
+        self.annot_path_cache = osp.join(cfg.data_dir, 'cache', f'MPII_{data_split}.npz')
+        if self.use_cache and osp.isfile(self.annot_path_cache):
+            print(f'[{self.__class__.__name__}] loading cache from {self.annot_path_cache}')
+            datalist = Cache(self.annot_path_cache)
+            assert datalist.data_strategy == getattr(cfg, 'data_strategy', None), \
+                f'Cache data strategy {datalist.data_strategy} does not match current data strategy ' \
+                f'{getattr(cfg, "data_strategy", None)}'
+            self.datalist = datalist
+        else:
+            if self.use_cache:
+                print(f'[{self.__class__.__name__}] Cache not found, generating cache...')
+            self.datalist = self.load_data()
+            if self.use_cache:
+                print(f'[{self.__class__.__name__}] Caching datalist to {self.annot_path_cache}...')
+                Cache.save(
+                    self.annot_path_cache,
+                    self.datalist,
+                    data_strategy=getattr(cfg, 'data_strategy', None)
+                )
+
+
 
     def load_data(self):
         db = COCO(osp.join(self.annot_path, 'train.json'))

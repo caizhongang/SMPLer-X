@@ -17,38 +17,50 @@ from humandata import HumanDataset
 class RenBody_HiRes(HumanDataset):
     def __init__(self, transform, data_split):
         super(RenBody_HiRes, self).__init__(transform, data_split)
-        
-        self.datalist = []
 
-        for idx in range(2):
-            if self.data_split == 'train':
-                pre_prc_file_train = f'renbody_train_highrescam_230517_399_{idx}_fix_betas.npz'
-                filename = getattr(cfg, 'filename', pre_prc_file_train)
-            else:
-                if idx > 0: continue
-                pre_prc_file_test = f'renbody_test_highrescam_230517_78_{idx}_fix_betas.npz'
-                filename = getattr(cfg, 'filename', pre_prc_file_test)
+        self.use_cache = getattr(cfg, 'use_cache', False)
+        self.annot_path_cache = osp.join(cfg.data_dir, 'cache', 'renbody_train_highrescam_230517_399_fix_betas.npz')
+        self.img_shape = None  # (h, w)
+        self.cam_param = {}
 
-            self.img_dir = osp.join(cfg.data_dir, 'RenBody')
-            self.annot_path = osp.join(cfg.data_dir, 'preprocessed_datasets', filename)
-            self.annot_path_cache = osp.join(cfg.data_dir, 'cache', filename)
-            self.use_cache = getattr(cfg, 'use_cache', False)
-            self.img_shape = None # (h, w)
-            self.cam_param = {}
+        # load data or cache
+        if self.use_cache and osp.isfile(self.annot_path_cache):
+            print(f'[{self.__class__.__name__}] loading cache from {self.annot_path_cache}')
+            self.datalist = self.load_cache(self.annot_path_cache)
 
-            # check image shape
-            # img_path = osp.join(self.img_dir, np.load(self.annot_path)['image_path'][0])
-            # img_shape = cv2.imread(img_path).shape[:2]
-            # assert self.img_shape == img_shape, 'image shape is incorrect: {} vs {}'.format(self.img_shape, img_shape)
+        else:
+            if self.use_cache:
+                print(f'[{self.__class__.__name__}] Cache not found, generating cache...')
 
-            # load data or cache
-            if self.use_cache and osp.isfile(self.annot_path_cache):
-                print(f'[{self.__class__.__name__}] loading cache from {self.annot_path_cache}')
-                self.datalist = self.load_cache(self.annot_path_cache)
-            else:
-                if self.use_cache:
-                    print(f'[{self.__class__.__name__}] Cache not found, generating cache...')
-                self.datalist = self.load_data(
-                    train_sample_interval=getattr(cfg, f'{self.__class__.__name__}_train_sample_interval', 1))
-                if self.use_cache:
-                    self.save_cache(self.annot_path_cache, self.datalist)
+            self.datalist = []
+            for idx in range(2):
+                if self.data_split == 'train':
+                    pre_prc_file_train = f'renbody_train_highrescam_230517_399_{idx}_fix_betas.npz'
+                    filename = getattr(cfg, 'filename', pre_prc_file_train)
+                else:
+                    if idx > 0: continue
+                    pre_prc_file_test = f'renbody_test_highrescam_230517_78_{idx}_fix_betas.npz'
+                    filename = getattr(cfg, 'filename', pre_prc_file_test)
+
+                self.img_dir = osp.join(cfg.data_dir, 'RenBody')
+                self.annot_path = osp.join(cfg.data_dir, 'preprocessed_datasets', filename)
+
+                # check image shape
+                # img_path = osp.join(self.img_dir, np.load(self.annot_path)['image_path'][0])
+                # img_shape = cv2.imread(img_path).shape[:2]
+                # assert self.img_shape == img_shape, 'image shape is incorrect: {} vs {}'.format(self.img_shape, img_shape)
+
+                # load data or cache
+                if self.use_cache and osp.isfile(self.annot_path_cache):
+                    print(f'[{self.__class__.__name__}] loading cache from {self.annot_path_cache}')
+                    self.datalist = self.load_cache(self.annot_path_cache)
+                else:
+                    if self.use_cache:
+                        print(f'[{self.__class__.__name__}] Cache not found, generating cache...')
+                    self.datalist = self.load_data(
+                        train_sample_interval=getattr(cfg, f'{self.__class__.__name__}_{self.data_split}_sample_interval', 1))
+                    if self.use_cache:
+                        self.save_cache(self.annot_path_cache, self.datalist)
+
+            if self.use_cache:
+                self.save_cache(self.annot_path_cache, self.datalist)

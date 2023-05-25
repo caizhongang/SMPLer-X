@@ -13,6 +13,8 @@ from utils.transforms import rigid_align
 from torch.utils.data.dataset import Dataset
 import random
 import tqdm
+from humandata import Cache
+
 
 class UBody_Part(torch.utils.data.Dataset):
     def __init__(self, transform, data_split, scene):
@@ -54,7 +56,30 @@ class UBody_Part(torch.utils.data.Dataset):
                  (126, 130), (127, 129), (131, 133)  # face lip
                  )
         }
-        self.datalist = self.load_data()
+
+        # self.datalist = self.load_data()
+
+        # load data or cache for db
+        self.use_cache = getattr(cfg, 'use_cache', False)
+        filename = f'ubody_{data_split}_{scene}.npz'
+        self.annot_path_cache = osp.join(cfg.data_dir, 'cache', filename)
+        if self.use_cache and osp.isfile(self.annot_path_cache):
+            print(f'[{self.__class__.__name__}] loading cache from {self.annot_path_cache}')
+            datalist = Cache(self.annot_path_cache)
+            assert datalist.data_strategy == getattr(cfg, 'data_strategy', None), \
+                f'Cache data strategy {datalist.data_strategy} does not match current data strategy ' \
+                f'{getattr(cfg, "data_strategy", None)}'
+            self.datalist = datalist
+        else:
+            if self.use_cache:
+                print(f'[{self.__class__.__name__}] Cache not found, generating cache...')
+            self.datalist = self.load_data()
+            if self.use_cache:
+                Cache.save(
+                    self.annot_path_cache,
+                    self.datalist,
+                    data_strategy=getattr(cfg, 'data_strategy', None)
+                )
 
     def merge_joint(self, joint_img, feet_img, lhand_img, rhand_img, face_img):
         # pelvis
@@ -560,19 +585,56 @@ class UBody(Dataset):
         self.aids = []
         # self.img_paths = []
         self.parts = []
-        self.datalist = []
-        folder = osp.join(cfg.data_dir, 'UBody', 'images')
-        for scene in tqdm.tqdm(os.listdir(folder)):
-            db = UBody_Part(transform, mode, scene=scene)
-            self.dbs.append(db)
-            self.datalist += db.datalist
-            # break
 
-        self.db_num = len(self.dbs)
-        self.max_db_data_num = max([len(db) for db in self.dbs])
-        self.db_len_cumsum = np.cumsum([len(db) for db in self.dbs])
-        self.make_same_len = cfg.make_same_len
-        print(f'Number of images: {sum([len(db) for db in self.dbs])}')
+        # load data or cache
+        # ubody has both db and datalist
+        # save two levels of cache
+        self.use_cache = getattr(cfg, 'use_cache', False)
+        self.annot_path_cache = osp.join(cfg.data_dir, 'cache', f'ubody_datalist_{mode}.npz')
+        if self.use_cache and osp.isfile(self.annot_path_cache):
+            print(f'[{self.__class__.__name__}] loading cache from {self.annot_path_cache}')
+            datalist = Cache(self.annot_path_cache)
+            assert datalist.data_strategy == getattr(cfg, 'data_strategy', None), \
+                f'Cache data strategy {datalist.data_strategy} does not match current data strategy ' \
+                f'{getattr(cfg, "data_strategy", None)}'
+            self.datalist = datalist
+
+            folder = osp.join(cfg.data_dir, 'UBody', 'images')
+            for scene in tqdm.tqdm(os.listdir(folder)):
+                db = UBody_Part(transform, mode, scene=scene)
+                self.dbs.append(db)
+
+            self.db_num = len(self.dbs)
+            self.max_db_data_num = max([len(db) for db in self.dbs])
+            self.db_len_cumsum = np.cumsum([len(db) for db in self.dbs])
+            self.make_same_len = cfg.make_same_len
+            print(f'Number of images: {sum([len(db) for db in self.dbs])}')
+
+        else:
+            if self.use_cache:
+                print(f'[{self.__class__.__name__}] Datalist cache not found, generating cache...')
+
+            self.datalist = []
+            folder = osp.join(cfg.data_dir, 'UBody', 'images')
+            for scene in tqdm.tqdm(os.listdir(folder)):
+                db = UBody_Part(transform, mode, scene=scene)
+                self.dbs.append(db)
+                self.datalist += db.datalist
+                # break
+
+            self.db_num = len(self.dbs)
+            self.max_db_data_num = max([len(db) for db in self.dbs])
+            self.db_len_cumsum = np.cumsum([len(db) for db in self.dbs])
+            self.make_same_len = cfg.make_same_len
+            print(f'Number of images: {sum([len(db) for db in self.dbs])}')
+
+            if self.use_cache:
+                print(f'[{self.__class__.__name__}] Caching datalist to {self.annot_path_cache}...')
+                Cache.save(
+                    self.annot_path_cache,
+                    self.datalist,
+                    data_strategy=getattr(cfg, 'data_strategy', None)
+                )
 
     def __len__(self):
         # all dbs have the same length

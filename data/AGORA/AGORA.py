@@ -15,13 +15,13 @@ from utils.preprocessing import load_img, sanitize_bbox, process_bbox, augmentat
 from utils.transforms import rigid_align
 import tqdm
 import random
+from humandata import Cache
 
 class AGORA(torch.utils.data.Dataset):
-    def __init__(self, transform, data_split, downsample=None):
+    def __init__(self, transform, data_split):
         self.transform = transform
         self.data_split = data_split
         self.data_path = osp.join(cfg.data_dir, 'AGORA', 'data')
-        self.downsample = downsample
         self.resolution = (2160, 3840)  # height, width. one of (720, 1280) and (2160, 3840)
         if cfg.agora_benchmark == 'agora_model_test' or cfg.agora_benchmark == 'test_only':
             self.test_set = 'test'
@@ -84,7 +84,49 @@ class AGORA(torch.utils.data.Dataset):
         self.joint_set['rwrist_idx'] = self.joint_set['joints_name'].index('R_Wrist')
         self.joint_set['neck_idx'] = self.joint_set['joints_name'].index('Neck')
 
-        self.datalist = self.load_data()
+        # self.datalist = self.load_data()
+
+        # load data or cache
+        self.use_cache = getattr(cfg, 'use_cache', False)
+        if self.data_split == 'train' or (self.data_split == 'test' and self.test_set == 'val'):
+            if self.data_split == 'train':
+                if getattr(cfg, 'agora_fix_betas', False):
+                    assert getattr(cfg, 'agora_fix_global_orient_transl')
+                    self.annot_path_cache = osp.join(cfg.data_dir, 'cache', 'AGORA_train_fix_betas.npz')
+                elif getattr(cfg, 'agora_fix_global_orient_transl', False):
+                    self.annot_path_cache = osp.join(cfg.data_dir, 'cache', 'AGORA_train_fix_global_orient_transl.npz')
+                else:
+                    self.annot_path_cache = osp.join(cfg.data_dir, 'cache', 'AGORA_train.npz')
+            else:
+                if getattr(cfg, 'agora_fix_betas', False):
+                    assert getattr(cfg, 'agora_fix_global_orient_transl')
+                    self.annot_path_cache = osp.join(cfg.data_dir, 'cache', 'AGORA_validation_fix_betas.npz')
+                elif getattr(cfg, 'agora_fix_global_orient_transl', False):
+                    self.annot_path_cache = osp.join(cfg.data_dir, 'cache', 'AGORA_validation_fix_global_orient_transl.npz')
+                else:
+                    self.annot_path_cache = osp.join(cfg.data_dir, 'cache', 'AGORA_validation.npz')
+
+            if self.use_cache and osp.isfile(self.annot_path_cache):
+                print(f'[{self.__class__.__name__}] loading cache from {self.annot_path_cache}')
+                datalist = Cache(self.annot_path_cache)
+                assert datalist.data_strategy == getattr(cfg, 'data_strategy', None), \
+                    f'Cache data strategy {datalist.data_strategy} does not match current data strategy ' \
+                    f'{getattr(cfg, "data_strategy", None)}'
+                self.datalist = datalist
+            else:
+                if self.use_cache:
+                    print(f'[{self.__class__.__name__}] Cache not found, generating cache...')
+                self.datalist = self.load_data()
+                if self.use_cache:
+                    print(f'[{self.__class__.__name__}] Caching datalist to {self.annot_path_cache}...')
+                    Cache.save(
+                        self.annot_path_cache,
+                        self.datalist,
+                        data_strategy=getattr(cfg, 'data_strategy', None)
+                    )
+
+        else: # test
+            self.datalist = self.load_data()
 
     def load_data(self):
         datalist = []
@@ -114,7 +156,7 @@ class AGORA(torch.utils.data.Dataset):
             ### HARDCODE vis for debug
             # count = 0
             i = 0
-            for aid in tqdm.tqdm(db.anns.keys()):
+            for aid in tqdm.tqdm(list(db.anns.keys())[:1000]):
                 # if count > 50:
                 #     continue
                 # count += 1

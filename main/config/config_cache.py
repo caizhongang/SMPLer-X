@@ -30,8 +30,8 @@ dataset_list = ['PoseTrack', 'GTA_Human2', 'SPEC', 'SynBody',
     'MPI_INF_3DHP', 'Behave', 'MuCo', 'RenBody_HiRes', 'InstaVariety', 'CHI3D', 'OCHuman', 'HumanSC3D',
     'MTP', 'Talkshow', 'AGORA', 'UBody']
 # dataset_list = ['Behave', 'CHI3D']
-trainset_3d = ['AGORA', 'UBody']
-trainset_2d = []
+trainset_3d = ['AGORA', 'Human36M']
+trainset_2d = ['UBody', 'MSCOCO', 'MPII']
 trainset_humandata = [
     # 'PoseTrack',
     # 'GTA_Human2',
@@ -45,13 +45,13 @@ trainset_humandata = [
     # 'MPI_INF_3DHP',
     # 'Behave',
     # 'MuCo',
-    # 'RenBody_HiRes',
-    # 'InstaVariety',
+    'RenBody_HiRes',
+    'InstaVariety',
     # 'CHI3D',
     # 'OCHuman',
     # 'HumanSC3D',
     # 'MTP',
-    # 'Talkshow'
+    'Talkshow'
 ]
 # trainset_humandata = ['Behave', 'CHI3D']
 testset = 'EHF'
@@ -65,10 +65,10 @@ use_cache = True
 
 EgoBody_Kinect_train_sample_interval = 10
 MPI_INF_3DHP_train_sample_interval = 5
-InstaVariety_Kinect_train_sample_interval = 10
-RenBody_HiRes_Kinect_train_sample_interval = 5
-Talkshow_Kinect_train_sample_interval = 10
-Human36M_Kinect_train_sample_interval = 10
+InstaVariety_train_sample_interval = 10
+RenBody_HiRes_train_sample_interval = 5
+Talkshow_train_sample_interval = 10
+Human36M_train_sample_interval = 10
 
 # model
 smplx_loss_weight = 1.0 #2 for agora_model for smplx shape

@@ -11,6 +11,7 @@ from utils.human_models import smpl_x
 from utils.preprocessing import load_img, process_bbox, augmentation, process_db_coord, process_human_model_output, get_fitting_error_3D
 from utils.transforms import world2cam, cam2pixel, rigid_align
 import random
+from humandata import Cache
 
 class Human36M(torch.utils.data.Dataset):
     def __init__(self, transform, data_split):
@@ -28,8 +29,29 @@ class Human36M(torch.utils.data.Dataset):
                         }
         self.joint_set['root_joint_idx'] = self.joint_set['joints_name'].index('Pelvis')
 
+        # self.datalist = self.load_data()
 
-        self.datalist = self.load_data()
+        # load data or cache
+        self.use_cache = getattr(cfg, 'use_cache', False)
+        self.annot_path_cache = osp.join(cfg.data_dir, 'cache', f'Human36M_{data_split}.npz')
+        if self.use_cache and osp.isfile(self.annot_path_cache):
+            print(f'[{self.__class__.__name__}] loading cache from {self.annot_path_cache}')
+            datalist = Cache(self.annot_path_cache)
+            assert datalist.data_strategy == getattr(cfg, 'data_strategy', None), \
+                f'Cache data strategy {datalist.data_strategy} does not match current data strategy ' \
+                f'{getattr(cfg, "data_strategy", None)}'
+            self.datalist = datalist
+        else:
+            if self.use_cache:
+                print(f'[{self.__class__.__name__}] Cache not found, generating cache...')
+            self.datalist = self.load_data()
+            if self.use_cache:
+                print(f'[{self.__class__.__name__}] Caching datalist to {self.annot_path_cache}...')
+                Cache.save(
+                    self.annot_path_cache,
+                    self.datalist,
+                    data_strategy=getattr(cfg, 'data_strategy', None)
+                )
 
     def get_subsampling_ratio(self):
         if self.data_split == 'train':

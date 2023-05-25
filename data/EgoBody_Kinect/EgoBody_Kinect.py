@@ -45,6 +45,6 @@ class EgoBody_Kinect(HumanDataset):
             if self.use_cache:
                 print(f'[{self.__class__.__name__}] Cache not found, generating cache...')
             self.datalist = self.load_data(
-                train_sample_interval=getattr(cfg, f'{self.__class__.__name__}_train_sample_interval', 1))
+                train_sample_interval=getattr(cfg, f'{self.__class__.__name__}_{self.data_split}_sample_interval', 1))
             if self.use_cache:
                 self.save_cache(self.annot_path_cache, self.datalist)

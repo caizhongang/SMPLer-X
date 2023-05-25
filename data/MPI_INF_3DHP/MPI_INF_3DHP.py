@@ -18,6 +18,9 @@ class MPI_INF_3DHP(HumanDataset):
     def __init__(self, transform, data_split):
         super(MPI_INF_3DHP, self).__init__(transform, data_split)
 
+        if data_split != 'train':
+            raise NotImplementedError('MPI_INF_3DHP test set is not supported')
+
         self.use_cache = getattr(cfg, 'use_cache', False)
         self.annot_path_cache = osp.join(cfg.data_dir, 'cache', 'mpi_inf_3dhp_neural_annot.npz')
         self.img_shape = None  # (h, w)

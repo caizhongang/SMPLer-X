@@ -47,7 +47,6 @@ class Cache():
         cache.update({
             'data_len': data_len,
             'data_strategy': data_strategy})
-        import pdb; pdb.set_trace()
         np.savez_compressed(save_path, **cache)
         print(f'Cache saved to {save_path}.')
 
