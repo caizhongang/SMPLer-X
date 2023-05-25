@@ -438,6 +438,7 @@ class Model(nn.Module):
             # test output
             out = {}
             out['img'] = inputs['img']
+            out['img_path'] = meta_info['img_path']
             out['joint_img'] = joint_img
             out['smplx_joint_proj'] = joint_proj
             out['smplx_mesh_cam'] = mesh_cam
@@ -503,6 +504,20 @@ def get_model(mode):
             print(f"Initialize backbone from {cfg.encoder_pretrained_model_path}")
         encoder = vit.backbone
 
+        # apply adapters
+        # currently, adapters have only been tested for ViTPose
+        adapter_name = getattr(cfg, 'adapter_name', None)
+        if adapter_name == 'lora':
+            from lora_utils import apply_adapter
+            encoder = apply_adapter(encoder)
+            print(f"Apply adapter {adapter_name}.")
+        elif adapter_name == 'vit_adapter':
+            from vit_adapter_utils import apply_adapter
+            encoder = apply_adapter(encoder, cfg.model_type)
+            print(f"Apply adapter {adapter_name}.")
+        else:
+            raise NotImplementedError('Undefined adapter: {}'.format(adapter_name))
+
     elif third_party_encoder == 'humanbench':
         # ref: https://github.com/OpenGVLab/HumanBench/blob/6478b659773de5de8ac6f2dd8e35d47cedc54877/PATH/core/models/backbones/vitdet_for_ladder_attention_share_pos_embed.py
         from humanbench_utils import get_backbone, load_checkpoint
@@ -538,13 +553,6 @@ def get_model(mode):
 
     else:
         raise NotImplementedError('Undefined third party encoder: {}'.format(third_party_encoder))
-
-    # apply adapters
-    adapter_name = getattr(cfg, 'adapter_name', None)
-    if adapter_name is not None:
-        from adapter_utils import apply_adapter
-        encoder = apply_adapter(encoder, adapter_name)
-        print(f"Apply adapter {adapter_name}.")
 
     # body
     body_position_net = PositionNet('body', feat_dim=cfg.feat_dim)

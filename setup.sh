@@ -39,11 +39,13 @@ cd main/dinov2
 pip install -v -e .
 cd ../..
 
-# install adapters
-cd main/adapter_utils
-pip install -v -e .
-cd ../..
-pip install pyyaml transformers accelerate
+# install lora-vit
+pip install safetensor
+
+# install vit-adapter
+cd main/vit_adapter_utils/detection/ops
+srun -p Zoetrope pip install -v -e .
+cd ../../../..
 
 # install shapy-related
 cd data/SHAPY/mesh-mesh-intersection
