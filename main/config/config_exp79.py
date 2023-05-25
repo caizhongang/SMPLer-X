@@ -31,20 +31,11 @@ trainset_2d = []
 trainset_humandata = ['PoseTrack', 'GTA_Human2', 'SPEC', 'SynBody', 
     'EgoBody_Egocentric', 'PROX', 'EgoBody_Kinect', 'CrowdPose', 'SynBody_Magic1']
 testset = 'EHF'
-# dataset_list = ['Human36M', 'MSCOCO', 'MPII', 'AGORA', 'EHF', 'SynBody', 'GTA_Human2', \
-#     'EgoBody_Egocentric', 'EgoBody_Kinect', 'UBody', 'PW3D', 'MuCo', 'PROX']
-# trainset_3d = ['MSCOCO', 'AGORA']
-# trainset_2d = ['UBody', 'PW3D']
-# trainset_humandata = ['PoseTrack', 'GTA_Human2', 'SPEC', 'SynBody', 
-#     'EgoBody_Egocentric', 'PROX', 'EgoBody_Kinect', 'CrowdPose', 'SynBody_Magic1',
-#     'MPI_INF_3DHP', 'Behave', 'MuCo', 'RenBody_HiRes', 'InstaVariety', 'CHI3D', 'OCHuman', 'HumanSC3D']
-# testset = 'EHF'
 
 # strategy 
 data_strategy = 'concat' # 'balance
 EgoBody_Kinect_train_sample_interval = 10
-# InstaVariety_Kinect_train_sample_interval = 10
-# RenBody_HiRes_Kinect_train_sample_interval = 5
+
 
 # model
 smplx_loss_weight = 1.0 #2 for agora_model for smplx shape

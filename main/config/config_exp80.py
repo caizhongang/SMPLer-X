@@ -24,6 +24,7 @@ agora_fix_betas = True
 agora_fix_global_orient_transl = True
 agora_valid_root_pose = True
 
+# top10
 dataset_list = ['Human36M', 'MSCOCO', 'MPII', 'AGORA', 'EHF', 'SynBody', 'GTA_Human2', \
     'EgoBody_Egocentric', 'EgoBody_Kinect', 'UBody', 'PW3D', 'MuCo', 'PROX']
 trainset_3d = ['MSCOCO', 'AGORA']
@@ -32,11 +33,12 @@ trainset_humandata = ['PoseTrack', 'GTA_Human2', 'SPEC', 'SynBody',
     'EgoBody_Egocentric', 'PROX', 'EgoBody_Kinect', 'CrowdPose', 'SynBody_Magic1']
 testset = 'EHF'
 
+# downsample
+EgoBody_Kinect_train_sample_interval = 10
+
 # strategy 
 data_strategy = 'balance' # 'balance' need to define total_data_len
 total_data_len = 1515988
-
-EgoBody_Kinect_train_sample_interval = 10
 
 # model
 smplx_loss_weight = 1.0 #2 for agora_model for smplx shape

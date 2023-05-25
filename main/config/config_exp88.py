@@ -34,9 +34,9 @@ testset = 'EHF'
 
 # strategy 
 data_strategy = 'balance' # 'balance' need to define total_data_len
-total_data_len = 1515988
+total_data_len = 'auto' # assign number or 'auto' for concat length
 
-Talkshow_Kinect_train_sample_interval = 10
+Talkshow_train_sample_interval = 10
 
 # model
 smplx_loss_weight = 1.0 #2 for agora_model for smplx shape

@@ -15,6 +15,7 @@ def parse_args():
     parser.add_argument('--testset', type=str, default='EHF')
     parser.add_argument('--agora_benchmark', type=str, default='na')
     parser.add_argument('--shapy_eval_split', type=str, default='val')
+    parser.add_argument('--use_cache', action='store_true')
     args = parser.parse_args()
     return args
 
@@ -28,7 +29,8 @@ def main():
     # ckpt_path = '/mnt/cache/yinwanqi/01-project/osx/pretrained_models/osx_l_agora.pth.tar'
 
     cfg.get_config_fromfile(config_path)
-    cfg.update_test_config(args.testset, args.agora_benchmark, args.shapy_eval_split, ckpt_path)
+    cfg.update_test_config(args.testset, args.agora_benchmark, args.shapy_eval_split, 
+                           ckpt_path, args.use_cache)
     cfg.update_config(args.num_gpus, args.exp_name)
 
     cudnn.benchmark = True
