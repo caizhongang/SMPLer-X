@@ -32,6 +32,8 @@ trainset_2d = []
 trainset_humandata = ['PoseTrack',  'Talkshow', 'EgoBody_Egocentric'] 
 testset = 'EHF'
 
+use_cache = True
+
 # strategy 
 data_strategy = 'balance' # 'balance' need to define total_data_len
 total_data_len = 'auto' # assign number or 'auto' for concat length
