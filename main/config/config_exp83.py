@@ -28,8 +28,7 @@ dataset_list = ['Human36M', 'MSCOCO', 'MPII', 'AGORA', 'EHF', 'SynBody', 'GTA_Hu
     'EgoBody_Egocentric', 'EgoBody_Kinect', 'UBody', 'PW3D', 'MuCo', 'PROX']
 trainset_3d = []
 trainset_2d = []
-trainset_humandata = ['UP3D']
-debug = True
+trainset_humandata = ['ARCTIC']
 testset = 'EHF'
 
 # model

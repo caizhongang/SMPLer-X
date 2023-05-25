@@ -29,6 +29,7 @@ dataset_list = ['Human36M', 'MSCOCO', 'MPII', 'AGORA', 'EHF', 'SynBody', 'GTA_Hu
 trainset_3d = []
 trainset_2d = []
 trainset_humandata = ['SSP3D']
+debug = True
 testset = 'EHF'
 
 # model

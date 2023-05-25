@@ -214,11 +214,15 @@ class HumanDataset(torch.utils.data.Dataset):
                 # smplx_param['shape'] = np.zeros(10, dtype=np.float32)
 
             # # TODO fix shape of poses
-            if self.__class__.__name__  == 'Talkshow':
+            if self.__class__.__name__ == 'Talkshow':
                 smplx_param['body_pose'] = smplx_param['body_pose'].reshape(-1, 3)
                 smplx_param['lhand_pose'] = smplx_param['lhand_pose'].reshape(-1, 3)
                 smplx_param['rhand_pose'] = smplx_param['lhand_pose'].reshape(-1, 3)
                 smplx_param['expr'] = smplx_param['expr'][:10]
+
+            if self.__class__.__name__ == 'BEDLAM':
+                smplx_param['shape'] = smplx_param['shape'][:10]
+
 
             if as_smplx == 'smpl':
                 smplx_param['shape'] = np.zeros(10, dtype=np.float32) # drop smpl betas for smplx
@@ -361,7 +365,7 @@ class HumanDataset(torch.utils.data.Dataset):
             targets = {'joint_img': joint_img_aug, # keypoints2d
                        'smplx_joint_img': joint_img_aug, #smplx_joint_img, # projected smplx if valid cam_param, else same as keypoints2d
                        'joint_cam': joint_cam_wo_ra, # joint_cam actually not used in any loss, # raw kps3d probably without ra
-                       'smplx_joint_cam': smplx_joint_cam if dummy_cord else joint_cam_ra, # kps3d with body, face, hand ra
+                       'smplx_joint_cam': smplx_joint_cam if (dummy_cord or getattr(cfg, 'debug', False)) else joint_cam_ra, # kps3d with body, face, hand ra
                        'smplx_pose': smplx_pose,
                        'smplx_shape': smplx_shape,
                        'smplx_expr': smplx_expr,
