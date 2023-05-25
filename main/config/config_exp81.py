@@ -40,8 +40,8 @@ total_data_len = 0 ### fill in this !!!!!!
 
 EgoBody_Kinect_train_sample_interval = 10
 MPI_INF_3DHP_train_sample_interval = 5
-InstaVariety_Kinect_train_sample_interval = 10
-RenBody_HiRes_Kinect_train_sample_interval = 5
+InstaVariety_train_sample_interval = 10
+RenBody_HiRes_train_sample_interval = 5
 
 # model
 smplx_loss_weight = 1.0 #2 for agora_model for smplx shape
@@ -99,7 +99,7 @@ lr_mult = 1
 test_batch_size = 32
 
 ## others
-num_thread = 16
+num_thread = 4
 vis = False
 
 ## directory

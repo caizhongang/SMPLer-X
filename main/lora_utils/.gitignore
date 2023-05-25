@@ -1,0 +1,15 @@
+*.png
+*.xml
+*.pyc
+*.pth
+*.pt
+*.log
+*.safetensors
+*.out
+OAI-train
+ChinaSet_AllFiles
+blood-cells
+__MACOSX
+*.sh
+results
+data

@@ -20,6 +20,8 @@ class Config:
         sys.path.insert(0, osp.join(self.root_dir, 'common'))
         sys.path.insert(0, osp.join(self.cur_dir, 'humanbench_utils'))
         sys.path.insert(0, osp.join(self.cur_dir, 'dinov2_utils'))
+        sys.path.insert(0, osp.join(self.cur_dir, 'lora_utils'))
+        sys.path.insert(0, osp.join(self.cur_dir, 'vit_adapter_utils'))
         from utils.dir import add_pypath
         add_pypath(osp.join(self.data_dir))
         for dataset in os.listdir(osp.join(self.root_dir, 'data')):
@@ -51,11 +53,12 @@ class Config:
         for file in copy_files:
             os.system(f'cp -r {self.root_dir}/{file} {self.code_dir}')
 
-    def update_test_config(self, testset, agora_benchmark, shapy_eval_split, pretrained_model_path):
+    def update_test_config(self, testset, agora_benchmark, shapy_eval_split, pretrained_model_path, use_cache):
         self.testset = testset
         self.agora_benchmark = agora_benchmark
         self.pretrained_model_path = pretrained_model_path
         self.shapy_eval_split = shapy_eval_split
+        self.use_cache = use_cache
 
     def update_config(self, num_gpus, exp_name):
         self.num_gpus = num_gpus

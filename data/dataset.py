@@ -10,11 +10,20 @@ class MultipleDatasets(Dataset):
         self.max_db_data_num = max([len(db) for db in dbs])
         self.db_len_cumsum = np.cumsum([len(db) for db in dbs])
         self.make_same_len = make_same_len
-        self.total_len = total_len
+        
+        if total_len == 'auto':
+            self.total_len = self.db_len_cumsum[-1]
+            self.auto_total_len = True
+        else:
+            self.total_len = total_len
+            self.auto_total_len = False
+
         if total_len is not None:
             self.per_db_len = self.total_len // self.db_num
         if verbose:
-            print('datasets: ', [len(self.dbs[i]) for i in range(self.db_num)])
+            print('datasets:', [len(self.dbs[i]) for i in range(self.db_num)])
+            print(f'Auto total length: {self.auto_total_len}, {self.total_len}')
+
             
 
     def __len__(self):

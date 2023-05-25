@@ -193,7 +193,7 @@ class MSCOCO(torch.utils.data.Dataset):
                   '. Sampled size:', len(datalist))
             
             if getattr(cfg, 'data_strategy', None) == 'balance':
-                print(f"[MSCOCO]Using [balance] strategy with datalist shuffled...")
+                print(f"[MSCOCO] Using [balance] strategy with datalist shuffled...")
                 random.shuffle(datalist)
 
             return datalist

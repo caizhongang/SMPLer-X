@@ -41,10 +41,10 @@ total_data_len = 0 ### fill in this !!!!!!
 
 EgoBody_Kinect_train_sample_interval = 10
 MPI_INF_3DHP_train_sample_interval = 5
-InstaVariety_Kinect_train_sample_interval = 10
-RenBody_HiRes_Kinect_train_sample_interval = 5
-Talkshow_Kinect_train_sample_interval = 10
-Human36M_Kinect_train_sample_interval = 10
+InstaVariety_train_sample_interval = 10
+RenBody_HiRes_train_sample_interval = 5
+Talkshow_train_sample_interval = 10
+Human36M_train_sample_interval = 10
 
 # model
 smplx_loss_weight = 1.0 #2 for agora_model for smplx shape

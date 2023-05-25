@@ -57,7 +57,7 @@ class PW3D(torch.utils.data.Dataset):
                   '. Sampled size:', len(datalist))
         
         if getattr(cfg, 'data_strategy', None) == 'balance' and self.data_split == 'train':
-            print(f'[PW3D]Using [balance] strategy with datalist shuffled...')
+            print(f'[PW3D] Using [balance] strategy with datalist shuffled...')
             random.shuffle(datalist)
 
         return datalist

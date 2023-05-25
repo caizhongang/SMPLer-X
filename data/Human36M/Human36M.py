@@ -159,7 +159,7 @@ class Human36M(torch.utils.data.Dataset):
                   '. Sampled size:', len(datalist))
 
         if getattr(cfg, 'data_strategy', None) == 'balance' and self.data_split == 'train':
-            print(f'[Human36M]Using [balance] strategy with datalist shuffled...')
+            print(f'[Human36M] Using [balance] strategy with datalist shuffled...')
             random.shuffle(datalist)
 
         return datalist

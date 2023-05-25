@@ -102,7 +102,7 @@ class MPII(torch.utils.data.Dataset):
                   '. Sampled size:', len(datalist))
         
         if getattr(cfg, 'data_strategy', None) == 'balance' and self.data_split == 'train':
-            print(f'[MPII]Using [balance] strategy with datalist shuffled...')
+            print(f'[MPII] Using [balance] strategy with datalist shuffled...')
             random.shuffle(datalist)
 
         return datalist

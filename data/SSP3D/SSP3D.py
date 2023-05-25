@@ -19,7 +19,7 @@ class SSP3D(HumanDataset):
         super(SSP3D, self).__init__(transform, data_split)
 
         if self.data_split == 'train':
-            filename = getattr(cfg, 'filename', 'ssp3d_230508_311.npz')
+            filename = getattr(cfg, 'filename', 'ssp3d_230525_311.npz')
         else:
             raise ValueError('SSP3D test set is not support')
 
