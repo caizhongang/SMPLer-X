@@ -18,9 +18,11 @@ class SynBody_Magic1(HumanDataset):
     def __init__(self, transform, data_split):
         super(SynBody_Magic1, self).__init__(transform, data_split)
 
+        filename = 'synbody_amass_230328_02172.npz'
         self.img_dir = osp.join(cfg.data_dir, 'SynBody')
-        self.annot_path = osp.join(cfg.data_dir, 'preprocessed_datasets', 
-                                'synbody_amass_230328_02172.npz')
+        self.annot_path = osp.join(cfg.data_dir, 'preprocessed_datasets', filename)
+        self.annot_path_cache = osp.join(cfg.data_dir, 'cache', filename)
+        self.use_cache = getattr(cfg, 'use_cache', False)
         self.img_shape = (1200, 1600)  # (h, w)
         self.cam_param = {
             'focal': (540, 540),  # (fx, fy)
@@ -32,6 +34,14 @@ class SynBody_Magic1(HumanDataset):
         img_shape = cv2.imread(img_path).shape[:2]
         assert self.img_shape == img_shape, 'image shape is incorrect: {} vs {}'.format(self.img_shape, img_shape)
 
-        # load data
-        self.datalist = self.load_data(train_sample_interval=getattr(cfg,
-                'SynBody_Magic1_train_sample_interval', 1))
+        # load data or cache
+        if self.use_cache and osp.isfile(self.annot_path_cache):
+            print(f'[{self.__class__.__name__}] loading cache from {self.annot_path_cache}')
+            self.datalist = self.load_cache(self.annot_path_cache)
+        else:
+            if self.use_cache:
+                print(f'[{self.__class__.__name__}] Cache not found, generating cache...')
+            self.datalist = self.load_data(
+                train_sample_interval=getattr(cfg, f'{self.__class__.__name__}_train_sample_interval', 1))
+            if self.use_cache:
+                self.save_cache(self.annot_path_cache, self.datalist)
