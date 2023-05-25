@@ -179,7 +179,7 @@ class UBody_Part(torch.utils.data.Dataset):
                   '. Sampled size:', len(datalist))
 
             if getattr(cfg, 'data_strategy', None) == 'balance':
-                print(f"[UBody]Using [balance] strategy with datalist shuffled...")
+                print(f"[UBody] Using [balance] strategy with datalist shuffled...")
                 random.shuffle(datalist)
 
             return datalist

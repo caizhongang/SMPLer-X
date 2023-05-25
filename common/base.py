@@ -198,11 +198,11 @@ class Trainer(Base):
                 syncbn_model = torch.nn.SyncBatchNorm.convert_sync_batchnorm(model, process_group)
                 model = torch.nn.parallel.DistributedDataParallel(
                     syncbn_model, device_ids=[self.gpu_idx],
-                    find_unused_parameters=True)
+                    find_unused_parameters=True) 
             else:
                 model = torch.nn.parallel.DistributedDataParallel(
                     model, device_ids=[self.gpu_idx],
-                    find_unused_parameters=False) # TODO
+                    find_unused_parameters=True) 
         else:
         # dp
             model = DataParallel(model).cuda()

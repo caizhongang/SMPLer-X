@@ -20,6 +20,8 @@ class Config:
         sys.path.insert(0, osp.join(self.root_dir, 'common'))
         sys.path.insert(0, osp.join(self.cur_dir, 'humanbench_utils'))
         sys.path.insert(0, osp.join(self.cur_dir, 'dinov2_utils'))
+        sys.path.insert(0, osp.join(self.cur_dir, 'lora_utils'))
+        sys.path.insert(0, osp.join(self.cur_dir, 'vit_adapter_utils'))
         from utils.dir import add_pypath
         add_pypath(osp.join(self.data_dir))
         for dataset in os.listdir(osp.join(self.root_dir, 'data')):

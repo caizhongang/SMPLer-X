@@ -421,6 +421,8 @@ class Model(nn.Module):
             out['lhand_bbox'] = lhand_bbox
             out['rhand_bbox'] = rhand_bbox
             out['face_bbox'] = face_bbox
+            if 'smplx_shape' in targets:
+                out['smplx_shape_target'] = targets['smplx_shape']
             if 'img_path' in meta_info:
                 out['img_path'] = meta_info['img_path']
             if 'smplx_pose' in targets:
@@ -498,6 +500,23 @@ def get_model(mode):
         face_regressor.apply(init_weights)
 
     encoder = vit.backbone
+
+    # apply adapters
+    # currently, adapters have only been tested for ViTPose
+    adapter_name = getattr(cfg, 'adapter_name', None)
+    if adapter_name == 'lora':
+        from lora_utils import apply_adapter
+        encoder = apply_adapter(encoder)
+        print(f"Apply adapter {adapter_name}.")
+    elif adapter_name == 'vit_adapter':
+        from vit_adapter_utils import apply_adapter
+        encoder = apply_adapter(encoder, cfg.model_type)
+        print(f"Apply adapter {adapter_name}.")
+    elif adapter_name is not None:
+        raise NotImplementedError('Undefined adapter: {}'.format(adapter_name))
+    else:
+        print("No adapter used.")
+
     model = Model(encoder, body_position_net, body_rotation_net, box_net, hand_position_net, hand_roi_net, hand_rotation_net,
                   face_regressor)
     return model

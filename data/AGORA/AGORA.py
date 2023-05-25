@@ -299,7 +299,7 @@ class AGORA(torch.utils.data.Dataset):
                                          'person_idx': pid})
         
         if getattr(cfg, 'data_strategy', None) == 'balance' and self.data_split == 'train':
-            print(f"[Agora]Using [balance] strategy with datalist shuffled...")
+            print(f"[Agora] Using [balance] strategy with datalist shuffled...")
             random.shuffle(datalist)
 
         return datalist
