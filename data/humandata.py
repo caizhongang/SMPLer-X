@@ -21,6 +21,52 @@ KPS3D_KEYS = ['keypoints3d_cam', 'keypoints3d', 'keypoints3d_smplx','keypoints3d
 # when there is keypoints3d_smplx, use this rather than keypoints3d_original
 
 
+class Cache():
+    """ A custom implementation for OSX pipeline """
+    def __init__(self, load_path=None):
+        if load_path is not None:
+            self.load(load_path)
+
+    def load(self, load_path):
+        self.load_path = load_path
+        self.cache = np.load(load_path, allow_pickle=True)
+        self.data_len = self.cache['data_len']
+        self.data_strategy = self.cache['data_strategy']
+        assert self.data_len == len(self.cache) - 2  # data_len, data_strategy
+        self.cache = None
+
+    @classmethod
+    def save(cls, save_path, data_list, data_strategy):
+        assert save_path is not None, 'save_path is None'
+        data_len = len(data_list)
+        cache = {}
+        for i, data in enumerate(data_list):
+            cache[str(i)] = data
+        assert len(cache) == data_len
+        # update meta
+        cache.update({
+            'data_len': data_len,
+            'data_strategy': data_strategy})
+        import pdb; pdb.set_trace()
+        np.savez_compressed(save_path, **cache)
+        print(f'Cache saved to {save_path}.')
+
+    # def shuffle(self):
+    #     random.shuffle(self.mapping)
+
+    def __len__(self):
+        return self.data_len
+
+    def __getitem__(self, idx):
+        if self.cache is None:
+            self.cache = np.load(self.load_path, allow_pickle=True)
+        # mapped_idx = self.mapping[idx]
+        # cache_data = self.cache[str(mapped_idx)]
+        cache_data = self.cache[str(idx)]
+        data = cache_data.item()
+        return data
+
+
 class HumanDataset(torch.utils.data.Dataset):
 
     # same mapping for 144->137 and 190->137
@@ -39,6 +85,8 @@ class HumanDataset(torch.utils.data.Dataset):
         # dataset information, to be filled by child class
         self.img_dir = None
         self.annot_path = None
+        self.annot_path_cache = None
+        self.use_cache = False
         self.img_shape = None  # (h, w)
         self.cam_param = None  # {'focal_length': (fx, fy), 'princpt': (cx, cy)}
         self.use_betas_neutral = False
@@ -49,10 +97,26 @@ class HumanDataset(torch.utils.data.Dataset):
             'flip_pairs': smpl_x.flip_pairs}
         self.joint_set['root_joint_idx'] = self.joint_set['joints_name'].index('Pelvis')
 
+    def load_cache(self, annot_path_cache):
+        datalist = Cache(annot_path_cache)
+        assert datalist.data_strategy == getattr(cfg, 'data_strategy', None), \
+            f'Cache data strategy {datalist.data_strategy} does not match current data strategy ' \
+            f'{getattr(cfg, "data_strategy", None)}'
+        return datalist
+
+    def save_cache(self, annot_path_cache, datalist):
+        print(f'[{self.__class__.__name__}] Caching datalist to {self.annot_path_cache}...')
+        Cache.save(
+            annot_path_cache,
+            datalist,
+            data_strategy=getattr(cfg, 'data_strategy', None)
+        )
+
     def load_data(self, train_sample_interval=1):
+
         content = np.load(self.annot_path, allow_pickle=True)
         num_examples = len(content['image_path'])
-        
+
         if 'meta' in content:
             meta = content['meta'].item()
             print('meta keys:', meta.keys())
@@ -69,7 +133,7 @@ class HumanDataset(torch.utils.data.Dataset):
             image_shape = np.stack([height, width], axis=-1)
         else:
             image_shape = None
-        
+
         bbox_xywh = content['bbox_xywh']
 
         if 'smplx' in content:
@@ -103,7 +167,7 @@ class HumanDataset(torch.utils.data.Dataset):
             face_bbox_xywh = content['face_bbox_xywh']
         else:
             face_bbox_xywh = np.zeros_like(bbox_xywh)
-        
+
         decompressed = False
         if content['__keypoints_compressed__']:
             decompressed_kps = self.decompress_keypoints(content)
@@ -112,13 +176,13 @@ class HumanDataset(torch.utils.data.Dataset):
         keypoints3d = None
         valid_kps3d = False
         keypoints3d_mask = None
-        valid_kps3d_mask = False 
+        valid_kps3d_mask = False
         for kps3d_key in KPS3D_KEYS:
             if kps3d_key in content:
                 keypoints3d = decompressed_kps[kps3d_key][:, self.SMPLX_137_MAPPING, :3] if decompressed \
                 else content[kps3d_key][:, self.SMPLX_137_MAPPING, :3]
                 valid_kps3d = True
-                
+
                 if f'{kps3d_key}_mask' in content:
                     keypoints3d_mask = content[f'{kps3d_key}_mask'][self.SMPLX_137_MAPPING]
                     valid_kps3d_mask = True
@@ -126,12 +190,12 @@ class HumanDataset(torch.utils.data.Dataset):
                     keypoints3d_mask = content['keypoints3d_mask'][self.SMPLX_137_MAPPING]
                     valid_kps3d_mask = True
                 break
-        
+
         for kps2d_key in KPS2D_KEYS:
             if kps2d_key in content:
                 keypoints2d = decompressed_kps[kps2d_key][:, self.SMPLX_137_MAPPING, :2] if decompressed \
                     else content[kps2d_key][:, self.SMPLX_137_MAPPING, :2]
-                
+
                 if f'{kps2d_key}_mask' in content:
                     keypoints2d_mask = content[f'{kps2d_key}_mask'][self.SMPLX_137_MAPPING]
                 elif 'keypoints2d_mask' in content:
@@ -197,7 +261,7 @@ class HumanDataset(torch.utils.data.Dataset):
                 joint_cam = keypoints3d[i]
             else:
                 joint_cam = None
-            
+
             smplx_param = {k: v[i] for k, v in smplx.items()}
 
             # TODO: set invalid if None?
@@ -231,7 +295,6 @@ class HumanDataset(torch.utils.data.Dataset):
             if as_smplx == 'smplh':
                 smplx_param['shape'] = np.zeros(10, dtype=np.float32) # drop smpl betas for smplx
 
-    
             if smplx_param['lhand_pose'] is None:
                 smplx_param['lhand_valid'] = False
             else:
@@ -267,7 +330,7 @@ class HumanDataset(torch.utils.data.Dataset):
             print(f'[{self.__class__.__name__} train] original size:', int(num_examples),
                   '. Sample interval:', train_sample_interval,
                   '. Sampled size:', len(datalist))
-        
+
         if getattr(cfg, 'data_strategy', None) == 'balance' and self.data_split == 'train':
             print(f'[{self.__class__.__name__}] Using [balance] strategy with datalist shuffled...')
             random.shuffle(datalist)
@@ -278,7 +341,13 @@ class HumanDataset(torch.utils.data.Dataset):
         return len(self.datalist)
 
     def __getitem__(self, idx):
-        data = copy.deepcopy(self.datalist[idx])
+        try:
+            data = copy.deepcopy(self.datalist[idx])
+        except Exception as e:
+            print(f'[{self.__class__.__name__}] Error loading data {idx}')
+            print(e)
+            exit(0)
+
         img_path, img_shape, bbox = data['img_path'], data['img_shape'], data['bbox']
 
         # img

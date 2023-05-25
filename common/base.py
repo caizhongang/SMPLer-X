@@ -175,7 +175,7 @@ class Trainer(Base):
             sampler_train = DistributedSampler(trainset_loader, world_size, rank, shuffle=True)
             self.batch_generator = DataLoader(dataset=trainset_loader, batch_size=cfg.train_batch_size,
                                           shuffle=False, num_workers=cfg.num_thread, sampler=sampler_train,
-                                          pin_memory=True, persistent_workers=True, drop_last=True) 
+                                          pin_memory=True, persistent_workers=True if cfg.num_thread > 0 else False, drop_last=True)
         else:
             self.batch_generator = DataLoader(dataset=trainset_loader, batch_size=cfg.num_gpus * cfg.train_batch_size,
                                           shuffle=True, num_workers=cfg.num_thread,
