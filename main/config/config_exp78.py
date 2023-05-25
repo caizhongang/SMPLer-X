@@ -33,6 +33,7 @@ trainset_humandata = ['PoseTrack', 'GTA_Human2', 'SPEC', 'SynBody',
     'EgoBody_Egocentric', 'PROX', 'EgoBody_Kinect', 'CrowdPose', 'SynBody_Magic1']
 testset = 'EHF'
 
+use_cache = True
 # downsample
 EgoBody_Kinect_train_sample_interval = 10
 

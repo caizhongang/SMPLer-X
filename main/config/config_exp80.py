@@ -17,7 +17,7 @@ bbox_ratio = 1.2
 # continue
 continue_train = True
 start_over = False
-pretrained_model_path = '../output/train_exp80_20230524_151039/model_dump/snapshot_7.pth.tar'
+pretrained_model_path = '../output/train_exp80_20230525_134033/model_dump/snapshot_7.pth.tar'
 
 # dataset setting
 agora_fix_betas = True
@@ -32,6 +32,8 @@ trainset_2d = []
 trainset_humandata = ['PoseTrack', 'GTA_Human2', 'SPEC', 'SynBody', 
     'EgoBody_Egocentric', 'PROX', 'EgoBody_Kinect', 'CrowdPose', 'SynBody_Magic1']
 testset = 'EHF'
+
+use_cache = True
 
 # downsample
 EgoBody_Kinect_train_sample_interval = 10
