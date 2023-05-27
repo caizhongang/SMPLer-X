@@ -22,7 +22,9 @@ KPS3D_KEYS = ['keypoints3d_cam', 'keypoints3d', 'keypoints3d_smplx','keypoints3d
 
 
 class Cache():
-    """ A custom implementation for OSX pipeline """
+    """ A custom implementation for OSX pipeline
+        Need to run tool/cache/fix_cache.py to fix paths
+    """
     def __init__(self, load_path=None):
         if load_path is not None:
             self.load(load_path)
