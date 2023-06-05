@@ -8,7 +8,7 @@ exp_name = 'output/exp1/pre_analysis'
 # quick access
 save_epoch = 1
 lr = 1e-5
-end_epoch = 20
+end_epoch = 10
 train_batch_size = 32
 
 syncbn = True
@@ -32,6 +32,8 @@ trainset_2d = []
 trainset_humandata = ['PoseTrack', 'GTA_Human2', 'SPEC', 'SynBody', 
     'EgoBody_Egocentric', 'PROX', 'EgoBody_Kinect', 'CrowdPose', 'SynBody_Magic1']
 testset = 'EHF'
+
+use_cache = True
 
 # downsample
 EgoBody_Kinect_train_sample_interval = 10

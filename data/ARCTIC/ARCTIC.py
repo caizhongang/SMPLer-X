@@ -18,16 +18,34 @@ class ARCTIC(HumanDataset):
     def __init__(self, transform, data_split):
         super(ARCTIC, self).__init__(transform, data_split)
 
-        if self.data_split == 'train':
-            filename = getattr(cfg, 'filename', 'p1_train.npz')
-        else:
-            raise ValueError('ARCTIC test set is not support')
+        if getattr(cfg, 'eval_on_train', False):
+            self.data_split = 'eval_train'
+            print("Evaluate on train set.")
 
-        self.img_dir = osp.join(cfg.data_dir, 'ARCTIC')
-        self.annot_path = osp.join(cfg.data_dir, 'preprocessed_datasets', filename)
-        self.img_shape = None #1024, 1024)  # (h, w) 
+        self.use_cache = getattr(cfg, 'use_cache', False)
+        self.annot_path_cache = osp.join(cfg.data_dir, 'cache', f'arctic_{self.data_split}.npz')
+        self.img_shape = None  # (h, w)
         self.cam_param = {}
 
-        # load data
-        self.datalist = self.load_data(
-            train_sample_interval=getattr(cfg, f'{self.__class__.__name__}_train_sample_interval', 1))
+        if self.use_cache and osp.isfile(self.annot_path_cache):
+            print(f'[{self.__class__.__name__}] loading cache from {self.annot_path_cache}')
+            self.datalist = self.load_cache(self.annot_path_cache)
+        else:
+            if self.use_cache:
+                print(f'[{self.__class__.__name__}] Cache not found, generating cache...')
+
+            if 'train' in data_split:
+                filename = getattr(cfg, 'filename', 'p1_train.npz')
+            else:
+                filename = getattr(cfg, 'filename', 'p1_val.npz')
+
+            self.img_dir = osp.join(cfg.data_dir, 'ARCTIC')
+            self.annot_path = osp.join(cfg.data_dir, 'preprocessed_datasets', filename)
+
+            # load data
+            self.datalist = self.load_data(
+                train_sample_interval=getattr(cfg, f'{self.__class__.__name__}_train_sample_interval', 1),
+                test_sample_interval=getattr(cfg, f'{self.__class__.__name__}_test_sample_interval', 10))
+
+            if self.use_cache:
+                self.save_cache(self.annot_path_cache, self.datalist)

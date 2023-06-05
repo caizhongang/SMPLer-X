@@ -38,6 +38,12 @@ class Model(nn.Module):
         self.body_num_joints = len(smpl_x.pos_joint_part['body'])
         self.hand_joint_num = len(smpl_x.pos_joint_part['rhand'])
 
+        self.neck = [self.box_net, self.hand_roi_net]
+
+        self.head = [self.body_position_net, self.body_regressor,
+                    self.hand_position_net, self.hand_regressor, 
+                    self.face_regressor]
+
         self.trainable_modules = [self.encoder, self.body_position_net, self.body_regressor,
                                   self.box_net, self.hand_position_net,
                                   self.hand_roi_net, self.hand_regressor, self.face_regressor]

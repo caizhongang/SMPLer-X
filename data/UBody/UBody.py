@@ -203,8 +203,10 @@ class UBody_Part(torch.utils.data.Dataset):
                   '. Sample interval:', train_sample_interval,
                   '. Sampled size:', len(datalist))
 
-            if getattr(cfg, 'data_strategy', None) == 'balance':
+            if (getattr(cfg, 'data_strategy', None) == 'balance' and self.data_split == 'train') or \
+                    getattr(cfg, 'eval_on_train', False):
                 print(f"[UBody] Using [balance] strategy with datalist shuffled...")
+                random.seed(2023)
                 random.shuffle(datalist)
 
             return datalist
@@ -398,6 +400,7 @@ class UBody_Part(torch.utils.data.Dataset):
                     smplx_pose_valid, smplx_joint_valid, smplx_expr_valid, smplx_mesh_cam_orig = \
                         process_human_model_output(smplx_param['smplx_param'], smplx_param['cam_param'], 
                                                    do_flip, img_shape, img2bb_trans, rot, 'smplx')
+                smplx_cam_trans = np.array(smplx_param['smplx_param']['trans'])
                 is_valid_fit = True
 
                 """
@@ -429,6 +432,7 @@ class UBody_Part(torch.utils.data.Dataset):
                 smplx_shape = np.zeros((smpl_x.shape_param_dim), dtype=np.float32)
                 smplx_expr = np.zeros((smpl_x.expr_code_dim), dtype=np.float32)
                 smplx_pose_valid = np.zeros((smpl_x.orig_joint_num), dtype=np.float32)
+                smplx_cam_trans = np.zeros((cam_param_num), dtype=np.float32)
                 smplx_expr_valid = False
                 is_valid_fit = False
 
@@ -453,13 +457,20 @@ class UBody_Part(torch.utils.data.Dataset):
                        'smplx_pose': smplx_pose, 'smplx_shape': smplx_shape, 'smplx_expr': smplx_expr, 
                        'lhand_bbox_center': lhand_bbox_center,'lhand_bbox_size': lhand_bbox_size, 
                        'rhand_bbox_center': rhand_bbox_center, 'rhand_bbox_size': rhand_bbox_size, 
-                       'face_bbox_center': face_bbox_center, 'face_bbox_size': face_bbox_size}
+                       'face_bbox_center': face_bbox_center, 'face_bbox_size': face_bbox_size,
+                       }
             meta_info = {'joint_valid': smplx_joint_valid, 'joint_trunc': smplx_joint_trunc, 
                          'smplx_joint_valid': smplx_joint_valid,'smplx_joint_trunc': smplx_joint_trunc, 
                          'smplx_pose_valid': smplx_pose_valid, 'smplx_shape_valid': float(smplx_shape_valid), 
                          'smplx_expr_valid': float(smplx_expr_valid),
                          'is_3D': float(True), 'lhand_bbox_valid': lhand_bbox_valid,
-                         'rhand_bbox_valid': rhand_bbox_valid, 'face_bbox_valid': face_bbox_valid}
+                         'rhand_bbox_valid': rhand_bbox_valid, 'face_bbox_valid': face_bbox_valid,
+                         }
+            
+            if getattr(cfg, 'eval_on_train', False):
+                targets['smplx_cam_trans'] = smplx_cam_trans
+                meta_info['bb2img_trans'] = bb2img_trans
+                
             return inputs, targets, meta_info
 
         # test mode
@@ -579,9 +590,8 @@ class UBody_Part(torch.utils.data.Dataset):
             return inputs, targets, meta_info
 
 class UBody(Dataset):
-    def __init__(self, transform, mode='test'):
+    def __init__(self, transform, mode='test'): 
         self.dbs = []
-
         self.aids = []
         # self.img_paths = []
         self.parts = []
@@ -591,6 +601,41 @@ class UBody(Dataset):
         # save two levels of cache
         self.use_cache = getattr(cfg, 'use_cache', False)
         self.annot_path_cache = osp.join(cfg.data_dir, 'cache', f'ubody_datalist_{mode}.npz')
+        if getattr(cfg, 'eval_on_train', False):
+            mode = 'train'
+            self.transform = transform
+            self.annot_path_cache = osp.join(cfg.data_dir, 'cache', 'ubody_datalist_eval_on_train.npz')
+            self.joint_set = {
+                'joint_num': 134,  # body 24 (23 + pelvis), lhand 21, rhand 21, face 68
+                'joints_name': \
+                    (
+                    'Nose', 'L_Eye', 'R_Eye', 'L_Ear', 'R_Ear', 'L_Shoulder', 'R_Shoulder', 'L_Elbow', 'R_Elbow', 'L_Wrist',
+                    'R_Wrist', 'L_Hip', 'R_Hip', 'L_Knee', 'R_Knee', 'L_Ankle', 'R_Ankle', 'Pelvis', 'L_Big_toe',
+                    'L_Small_toe', 'L_Heel', 'R_Big_toe', 'R_Small_toe', 'R_Heel',  # body part
+                    'L_Wrist_Hand', 'L_Thumb_1', 'L_Thumb_2', 'L_Thumb_3', 'L_Thumb_4', 'L_Index_1', 'L_Index_2',
+                    'L_Index_3', 'L_Index_4', 'L_Middle_1', 'L_Middle_2', 'L_Middle_3', 'L_Middle_4', 'L_Ring_1',
+                    'L_Ring_2', 'L_Ring_3', 'L_Ring_4', 'L_Pinky_1', 'L_Pinky_2', 'L_Pinky_3', 'L_Pinky_4',  # left hand
+                    'R_Wrist_Hand', 'R_Thumb_1', 'R_Thumb_2', 'R_Thumb_3', 'R_Thumb_4', 'R_Index_1', 'R_Index_2',
+                    'R_Index_3', 'R_Index_4', 'R_Middle_1', 'R_Middle_2', 'R_Middle_3', 'R_Middle_4', 'R_Ring_1',
+                    'R_Ring_2', 'R_Ring_3', 'R_Ring_4', 'R_Pinky_1', 'R_Pinky_2', 'R_Pinky_3', 'R_Pinky_4',  # right hand
+                    *['Face_' + str(i) for i in range(56, 73)],  # face contour
+                    *['Face_' + str(i) for i in range(5, 56)]  # face
+                    ),
+                'flip_pairs': \
+                    ((1, 2), (3, 4), (5, 6), (7, 8), (9, 10), (11, 12), (13, 14), (15, 16), (18, 21), (19, 22), (20, 23),
+                    # body part
+                    (24, 45), (25, 46), (26, 47), (27, 48), (28, 49), (29, 50), (30, 51), (31, 52), (32, 53), (33, 54),
+                    (34, 55), (35, 56), (36, 57), (37, 58), (38, 59), (39, 60), (40, 61), (41, 62), (42, 63), (43, 64),
+                    (44, 65),  # hand part
+                    (66, 82), (67, 81), (68, 80), (69, 79), (70, 78), (71, 77), (72, 76), (73, 75),  # face contour
+                    (83, 92), (84, 91), (85, 90), (86, 89), (87, 88),  # face eyebrow
+                    (97, 101), (98, 100),  # face below nose
+                    (102, 111), (103, 110), (104, 109), (105, 108), (106, 113), (107, 112),  # face eyes
+                    (114, 120), (115, 119), (116, 118), (121, 125), (122, 124),  # face mouth
+                    (126, 130), (127, 129), (131, 133)  # face lip
+                    )
+            }
+            print("Evaluate on train set.")
         if self.use_cache and osp.isfile(self.annot_path_cache):
             print(f'[{self.__class__.__name__}] loading cache from {self.annot_path_cache}')
             datalist = Cache(self.annot_path_cache)
@@ -599,16 +644,18 @@ class UBody(Dataset):
                 f'{getattr(cfg, "data_strategy", None)}'
             self.datalist = datalist
 
-            folder = osp.join(cfg.data_dir, 'UBody', 'images')
-            for scene in tqdm.tqdm(os.listdir(folder)):
-                db = UBody_Part(transform, mode, scene=scene)
-                self.dbs.append(db)
+            # skip db system for eval on train
+            if not getattr(cfg, 'eval_on_train', False):
+                folder = osp.join(cfg.data_dir, 'UBody', 'images')
+                for scene in tqdm.tqdm(os.listdir(folder)):
+                    db = UBody_Part(transform, mode, scene=scene)
+                    self.dbs.append(db)
 
-            self.db_num = len(self.dbs)
-            self.max_db_data_num = max([len(db) for db in self.dbs])
-            self.db_len_cumsum = np.cumsum([len(db) for db in self.dbs])
-            self.make_same_len = cfg.make_same_len
-            print(f'Number of images: {sum([len(db) for db in self.dbs])}')
+                self.db_num = len(self.dbs)
+                self.max_db_data_num = max([len(db) for db in self.dbs])
+                self.db_len_cumsum = np.cumsum([len(db) for db in self.dbs])
+                self.make_same_len = cfg.make_same_len
+                print(f'Number of images: {sum([len(db) for db in self.dbs])}')
 
         else:
             if self.use_cache:
@@ -622,6 +669,12 @@ class UBody(Dataset):
                 self.datalist += db.datalist
                 # break
 
+            if getattr(cfg, 'eval_on_train', False):
+                print(f"[UBody eval on train] Datalist shuffled and take first 10000...")
+                random.seed(2023)
+                random.shuffle(self.datalist)
+                self.datalist = self.datalist[:10000]
+            
             self.db_num = len(self.dbs)
             self.max_db_data_num = max([len(db) for db in self.dbs])
             self.db_len_cumsum = np.cumsum([len(db) for db in self.dbs])
@@ -637,15 +690,136 @@ class UBody(Dataset):
                 )
 
     def __len__(self):
+
+        if getattr(cfg, 'eval_on_train', False):
+            return len(self.datalist)
+        
         # all dbs have the same length
         if self.make_same_len:
             return self.max_db_data_num * self.db_num
         # each db has different length
         else:
             return sum([len(db) for db in self.dbs])
-
+        
     def __getitem__(self, index):
         # print(self.__len__(), len(self.parts))
+        if getattr(cfg, 'eval_on_train', False):
+            self.data_split = 'test'
+            data = copy.deepcopy(self.datalist[index])
+
+            # eval on train mode
+            img_path, img_shape = data['img_path'], data['img_shape']
+
+            # image load
+            img = load_img(img_path)
+            bbox = data['bbox']
+            img, img2bb_trans, bb2img_trans, rot, do_flip = augmentation(img, bbox, self.data_split)
+            img = self.transform(img.astype(np.float32)) / 255.
+
+            # hand and face bbox transform
+            lhand_bbox, lhand_bbox_valid = self.process_hand_face_bbox(data['lhand_bbox'], do_flip, img_shape,
+                                                                       img2bb_trans)
+            rhand_bbox, rhand_bbox_valid = self.process_hand_face_bbox(data['rhand_bbox'], do_flip, img_shape,
+                                                                       img2bb_trans)
+            face_bbox, face_bbox_valid = self.process_hand_face_bbox(data['face_bbox'], do_flip, img_shape,
+                                                                     img2bb_trans)
+            if do_flip:
+                lhand_bbox, rhand_bbox = rhand_bbox, lhand_bbox
+                lhand_bbox_valid, rhand_bbox_valid = rhand_bbox_valid, lhand_bbox_valid
+            lhand_bbox_center = (lhand_bbox[0] + lhand_bbox[1]) / 2.;
+            rhand_bbox_center = (rhand_bbox[0] + rhand_bbox[1]) / 2.;
+            face_bbox_center = (face_bbox[0] + face_bbox[1]) / 2.
+            lhand_bbox_size = lhand_bbox[1] - lhand_bbox[0];
+            rhand_bbox_size = rhand_bbox[1] - rhand_bbox[0];
+            face_bbox_size = face_bbox[1] - face_bbox[0];
+
+            # coco gt
+            dummy_coord = np.zeros((self.joint_set['joint_num'], 3), dtype=np.float32)
+            joint_img = data['joint_img']
+            joint_img = np.concatenate((joint_img[:, :2], np.zeros_like(joint_img[:, :1])), 1)  # x, y, dummy depth
+            joint_img, joint_cam, joint_cam_ra ,joint_valid, joint_trunc = process_db_coord(joint_img, dummy_coord,
+                                                                              data['joint_valid'], do_flip, img_shape,
+                                                                              self.joint_set['flip_pairs'],
+                                                                              img2bb_trans, rot,
+                                                                              self.joint_set['joints_name'],
+                                                                              smpl_x.joints_name)
+
+            # smplx coordinates and parameters
+            smplx_param = data['smplx_param']
+            if smplx_param is not None:
+                smplx_joint_img, smplx_joint_cam, smplx_joint_trunc, smplx_pose, smplx_shape, smplx_expr, \
+                    smplx_pose_valid, smplx_joint_valid, smplx_expr_valid, smplx_mesh_cam_orig = \
+                        process_human_model_output(smplx_param['smplx_param'], smplx_param['cam_param'], 
+                                                   do_flip, img_shape, img2bb_trans, rot, 'smplx')
+                smplx_cam_trans = np.array(smplx_param['smplx_param']['trans'])
+                is_valid_fit = True
+
+                """
+                # for debug
+                _tmp = joint_img.copy()
+                _tmp[:,0] = _tmp[:,0] / cfg.output_hm_shape[2] * cfg.input_img_shape[1]
+                _tmp[:,1] = _tmp[:,1] / cfg.output_hm_shape[1] * cfg.input_img_shape[0]
+                _img = img.numpy().transpose(1,2,0)[:,:,::-1] * 255
+                _img = vis_keypoints(_img, _tmp)
+                cv2.imwrite('coco_' + str(idx) + '.jpg', _img)
+                """
+                # reverse ra
+                smplx_joint_cam_wo_ra = smplx_joint_cam.copy()
+                smplx_joint_cam_wo_ra[smpl_x.joint_part['lhand'], :] = smplx_joint_cam_wo_ra[smpl_x.joint_part['lhand'], :] \
+                                                                + smplx_joint_cam_wo_ra[smpl_x.lwrist_idx, None, :]  # left hand root-relative
+                smplx_joint_cam_wo_ra[smpl_x.joint_part['rhand'], :] = smplx_joint_cam_wo_ra[smpl_x.joint_part['rhand'], :] \
+                                                                + smplx_joint_cam_wo_ra[smpl_x.rwrist_idx, None, :]  # right hand root-relative
+                smplx_joint_cam_wo_ra[smpl_x.joint_part['face'], :] = smplx_joint_cam_wo_ra[smpl_x.joint_part['face'], :] \
+                                                                + smplx_joint_cam_wo_ra[smpl_x.neck_idx, None,: ]  # face root-relative
+
+
+            else:
+                # dummy values
+                smplx_joint_img = np.zeros((smpl_x.joint_num, 3), dtype=np.float32)
+                smplx_joint_cam = np.zeros((smpl_x.joint_num, 3), dtype=np.float32)
+                smplx_joint_trunc = np.zeros((smpl_x.joint_num, 1), dtype=np.float32)
+                smplx_joint_valid = np.zeros((smpl_x.joint_num), dtype=np.float32)
+                smplx_pose = np.zeros((smpl_x.orig_joint_num * 3), dtype=np.float32)
+                smplx_shape = np.zeros((smpl_x.shape_param_dim), dtype=np.float32)
+                smplx_expr = np.zeros((smpl_x.expr_code_dim), dtype=np.float32)
+                smplx_pose_valid = np.zeros((smpl_x.orig_joint_num), dtype=np.float32)
+                cam_param_num = 3
+                smplx_cam_trans = np.zeros((cam_param_num), dtype=np.float32)
+                smplx_expr_valid = False
+                is_valid_fit = False
+
+            # SMPLX pose parameter validity
+            smplx_pose_valid = np.tile(smplx_pose_valid[:, None], (1, 3)).reshape(-1)
+            # SMPLX joint coordinate validity
+            smplx_joint_valid = smplx_joint_valid[:, None]
+            smplx_joint_trunc = smplx_joint_valid * smplx_joint_trunc
+
+            # make zero mask for invalid fit
+            if not is_valid_fit:
+                smplx_pose_valid[:] = 0
+                smplx_joint_valid[:] = 0
+                smplx_joint_trunc[:] = 0
+                smplx_shape_valid = False
+            else:
+                smplx_shape_valid = True
+
+            inputs = {'img': img, }
+            targets = {'joint_img': smplx_joint_img, 'joint_cam': smplx_joint_cam_wo_ra, 
+                       'smplx_joint_img': smplx_joint_img,'smplx_joint_cam': smplx_joint_cam, 
+                       'smplx_pose': smplx_pose, 'smplx_shape': smplx_shape, 'smplx_expr': smplx_expr, 
+                       'lhand_bbox_center': lhand_bbox_center,'lhand_bbox_size': lhand_bbox_size, 
+                       'rhand_bbox_center': rhand_bbox_center, 'rhand_bbox_size': rhand_bbox_size, 
+                       'face_bbox_center': face_bbox_center, 'face_bbox_size': face_bbox_size,
+                       'smplx_cam_trans': smplx_cam_trans}
+            meta_info = {'joint_valid': smplx_joint_valid, 'joint_trunc': smplx_joint_trunc, 
+                         'smplx_joint_valid': smplx_joint_valid,'smplx_joint_trunc': smplx_joint_trunc, 
+                         'smplx_pose_valid': smplx_pose_valid, 'smplx_shape_valid': float(smplx_shape_valid), 
+                         'smplx_expr_valid': float(smplx_expr_valid),
+                         'is_3D': float(True), 'lhand_bbox_valid': lhand_bbox_valid,
+                         'rhand_bbox_valid': rhand_bbox_valid, 'face_bbox_valid': face_bbox_valid,
+                         'bb2img_trans': bb2img_trans}
+            return inputs, targets, meta_info
+
         if self.make_same_len:
             db_idx = index // self.max_db_data_num
             data_idx = index % self.max_db_data_num
@@ -664,7 +838,43 @@ class UBody(Dataset):
                 data_idx = index - self.db_len_cumsum[db_idx-1]
 
         return self.dbs[db_idx][data_idx]
+    
+    def process_hand_face_bbox(self, bbox, do_flip, img_shape, img2bb_trans):
+        if bbox is None:
+            bbox = np.array([0, 0, 1, 1], dtype=np.float32).reshape(2, 2)  # dummy value
+            bbox_valid = float(False)  # dummy value
+        else:
+            # reshape to top-left (x,y) and bottom-right (x,y)
+            bbox = bbox.reshape(2, 2)
 
+            # flip augmentation
+            if do_flip:
+                bbox[:, 0] = img_shape[1] - bbox[:, 0] - 1
+                bbox[0, 0], bbox[1, 0] = bbox[1, 0].copy(), bbox[0, 0].copy()  # xmin <-> xmax swap
+
+            # make four points of the bbox
+            bbox = bbox.reshape(4).tolist()
+            xmin, ymin, xmax, ymax = bbox
+            bbox = np.array([[xmin, ymin], [xmax, ymin], [xmax, ymax], [xmin, ymax]], dtype=np.float32).reshape(4, 2)
+
+            # affine transformation (crop, rotation, scale)
+            bbox_xy1 = np.concatenate((bbox, np.ones_like(bbox[:, :1])), 1)
+            bbox = np.dot(img2bb_trans, bbox_xy1.transpose(1, 0)).transpose(1, 0)[:, :2]
+            bbox[:, 0] = bbox[:, 0] / cfg.input_img_shape[1] * cfg.output_hm_shape[2]
+            bbox[:, 1] = bbox[:, 1] / cfg.input_img_shape[0] * cfg.output_hm_shape[1]
+
+            # make box a rectangle without rotation
+            xmin = np.min(bbox[:, 0]);
+            xmax = np.max(bbox[:, 0]);
+            ymin = np.min(bbox[:, 1]);
+            ymax = np.max(bbox[:, 1]);
+            bbox = np.array([xmin, ymin, xmax, ymax], dtype=np.float32)
+
+            bbox_valid = float(True)
+            bbox = bbox.reshape(2, 2)
+
+        return bbox, bbox_valid
+    
     def perspective_transform(self, cam_trans, bb2img_trans, inputs):
         # inputs: [num_points, 3], world coordinate
         x = (inputs[:, 0] + cam_trans[None, 0]) / (
@@ -861,6 +1071,12 @@ class UBody(Dataset):
 
         print('PA MPJPE (Body): %.2f mm' % np.mean(eval_result['pa_mpjpe_body']))
         print('PA MPJPE (Hands): %.2f mm' % np.mean(eval_result['pa_mpjpe_hand']))
+        print()
+
+        print(f"{np.mean(eval_result['pa_mpvpe_all'])},{np.mean(eval_result['pa_mpvpe_hand'])},{np.mean(eval_result['pa_mpvpe_face'])},"
+        f"{np.mean(eval_result['mpvpe_all'])},{np.mean(eval_result['mpvpe_hand'])},{np.mean(eval_result['mpvpe_face'])},"
+        f"{np.mean(eval_result['pa_mpjpe_body'])},{np.mean(eval_result['pa_mpjpe_hand'])}")
+        print()
 
         f = open(os.path.join(cfg.result_dir, 'result.txt'), 'w')
         f.write(f'UBody dataset: \n')
@@ -872,3 +1088,20 @@ class UBody(Dataset):
         f.write('MPVPE (Face): %.2f mm\n' % np.mean(eval_result['mpvpe_face']))
         f.write('PA MPJPE (Body): %.2f mm\n' % np.mean(eval_result['pa_mpjpe_body']))
         f.write('PA MPJPE (Hands): %.2f mm\n' % np.mean(eval_result['pa_mpjpe_hand']))
+
+        f.write(f"{np.mean(eval_result['pa_mpvpe_all'])},{np.mean(eval_result['pa_mpvpe_hand'])},{np.mean(eval_result['pa_mpvpe_face'])},"
+        f"{np.mean(eval_result['mpvpe_all'])},{np.mean(eval_result['mpvpe_hand'])},{np.mean(eval_result['mpvpe_face'])},"
+        f"{np.mean(eval_result['pa_mpjpe_body'])},{np.mean(eval_result['pa_mpjpe_hand'])}")
+
+        if getattr(cfg, 'eval_on_train', False):
+            import csv
+            csv_file = f'{cfg.root_dir}/output/{cfg.testset}_eval_on_train.csv'
+            exp_id = cfg.exp_name.split('_')[1]
+            new_line = [exp_id,np.mean(eval_result['pa_mpvpe_all']),np.mean(eval_result['pa_mpvpe_hand']),np.mean(eval_result['pa_mpvpe_face']),
+                        np.mean(eval_result['mpvpe_all']),np.mean(eval_result['mpvpe_hand']),np.mean(eval_result['mpvpe_face']),
+                        np.mean(eval_result['pa_mpjpe_body']),np.mean(eval_result['pa_mpjpe_hand'])]
+
+            # Append the new line to the CSV file
+            with open(csv_file, 'a', newline='') as file:
+                writer = csv.writer(file)
+                writer.writerow(new_line)

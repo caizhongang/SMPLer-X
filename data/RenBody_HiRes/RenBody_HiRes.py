@@ -17,9 +17,13 @@ from humandata import HumanDataset
 class RenBody_HiRes(HumanDataset):
     def __init__(self, transform, data_split):
         super(RenBody_HiRes, self).__init__(transform, data_split)
+        self.datalist = []
+        if getattr(cfg, 'eval_on_train', False):
+            self.data_split = 'eval_train'
+            print("Evaluate on train set.")
 
         self.use_cache = getattr(cfg, 'use_cache', False)
-        self.annot_path_cache = osp.join(cfg.data_dir, 'cache', 'renbody_train_highrescam_230517_399_fix_betas.npz')
+        self.annot_path_cache = osp.join(cfg.data_dir, 'cache', f'renbody_{self.data_split}_highrescam_230517_399_fix_betas.npz')
         self.img_shape = None  # (h, w)
         self.cam_param = {}
 
@@ -32,9 +36,8 @@ class RenBody_HiRes(HumanDataset):
             if self.use_cache:
                 print(f'[{self.__class__.__name__}] Cache not found, generating cache...')
 
-            self.datalist = []
             for idx in range(2):
-                if self.data_split == 'train':
+                if 'train' in self.data_split:
                     pre_prc_file_train = f'renbody_train_highrescam_230517_399_{idx}_fix_betas.npz'
                     filename = getattr(cfg, 'filename', pre_prc_file_train)
                 else:
@@ -45,22 +48,14 @@ class RenBody_HiRes(HumanDataset):
                 self.img_dir = osp.join(cfg.data_dir, 'RenBody')
                 self.annot_path = osp.join(cfg.data_dir, 'preprocessed_datasets', filename)
 
-                # check image shape
-                # img_path = osp.join(self.img_dir, np.load(self.annot_path)['image_path'][0])
-                # img_shape = cv2.imread(img_path).shape[:2]
-                # assert self.img_shape == img_shape, 'image shape is incorrect: {} vs {}'.format(self.img_shape, img_shape)
+                if self.use_cache:
+                    print(f'[{self.__class__.__name__}] Cache not found, generating cache...')
+                
+                data_split = self.load_data(
+                    train_sample_interval=getattr(cfg, f'{self.__class__.__name__}_{self.data_split}_sample_interval', 1),
+                    test_sample_interval=getattr(cfg, f'{self.__class__.__name__}_{self.data_split}_sample_interval', 10))
+                self.datalist.extend(data_split)
 
-                # load data or cache
-                if self.use_cache and osp.isfile(self.annot_path_cache):
-                    print(f'[{self.__class__.__name__}] loading cache from {self.annot_path_cache}')
-                    self.datalist = self.load_cache(self.annot_path_cache)
-                else:
-                    if self.use_cache:
-                        print(f'[{self.__class__.__name__}] Cache not found, generating cache...')
-                    self.datalist = self.load_data(
-                        train_sample_interval=getattr(cfg, f'{self.__class__.__name__}_{self.data_split}_sample_interval', 1))
-                    if self.use_cache:
-                        self.save_cache(self.annot_path_cache, self.datalist)
 
             if self.use_cache:
                 self.save_cache(self.annot_path_cache, self.datalist)

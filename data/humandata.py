@@ -20,6 +20,24 @@ KPS3D_KEYS = ['keypoints3d_cam', 'keypoints3d', 'keypoints3d_smplx','keypoints3d
 # keypoints3d_cam with root-align has higher priority, followed by old version key keypoints3d
 # when there is keypoints3d_smplx, use this rather than keypoints3d_original
 
+hands_meanr = np.array([ 0.11167871, -0.04289218,  0.41644183,  0.10881133,  0.06598568,
+        0.75622   , -0.09639297,  0.09091566,  0.18845929, -0.11809504,
+       -0.05094385,  0.5295845 , -0.14369841, -0.0552417 ,  0.7048571 ,
+       -0.01918292,  0.09233685,  0.3379135 , -0.45703298,  0.19628395,
+        0.6254575 , -0.21465237,  0.06599829,  0.50689423, -0.36972436,
+        0.06034463,  0.07949023, -0.1418697 ,  0.08585263,  0.63552827,
+       -0.3033416 ,  0.05788098,  0.6313892 , -0.17612089,  0.13209307,
+        0.37335458,  0.8509643 , -0.27692273,  0.09154807, -0.49983943,
+       -0.02655647, -0.05288088,  0.5355592 , -0.04596104,  0.27735803]).reshape(15, -1)
+hands_meanl = np.array([ 0.11167871,  0.04289218, -0.41644183,  0.10881133, -0.06598568,
+       -0.75622   , -0.09639297, -0.09091566, -0.18845929, -0.11809504,
+        0.05094385, -0.5295845 , -0.14369841,  0.0552417 , -0.7048571 ,
+       -0.01918292, -0.09233685, -0.3379135 , -0.45703298, -0.19628395,
+       -0.6254575 , -0.21465237, -0.06599829, -0.50689423, -0.36972436,
+       -0.06034463, -0.07949023, -0.1418697 , -0.08585263, -0.63552827,
+       -0.3033416 , -0.05788098, -0.6313892 , -0.17612089, -0.13209307,
+       -0.37335458,  0.8509643 ,  0.27692273, -0.09154807, -0.49983943,
+        0.02655647,  0.05288088,  0.5355592 ,  0.04596104, -0.27735803]).reshape(15, -1)
 
 class Cache():
     """ A custom implementation for OSX pipeline """
@@ -112,7 +130,7 @@ class HumanDataset(torch.utils.data.Dataset):
             data_strategy=getattr(cfg, 'data_strategy', None)
         )
 
-    def load_data(self, train_sample_interval=1):
+    def load_data(self, train_sample_interval=1, test_sample_interval=1):
 
         content = np.load(self.annot_path, allow_pickle=True)
         num_examples = len(content['image_path'])
@@ -211,6 +229,8 @@ class HumanDataset(torch.utils.data.Dataset):
         for i in tqdm.tqdm(range(int(num_examples))):
             if self.data_split == 'train' and i % train_sample_interval != 0:
                 continue
+            if self.data_split == 'test' and i % test_sample_interval != 0:
+                continue
             img_path = osp.join(self.img_dir, image_path[i])
             img_shape = image_shape[i] if image_shape is not None else self.img_shape
 
@@ -279,13 +299,16 @@ class HumanDataset(torch.utils.data.Dataset):
 
             # # TODO fix shape of poses
             if self.__class__.__name__ == 'Talkshow':
-                smplx_param['body_pose'] = smplx_param['body_pose'].reshape(-1, 3)
-                smplx_param['lhand_pose'] = smplx_param['lhand_pose'].reshape(-1, 3)
-                smplx_param['rhand_pose'] = smplx_param['lhand_pose'].reshape(-1, 3)
+                smplx_param['body_pose'] = smplx_param['body_pose'].reshape(21, 3)
+                smplx_param['lhand_pose'] = smplx_param['lhand_pose'].reshape(15, 3)
+                smplx_param['rhand_pose'] = smplx_param['lhand_pose'].reshape(15, 3)
                 smplx_param['expr'] = smplx_param['expr'][:10]
 
             if self.__class__.__name__ == 'BEDLAM':
                 smplx_param['shape'] = smplx_param['shape'][:10]
+                # manually set flat_hand_mean = True
+                smplx_param['lhand_pose'] -= hands_meanl
+                smplx_param['rhand_pose'] -= hands_meanr
 
 
             if as_smplx == 'smpl':
@@ -331,9 +354,14 @@ class HumanDataset(torch.utils.data.Dataset):
                   '. Sample interval:', train_sample_interval,
                   '. Sampled size:', len(datalist))
 
-        if getattr(cfg, 'data_strategy', None) == 'balance' and self.data_split == 'train':
+        if (getattr(cfg, 'data_strategy', None) == 'balance' and self.data_split == 'train') or \
+                getattr(cfg, 'eval_on_train', False):
             print(f'[{self.__class__.__name__}] Using [balance] strategy with datalist shuffled...')
+            random.seed(2023)
             random.shuffle(datalist)
+
+            if getattr(cfg, 'eval_on_train', False):
+                return datalist[:10000]
 
         return datalist
 
@@ -645,6 +673,13 @@ class HumanDataset(torch.utils.data.Dataset):
         print('PA MPJPE (R-Hands): %.2f mm' % np.mean(eval_result['pa_mpjpe_r_hand']))
         print('PA MPJPE (Hands): %.2f mm' % np.mean(eval_result['pa_mpjpe_hand']))
 
+        print()
+        print(f"{np.mean(eval_result['pa_mpvpe_all'])},{np.mean(eval_result['pa_mpvpe_l_hand'])},{np.mean(eval_result['pa_mpvpe_r_hand'])},{np.mean(eval_result['pa_mpvpe_hand'])},{np.mean(eval_result['pa_mpvpe_face'])},"
+        f"{np.mean(eval_result['mpvpe_all'])},{np.mean(eval_result['mpvpe_l_hand'])},{np.mean(eval_result['mpvpe_r_hand'])},{np.mean(eval_result['mpvpe_hand'])},{np.mean(eval_result['mpvpe_face'])},"
+        f"{np.mean(eval_result['pa_mpjpe_body'])},{np.mean(eval_result['pa_mpjpe_l_hand'])},{np.mean(eval_result['pa_mpjpe_r_hand'])},{np.mean(eval_result['pa_mpjpe_hand'])}")
+        print()
+
+
         f = open(os.path.join(cfg.result_dir, 'result.txt'), 'w')
         f.write(f'{cfg.testset} dataset \n')
         f.write('PA MPVPE (All): %.2f mm\n' % np.mean(eval_result['pa_mpvpe_all']))
@@ -661,6 +696,22 @@ class HumanDataset(torch.utils.data.Dataset):
         f.write('PA MPJPE (L-Hands): %.2f mm' % np.mean(eval_result['pa_mpjpe_l_hand']))
         f.write('PA MPJPE (R-Hands): %.2f mm' % np.mean(eval_result['pa_mpjpe_r_hand']))
         f.write('PA MPJPE (Hands): %.2f mm\n' % np.mean(eval_result['pa_mpjpe_hand']))
+        f.write(f"{np.mean(eval_result['pa_mpvpe_all'])},{np.mean(eval_result['pa_mpvpe_l_hand'])},{np.mean(eval_result['pa_mpvpe_r_hand'])},{np.mean(eval_result['pa_mpvpe_hand'])},{np.mean(eval_result['pa_mpvpe_face'])},"
+        f"{np.mean(eval_result['mpvpe_all'])},{np.mean(eval_result['mpvpe_l_hand'])},{np.mean(eval_result['mpvpe_r_hand'])},{np.mean(eval_result['mpvpe_hand'])},{np.mean(eval_result['mpvpe_face'])},"
+        f"{np.mean(eval_result['pa_mpjpe_body'])},{np.mean(eval_result['pa_mpjpe_l_hand'])},{np.mean(eval_result['pa_mpjpe_r_hand'])},{np.mean(eval_result['pa_mpjpe_hand'])}")
+
+        if getattr(cfg, 'eval_on_train', False):
+            import csv
+            csv_file = f'{cfg.root_dir}/output/{cfg.testset}_eval_on_train.csv'
+            exp_id = cfg.exp_name.split('_')[1]
+            new_line = [exp_id,np.mean(eval_result['pa_mpvpe_all']),np.mean(eval_result['pa_mpvpe_l_hand']),np.mean(eval_result['pa_mpvpe_r_hand']),np.mean(eval_result['pa_mpvpe_hand']),np.mean(eval_result['pa_mpvpe_face']),
+                        np.mean(eval_result['mpvpe_all']),np.mean(eval_result['mpvpe_l_hand']),np.mean(eval_result['mpvpe_r_hand']),np.mean(eval_result['mpvpe_hand']),np.mean(eval_result['mpvpe_face']),
+                        np.mean(eval_result['pa_mpjpe_body']),np.mean(eval_result['pa_mpjpe_l_hand']),np.mean(eval_result['pa_mpjpe_r_hand']),np.mean(eval_result['pa_mpjpe_hand'])]
+
+            # Append the new line to the CSV file
+            with open(csv_file, 'a', newline='') as file:
+                writer = csv.writer(file)
+                writer.writerow(new_line)
 
     def decompress_keypoints(self, humandata) -> None:
         """If a key contains 'keypoints', and f'{key}_mask' is in self.keys(),

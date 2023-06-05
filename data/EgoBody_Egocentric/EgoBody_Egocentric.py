@@ -17,8 +17,11 @@ from humandata import HumanDataset
 class EgoBody_Egocentric(HumanDataset):
     def __init__(self, transform, data_split):
         super(EgoBody_Egocentric, self).__init__(transform, data_split)
+        if getattr(cfg, 'eval_on_train', False):
+            self.data_split = 'eval_train'
+            print("Evaluate on train set.")
 
-        if self.data_split == 'train':
+        if 'train' in self.data_split:
             filename = getattr(cfg, 'filename', 'egobody_egocentric_train_230425_065_fix_betas.npz')
         else:
             filename = getattr(cfg, 'filename', 'egobody_egocentric_test_230425_043_fix_betas.npz')

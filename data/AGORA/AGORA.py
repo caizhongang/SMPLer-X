@@ -21,6 +21,9 @@ class AGORA(torch.utils.data.Dataset):
     def __init__(self, transform, data_split):
         self.transform = transform
         self.data_split = data_split
+        if getattr(cfg, 'eval_on_train', False):
+            self.data_split = 'eval_train'
+            print("Evaluate on train set.")
         self.data_path = osp.join(cfg.data_dir, 'AGORA', 'data')
         self.resolution = (2160, 3840)  # height, width. one of (720, 1280) and (2160, 3840)
         if cfg.agora_benchmark == 'agora_model_test' or cfg.agora_benchmark == 'test_only':
@@ -88,15 +91,15 @@ class AGORA(torch.utils.data.Dataset):
 
         # load data or cache
         self.use_cache = getattr(cfg, 'use_cache', False)
-        if self.data_split == 'train' or (self.data_split == 'test' and self.test_set == 'val'):
-            if self.data_split == 'train':
+        if 'train'in self.data_split or (self.data_split == 'test' and self.test_set == 'val'):
+            if 'train' in self.data_split:
                 if getattr(cfg, 'agora_fix_betas', False):
                     assert getattr(cfg, 'agora_fix_global_orient_transl')
-                    self.annot_path_cache = osp.join(cfg.data_dir, 'cache', 'AGORA_train_fix_betas.npz')
+                    self.annot_path_cache = osp.join(cfg.data_dir, 'cache', f'AGORA_{self.data_split}_fix_betas.npz')
                 elif getattr(cfg, 'agora_fix_global_orient_transl', False):
-                    self.annot_path_cache = osp.join(cfg.data_dir, 'cache', 'AGORA_train_fix_global_orient_transl.npz')
+                    self.annot_path_cache = osp.join(cfg.data_dir, 'cache', f'AGORA_{self.data_split}_fix_global_orient_transl.npz')
                 else:
-                    self.annot_path_cache = osp.join(cfg.data_dir, 'cache', 'AGORA_train.npz')
+                    self.annot_path_cache = osp.join(cfg.data_dir, 'cache', f'AGORA_{self.data_split}.npz')
             else:
                 if getattr(cfg, 'agora_fix_betas', False):
                     assert getattr(cfg, 'agora_fix_global_orient_transl')
@@ -130,13 +133,13 @@ class AGORA(torch.utils.data.Dataset):
 
     def load_data(self):
         datalist = []
-        if self.data_split == 'train' or (self.data_split == 'test' and self.test_set == 'val'):
+        if 'train' in self.data_split or (self.data_split == 'test' and self.test_set == 'val'):
             print('dataset settings:')
             print('agora_fix_betas', getattr(cfg, 'agora_fix_betas', False))
             print('agora_fix_global_orient_transl', getattr(cfg, 'agora_fix_global_orient_transl', False))
             print('agora_valid_root_pose', getattr(cfg, 'agora_valid_root_pose', False))
 
-            if self.data_split == 'train':
+            if 'train' in self.data_split:
                 if getattr(cfg, 'agora_fix_betas', False):
                     assert getattr(cfg, 'agora_fix_global_orient_transl')
                     db = COCO(osp.join(self.data_path, 'AGORA_train_fix_betas.json'))
@@ -156,11 +159,11 @@ class AGORA(torch.utils.data.Dataset):
             ### HARDCODE vis for debug
             # count = 0
             i = 0
-            for aid in tqdm.tqdm(list(db.anns.keys())[:1000]):
+            for aid in tqdm.tqdm(list(db.anns.keys())):
                 # if count > 50:
                 #     continue
                 # count += 1
-
+                
                 i += 1
                 if self.data_split == 'train' and i % getattr(cfg, 'AGORA_train_sample_interval', 1) != 0:
                     continue
@@ -340,9 +343,14 @@ class AGORA(torch.utils.data.Dataset):
                                          'img2bb_trans_from_orig': img2bb_trans_from_orig, 'bbox': bbox,
                                          'person_idx': pid})
         
-        if getattr(cfg, 'data_strategy', None) == 'balance' and self.data_split == 'train':
+        if (getattr(cfg, 'data_strategy', None) == 'balance' and self.data_split == 'train') or \
+                self.data_split == 'eval_train':
             print(f"[Agora] Using [balance] strategy with datalist shuffled...")
+            random.seed(2023)
             random.shuffle(datalist)
+
+            if self.data_split == "eval_train":
+                return datalist[:10000]
 
         return datalist
 
@@ -769,6 +777,11 @@ class AGORA(torch.utils.data.Dataset):
         print('MPVPE (R-Hands): %.2f mm' % np.mean(eval_result['mpvpe_r_hand']))
         print('MPVPE (Hands): %.2f mm' % np.mean(eval_result['mpvpe_hand']))
         print('MPVPE (Face): %.2f mm' % np.mean(eval_result['mpvpe_face']))
+        print()
+        
+        print(f"{np.mean(eval_result['pa_mpvpe_all'])},{np.mean(eval_result['pa_mpvpe_l_hand'])},{np.mean(eval_result['pa_mpvpe_r_hand'])},{np.mean(eval_result['pa_mpvpe_hand'])},{np.mean(eval_result['pa_mpvpe_face'])},"
+                f"{np.mean(eval_result['mpvpe_all'])},{np.mean(eval_result['mpvpe_l_hand'])},{np.mean(eval_result['mpvpe_r_hand'])},{np.mean(eval_result['mpvpe_hand'])},{np.mean(eval_result['mpvpe_face'])}")
+        print()
 
         f = open(os.path.join(cfg.result_dir, 'result.txt'), 'w')
         f.write(f'AGORA-val dataset: \n')
@@ -782,3 +795,17 @@ class AGORA(torch.utils.data.Dataset):
         f.write('MPVPE (R-Hands): %.2f mm' % np.mean(eval_result['mpvpe_r_hand']))
         f.write('MPVPE (Hands): %.2f mm' % np.mean(eval_result['mpvpe_hand']))
         f.write('MPVPE (Face): %.2f mm\n' % np.mean(eval_result['mpvpe_face']))
+        f.write(f"{np.mean(eval_result['pa_mpvpe_all'])},{np.mean(eval_result['pa_mpvpe_l_hand'])},{np.mean(eval_result['pa_mpvpe_r_hand'])},{np.mean(eval_result['pa_mpvpe_hand'])},{np.mean(eval_result['pa_mpvpe_face'])},"
+                f"{np.mean(eval_result['mpvpe_all'])},{np.mean(eval_result['mpvpe_l_hand'])},{np.mean(eval_result['mpvpe_r_hand'])},{np.mean(eval_result['mpvpe_hand'])},{np.mean(eval_result['mpvpe_face'])}")
+
+        if getattr(cfg, 'eval_on_train', False):
+            import csv
+            csv_file = f'{cfg.root_dir}/output/agora_eval_on_train.csv'
+            exp_id = cfg.exp_name.split('_')[1]
+            new_line = [exp_id,np.mean(eval_result['pa_mpvpe_all']),np.mean(eval_result['pa_mpvpe_l_hand']),np.mean(eval_result['pa_mpvpe_r_hand']),np.mean(eval_result['pa_mpvpe_hand']),np.mean(eval_result['pa_mpvpe_face']),
+                        np.mean(eval_result['mpvpe_all']),np.mean(eval_result['mpvpe_l_hand']),np.mean(eval_result['mpvpe_r_hand']),np.mean(eval_result['mpvpe_hand']),np.mean(eval_result['mpvpe_face'])]
+
+            # Append the new line to the CSV file
+            with open(csv_file, 'a', newline='') as file:
+                writer = csv.writer(file)
+                writer.writerow(new_line)

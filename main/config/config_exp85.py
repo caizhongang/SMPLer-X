@@ -6,9 +6,9 @@ num_gpus = -1
 exp_name = 'output/exp1/pre_analysis'
 
 # quick access
-save_epoch = 5
+save_epoch = 1
 lr = 1e-5
-end_epoch = 20
+end_epoch = 5
 train_batch_size = 32
 
 syncbn = True
@@ -29,7 +29,6 @@ dataset_list = ['Human36M', 'MSCOCO', 'MPII', 'AGORA', 'EHF', 'SynBody', 'GTA_Hu
 trainset_3d = []
 trainset_2d = []
 trainset_humandata = ['RICH']
-debug = True
 testset = 'EHF'
 
 # model
@@ -88,7 +87,7 @@ lr_mult = 1
 test_batch_size = 32
 
 ## others
-num_thread = 16
+num_thread = 4
 vis = False
 
 ## directory

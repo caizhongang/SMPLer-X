@@ -8,16 +8,16 @@ exp_name = 'output/exp1/pre_analysis'
 # quick access
 save_epoch = 1
 lr = 1e-5
-end_epoch = 20
+end_epoch = 10
 train_batch_size = 32
 
 syncbn = True
 bbox_ratio = 1.2
 
 # continue
-continue_train = False
-start_over = True
-# pretrained_model_path = '../output/train_gta_synbody_ft_20230410_132110/model_dump/snapshot_2.pth.tar'
+continue_train = True
+start_over = False
+pretrained_model_path = '../output/train_exp81_20230527_124916/model_dump/snapshot_7.pth.tar'
 
 # dataset setting
 agora_fix_betas = True
@@ -31,17 +31,21 @@ trainset_3d = ['AGORA']
 trainset_2d = ['UBody', 'PW3D', 'MSCOCO']
 trainset_humandata = ['PoseTrack', 'GTA_Human2', 'SPEC', 'SynBody', 
     'EgoBody_Egocentric', 'PROX', 'EgoBody_Kinect', 'CrowdPose', 'SynBody_Magic1',
-    'MPI_INF_3DHP', 'Behave', 'MuCo', 'RenBody_HiRes', 'InstaVariety', 'CHI3D', 'OCHuman', 'HumanSC3D']
+    'MPI_INF_3DHP', 'Behave', 'MuCo', 'RenBody_HiRes', 'InstaVariety',
+    'BEDLAM', 'RICH', 'UP3D' ]
 testset = 'EHF'
+
+use_cache = True
 
 # strategy 
 data_strategy = 'balance' # 'balance' need to define total_data_len
-total_data_len = 0 ### fill in this !!!!!!
+total_data_len = 'auto' ### fill in this !!!!!!
 
 EgoBody_Kinect_train_sample_interval = 10
 MPI_INF_3DHP_train_sample_interval = 5
 InstaVariety_train_sample_interval = 10
 RenBody_HiRes_train_sample_interval = 5
+BEDLAM_train_sample_interval = 5
 
 # model
 smplx_loss_weight = 1.0 #2 for agora_model for smplx shape

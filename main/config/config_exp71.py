@@ -29,8 +29,12 @@ dataset_list = ['Human36M', 'MSCOCO', 'MPII', 'AGORA', 'EHF', 'SynBody', 'GTA_Hu
 trainset_3d = []
 trainset_2d = []
 trainset_humandata = ['UP3D']
-debug = True
 testset = 'EHF'
+
+use_cache = True
+
+data_strategy = 'balance'
+
 
 # model
 smplx_loss_weight = 1.0 #2 for agora_model for smplx shape
@@ -88,7 +92,7 @@ lr_mult = 1
 test_batch_size = 32
 
 ## others
-num_thread = 16
+num_thread = 4
 vis = False
 
 ## directory

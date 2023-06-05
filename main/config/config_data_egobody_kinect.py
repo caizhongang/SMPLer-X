@@ -74,7 +74,7 @@ lr_mult = 1
 test_batch_size = 32
 
 ## others
-num_thread = 16  # num workers
+num_thread = 4  # num workers
 vis = False
 
 ## directory

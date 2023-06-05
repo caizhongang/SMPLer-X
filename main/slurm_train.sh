@@ -18,11 +18,13 @@ srun -p ${PARTITION} \
     --ntasks=${GPUS} \
     --ntasks-per-node=${GPUS_PER_NODE} \
     --cpus-per-task=${CPUS_PER_TASK} \
+    --quotatype=auto \
+    --exclusive \
     --kill-on-bad-exit=1 \
     ${SRUN_ARGS} \
     python train.py \
         --num_gpus ${GPUS} \
         --exp_name output/train_${JOB_NAME} \
-        --master_port $(( $RANDOM % 50 + 45600 )) \
+        --master_port $(($RANDOM % 50 + 45600)) \
         --config ${CONFIG}
 

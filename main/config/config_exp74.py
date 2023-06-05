@@ -31,6 +31,9 @@ trainset_2d = []
 trainset_humandata = ['RenBody_HiRes']
 testset = 'EHF'
 
+RenBody_HiRes_train_sample_interval = 5
+use_cache = True
+
 # model
 smplx_loss_weight = 1.0 #2 for agora_model for smplx shape
 smplx_pose_weight = 10.0
@@ -87,7 +90,7 @@ lr_mult = 1
 test_batch_size = 32
 
 ## others
-num_thread = 16
+num_thread = 4
 vis = False
 
 ## directory

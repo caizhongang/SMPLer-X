@@ -108,7 +108,7 @@ class Trainer(Base):
                 start_epoch = 0
             else:
                 optimizer.load_state_dict(ckpt['optimizer'])
-                start_epoch = ckpt['epoch']
+                start_epoch = ckpt['epoch'] + 1 
                 self.logger.info(f'Load optimizer, start from{start_epoch}')
         else:
             start_epoch = 0
@@ -139,7 +139,7 @@ class Trainer(Base):
             trainset_loader = MultipleDatasets(trainset3d_loader + trainset2d_loader + trainset_humandata_loader, 
                                                 make_same_len=False, verbose=True)
         elif data_strategy == 'balance':
-            total_len = cfg.total_data_len
+            total_len = getattr(cfg, 'total_data_len', 'auto')
             print(f"Using [balance] strategy with total_data_len : {total_len}...")
             trainset_loader = MultipleDatasets(trainset3d_loader + trainset2d_loader + trainset_humandata_loader, 
                                                  make_same_len=True, total_len=total_len, verbose=True)
@@ -185,6 +185,29 @@ class Trainer(Base):
         # prepare network
         self.logger_info("Creating graph and optimizer...")
         model = get_model('train')
+
+        if getattr(cfg, 'fine_tune', None) == 'backbone':
+            print("Fine-tuning [backbone]...")
+            for module in model.head:
+                for param in module.parameters():
+                    param.requires_grad = False
+            for module in model.neck:
+                for param in module.parameters():
+                    param.requires_grad = False
+
+        elif getattr(cfg, 'fine_tune', None) == 'neck_and_head':
+            print("Fine-tuning [neck and head]...")
+            for param in model.encoder.parameters():
+                param.requires_grad = False
+        
+        elif getattr(cfg, 'fine_tune', None) == 'head':
+            print("Fine-tuning [head]...")
+            for param in model.encoder.parameters():
+                param.requires_grad = False
+            for module in model.neck:
+                for param in module.parameters():
+                    param.requires_grad = False
+        
         
         # ddp
         if self.distributed:
@@ -219,7 +242,7 @@ class Trainer(Base):
 
         else:
             scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, cfg.end_epoch * self.itr_per_epoch,
-                                                               eta_min=1e-6)
+                                                               eta_min=getattr(cfg,'min_lr',1e-6))
         if cfg.continue_train:
             if self.distributed:
                 start_epoch, model, optimizer = self.load_model(model, optimizer)
@@ -266,7 +289,7 @@ class Tester(Base):
         model = get_model('test')
         model = DataParallel(model).cuda()
         if not getattr(cfg, 'random_init', False):
-            ckpt = torch.load(cfg.pretrained_model_path)
+            ckpt = torch.load(cfg.pretrained_model_path, map_location=torch.device('cpu'))
 
             from collections import OrderedDict
             new_state_dict = OrderedDict()
@@ -304,7 +327,7 @@ class Demoer(Base):
         self.logger.info("Creating graph...")
         model = get_model('test')
         model = DataParallel(model).cuda()
-        ckpt = torch.load(cfg.pretrained_model_path)
+        ckpt = torch.load(cfg.pretrained_model_path, map_location=torch.device('cpu'))
 
         from collections import OrderedDict
         new_state_dict = OrderedDict()

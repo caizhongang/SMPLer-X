@@ -31,9 +31,13 @@ class PW3D(torch.utils.data.Dataset):
 
         datalist = []
         i = 0
+        if getattr(cfg, 'eval_on_train', False):
+            self.data_split = 'eval_train'
+            print("Evaluate on train set.")
+
         for aid in db.anns.keys():
             i += 1
-            if self.data_split == 'train' and i % getattr(cfg, 'PW3D_train_sample_interval', 1) != 0:
+            if 'train' in self.data_split and i % getattr(cfg, 'PW3D_train_sample_interval', 1) != 0:
                 continue
 
             ann = db.anns[aid]
@@ -56,9 +60,14 @@ class PW3D(torch.utils.data.Dataset):
                   '. Sample interval:', getattr(cfg, 'PW3D_train_sample_interval', 1),
                   '. Sampled size:', len(datalist))
         
-        if getattr(cfg, 'data_strategy', None) == 'balance' and self.data_split == 'train':
+        if (getattr(cfg, 'data_strategy', None) == 'balance' and self.data_split == 'train') or \
+                self.data_split == 'eval_train':
             print(f'[PW3D] Using [balance] strategy with datalist shuffled...')
+            random.seed(2023)
             random.shuffle(datalist)
+            
+            if self.data_split == "eval_train":
+                return datalist[:10000]
 
         return datalist
 
@@ -209,12 +218,27 @@ class PW3D(torch.utils.data.Dataset):
         print('======3DPW-test======')
         print('MPJPE (Body): %.2f mm' % np.mean(eval_result['mpjpe_body']))
         print('PA MPJPE (Body): %.2f mm' % np.mean(eval_result['pa_mpjpe_body']))
+        print()
+        print(f"{np.mean(eval_result['mpjpe_body'])},{np.mean(eval_result['pa_mpjpe_body'])}")
+        print()
 
         f = open(os.path.join(cfg.result_dir, 'result.txt'), 'w')
         f.write(f'3DPW-test dataset: \n')
         f.write('MPJPE (Body): %.2f mm\n' % np.mean(eval_result['mpjpe_body']))
         f.write('PA MPJPE (Body): %.2f mm\n' % np.mean(eval_result['pa_mpjpe_body']))
 
+        f.write(f"{np.mean(eval_result['mpjpe_body'])},{np.mean(eval_result['pa_mpjpe_body'])}")
+
+        if getattr(cfg, 'eval_on_train', False):
+            import csv
+            csv_file = f'{cfg.root_dir}/output/pw3d_eval_on_train.csv'
+            exp_id = cfg.exp_name.split('_')[1]
+            new_line = [exp_id,np.mean(eval_result['mpjpe_body']), np.mean(eval_result['pa_mpjpe_body'])]
+
+            # Append the new line to the CSV file
+            with open(csv_file, 'a', newline='') as file:
+                writer = csv.writer(file)
+                writer.writerow(new_line)
 
 
 

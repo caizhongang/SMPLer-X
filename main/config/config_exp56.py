@@ -6,9 +6,9 @@ num_gpus = -1
 exp_name = 'output/exp1/pre_analysis'
 
 # quick access
-save_epoch = 5
+save_epoch = 1
 lr = 1e-5
-end_epoch = 20
+end_epoch = 5
 train_batch_size = 32
 
 syncbn = True
@@ -30,6 +30,8 @@ trainset_3d = []
 trainset_2d = []
 trainset_humandata = ['FIT3D']
 testset = 'EHF'
+
+use_cache = True
 
 # model
 smplx_loss_weight = 1.0 #2 for agora_model for smplx shape
@@ -87,7 +89,7 @@ lr_mult = 1
 test_batch_size = 32
 
 ## others
-num_thread = 16
+num_thread = 4
 vis = False
 
 ## directory

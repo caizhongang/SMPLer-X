@@ -15,9 +15,9 @@ syncbn = True
 bbox_ratio = 1.2
 
 # continue
-continue_train = False
-start_over = True
-# pretrained_model_path = '../output/train_gta_synbody_ft_20230410_132110/model_dump/snapshot_2.pth.tar'
+continue_train = True
+start_over = False
+pretrained_model_path = '../output/train_exp87_20230529_180517/model_dump/snapshot_11.pth.tar'
 
 # dataset setting
 agora_fix_betas = True
@@ -30,11 +30,13 @@ dataset_list = ['Human36M', 'MSCOCO', 'MPII', 'AGORA', 'EHF', 'SynBody', 'GTA_Hu
 trainset_3d = ['MSCOCO', 'AGORA']
 trainset_2d = []
 trainset_humandata = ['PoseTrack', 'GTA_Human2', 'SPEC', 'SynBody', 
-    'EgoBody_Egocentric', 'PROX', 'EgoBody_Kinect', 'CrowdPose', 'SynBody_Magic1']
+    'EgoBody_Egocentric', 'PROX', 'EgoBody_Kinect', 'BEDLAM', 'SynBody_Magic1']
 testset = 'EHF'
 
-# downsample
 EgoBody_Kinect_train_sample_interval = 10
+BEDLAM_train_sample_interval = 5
+
+use_cache = True
 
 # strategy 
 data_strategy = 'balance' # 'balance' need to define total_data_len
@@ -106,7 +108,7 @@ lr_mult = 1
 test_batch_size = 32
 
 ## others
-num_thread = 16
+num_thread = 4
 vis = False
 
 ## directory

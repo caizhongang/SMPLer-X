@@ -8,7 +8,7 @@ exp_name = 'output/exp1/pre_analysis'
 # quick access
 save_epoch = 1
 lr = 1e-5
-end_epoch = 20
+end_epoch = 10
 train_batch_size = 32
 
 syncbn = True
@@ -27,24 +27,31 @@ agora_valid_root_pose = True
 # top30
 dataset_list = ['Human36M', 'MSCOCO', 'MPII', 'AGORA', 'EHF', 'SynBody', 'GTA_Human2', \
     'EgoBody_Egocentric', 'EgoBody_Kinect', 'UBody', 'PW3D', 'MuCo', 'PROX']
-trainset_3d = ['AGORA', 'Human36M']
-trainset_2d = ['UBody', 'PW3D', 'MSCOCO', 'MPII']
+trainset_3d = ['AGORA']
+trainset_2d = ['UBody', 'PW3D', 'MSCOCO']
 trainset_humandata = ['PoseTrack', 'GTA_Human2', 'SPEC', 'SynBody', 
     'EgoBody_Egocentric', 'PROX', 'EgoBody_Kinect', 'CrowdPose', 'SynBody_Magic1',
-    'MPI_INF_3DHP', 'Behave', 'MuCo', 'RenBody_HiRes', 'InstaVariety', 'CHI3D', 'OCHuman', 'HumanSC3D'
-    'MTP', 'Talkshow']
+    'MPI_INF_3DHP', 'Behave', 'MuCo', 'RenBody_HiRes', 'InstaVariety',
+    'BEDLAM', 'RICH', 'UP3D', 
+    'OCHuman', 'HumanSC3D', 'MTP', 'Human36M' ,
+    'MPII', 'Talkshow', 'SSP3D', 'LSPET', 'RenBody', 'FIT3D', 'ARCTIC']
 testset = 'EHF'
+
+use_cache = True
 
 # strategy 
 data_strategy = 'balance' # 'balance' need to define total_data_len
-total_data_len = 0 ### fill in this !!!!!!
+total_data_len = 'auto' ### fill in this !!!!!!
 
 EgoBody_Kinect_train_sample_interval = 10
 MPI_INF_3DHP_train_sample_interval = 5
 InstaVariety_train_sample_interval = 10
 RenBody_HiRes_train_sample_interval = 5
-Talkshow_train_sample_interval = 10
-Human36M_train_sample_interval = 10
+BEDLAM_train_sample_interval = 5
+RenBody_train_sample_interval = 10
+FIT3D_train_sample_interval = 10
+ARCTIC_train_sample_interval = 5
+
 
 # model
 smplx_loss_weight = 1.0 #2 for agora_model for smplx shape
@@ -102,7 +109,7 @@ lr_mult = 1
 test_batch_size = 32
 
 ## others
-num_thread = 16
+num_thread = 4
 vis = False
 
 ## directory

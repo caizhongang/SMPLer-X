@@ -8,16 +8,16 @@ exp_name = 'output/exp1/pre_analysis'
 # quick access
 save_epoch = 1
 lr = 1e-5
-end_epoch = 20
+end_epoch = 10
 train_batch_size = 32
 
 syncbn = True
 bbox_ratio = 1.2
 
 # continue
-continue_train = False
-start_over = True
-# pretrained_model_path = '../output/train_gta_synbody_ft_20230410_132110/model_dump/snapshot_2.pth.tar'
+continue_train = True
+start_over = False
+pretrained_model_path = '../output/train_exp78_20230526_105124/model_dump/snapshot_4.pth.tar'
 
 # dataset setting
 agora_fix_betas = True

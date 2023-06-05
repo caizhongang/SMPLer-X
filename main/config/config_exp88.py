@@ -16,8 +16,8 @@ bbox_ratio = 1.2
 
 # continue
 continue_train = True
-start_over = True
-pretrained_model_path = '../output/train_exp80_20230524_151039/model_dump/snapshot_7.pth.tar'
+start_over = False
+pretrained_model_path = '../output/train_exp88_20230526_112100/model_dump/snapshot_3.pth.tar'
 
 # dataset setting
 agora_fix_betas = True
@@ -97,7 +97,7 @@ lr_mult = 1
 test_batch_size = 32
 
 ## others
-num_thread = 16
+num_thread = 4
 vis = False
 
 ## directory

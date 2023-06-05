@@ -29,7 +29,6 @@ dataset_list = ['Human36M', 'MSCOCO', 'MPII', 'AGORA', 'EHF', 'SynBody', 'GTA_Hu
 trainset_3d = []
 trainset_2d = []
 trainset_humandata = ['SSP3D']
-debug = True
 testset = 'EHF'
 
 # model
@@ -88,7 +87,7 @@ lr_mult = 1
 test_batch_size = 32
 
 ## others
-num_thread = 16
+num_thread = 4
 vis = False
 
 ## directory
