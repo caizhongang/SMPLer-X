@@ -30,8 +30,15 @@ dataset_list = ['PoseTrack', 'GTA_Human2', 'SPEC', 'SynBody',
     'MPI_INF_3DHP', 'Behave', 'MuCo', 'RenBody_HiRes', 'InstaVariety', 'CHI3D', 'OCHuman', 'HumanSC3D',
     'MTP', 'Talkshow', 'AGORA', 'UBody']
 # dataset_list = ['Behave', 'CHI3D']
-trainset_3d = ['AGORA', 'Human36M']
-trainset_2d = ['UBody', 'MSCOCO', 'MPII']
+trainset_3d = [
+    'AGORA',
+    # 'Human36M'
+]
+trainset_2d = [
+    # 'UBody',
+    # 'MSCOCO',
+    # 'MPII'
+]
 trainset_humandata = [
     # 'PoseTrack',
     # 'GTA_Human2',
@@ -45,13 +52,13 @@ trainset_humandata = [
     # 'MPI_INF_3DHP',
     # 'Behave',
     # 'MuCo',
-    'RenBody_HiRes',
-    'InstaVariety',
+    # 'RenBody_HiRes',
+    # 'InstaVariety',
     # 'CHI3D',
     # 'OCHuman',
     # 'HumanSC3D',
     # 'MTP',
-    'Talkshow'
+    # 'Talkshow'
 ]
 # trainset_humandata = ['Behave', 'CHI3D']
 testset = 'EHF'
