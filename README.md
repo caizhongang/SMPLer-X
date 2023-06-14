@@ -111,8 +111,9 @@ sh slurm_train.sh {JOB_NAME} {NUM_GPU} {CONFIG_FILE}
 ```bash
 cd main
 sh slurm_test.sh {JOB_NAME} {NUM_GPU} {TRAIN_OUTPUT_DIR} {CKPT_ID}
+# NUM_GPU = 1 is recommended
 # this will eval the model ../output/train_{JOB_NAME}_{DATE_TIME}/model_dump/snapshot_{CKPT_ID}.pth.tar with confing ../output/train_{JOB_NAME}_{DATE_TIME}/code/config_base.py
-# logs and results  will be saved to ../output/test_{JOB_NAME}_{DATE_TIME}
+# logs and results  will be saved to ../output/test_${JOB_NAME}_ep${CKPT_ID}{TEST_DATSET}
 ```
 
 ## References
