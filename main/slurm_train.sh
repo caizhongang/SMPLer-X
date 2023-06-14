@@ -2,13 +2,13 @@
 
 set -x
 
-PARTITION=Zoetrope
+PARTITION=your_partition
 JOB_NAME=$1
 GPUS=$2
 CONFIG=$3
 
 GPUS_PER_NODE=$((${GPUS}<8?${GPUS}:8))
-CPUS_PER_TASK=4 # ${CPUS_PER_TASK:-2}
+CPUS_PER_TASK=4
 SRUN_ARGS=${SRUN_ARGS:-""}
 
 PYTHONPATH="$(dirname $0)/..":$PYTHONPATH \
