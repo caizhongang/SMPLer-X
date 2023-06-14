@@ -157,14 +157,9 @@ class AGORA(torch.utils.data.Dataset):
                 else:
                     db = COCO(osp.join(self.data_path, 'AGORA_validation.json'))
 
-            ### HARDCODE vis for debug
-            # count = 0
             i = 0
             for aid in tqdm.tqdm(list(db.anns.keys())):
-                # if count > 50:
-                #     continue
-                # count += 1
-                
+    
                 i += 1
                 if self.data_split == 'train' and i % getattr(cfg, 'AGORA_train_sample_interval', 1) != 0:
                     continue
@@ -418,8 +413,6 @@ class AGORA(torch.utils.data.Dataset):
                 joint_img[:, 1] = joint_img[:, 1] / 2160 * self.resolution[0]
             with open(data['joints_3d_path']) as f:
                 joint_cam = np.array(json.load(f)).reshape(-1, 3)
-                ### HARDCODE vis for debug
-                # joint_cam_orig = joint_cam.copy()
             with open(data['smplx_param_path'], 'rb') as f:
                 smplx_param = pickle.load(f, encoding='latin1')
 
@@ -437,30 +430,6 @@ class AGORA(torch.utils.data.Dataset):
             lhand_bbox_size = lhand_bbox[1] - lhand_bbox[0];
             rhand_bbox_size = rhand_bbox[1] - rhand_bbox[0];
             face_bbox_size = face_bbox[1] - face_bbox[0];
-
-            """
-            # for debug
-            _img = img.numpy().transpose(1,2,0)[:,:,::-1].copy() * 255
-            if lhand_bbox_valid:
-                _tmp = lhand_bbox.copy().reshape(2,2)
-                _tmp[:,0] = _tmp[:,0] / cfg.output_hm_shape[2] * cfg.input_img_shape[1]
-                _tmp[:,1] = _tmp[:,1] / cfg.output_hm_shape[1] * cfg.input_img_shape[0]
-                cv2.rectangle(_img, (int(_tmp[0,0]), int(_tmp[0,1])), (int(_tmp[1,0]), int(_tmp[1,1])), (255,0,0), 3)
-                cv2.imwrite('agora_' + str(idx) + '_lhand.jpg', _img)
-            if rhand_bbox_valid:
-                _tmp = rhand_bbox.copy().reshape(2,2)
-                _tmp[:,0] = _tmp[:,0] / cfg.output_hm_shape[2] * cfg.input_img_shape[1]
-                _tmp[:,1] = _tmp[:,1] / cfg.output_hm_shape[1] * cfg.input_img_shape[0]
-                cv2.rectangle(_img, (int(_tmp[0,0]), int(_tmp[0,1])), (int(_tmp[1,0]), int(_tmp[1,1])), (255,0,0), 3)
-                cv2.imwrite('agora_' + str(idx) + '_rhand.jpg', _img)
-            if face_bbox_valid:
-                _tmp = face_bbox.copy().reshape(2,2)
-                _tmp[:,0] = _tmp[:,0] / cfg.output_hm_shape[2] * cfg.input_img_shape[1]
-                _tmp[:,1] = _tmp[:,1] / cfg.output_hm_shape[1] * cfg.input_img_shape[0]
-                cv2.rectangle(_img, (int(_tmp[0,0]), int(_tmp[0,1])), (int(_tmp[1,0]), int(_tmp[1,1])), (255,0,0), 3)
-                cv2.imwrite('agora_' + str(idx) + '_face.jpg', _img)
-            #cv2.imwrite('agora_' + str(idx) + '.jpg', _img)
-            """
 
             # coordinates
             joint_cam = joint_cam - joint_cam[self.joint_set['root_joint_idx'], None, :]  # root-relative
@@ -507,27 +476,6 @@ class AGORA(torch.utils.data.Dataset):
             joint_cam_wo_ra[smpl_x.joint_part['face'], :] = joint_cam_wo_ra[smpl_x.joint_part['face'], :] \
                                                             + joint_cam_wo_ra[smpl_x.neck_idx, None,: ]  # face root-relative
 
-
-            """
-            # for debug
-            _tmp = joint_img.copy() 
-            _tmp[:,0] = _tmp[:,0] / cfg.output_hm_shape[2] * cfg.input_img_shape[1]
-            _tmp[:,1] = _tmp[:,1] / cfg.output_hm_shape[1] * cfg.input_img_shape[0]
-            _img = img.numpy().transpose(1,2,0)[:,:,::-1] * 255
-            _img = vis_keypoints(_img.copy(), _tmp)
-            cv2.imwrite('agora_' + str(idx) + '.jpg', _img)
-            """
-
-            """
-            # for debug
-            _tmp = joint_cam.copy()[:,:2]
-            _tmp[:,0] = _tmp[:,0] / (cfg.body_3d_size / 2) * cfg.input_img_shape[1] + cfg.input_img_shape[1]/2
-            _tmp[:,1] = _tmp[:,1] / (cfg.body_3d_size / 2) * cfg.input_img_shape[0] + cfg.input_img_shape[0]/2
-            _img = np.zeros((cfg.input_img_shape[0], cfg.input_img_shape[1], 3), dtype=np.float32)
-            _img = vis_keypoints(_img.copy(), _tmp)
-            cv2.imwrite('agora_' + str(idx) + '_cam.jpg', _img)
-            """
-
             # smplx parameters
             root_pose = np.array(smplx_param['global_orient'], dtype=np.float32).reshape(
                 -1)  # rotation to world coordinate
@@ -553,9 +501,6 @@ class AGORA(torch.utils.data.Dataset):
                            'trans': trans}
             _, _, _, smplx_pose, smplx_shape, smplx_expr, smplx_pose_valid, _, smplx_expr_valid, _ = process_human_model_output(
                 smplx_param, cam_param, do_flip, img_shape, img2bb_trans, rot, 'smplx')
-            ### HARDCODE vis for debug
-            # mesh_rot_, joint_cam_, _, smplx_pose, smplx_shape, smplx_expr, smplx_pose_valid, _, smplx_expr_valid, mesh_orig, joint_cam_orig_ = process_human_model_output(
-            #     smplx_param, cam_param, do_flip, img_shape, img2bb_trans, rot, 'smplx')
             smplx_pose_valid = np.tile(smplx_pose_valid[:, None], (1, 3)).reshape(-1)
             
             if not getattr(cfg, 'agora_valid_root_pose', False):
@@ -573,8 +518,6 @@ class AGORA(torch.utils.data.Dataset):
                          'smplx_pose_valid': smplx_pose_valid, 'smplx_shape_valid': float(smplx_shape_valid), 
                          'smplx_expr_valid': float(smplx_expr_valid), 'is_3D': float(True), 
                          'lhand_bbox_valid': lhand_bbox_valid, 'rhand_bbox_valid': rhand_bbox_valid, 'face_bbox_valid': face_bbox_valid}
-                        ### HARDCODE vis for debug
-                        #  'gt_3d_path': data['joints_3d_path'], 'smplx_path': data['smplx_param_path'], 'id': idx}
             return inputs, targets, meta_info
         else:
             # load crop and resize information (for the 4K setting)
@@ -678,41 +621,8 @@ class AGORA(torch.utils.data.Dataset):
             eval_result['pa_mpvpe_face'].append(
                 np.sqrt(np.sum((mesh_out_face_align - mesh_gt_face) ** 2, 1)).mean() * 1000)
 
-            ### HARDCODE
+
             if vis:
-
-                # from utils.vis import vis_keypoints, vis_mesh, save_obj, render_mesh
-                # # img = (out['img'].transpose(1,2,0)[:,:,::-1] * 255).copy()
-                # # joint_img = out['joint_img'].copy()
-                # # joint_img[:,0] = joint_img[:,0] / cfg.output_hm_shape[2] * cfg.input_img_shape[1]
-                # # joint_img[:,1] = joint_img[:,1] / cfg.output_hm_shape[1] * cfg.input_img_shape[0]
-                # # for j in range(len(joint_img)):
-                # #    cv2.circle(img, (int(joint_img[j][0]), int(joint_img[j][1])), 3, (0,0,255), -1)
-                # # cv2.imwrite(str(cur_sample_idx + n) + '.jpg', img)
-
-                # img_path = annot['img_path']
-                # img_id = img_path.split('/')[-1][:-4]
-                # ann_id = 0
-                # # ann_id = annot['ann_id']
-                # img = load_img(img_path)[:, :, ::-1]
-                # bbox = annot['bbox']
-                # focal = list(cfg.focal)
-                # princpt = list(cfg.princpt)
-                # focal[0] = focal[0] / cfg.input_body_shape[1] * bbox[2]
-                # focal[1] = focal[1] / cfg.input_body_shape[0] * bbox[3]
-                # princpt[0] = princpt[0] / cfg.input_body_shape[1] * bbox[2] + bbox[0]
-                # princpt[1] = princpt[1] / cfg.input_body_shape[0] * bbox[3] + bbox[1]
-                # img = render_mesh(img, out['smplx_mesh_cam'], smpl_x.face, {'focal': focal, 'princpt': princpt}, mesh_as_vertices=True)
-                # # img = cv2.resize(img, (512,512))
-                # cv2.imwrite(osp.join(vis_save_dir, img_id + '_' + str(ann_id) + '.jpg'), img)
-
-                # vis_mesh_out = out['smplx_mesh_cam']
-                # vis_mesh_out = vis_mesh_out - np.dot(smpl_x.layer['neutral'].J_regressor, vis_mesh_out)[
-                #                               smpl_x.J_regressor_idx['pelvis'], None, :]
-                # # vis_mesh_gt = out['smplx_mesh_cam_target']
-                # # vis_mesh_gt = vis_mesh_gt - np.dot(smpl_x.layer['neutral'].J_regressor, vis_mesh_gt)[smpl_x.J_regressor_idx['pelvis'],None,:]
-                # # save_obj(vis_mesh_out, smpl_x.face, osp.join(img_id + '_' + str(ann_id) + '.obj'))
-                # # save_obj(vis_mesh_gt, smpl_x.face, str(cur_sample_idx + n) + '_gt.obj')
                 img_path = out['img_path']
                 rel_img_path = img_path.split('..')[-1]
                 smplx_pred = {}
@@ -785,14 +695,6 @@ class AGORA(torch.utils.data.Dataset):
             with open(osp.join(cfg.result_dir, 'predictions', save_name), 'wb') as f:
                 pickle.dump(save_dict, f)
 
-            """
-            # for debug
-            img_path = annot['img_path']
-            img_path = osp.join(self.data_path, '3840x2160', 'test', img_path.split('/')[-1].split('_')[0] + '.png')
-            img = cv2.imread(img_path)
-            img = vis_keypoints(img.copy(), joint_proj)
-            cv2.imwrite(img_path.split('/')[-1], img)
-            """
         if getattr(cfg, 'vis', False):
             file.close()
 

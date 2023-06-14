@@ -235,9 +235,7 @@ class UBody_Part(torch.utils.data.Dataset):
                 video_name = file_name.split('/')[-2]
                 if 'Trim' in video_name:
                     video_name = video_name.split('_Trim')[0]
-                # if video_name in test_video_list:
-                #     # data to use in test
-                #     import pdb; pdb.set_trace()
+
                 if video_name not in test_video_list: continue  # exclude the train video
                 img_path = osp.join(self.img_path, file_name)
                 if not os.path.exists(img_path): continue
@@ -403,15 +401,6 @@ class UBody_Part(torch.utils.data.Dataset):
                 smplx_cam_trans = np.array(smplx_param['smplx_param']['trans'])
                 is_valid_fit = True
 
-                """
-                # for debug
-                _tmp = joint_img.copy()
-                _tmp[:,0] = _tmp[:,0] / cfg.output_hm_shape[2] * cfg.input_img_shape[1]
-                _tmp[:,1] = _tmp[:,1] / cfg.output_hm_shape[1] * cfg.input_img_shape[0]
-                _img = img.numpy().transpose(1,2,0)[:,:,::-1] * 255
-                _img = vis_keypoints(_img, _tmp)
-                cv2.imwrite('coco_' + str(idx) + '.jpg', _img)
-                """
                 # reverse ra
                 smplx_joint_cam_wo_ra = smplx_joint_cam.copy()
                 smplx_joint_cam_wo_ra[smpl_x.joint_part['lhand'], :] = smplx_joint_cam_wo_ra[smpl_x.joint_part['lhand'], :] \
@@ -514,25 +503,14 @@ class UBody_Part(torch.utils.data.Dataset):
 
             # smplx coordinates and parameters
             smplx_param = data['smplx_param']
-            # if str(data['ann_id'])=='184516':
-            #     print(data['ann_id'], smplx_param)
+    
             if smplx_param is not None:
                 smplx_joint_img, smplx_joint_cam, smplx_joint_trunc, smplx_pose, smplx_shape, smplx_expr, smplx_pose_valid, smplx_joint_valid, smplx_expr_valid, smplx_mesh_cam_orig = process_human_model_output(
                     smplx_param['smplx_param'], smplx_param['cam_param'], do_flip, img_shape, img2bb_trans, rot,
                     'smplx')
                 is_valid_fit = True
                 smplx_cam_trans = np.array(smplx_param['smplx_param']['trans'])
-                # if str(data['ann_id']) == '184516':
-                #     print(data['ann_id'], smplx_pose)
-                """
-                # for debug
-                _tmp = joint_img.copy()
-                _tmp[:,0] = _tmp[:,0] / cfg.output_hm_shape[2] * cfg.input_img_shape[1]
-                _tmp[:,1] = _tmp[:,1] / cfg.output_hm_shape[1] * cfg.input_img_shape[0]
-                _img = img.numpy().transpose(1,2,0)[:,:,::-1] * 255
-                _img = vis_keypoints(_img, _tmp)
-                cv2.imwrite('coco_' + str(idx) + '.jpg', _img)
-                """
+        
                 # reverse ra
                 smplx_joint_cam_wo_ra = smplx_joint_cam.copy()
                 smplx_joint_cam_wo_ra[smpl_x.joint_part['lhand'], :] = smplx_joint_cam_wo_ra[smpl_x.joint_part['lhand'], :] \
@@ -755,15 +733,6 @@ class UBody(Dataset):
                 smplx_cam_trans = np.array(smplx_param['smplx_param']['trans'])
                 is_valid_fit = True
 
-                """
-                # for debug
-                _tmp = joint_img.copy()
-                _tmp[:,0] = _tmp[:,0] / cfg.output_hm_shape[2] * cfg.input_img_shape[1]
-                _tmp[:,1] = _tmp[:,1] / cfg.output_hm_shape[1] * cfg.input_img_shape[0]
-                _img = img.numpy().transpose(1,2,0)[:,:,::-1] * 255
-                _img = vis_keypoints(_img, _tmp)
-                cv2.imwrite('coco_' + str(idx) + '.jpg', _img)
-                """
                 # reverse ra
                 smplx_joint_cam_wo_ra = smplx_joint_cam.copy()
                 smplx_joint_cam_wo_ra[smpl_x.joint_part['lhand'], :] = smplx_joint_cam_wo_ra[smpl_x.joint_part['lhand'], :] \
@@ -1026,45 +995,10 @@ class UBody(Dataset):
             if len(pa_mpjpe_hand)>0:
                 eval_result['pa_mpjpe_hand'].append(np.mean(pa_mpjpe_hand))
 
-            # data_dict = {}
-            # data_dict['mpvpe_all'] = eval_result['mpvpe_all'][-1]
-            # data_dict['mpvpe_hand'] = eval_result['mpvpe_hand'][-1]
-            # data_dict['mpvpe_face'] = eval_result['mpvpe_face'][-1]
-            # data_dict['mesh'] = mesh_out
-            # data_dict['mesh_gt'] = mesh_gt
-
             vis = cfg.vis
             save_folder = cfg.vis_dir
             data_folder = os.path.join(cfg.root_dir, 'dataset', 'UBody', 'images')
             if vis:
-                # from common.utils.vis import vis_keypoints, vis_mesh, save_obj, render_mesh
-                # img_path = annot['img_path']
-                # render_img_save_path = img_path.replace(data_folder, f'{save_folder}/render/')
-                # if os.path.exists(render_img_save_path):
-                #     img = load_img(render_img_save_path)[:, :, ::-1]
-                # else:
-                #     img = load_img(img_path)[:, :, ::-1]
-
-
-                # ''' for debug
-                # kpt_path = render_img_save_path.replace('/render/', '/keypoints/')
-                # kpt_img = img.copy()
-                # kpt_img = vis_keypoints(kpt_img, joint_proj)
-                # # kpt_img = vis_keypoints(kpt_img, mesh_gt_proj)
-                # os.makedirs(os.path.dirname(kpt_path), exist_ok=True)
-                # cv2.imwrite(kpt_path, kpt_img)    
-                # '''
-
-                # bbox = annot['bbox']
-                # focal = list(cfg.focal)
-                # princpt = list(cfg.princpt)
-                # focal[0] = focal[0] / cfg.input_body_shape[1] * bbox[2]
-                # focal[1] = focal[1] / cfg.input_body_shape[0] * bbox[3]
-                # princpt[0] = princpt[0] / cfg.input_body_shape[1] * bbox[2] + bbox[0]
-                # princpt[1] = princpt[1] / cfg.input_body_shape[0] * bbox[3] + bbox[1]
-                # img = render_mesh(img, out['smplx_mesh_cam'], smpl_x.face, {'focal': focal, 'princpt': princpt})
-                # os.makedirs(os.path.dirname(render_img_save_path), exist_ok=True)
-                # cv2.imwrite(render_img_save_path, img)
                 vis_save_dir = cfg.vis_dir
                 rel_img_path = img_path.split('..')[-1]
                 smplx_pred = {}
@@ -1080,8 +1014,6 @@ class UBody(Dataset):
                 smplx_pred['transl'] = out['gt_smplx_transl'].reshape(-1,3)
                 smplx_pred['img_path'] = rel_img_path
 
-                
-                # import pdb; pdb.set_trace()
                 npz_path = os.path.join(cfg.vis_dir, f'{cur_sample_idx + n}.npz')
                 np.savez(npz_path, **smplx_pred)
 

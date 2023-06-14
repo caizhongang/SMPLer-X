@@ -165,10 +165,6 @@ class PW3D(torch.utils.data.Dataset):
         #    'left_elbow', 'right_elbow', 'left_wrist', 'right_wrist']
         joint_mapper = [1, 2, 4, 5, 7, 8, 12, 15, 16, 17, 18, 19, 20, 21]
 
-        ### Save vis for debug
-        # joint_gt_body_to_save = np.zeros((sample_num, len(joint_mapper), 3))
-        # joint_out_body_root_align_to_save = np.zeros((sample_num, len(joint_mapper), 3))
-        # joint_out_body_pa_align_to_save = np.zeros((sample_num, len(joint_mapper), 3))
         
         for n in range(sample_num):
 
@@ -182,11 +178,6 @@ class PW3D(torch.utils.data.Dataset):
             mesh_out_align = mesh_out - np.dot(smpl_x.J_regressor, mesh_out)[smpl_x.J_regressor_idx['pelvis'], None, :] \
                                       + np.dot(smpl.joint_regressor, mesh_gt)[smpl.root_joint_idx, None, :]
 
-            # only eval point0-21 since only smpl gt is given
-            # joint_gt_body = np.dot(smpl.joint_regressor, mesh_gt)[:22, :] 
-            # joint_out_body = np.dot(smpl_x.J_regressor, mesh_out)[:22, :] 
-            # joint_out_body_root_align = np.dot(smpl_x.J_regressor, mesh_out_align)[:22, :]
-
             # only test 14 keypoints
             joint_gt_body = np.dot(smpl.joint_regressor, mesh_gt)[joint_mapper, :] 
             joint_out_body = np.dot(smpl_x.J_regressor, mesh_out)[joint_mapper, :] 
@@ -199,18 +190,6 @@ class PW3D(torch.utils.data.Dataset):
             joint_out_body_pa_align = rigid_align(joint_out_body, joint_gt_body)
             eval_result['pa_mpjpe_body'].append(
                 np.sqrt(np.sum((joint_out_body_pa_align - joint_gt_body) ** 2, 1)).mean() * 1000)
-            
-            ### Save vis for debug
-            # joint_gt_body_to_save[n, ...] = joint_gt_body
-            # joint_out_body_root_align_to_save[n, ...] = joint_out_body_root_align
-            # joint_out_body_pa_align_to_save[n, ...] = joint_out_body_pa_align
-        
-        ### Save vis for debug
-        # import numpy as np
-        # np.save(f'./vis/val_0509_joint_gt_body.npy', joint_gt_body_to_save)
-        # np.save(f'./vis/val_0509_joint_out_body_root_align.npy', joint_out_body_root_align_to_save)
-        # np.save(f'./vis/val_0509_joint_out_body_pa_align.npy', joint_out_body_pa_align_to_save)
-        # import pdb; pdb.set_trace()
 
         return eval_result
 
