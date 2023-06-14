@@ -291,7 +291,6 @@ class EHF(torch.utils.data.Dataset):
                 smplx_pred['expression'] = out['smplx_expr'].reshape(-1,10)
                 smplx_pred['transl'] = out['cam_trans'].reshape(-1,3)
                 
-                # import pdb; pdb.set_trace()
                 np.savez(os.path.join(cfg.vis_dir, f'{self.save_idx}.npz'), **smplx_pred)
 
                 # save img path and error

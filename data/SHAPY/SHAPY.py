@@ -96,8 +96,6 @@ class SHAPY(HumanDataset):
         sample_num = len(outs)
         eval_result = {'v2v_t_errors': [], 'point_t_errors': [], 'height': [], 'chest': [], 'waist': [], 'hips': [], 'mass': []}
 
-        # sample_num = sample_num // 10 # TODO: debug only
-
         for n in range(sample_num):
             annot = annots[cur_sample_idx + n]
             out = outs[n]
@@ -107,8 +105,6 @@ class SHAPY(HumanDataset):
 
             # compute v_shaped
             betas_fit = torch.tensor(betas_fit.reshape(-1, 10)).cuda()
-            # betas_fit = torch.tensor(out['smplx_shape_target'].reshape(-1, 10)).cuda()  # TODO: debug only
-            # betas_fit = torch.zeros((1, 10)).cuda()  # TODO: debug only
             output = self.smplx_layer(
                 betas=betas_fit, 
                 body_pose=torch.zeros((1, 63)).to(betas_fit.device), 
@@ -122,8 +118,6 @@ class SHAPY(HumanDataset):
                 return_verts=True
                 )
             v_shaped_fit = output.vertices.detach().cpu().numpy().squeeze()
-            # v_shaped_gt = v_shaped_fit  # TODO: debug only
-            # v_shaped_fit = self.smplx_layer.forward_shape(betas=betas_fit)
 
             image_name = '/'.join(img_path.split('/')[-4:])
             self.images_names.append(image_name)

@@ -53,9 +53,10 @@ cd ../..
   - [UBody](https://github.com/IDEA-Research/OSX)
   - [UP3D](https://files.is.tuebingen.mpg.de/classner/up/)
 - process all datasets into [HumanData](https://github.com/open-mmlab/mmhuman3d/blob/main/docs/human_data.md) format, except the following:
-  - AGORA, MSCOCO, MPII, Human3.6M, UBody
-- follow [OSX](https://github.com/IDEA-Research/OSX) in preparing pretrained ViT-Pose models. 
-- download [SMPL-X](https://smpl-x.is.tue.mpg.de/) body models
+  - AGORA, MSCOCO, MPII, Human3.6M, UBody. 
+  - Follow [OSX](https://github.com/IDEA-Research/OSX) in preparing these 5 datasets.
+- follow [OSX](https://github.com/IDEA-Research/OSX) in preparing pretrained ViTPose models. Download the ViTPose pretrained weights for ViT-small and ViT-huge from [here](https://github.com/ViTAE-Transformer/ViTPose).
+- download [SMPL-X](https://smpl-x.is.tue.mpg.de/) and [SMPL](https://smpl.is.tue.mpg.de/) body models.
 
 The file structure should be like:
 ```
@@ -63,9 +64,25 @@ SMPLer-X/
 ├── common/
 │   └── utils/
 │       └── human_model_files/  # body model
+│           ├── smpl/
+│           │   ├──SMPL_NEUTRAL.pkl
+│           │   ├──SMPL_MALE.pkl
+│           │   └──SMPL_FEMALE.pkl
+│           └── smplx/
+│               ├──MANO_SMPLX_vertex_ids.pkl
+│               ├──SMPL-X__FLAME_vertex_ids.npy
+│               ├──SMPLX_NEUTRAL.pkl
+│               ├──SMPLX_to_J14.pkl
+│               ├──SMPLX_NEUTRAL.npz
+│               ├──SMPLX_MALE.npz
+│               └──SMPLX_FEMALE.npz
 ├── data/
 ├── main/
 ├── pretrained_models/  # pretrained ViT-Pose models
+│   ├── vitpose_small.pth
+│   ├── vitpose_base.pth
+│   ├── vitpose_large.pth
+│   └── vitpose_huge.pth
 └── dataset/  
     ├── AGORA/       
     ├── ARCTIC/      
@@ -105,18 +122,24 @@ SMPLer-X/
 ```bash
 cd main
 sh slurm_train.sh {JOB_NAME} {NUM_GPU} {CONFIG_FILE}
-# logs and ckpts will be saved to ../output/train_{JOB_NAME}_{DATE_TIME}
-# config file is the file name under ./config, e.g. ./config/config_base.py
-# a copy of current config file wil be saved to ../output/train_{JOB_NAME}_{DATE_TIME}/code/config_base.py
+
+# For training SMPLer-X-H32
+sh slurm_train.sh smpler-x-h32 16 config_smpler_x_h32.py
+
 ```
+- CONFIG_FILE is the file name under `./config`, e.g. `./config/config_base.py`, more configs can be found under `./config`
+- Logs and checkpoints will be saved to `../output/train_{JOB_NAME}_{DATE_TIME}`
+
 
 ## Testing
 ```bash
+# To eval the model ../output/{TRAIN_OUTPUT_DIR}/model_dump/snapshot_{CKPT_ID}.pth.tar 
+# with confing ../output/{TRAIN_OUTPUT_DIR}/code/config_base.py
 cd main
 sh slurm_test.sh {JOB_NAME} {NUM_GPU} {TRAIN_OUTPUT_DIR} {CKPT_ID}
-# this will eval the model ../output/train_{JOB_NAME}_{DATE_TIME}/model_dump/snapshot_{CKPT_ID}.pth.tar with confing ../output/train_{JOB_NAME}_{DATE_TIME}/code/config_base.py
-# logs and results  will be saved to ../output/test_{JOB_NAME}_{DATE_TIME}
 ```
+- NUM_GPU = 1 is recommended for testing
+- Logs and results  will be saved to `../output/test_{JOB_NAME}_ep{CKPT_ID}_{TEST_DATSET}`
 
 ## References
 - [Hand4Whole](https://github.com/mks0601/Hand4Whole_RELEASE)

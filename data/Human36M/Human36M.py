@@ -192,15 +192,6 @@ class Human36M(torch.utils.data.Dataset):
                 smplx_pose_valid, smplx_joint_valid, smplx_expr_valid, smplx_mesh_cam_orig = \
                     process_human_model_output(smplx_param, cam_param, do_flip, img_shape, img2bb_trans, rot, 'smplx')
 
-            """
-            # for debug
-            _tmp = joint_img.copy()
-            _tmp[:,0] = _tmp[:,0] / cfg.output_hm_shape[2] * cfg.input_img_shape[1]
-            _tmp[:,1] = _tmp[:,1] / cfg.output_hm_shape[1] * cfg.input_img_shape[0]
-            _img = img.numpy().transpose(1,2,0)[:,:,::-1] * 255
-            _img = vis_keypoints(_img, _tmp)
-            cv2.imwrite('h36m_' + str(idx) + '.jpg', _img)
-            """
             # reverse ra
             smplx_joint_cam_wo_ra = smplx_joint_cam.copy()
             smplx_joint_cam_wo_ra[smpl_x.joint_part['lhand'], :] = smplx_joint_cam_wo_ra[smpl_x.joint_part['lhand'], :] \

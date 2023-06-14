@@ -287,7 +287,6 @@ class HumanDataset(torch.utils.data.Dataset):
 
             smplx_param = {k: v[i] for k, v in smplx.items()}
 
-            # TODO: set invalid if None?
             smplx_param['root_pose'] = smplx_param.pop('global_orient', None)
             smplx_param['shape'] = smplx_param.pop('betas', None)
             smplx_param['trans'] = smplx_param.pop('transl', np.zeros(3))
@@ -298,9 +297,8 @@ class HumanDataset(torch.utils.data.Dataset):
             # TODO do not fix betas, give up shape supervision
             if 'betas_neutral' in smplx_param:
                 smplx_param['shape'] = smplx_param.pop('betas_neutral')
-                # smplx_param['shape'] = np.zeros(10, dtype=np.float32)
 
-            # # TODO fix shape of poses
+            # TODO fix shape of poses
             if self.__class__.__name__ == 'Talkshow':
                 smplx_param['body_pose'] = smplx_param['body_pose'].reshape(21, 3)
                 smplx_param['lhand_pose'] = smplx_param['lhand_pose'].reshape(15, 3)
@@ -466,7 +464,7 @@ class HumanDataset(torch.utils.data.Dataset):
             targets = {'joint_img': joint_img_aug, # keypoints2d
                        'smplx_joint_img': joint_img_aug, #smplx_joint_img, # projected smplx if valid cam_param, else same as keypoints2d
                        'joint_cam': joint_cam_wo_ra, # joint_cam actually not used in any loss, # raw kps3d probably without ra
-                       'smplx_joint_cam': smplx_joint_cam if (dummy_cord or getattr(cfg, 'debug', False)) else joint_cam_ra, # kps3d with body, face, hand ra
+                       'smplx_joint_cam': smplx_joint_cam if dummy_cord else joint_cam_ra, # kps3d with body, face, hand ra
                        'smplx_pose': smplx_pose,
                        'smplx_shape': smplx_shape,
                        'smplx_expr': smplx_expr,
@@ -680,7 +678,6 @@ class HumanDataset(torch.utils.data.Dataset):
                 smplx_pred['transl'] =  out['gt_smplx_transl'].reshape(-1,3)
                 smplx_pred['img_path'] = rel_img_path
                 
-                # import pdb; pdb.set_trace()
                 npz_path = os.path.join(cfg.vis_dir, f'{self.save_idx}.npz')
                 np.savez(npz_path, **smplx_pred)
 

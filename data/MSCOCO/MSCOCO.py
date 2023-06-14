@@ -321,16 +321,6 @@ class MSCOCO(torch.utils.data.Dataset):
                                                  img_shape, img2bb_trans, rot, 'smplx')
                 is_valid_fit = True
 
-                """
-                # for debug
-                _tmp = joint_img.copy() 
-                _tmp[:,0] = _tmp[:,0] / cfg.output_hm_shape[2] * cfg.input_img_shape[1]
-                _tmp[:,1] = _tmp[:,1] / cfg.output_hm_shape[1] * cfg.input_img_shape[0]
-                _img = img.numpy().transpose(1,2,0)[:,:,::-1] * 255
-                _img = vis_keypoints(_img, _tmp)
-                cv2.imwrite('coco_' + str(idx) + '.jpg', _img)
-                """
-
             else:
                 # dummy values
                 smplx_joint_img = np.zeros((smpl_x.joint_num, 3), dtype=np.float32)

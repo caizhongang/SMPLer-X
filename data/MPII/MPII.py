@@ -131,16 +131,6 @@ class MPII(torch.utils.data.Dataset):
             smplx_joint_img, smplx_joint_cam, smplx_joint_trunc, smplx_pose, smplx_shape, smplx_expr, smplx_pose_valid, smplx_joint_valid, smplx_expr_valid, smplx_mesh_cam_orig = process_human_model_output(smplx_param['smplx_param'], smplx_param['cam_param'], do_flip, img_shape, img2bb_trans, rot, 'smplx')
             is_valid_fit = True
             
-            """
-            # for debug
-            _tmp = joint_img.copy() 
-            _tmp[:,0] = _tmp[:,0] / cfg.output_hm_shape[2] * cfg.input_img_shape[1]
-            _tmp[:,1] = _tmp[:,1] / cfg.output_hm_shape[1] * cfg.input_img_shape[0]
-            _img = img.numpy().transpose(1,2,0)[:,:,::-1] * 255
-            _img = vis_keypoints(_img.copy(), _tmp)
-            cv2.imwrite('mpii_' + str(idx) + '.jpg', _img)
-            """
-            
         else:
             # dummy values
             smplx_joint_img = np.zeros((smpl_x.joint_num,3), dtype=np.float32)
