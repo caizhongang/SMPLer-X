@@ -18,7 +18,8 @@ bbox_ratio = 1.2
 # continue
 continue_train = True
 start_over = True
-pretrained_model_path = '../output/train_exp118_20230607_192422/model_dump/snapshot_9.pth.tar'
+pretrained_model_path = '../path_to_smpler_x_h32/snapshot.pth.tar'
+
 # dataset setting
 agora_fix_betas = True
 agora_fix_global_orient_transl = True
@@ -27,9 +28,9 @@ agora_valid_root_pose = True
 # for ubody ft
 dataset_list = ['Human36M', 'MSCOCO', 'MPII', 'AGORA', 'EHF', 'SynBody', 'GTA_Human2', \
     'EgoBody_Egocentric', 'EgoBody_Kinect', 'UBody', 'PW3D', 'MuCo', 'PROX']
-trainset_3d = ['MSCOCO'] 
+trainset_3d = ['PW3D'] 
 trainset_2d = []
-trainset_humandata = ['EgoBody_Egocentric', 'EgoBody_Kinect', 'BEDLAM', 'PROX'] 
+trainset_humandata = ['GTA_Human2', 'EgoBody_Kinect', 'InstaVariety', 'HumanSC3D'] 
 testset = 'EHF'
 
 use_cache = True

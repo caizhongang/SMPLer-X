@@ -15,9 +15,8 @@ syncbn = True
 bbox_ratio = 1.2
 
 # continue
-continue_train = True
-start_over = False
-pretrained_model_path = '../output/train_exp106_20230602_211720/model_dump/snapshot_0.pth.tar'
+continue_train = False
+start_over = True
 
 # dataset setting
 agora_fix_betas = True

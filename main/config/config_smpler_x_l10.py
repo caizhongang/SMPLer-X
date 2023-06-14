@@ -9,7 +9,7 @@ exp_name = 'output/exp1/pre_analysis'
 save_epoch = 1
 lr = 1e-5
 end_epoch = 5
-train_batch_size = 16
+train_batch_size = 32
 
 syncbn = True
 bbox_ratio = 1.2
@@ -17,7 +17,6 @@ bbox_ratio = 1.2
 # continue
 continue_train = False
 start_over = True
-# pretrained_model_path = '../output/train_exp78_20230526_105124/model_dump/snapshot_4.pth.tar'
 
 # dataset setting
 agora_fix_betas = True
@@ -60,10 +59,12 @@ net_kps_2d_weight = 1.0
 
 agora_benchmark = 'agora_model' # 'agora_model', 'test_only'
 
-model_type = 'smpler_x_h'
-encoder_config_file = 'transformer_utils/configs/smpler_x/encoder/body_encoder_huge.py'
-encoder_pretrained_model_path = '../pretrained_models/vitpose_huge.pth'
-feat_dim = 1280
+
+model_type = 'smpler_x_l'
+encoder_config_file = 'transformer_utils/configs/smpler_x/encoder/body_encoder_large.py'
+encoder_pretrained_model_path = '../pretrained_models/vitpose_large.pth'
+feat_dim = 1024
+
 
 ## =====FIXED ARGS============================================================
 ## model setting

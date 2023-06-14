@@ -15,24 +15,25 @@ syncbn = True
 bbox_ratio = 1.2
 
 # continue
-continue_train = True
-start_over = False
-pretrained_model_path = '../output/train_exp97_20230527_164023/model_dump/snapshot_0.pth.tar'
+continue_train = False
+start_over = True
 
 # dataset setting
 agora_fix_betas = True
 agora_fix_global_orient_transl = True
 agora_valid_root_pose = True
 
-# top20
+# all
 dataset_list = ['Human36M', 'MSCOCO', 'MPII', 'AGORA', 'EHF', 'SynBody', 'GTA_Human2', \
     'EgoBody_Egocentric', 'EgoBody_Kinect', 'UBody', 'PW3D', 'MuCo', 'PROX']
 trainset_3d = ['MSCOCO','AGORA', 'UBody']
-trainset_2d = ['PW3D']
+trainset_2d = ['PW3D', 'MPII', 'Human36M']
 trainset_humandata = ['BEDLAM', 'SPEC', 'GTA_Human2','SynBody', 'PoseTrack',
                     'EgoBody_Egocentric', 'PROX', 'CrowdPose',
                     'EgoBody_Kinect', 'MPI_INF_3DHP', 'RICH', 'MuCo', 'InstaVariety',
-                    'Behave', 'UP3D', 'ARCTIC' ]
+                    'Behave', 'UP3D', 'ARCTIC',
+                    'OCHuman', 'CHI3D', 'RenBody_HiRes', 'MTP', 'HumanSC3D', 'RenBody',
+                    'FIT3D', 'Talkshow' , 'SSP3D', 'LSPET']
 testset = 'EHF'
 
 use_cache = True
@@ -44,13 +45,13 @@ MPI_INF_3DHP_train_sample_interval = 5
 InstaVariety_train_sample_interval = 10
 RenBody_HiRes_train_sample_interval = 5
 ARCTIC_train_sample_interval = 10
-RenBody_train_sample_interval = 10
+# RenBody_train_sample_interval = 10
 FIT3D_train_sample_interval = 10
 Talkshow_train_sample_interval = 10
 
 # strategy 
 data_strategy = 'balance' # 'balance' need to define total_data_len
-total_data_len = 3000000
+total_data_len = 4500000
 
 # model
 smplx_loss_weight = 1.0 #2 for agora_model for smplx shape
@@ -62,10 +63,10 @@ net_kps_2d_weight = 1.0
 
 agora_benchmark = 'agora_model' # 'agora_model', 'test_only'
 
-model_type = 'smpler_x_s'
-encoder_config_file = 'transformer_utils/configs/smpler_x/encoder/body_encoder_small.py'
-encoder_pretrained_model_path = '../pretrained_models/vitpose_small.pth'
-feat_dim = 384
+model_type = 'smpler_x_l'
+encoder_config_file = 'transformer_utils/configs/smpler_x/encoder/body_encoder_large.py'
+encoder_pretrained_model_path = '../pretrained_models/vitpose_large.pth'
+feat_dim = 1024
 
 
 ## =====FIXED ARGS============================================================
@@ -104,7 +105,7 @@ lr_mult = 1
 test_batch_size = 32
 
 ## others
-num_thread = 4
+num_thread = 2
 vis = False
 
 ## directory

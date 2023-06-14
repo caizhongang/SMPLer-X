@@ -9,7 +9,7 @@ exp_name = 'output/exp1/pre_analysis'
 save_epoch = 1
 lr = 1e-5
 end_epoch = 5
-train_batch_size = 16
+train_batch_size = 32
 
 syncbn = True
 bbox_ratio = 1.2
@@ -17,22 +17,19 @@ bbox_ratio = 1.2
 # continue
 continue_train = False
 start_over = True
-# pretrained_model_path = '../output/train_exp78_20230526_105124/model_dump/snapshot_4.pth.tar'
 
 # dataset setting
 agora_fix_betas = True
 agora_fix_global_orient_transl = True
 agora_valid_root_pose = True
 
-# top20
+# top10
 dataset_list = ['Human36M', 'MSCOCO', 'MPII', 'AGORA', 'EHF', 'SynBody', 'GTA_Human2', \
     'EgoBody_Egocentric', 'EgoBody_Kinect', 'UBody', 'PW3D', 'MuCo', 'PROX']
-trainset_3d = ['MSCOCO','AGORA', 'UBody']
-trainset_2d = ['PW3D']
+trainset_3d = ['MSCOCO','AGORA']
+trainset_2d = []
 trainset_humandata = ['BEDLAM', 'SPEC', 'GTA_Human2','SynBody', 'PoseTrack',
-                    'EgoBody_Egocentric', 'PROX', 'CrowdPose',
-                    'EgoBody_Kinect', 'MPI_INF_3DHP', 'RICH', 'MuCo', 'InstaVariety',
-                    'Behave', 'UP3D', 'ARCTIC' ]
+                    'EgoBody_Egocentric', 'PROX', 'CrowdPose']
 testset = 'EHF'
 
 use_cache = True
@@ -50,7 +47,7 @@ Talkshow_train_sample_interval = 10
 
 # strategy 
 data_strategy = 'balance' # 'balance' need to define total_data_len
-total_data_len = 3000000
+total_data_len = 1500000
 
 # model
 smplx_loss_weight = 1.0 #2 for agora_model for smplx shape
@@ -62,10 +59,11 @@ net_kps_2d_weight = 1.0
 
 agora_benchmark = 'agora_model' # 'agora_model', 'test_only'
 
-model_type = 'smpler_x_h'
-encoder_config_file = 'transformer_utils/configs/smpler_x/encoder/body_encoder_huge.py'
-encoder_pretrained_model_path = '../pretrained_models/vitpose_huge.pth'
-feat_dim = 1280
+model_type = 'smpler_x_s'
+encoder_config_file = 'transformer_utils/configs/smpler_x/encoder/body_encoder_small.py'
+encoder_pretrained_model_path = '../pretrained_models/vitpose_small.pth'
+feat_dim = 384
+
 
 ## =====FIXED ARGS============================================================
 ## model setting

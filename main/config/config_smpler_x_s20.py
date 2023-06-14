@@ -17,7 +17,6 @@ bbox_ratio = 1.2
 # continue
 continue_train = False
 start_over = True
-# pretrained_model_path = '../output/train_exp78_20230526_105124/model_dump/snapshot_4.pth.tar'
 
 # dataset setting
 agora_fix_betas = True
@@ -62,10 +61,10 @@ net_kps_2d_weight = 1.0
 
 agora_benchmark = 'agora_model' # 'agora_model', 'test_only'
 
-model_type = 'smpler_x_b'
-encoder_config_file = 'transformer_utils/configs/smpler_x/encoder/body_encoder_base.py'
-encoder_pretrained_model_path = '../pretrained_models/vitpose_base.pth'
-feat_dim = 768
+model_type = 'smpler_x_s'
+encoder_config_file = 'transformer_utils/configs/smpler_x/encoder/body_encoder_small.py'
+encoder_pretrained_model_path = '../pretrained_models/vitpose_small.pth'
+feat_dim = 384
 
 
 ## =====FIXED ARGS============================================================
