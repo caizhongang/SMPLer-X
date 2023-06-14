@@ -18,10 +18,6 @@ class Config:
 
         ## add some paths to the system root dir
         sys.path.insert(0, osp.join(self.root_dir, 'common'))
-        sys.path.insert(0, osp.join(self.cur_dir, 'humanbench_utils'))
-        sys.path.insert(0, osp.join(self.cur_dir, 'dinov2_utils'))
-        sys.path.insert(0, osp.join(self.cur_dir, 'lora_utils'))
-        sys.path.insert(0, osp.join(self.cur_dir, 'vit_adapter_utils'))
         from utils.dir import add_pypath
         add_pypath(osp.join(self.data_dir))
         for dataset in os.listdir(osp.join(self.root_dir, 'data')):
@@ -48,7 +44,7 @@ class Config:
 
         ## copy some code to log dir as a backup
         copy_files = ['main/train.py', 'main/test.py', 'common/base.py',
-                      'main/OSX.py', 'common/nets', 'main/OSX_WoDecoder.py',
+                      'common/nets', 'main/SMPLer_X.py',
                       'data/dataset.py', 'data/MSCOCO/MSCOCO.py', 'data/AGORA/AGORA.py']
         for file in copy_files:
             os.system(f'cp -r {self.root_dir}/{file} {self.code_dir}')

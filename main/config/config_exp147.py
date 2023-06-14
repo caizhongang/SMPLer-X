@@ -40,9 +40,7 @@ total_data_len = 1000000 # assign number or 'auto' for concat length
 
 Talkshow_train_sample_interval = 10
 
-# model
 # fine-tune
-# adapter_name = 'lora' # apply adapter. 'lora', 'vit_adapter'
 fine_tune = None # 'backbone', 'head', None for full network tuning
 
 smplx_loss_weight = 1.0 #2 for agora_model for smplx shape
@@ -54,18 +52,8 @@ net_kps_2d_weight = 1.0
 
 agora_benchmark = 'agora_model' # 'agora_model', 'test_only'
 
-# model_type = 'osx_b'
-# encoder_config_file = 'transformer_utils/configs/osx/encoder/body_encoder_base.py'
-# encoder_pretrained_model_path = '../pretrained_models/osx_vit_b.pth'
-# feat_dim = 768
-
-# model_type = 'osx_l'
-# encoder_config_file = 'transformer_utils/configs/osx/encoder/body_encoder_large.py'
-# encoder_pretrained_model_path = '../pretrained_models/osx_vit_l.pth'
-# feat_dim = 1024
-
-model_type = 'osx_h'
-encoder_config_file = 'transformer_utils/configs/osx/encoder/body_encoder_huge.py'
+model_type = 'smpler_x_h'
+encoder_config_file = 'transformer_utils/configs/smpler_x/encoder/body_encoder_huge.py'
 encoder_pretrained_model_path = '../pretrained_models/vitpose_huge.pth'
 feat_dim = 1280
 

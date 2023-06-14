@@ -1,8 +1,0 @@
-phoenix-srun: job 486913 queued and waiting for resources
-phoenix-srun: job 486913 has been allocated resources
-phoenix-srun: Job 486913 scheduled successfully!
-Current QUOTA_TYPE is [reserved], which means the job has occupied quota in RESERVED_TOTAL under your partition.
-Current PHX_PRIORITY is normal
-
-/mnt/cache/share/spring/conda_envs/miniconda3/envs/s0.3.4/bin/python: can't open file '../..//test.py': [Errno 2] No such file or directory
-phoenix-srun: error: SH-IDC1-10-198-4-246: task 0: Exited with exit code 2

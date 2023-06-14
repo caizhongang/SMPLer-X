@@ -17,7 +17,6 @@ bbox_ratio = 1.2
 # continue
 continue_train = False
 start_over = True
-# pretrained_model_path = '../output/train_exp78_20230526_105124/model_dump/snapshot_4.pth.tar'
 
 # dataset setting
 agora_fix_betas = True
@@ -59,25 +58,11 @@ net_kps_2d_weight = 1.0
 
 agora_benchmark = 'agora_model' # 'agora_model', 'test_only'
 
-model_type = 'osx_s'
-encoder_config_file = 'transformer_utils/configs/osx/encoder/body_encoder_small.py'
+model_type = 'smpler_x_s'
+encoder_config_file = 'transformer_utils/configs/smpler_x/encoder/body_encoder_small.py'
 encoder_pretrained_model_path = '../pretrained_models/vitpose_small.pth'
 feat_dim = 384
 
-# model_type = 'osx_b'
-# encoder_config_file = 'transformer_utils/configs/osx/encoder/body_encoder_base.py'
-# encoder_pretrained_model_path = '../pretrained_models/osx_vit_b.pth'
-# feat_dim = 768
-
-# model_type = 'osx_l'
-# encoder_config_file = 'transformer_utils/configs/osx/encoder/body_encoder_large.py'
-# encoder_pretrained_model_path = '../pretrained_models/osx_vit_l.pth'
-# feat_dim = 1024
-
-# model_type = 'osx_h'
-# encoder_config_file = 'transformer_utils/configs/osx/encoder/body_encoder_huge.py'
-# encoder_pretrained_model_path = '../pretrained_models/vitpose_huge.pth'
-# feat_dim = 1280
 
 ## =====FIXED ARGS============================================================
 ## model setting

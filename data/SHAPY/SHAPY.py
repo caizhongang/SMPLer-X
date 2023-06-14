@@ -164,19 +164,6 @@ class SHAPY(HumanDataset):
                     error = abs(measurements_gt[k]['tensor'].item() - measurements_fit[k]['tensor'].item())
                     eval_result[k].append(error)
 
-            # # visualization
-            # save_content = {
-            #     'v_shaped_gt': v_shaped_gt,
-            #     'v_shaped_fit': v_shaped_fit,
-            # }
-            # for k in ['height', 'chest', 'waist', 'hips', 'mass']:
-            #     save_content[k] = abs(measurements_gt[k]['tensor'].item() - measurements_fit[k]['tensor'].item())
-            # save_dir = '/mnt/cache/caizhongang/osx/tool/SHAPY/vis_shapy/smplx_shape_target'
-            # os.makedirs(save_dir, exist_ok=True)
-            # stem, _ = osp.splitext(osp.basename(img_path))
-            # save_path = osp.join(save_dir, f'{stem}.npz')
-            # np.savez(save_path, **save_content)
-            # print(f'visualization saved at {save_path}')
 
         return eval_result
 

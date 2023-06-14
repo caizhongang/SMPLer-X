@@ -8,10 +8,7 @@ from timer import Timer
 from logger import colorlogger
 from torch.nn.parallel.data_parallel import DataParallel
 from config import cfg
-if 'agora_model' in cfg.agora_benchmark:
-    from OSX_WoDecoder import get_model # agora
-else:
-    from OSX import get_model
+from SMPLer_X import get_model
 from dataset import MultipleDatasets
 # ddp
 import torch.distributed as dist

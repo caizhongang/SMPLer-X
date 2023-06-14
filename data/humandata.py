@@ -40,7 +40,7 @@ hands_meanl = np.array([ 0.11167871,  0.04289218, -0.41644183,  0.10881133, -0.0
         0.02655647,  0.05288088,  0.5355592 ,  0.04596104, -0.27735803]).reshape(15, -1)
 
 class Cache():
-    """ A custom implementation for OSX pipeline
+    """ A custom implementation for SMPLer_X pipeline
         Need to run tool/cache/fix_cache.py to fix paths
     """
     def __init__(self, load_path=None):

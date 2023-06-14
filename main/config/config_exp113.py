@@ -29,7 +29,7 @@ dataset_list = ['Human36M', 'MSCOCO', 'MPII', 'AGORA', 'EHF', 'SynBody', 'GTA_Hu
     'EgoBody_Egocentric', 'EgoBody_Kinect', 'UBody', 'PW3D', 'MuCo', 'PROX']
 trainset_3d = ['MSCOCO','AGORA', 'UBody']
 trainset_2d = ['PW3D']
-trainset_humandata = ['BEDLAM', 'SPEC', 'GTA_Human2','SynBody','SynBody_Magic1', 'PoseTrack',
+trainset_humandata = ['BEDLAM', 'SPEC', 'GTA_Human2','SynBody', 'PoseTrack',
                     'EgoBody_Egocentric', 'PROX', 'CrowdPose',
                     'EgoBody_Kinect', 'MPI_INF_3DHP', 'RICH', 'MuCo', 'InstaVariety',
                     'Behave', 'UP3D', 'ARCTIC' ]
@@ -62,25 +62,11 @@ net_kps_2d_weight = 1.0
 
 agora_benchmark = 'agora_model' # 'agora_model', 'test_only'
 
-# model_type = 'osx_s'
-# encoder_config_file = 'transformer_utils/configs/osx/encoder/body_encoder_small.py'
-# encoder_pretrained_model_path = '../pretrained_models/vitpose_small.pth'
-# feat_dim = 384
-
-# model_type = 'osx_b'
-# encoder_config_file = 'transformer_utils/configs/osx/encoder/body_encoder_base.py'
-# encoder_pretrained_model_path = '../pretrained_models/osx_vit_b.pth'
-# feat_dim = 768
-
-model_type = 'osx_l'
-encoder_config_file = 'transformer_utils/configs/osx/encoder/body_encoder_large.py'
-encoder_pretrained_model_path = '../pretrained_models/osx_vit_l.pth'
+model_type = 'smpler_x_l'
+encoder_config_file = 'transformer_utils/configs/smpler_x/encoder/body_encoder_large.py'
+encoder_pretrained_model_path = '../pretrained_models/vitpose_large.pth'
 feat_dim = 1024
 
-# model_type = 'osx_h'
-# encoder_config_file = 'transformer_utils/configs/osx/encoder/body_encoder_huge.py'
-# encoder_pretrained_model_path = '../pretrained_models/vitpose_huge.pth'
-# feat_dim = 1280
 
 ## =====FIXED ARGS============================================================
 ## model setting
