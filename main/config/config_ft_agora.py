@@ -9,7 +9,7 @@ exp_name = 'output/exp1/pre_analysis'
 save_epoch = 1
 lr = 1e-5
 min_lr = 5e-7
-end_epoch = 50
+end_epoch = 5
 train_batch_size = 16
 
 syncbn = True
