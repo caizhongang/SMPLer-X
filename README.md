@@ -51,8 +51,8 @@ cd ../..
   - [UP3D](https://files.is.tuebingen.mpg.de/classner/up/)
 - process all datasets into [HumanData](https://github.com/open-mmlab/mmhuman3d/blob/main/docs/human_data.md) format, except the following:
   - AGORA, MSCOCO, MPII, Human3.6M, UBody
-- follow [OSX](https://github.com/IDEA-Research/OSX) in preparing pretrained ViT-Pose models. 
-- download [SMPL-X](https://smpl-x.is.tue.mpg.de/) body models
+- follow [OSX](https://github.com/IDEA-Research/OSX) in preparing pretrained ViTPose models. Download the ViTPose pretrained weights for ViT-small and ViT-huge from [here](https://github.com/ViTAE-Transformer/ViTPose).
+- download [SMPL-X](https://smpl-x.is.tue.mpg.de/) and [SMPL](https://smpl.is.tue.mpg.de/) body models.
 
 The file structure should be like:
 ```
@@ -60,9 +60,25 @@ SMPLer-X/
 ├── common/
 │   └── utils/
 │       └── human_model_files/  # body model
+│           ├── smpl
+│           │   ├──SMPL_NEUTRAL.pkl
+│           │   ├──SMPL_MALE.pkl
+│           │   └──SMPL_FEMALE.pkl
+│           └── smplx
+│               ├──MANO_SMPLX_vertex_ids.pkl
+│               ├──SMPL-X__FLAME_vertex_ids.npy
+│               ├──SMPLX_NEUTRAL.pkl
+│               ├──SMPLX_to_J14.pkl
+│               ├──SMPLX_NEUTRAL.npz
+│               ├──SMPLX_MALE.npz
+│               └──SMPLX_FEMALE.npz
 ├── data/
 ├── main/
 ├── pretrained_models/  # pretrained ViT-Pose models
+│   ├── vitpose_small.pth
+│   ├── vitpose_base.pth
+│   ├── vitpose_large.pth
+│   └── vitpose_huge.pth
 └── dataset/  
     ├── AGORA/       
     ├── ARCTIC/      
