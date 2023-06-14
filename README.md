@@ -130,8 +130,8 @@ sh slurm_train.sh smpler-x-h32 16 config_smpler_x_h32.py
 
 ## Testing
 ```bash
-# To eval the model ../output/train_{JOB_NAME}_{DATE_TIME}/model_dump/snapshot_{CKPT_ID}.pth.tar 
-# with confing ../output/train_{JOB_NAME}_{DATE_TIME}/code/config_base.py
+# To eval the model ../output/{TRAIN_OUTPUT_DIR}/model_dump/snapshot_{CKPT_ID}.pth.tar 
+# with confing ../output/{TRAIN_OUTPUT_DIR}/code/config_base.py
 cd main
 sh slurm_test.sh {JOB_NAME} {NUM_GPU} {TRAIN_OUTPUT_DIR} {CKPT_ID}
 ```
