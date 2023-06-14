@@ -107,6 +107,7 @@ class HumanDataset(torch.utils.data.Dataset):
         self.annot_path = None
         self.annot_path_cache = None
         self.use_cache = False
+        self.save_idx = 0
         self.img_shape = None  # (h, w)
         self.cam_param = None  # {'focal_length': (fx, fy), 'princpt': (cx, cy)}
         self.use_betas_neutral = False
@@ -346,7 +347,8 @@ class HumanDataset(torch.utils.data.Dataset):
                 'joint_img': joint_img,
                 'joint_cam': joint_cam,
                 'joint_valid': joint_valid,
-                'smplx_param': smplx_param})
+                'smplx_param': smplx_param,
+                'smplx': smplx})
 
         # save memory
         del content, image_path, bbox_xywh, lhand_bbox_xywh, rhand_bbox_xywh, face_bbox_xywh, keypoints3d, keypoints2d
@@ -529,10 +531,11 @@ class HumanDataset(torch.utils.data.Dataset):
             targets = {'smplx_pose': smplx_pose,
                        'smplx_shape': smplx_shape,
                        'smplx_expr': smplx_expr,
-                       'smplx_cam_trans' : smplx_cam_trans
+                       'smplx_cam_trans' : smplx_cam_trans,
                        }
             meta_info = {'img_path': img_path,
-                         'bb2img_trans': bb2img_trans}
+                         'bb2img_trans': bb2img_trans,
+                         'gt_smplx_transl':smplx_cam_trans}
 
             return inputs, targets, meta_info
 
@@ -578,6 +581,12 @@ class HumanDataset(torch.utils.data.Dataset):
                        'mpvpe_all': [], 'mpvpe_l_hand': [], 'mpvpe_r_hand': [], 'mpvpe_hand': [], 'mpvpe_face': [], 
                        'pa_mpjpe_body': [], 'pa_mpjpe_l_hand': [], 'pa_mpjpe_r_hand': [], 'pa_mpjpe_hand': []}
 
+        if getattr(cfg, 'vis', False):
+            import csv
+            csv_file = f'{cfg.vis_dir}/{cfg.testset}_smplx_error.csv'
+            file = open(csv_file, 'a', newline='')
+            writer = csv.writer(file)
+
         for n in range(sample_num):
             out = outs[n]
             mesh_gt = out['smplx_mesh_cam_pseudo_gt']
@@ -587,9 +596,11 @@ class HumanDataset(torch.utils.data.Dataset):
             mesh_out_align = mesh_out - np.dot(smpl_x.J_regressor, mesh_out)[smpl_x.J_regressor_idx['pelvis'], None,
                                         :] + np.dot(smpl_x.J_regressor, mesh_gt)[smpl_x.J_regressor_idx['pelvis'], None,
                                              :]
-            eval_result['mpvpe_all'].append(np.sqrt(np.sum((mesh_out_align - mesh_gt) ** 2, 1)).mean() * 1000)
+            mpvpe_all = np.sqrt(np.sum((mesh_out_align - mesh_gt) ** 2, 1)).mean() * 1000
+            eval_result['mpvpe_all'].append(mpvpe_all)
             mesh_out_align = rigid_align(mesh_out, mesh_gt)
-            eval_result['pa_mpvpe_all'].append(np.sqrt(np.sum((mesh_out_align - mesh_gt) ** 2, 1)).mean() * 1000)
+            pa_mpvpe_all = np.sqrt(np.sum((mesh_out_align - mesh_gt) ** 2, 1)).mean() * 1000
+            eval_result['pa_mpvpe_all'].append(pa_mpvpe_all)
 
             # MPVPE from hand vertices
             mesh_gt_lhand = mesh_gt[smpl_x.hand_vertex_idx['left_hand'], :]
@@ -652,10 +663,41 @@ class HumanDataset(torch.utils.data.Dataset):
             eval_result['pa_mpjpe_hand'].append((np.sqrt(
                 np.sum((joint_out_lhand_align - joint_gt_lhand) ** 2, 1)).mean() * 1000 + np.sqrt(
                 np.sum((joint_out_rhand_align - joint_gt_rhand) ** 2, 1)).mean() * 1000) / 2.)
+
+            if getattr(cfg, 'vis', False):
+                img_path = out['img_path']
+                rel_img_path = img_path.split('..')[-1]
+                smplx_pred = {}
+                smplx_pred['global_orient'] = out['smplx_root_pose'].reshape(-1,3)
+                smplx_pred['body_pose'] = out['smplx_body_pose'].reshape(-1,3)
+                smplx_pred['left_hand_pose'] = out['smplx_lhand_pose'].reshape(-1,3)
+                smplx_pred['right_hand_pose'] = out['smplx_rhand_pose'].reshape(-1,3)
+                smplx_pred['jaw_pose'] = out['smplx_jaw_pose'].reshape(-1,3)
+                smplx_pred['leye_pose'] = np.zeros((1, 3))
+                smplx_pred['reye_pose'] = np.zeros((1, 3))
+                smplx_pred['betas'] = out['smplx_shape'].reshape(-1,10)
+                smplx_pred['expression'] = out['smplx_expr'].reshape(-1,10)
+                smplx_pred['transl'] =  out['gt_smplx_transl'].reshape(-1,3)
+                smplx_pred['img_path'] = rel_img_path
+                
+                # import pdb; pdb.set_trace()
+                npz_path = os.path.join(cfg.vis_dir, f'{self.save_idx}.npz')
+                np.savez(npz_path, **smplx_pred)
+
+                # save img path and error
+                new_line = [self.save_idx, rel_img_path, mpvpe_all, pa_mpvpe_all]
+                # Append the new line to the CSV file
+                writer.writerow(new_line)
+                self.save_idx += 1
+
+        if getattr(cfg, 'vis', False):
+            file.close()
+
         return eval_result
             
     def print_eval_result(self, eval_result):
         print(f'======{cfg.testset}======')
+        print(f'{cfg.vis_dir}')
         print('PA MPVPE (All): %.2f mm' % np.mean(eval_result['pa_mpvpe_all']))
         print('PA MPVPE (L-Hands): %.2f mm' % np.mean(eval_result['pa_mpvpe_l_hand']))
         print('PA MPVPE (R-Hands): %.2f mm' % np.mean(eval_result['pa_mpvpe_r_hand']))

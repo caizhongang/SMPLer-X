@@ -1,12 +1,12 @@
 import torch
 import torch.nn as nn
 from torch.nn import functional as F
-from nets.resnet import ResNetBackbone
-from nets.module import PositionNet, RotationNet, FaceRegressor, BoxNet, HandRoI, FaceRoI
-from nets.loss import CoordLoss, ParamLoss
+from h4w_nets.resnet import ResNetBackbone
+from h4w_nets.module import PositionNet, RotationNet, FaceRegressor, BoxNet, HandRoI, FaceRoI
+from h4w_nets.loss import CoordLoss, ParamLoss
 from utils.human_models import smpl_x
 from utils.transforms import rot6d_to_axis_angle, restore_bbox
-from config import cfg
+from h4w_config import cfg
 import math
 import copy
 import time
@@ -32,6 +32,10 @@ class Model(nn.Module):
         self.param_loss = ParamLoss()
 
         self.trainable_modules = [self.backbone, self.body_position_net, self.body_rotation_net, self.box_net, self.hand_roi_net, self.hand_position_net, self.hand_rotation_net, self.face_roi_net, self.face_regressor]
+        param = 0
+        for module in self.trainable_modules:
+            param += sum(p.numel() for p in module.parameters() if p.requires_grad)
+        print(param)
 
     def get_camera_trans(self, cam_param):
         # camera translation
@@ -219,6 +223,8 @@ class Model(nn.Module):
             loss['smplx_joint_img'] = self.coord_loss(joint_img, smpl_x.reduce_joint_set(targets['smplx_joint_img']), smpl_x.reduce_joint_set(meta_info['smplx_joint_trunc']))
             return loss
         else:
+            if mode == 'test' and 'smplx_pose' in targets:
+                mesh_pseudo_gt = self.generate_mesh_gt(targets, mode)
             # change hand output joint_img according to hand bbox
             for part_name, bbox in (('lhand', lhand_bbox), ('rhand', rhand_bbox)):
                 joint_img[:,smpl_x.pos_joint_part[part_name],0] *= (((bbox[:,None,2] - bbox[:,None,0]) / cfg.input_body_shape[1] * cfg.output_hm_shape[2]) / cfg.output_hand_hm_shape[2])
@@ -250,13 +256,46 @@ class Model(nn.Module):
             out['lhand_bbox'] = lhand_bbox
             out['rhand_bbox'] = rhand_bbox
             out['face_bbox'] = face_bbox
+            if 'smplx_shape' in targets:
+                out['smplx_shape_target'] = targets['smplx_shape']
+            if 'img_path' in meta_info:
+                out['img_path'] = meta_info['img_path']
+            if 'smplx_pose' in targets:
+                out['smplx_mesh_cam_pseudo_gt'] = mesh_pseudo_gt
             if 'smplx_mesh_cam' in targets:
                 out['smplx_mesh_cam_target'] = targets['smplx_mesh_cam']
             if 'smpl_mesh_cam' in targets:
                 out['smpl_mesh_cam_target'] = targets['smpl_mesh_cam']
             if 'bb2img_trans' in meta_info:
                 out['bb2img_trans'] = meta_info['bb2img_trans']
+            if 'gt_smplx_transl' in meta_info:
+                out['gt_smplx_transl'] = meta_info['gt_smplx_transl']
             return out
+        
+    def generate_mesh_gt(self, targets, mode):
+        if 'smplx_mesh_cam' in targets:
+            return targets['smplx_mesh_cam']
+        nums = [3, 63, 45, 45, 3]
+        accu = []
+        temp = 0
+        for num in nums:
+            temp += num
+            accu.append(temp)
+        pose = targets['smplx_pose']
+        root_pose, body_pose, lhand_pose, rhand_pose, jaw_pose = \
+            pose[:, :accu[0]], pose[:, accu[0]:accu[1]], pose[:, accu[1]:accu[2]], pose[:, accu[2]:accu[3]], pose[:,
+                                                                                                             accu[3]:
+                                                                                                             accu[4]]
+        # print(lhand_pose)
+        shape = targets['smplx_shape']
+        expr = targets['smplx_expr']
+        cam_trans = targets['smplx_cam_trans']
+
+        # final output
+        joint_proj, joint_cam, mesh_cam = self.get_coord(root_pose, body_pose, lhand_pose, rhand_pose, jaw_pose, shape,
+                                                         expr, cam_trans, mode)
+
+        return mesh_cam
 
 def init_weights(m):
     try:

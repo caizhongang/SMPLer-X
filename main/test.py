@@ -17,6 +17,9 @@ def parse_args():
     parser.add_argument('--shapy_eval_split', type=str, default='val')
     parser.add_argument('--use_cache', action='store_true')
     parser.add_argument('--eval_on_train', action='store_true')
+    parser.add_argument('--vis', action='store_true')
+    parser.add_argument('--osx_original', action='store_true')
+    parser.add_argument('--h4w_original', action='store_true')
     args = parser.parse_args()
     return args
 
@@ -26,17 +29,29 @@ def main():
 
     config_path = osp.join('../output',args.result_path, 'code', 'config_base.py')
     ckpt_path = osp.join('../output', args.result_path, 'model_dump', f'snapshot_{int(args.ckpt_idx)}.pth.tar')
-    # config_path = '/mnt/cache/yinwanqi/01-project/osx/main/config/config_base.py'
-    # ckpt_path = '/mnt/cache/yinwanqi/01-project/osx/pretrained_models/osx_l_agora.pth.tar'
+    
+    if args.osx_original:
+        config_path = '/mnt/cache/yinwanqi/01-project/osx/main/config/config_base.py'
+        ckpt_path = '/mnt/cache/yinwanqi/01-project/osx/pretrained_models/osx_l.pth.tar'
+        args.agora_benchmark = 'na'
 
     cfg.get_config_fromfile(config_path)
     cfg.update_test_config(args.testset, args.agora_benchmark, args.shapy_eval_split, 
-                           ckpt_path, args.use_cache, args.eval_on_train)
+                           ckpt_path, args.use_cache, args.eval_on_train, args.vis)
     cfg.update_config(args.num_gpus, args.exp_name)
 
     cudnn.benchmark = True
-    from base import Tester
-    tester = Tester()
+
+    ##
+    # to test hand4whole model
+    if args.h4w_original:
+        from h4w_base import Tester
+        tester = Tester(args.ckpt_idx, ckpt_path)
+    else:
+        from base import Tester
+        tester = Tester()
+    ##
+
     tester._make_batch_generator()
     tester._make_model()
 

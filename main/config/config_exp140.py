@@ -7,47 +7,28 @@ exp_name = 'output/exp1/pre_analysis'
 
 # quick access
 save_epoch = 1
-lr = 2e-5
+lr = 1e-6
 end_epoch = 5
 train_batch_size = 32
-
 syncbn = True
 bbox_ratio = 1.2
-
 # continue
-continue_train = False
+continue_train = True
 start_over = True
-# pretrained_model_path = '../output/train_exp111_20230602_184623/model_dump/snapshot_4.pth.tar'
+pretrained_model_path = '/mnt/cache/yinwanqi/01-project/osx/pretrained_models/osx_l.pth.tar'
 
-# dataset setting
 agora_fix_betas = True
 agora_fix_global_orient_transl = True
 agora_valid_root_pose = True
 
-# top5
-dataset_list = ['Human36M', 'MSCOCO', 'MPII', 'AGORA', 'EHF', 'SynBody', 'GTA_Human2', \
-    'EgoBody_Egocentric', 'EgoBody_Kinect', 'UBody', 'PW3D', 'MuCo', 'PROX']
-trainset_3d = ['MSCOCO','AGORA']
+# dataset setting
+dataset_list = ['Human36M', 'MSCOCO', 'MPII', 'AGORA', 'EHF', 'SynBody', 'GTA_Human2', 'EgoBody', 'SHAPY']
+trainset_3d = []
 trainset_2d = []
-trainset_humandata = ['BEDLAM', 'SPEC', 'GTA_Human2']
+trainset_humandata = ['EgoBody_Egocentric']
 testset = 'EHF'
-
-use_cache = True
-# downsample
-BEDLAM_train_sample_interval = 5
-EgoBody_Kinect_train_sample_interval = 10
-train_sample_interval = 10 # UBody
-MPI_INF_3DHP_train_sample_interval = 5
-InstaVariety_train_sample_interval = 10
-RenBody_HiRes_train_sample_interval = 5
-ARCTIC_train_sample_interval = 10
-RenBody_train_sample_interval = 10
-FIT3D_train_sample_interval = 10
-Talkshow_train_sample_interval = 10
-
-# strategy 
-data_strategy = 'balance' # 'balance' need to define total_data_len
-total_data_len = 750000
+# testset = 'SHAPY'
+# shapy_eval_split = 'test'  # val, test. This can be overwritten by args of test.py
 
 # model
 smplx_loss_weight = 1.0 #2 for agora_model for smplx shape
@@ -57,12 +38,7 @@ smplx_kps_3d_weight = 100.0
 smplx_kps_2d_weight = 1.0
 net_kps_2d_weight = 1.0
 
-agora_benchmark = 'agora_model' # 'agora_model', 'test_only'
-
-# model_type = 'osx_s'
-# encoder_config_file = 'transformer_utils/configs/osx/encoder/body_encoder_small.py'
-# encoder_pretrained_model_path = '../pretrained_models/vitpose_small.pth'
-# feat_dim = 384
+agora_benchmark = 'na' # 'agora_model', 'test_only'
 
 # model_type = 'osx_b'
 # encoder_config_file = 'transformer_utils/configs/osx/encoder/body_encoder_base.py'
@@ -73,11 +49,6 @@ model_type = 'osx_l'
 encoder_config_file = 'transformer_utils/configs/osx/encoder/body_encoder_large.py'
 encoder_pretrained_model_path = '../pretrained_models/osx_vit_l.pth'
 feat_dim = 1024
-
-# model_type = 'osx_h'
-# encoder_config_file = 'transformer_utils/configs/osx/encoder/body_encoder_huge.py'
-# encoder_pretrained_model_path = '../pretrained_models/vitpose_huge.pth'
-# feat_dim = 1280
 
 ## =====FIXED ARGS============================================================
 ## model setting

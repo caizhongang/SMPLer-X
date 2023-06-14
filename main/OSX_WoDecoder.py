@@ -49,6 +49,23 @@ class Model(nn.Module):
                                   self.hand_roi_net, self.hand_regressor, self.face_regressor]
         self.special_trainable_modules = []
 
+        # backbone:
+        param_bb = sum(p.numel() for p in self.encoder.parameters() if p.requires_grad)
+        # neck 
+        param_neck = 0
+        for module in self.neck:
+            param_neck += sum(p.numel() for p in module.parameters() if p.requires_grad)
+        # head
+        param_head = 0
+        for module in self.head:
+            param_head += sum(p.numel() for p in module.parameters() if p.requires_grad)
+
+        param_net = param_bb + param_neck + param_head
+
+        print('#parameters:')
+        print(f'{param_bb}, {param_neck}, {param_head}, {param_net}')
+        # import pdb; pdb.set_trace()
+
     def get_camera_trans(self, cam_param):
         # camera translation
         t_xy = cam_param[:, :2]
@@ -439,6 +456,9 @@ class Model(nn.Module):
                 out['smpl_mesh_cam_target'] = targets['smpl_mesh_cam']
             if 'bb2img_trans' in meta_info:
                 out['bb2img_trans'] = meta_info['bb2img_trans']
+            if 'gt_smplx_transl' in meta_info:
+                out['gt_smplx_transl'] = meta_info['gt_smplx_transl']
+
 
             ### save result for vis and debug
             # import numpy as np

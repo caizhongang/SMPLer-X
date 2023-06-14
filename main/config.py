@@ -54,13 +54,14 @@ class Config:
             os.system(f'cp -r {self.root_dir}/{file} {self.code_dir}')
 
     def update_test_config(self, testset, agora_benchmark, shapy_eval_split, pretrained_model_path, use_cache,
-                           eval_on_train):
+                           eval_on_train, vis):
         self.testset = testset
         self.agora_benchmark = agora_benchmark
         self.pretrained_model_path = pretrained_model_path
         self.shapy_eval_split = shapy_eval_split
         self.use_cache = use_cache
         self.eval_on_train = eval_on_train
+        self.vis = vis
 
     def update_config(self, num_gpus, exp_name):
         self.num_gpus = num_gpus

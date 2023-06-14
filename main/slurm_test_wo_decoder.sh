@@ -3,7 +3,7 @@
 
 set -x
 
-PARTITION=test
+PARTITION=Zoetrope
 JOB_NAME=$1
 GPUS=$2
 RES_PATH=$3
@@ -115,9 +115,8 @@ srun -p ${PARTITION} \
         --result_path ${RES_PATH} \
         --ckpt_idx ${CKPT} \
         --testset ARCTIC \
-        --use_cache \
         --agora_benchmark agora_model_val
-
+w
 PYTHONPATH="$(dirname $0)/..":$PYTHONPATH \
 srun -p ${PARTITION} \
     --job-name=${JOB_NAME} \
@@ -133,7 +132,6 @@ srun -p ${PARTITION} \
         --result_path ${RES_PATH} \
         --ckpt_idx ${CKPT} \
         --testset RenBody_HiRes \
-        --use_cache \
         --agora_benchmark agora_model_val
 
 

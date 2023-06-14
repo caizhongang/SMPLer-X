@@ -25,6 +25,7 @@ class AGORA(torch.utils.data.Dataset):
             self.data_split = 'eval_train'
             print("Evaluate on train set.")
         self.data_path = osp.join(cfg.data_dir, 'AGORA', 'data')
+        self.save_idx = 0
         self.resolution = (2160, 3840)  # height, width. one of (720, 1280) and (2160, 3840)
         if cfg.agora_benchmark == 'agora_model_test' or cfg.agora_benchmark == 'test_only':
             self.test_set = 'test'
@@ -591,14 +592,18 @@ class AGORA(torch.utils.data.Dataset):
                 # gt load
                 with open(data['verts_path']) as f:
                     verts = np.array(json.load(f)).reshape(-1, 3)
+                
+                with open(data['smplx_param_path'], 'rb') as f:
+                    smplx_param = pickle.load(f, encoding='latin1')
+                transl = np.array(smplx_param['transl'], dtype=np.float32).reshape(-1) 
 
                 inputs = {'img': img}
                 targets = {'smplx_mesh_cam': verts}
-                meta_info = {'bb2img_trans': bb2img_trans}
+                meta_info = {'bb2img_trans': bb2img_trans, 'img_path': img_path, 'gt_smplx_transl':transl}
             else:
                 inputs = {'img': img}
                 targets = {'smplx_mesh_cam': np.zeros((smpl_x.vertex_num, 3), dtype=np.float32)}  # dummy vertex
-                meta_info = {'bb2img_trans': bb2img_trans}
+                meta_info = {'bb2img_trans': bb2img_trans, 'img_path': img_path}
 
             return inputs, targets, meta_info
 
@@ -611,6 +616,12 @@ class AGORA(torch.utils.data.Dataset):
         vis = getattr(cfg, 'vis', False)
         vis_save_dir = cfg.vis_dir
 
+        if getattr(cfg, 'vis', False):
+            import csv
+            csv_file = f'{cfg.vis_dir}/agora_smplx_error.csv'
+            file = open(csv_file, 'a', newline='')
+            writer = csv.writer(file)
+
         for n in range(sample_num):
             annot = annots[cur_sample_idx + n]
             out = outs[n]
@@ -621,9 +632,11 @@ class AGORA(torch.utils.data.Dataset):
             mesh_out_align = mesh_out - np.dot(smpl_x.J_regressor, mesh_out)[smpl_x.J_regressor_idx['pelvis'], None,
                                         :] + np.dot(smpl_x.J_regressor, mesh_gt)[smpl_x.J_regressor_idx['pelvis'], None,
                                              :]
-            eval_result['mpvpe_all'].append(np.sqrt(np.sum((mesh_out_align - mesh_gt) ** 2, 1)).mean() * 1000)
+            mpvpe_all = np.sqrt(np.sum((mesh_out_align - mesh_gt) ** 2, 1)).mean() * 1000                            
+            eval_result['mpvpe_all'].append(mpvpe_all)
             mesh_out_align = rigid_align(mesh_out, mesh_gt)
-            eval_result['pa_mpvpe_all'].append(np.sqrt(np.sum((mesh_out_align - mesh_gt) ** 2, 1)).mean() * 1000)
+            pa_mpvpe_all = np.sqrt(np.sum((mesh_out_align - mesh_gt) ** 2, 1)).mean() * 1000
+            eval_result['pa_mpvpe_all'].append(pa_mpvpe_all)
 
             # MPVPE from hand vertices
             mesh_gt_lhand = mesh_gt[smpl_x.hand_vertex_idx['left_hand'], :]
@@ -668,39 +681,64 @@ class AGORA(torch.utils.data.Dataset):
             ### HARDCODE
             if vis:
 
-                from utils.vis import vis_keypoints, vis_mesh, save_obj, render_mesh
-                # img = (out['img'].transpose(1,2,0)[:,:,::-1] * 255).copy()
-                # joint_img = out['joint_img'].copy()
-                # joint_img[:,0] = joint_img[:,0] / cfg.output_hm_shape[2] * cfg.input_img_shape[1]
-                # joint_img[:,1] = joint_img[:,1] / cfg.output_hm_shape[1] * cfg.input_img_shape[0]
-                # for j in range(len(joint_img)):
-                #    cv2.circle(img, (int(joint_img[j][0]), int(joint_img[j][1])), 3, (0,0,255), -1)
-                # cv2.imwrite(str(cur_sample_idx + n) + '.jpg', img)
+                # from utils.vis import vis_keypoints, vis_mesh, save_obj, render_mesh
+                # # img = (out['img'].transpose(1,2,0)[:,:,::-1] * 255).copy()
+                # # joint_img = out['joint_img'].copy()
+                # # joint_img[:,0] = joint_img[:,0] / cfg.output_hm_shape[2] * cfg.input_img_shape[1]
+                # # joint_img[:,1] = joint_img[:,1] / cfg.output_hm_shape[1] * cfg.input_img_shape[0]
+                # # for j in range(len(joint_img)):
+                # #    cv2.circle(img, (int(joint_img[j][0]), int(joint_img[j][1])), 3, (0,0,255), -1)
+                # # cv2.imwrite(str(cur_sample_idx + n) + '.jpg', img)
 
-                img_path = annot['img_path']
-                img_id = img_path.split('/')[-1][:-4]
-                ann_id = 0
-                # ann_id = annot['ann_id']
-                img = load_img(img_path)[:, :, ::-1]
-                bbox = annot['bbox']
-                focal = list(cfg.focal)
-                princpt = list(cfg.princpt)
-                focal[0] = focal[0] / cfg.input_body_shape[1] * bbox[2]
-                focal[1] = focal[1] / cfg.input_body_shape[0] * bbox[3]
-                princpt[0] = princpt[0] / cfg.input_body_shape[1] * bbox[2] + bbox[0]
-                princpt[1] = princpt[1] / cfg.input_body_shape[0] * bbox[3] + bbox[1]
-                img = render_mesh(img, out['smplx_mesh_cam'], smpl_x.face, {'focal': focal, 'princpt': princpt}, mesh_as_vertices=True)
-                # img = cv2.resize(img, (512,512))
-                cv2.imwrite(osp.join(vis_save_dir, img_id + '_' + str(ann_id) + '.jpg'), img)
+                # img_path = annot['img_path']
+                # img_id = img_path.split('/')[-1][:-4]
+                # ann_id = 0
+                # # ann_id = annot['ann_id']
+                # img = load_img(img_path)[:, :, ::-1]
+                # bbox = annot['bbox']
+                # focal = list(cfg.focal)
+                # princpt = list(cfg.princpt)
+                # focal[0] = focal[0] / cfg.input_body_shape[1] * bbox[2]
+                # focal[1] = focal[1] / cfg.input_body_shape[0] * bbox[3]
+                # princpt[0] = princpt[0] / cfg.input_body_shape[1] * bbox[2] + bbox[0]
+                # princpt[1] = princpt[1] / cfg.input_body_shape[0] * bbox[3] + bbox[1]
+                # img = render_mesh(img, out['smplx_mesh_cam'], smpl_x.face, {'focal': focal, 'princpt': princpt}, mesh_as_vertices=True)
+                # # img = cv2.resize(img, (512,512))
+                # cv2.imwrite(osp.join(vis_save_dir, img_id + '_' + str(ann_id) + '.jpg'), img)
 
-                vis_mesh_out = out['smplx_mesh_cam']
-                vis_mesh_out = vis_mesh_out - np.dot(smpl_x.layer['neutral'].J_regressor, vis_mesh_out)[
-                                              smpl_x.J_regressor_idx['pelvis'], None, :]
-                # vis_mesh_gt = out['smplx_mesh_cam_target']
-                # vis_mesh_gt = vis_mesh_gt - np.dot(smpl_x.layer['neutral'].J_regressor, vis_mesh_gt)[smpl_x.J_regressor_idx['pelvis'],None,:]
-                # save_obj(vis_mesh_out, smpl_x.face, osp.join(img_id + '_' + str(ann_id) + '.obj'))
-                # save_obj(vis_mesh_gt, smpl_x.face, str(cur_sample_idx + n) + '_gt.obj')
+                # vis_mesh_out = out['smplx_mesh_cam']
+                # vis_mesh_out = vis_mesh_out - np.dot(smpl_x.layer['neutral'].J_regressor, vis_mesh_out)[
+                #                               smpl_x.J_regressor_idx['pelvis'], None, :]
+                # # vis_mesh_gt = out['smplx_mesh_cam_target']
+                # # vis_mesh_gt = vis_mesh_gt - np.dot(smpl_x.layer['neutral'].J_regressor, vis_mesh_gt)[smpl_x.J_regressor_idx['pelvis'],None,:]
+                # # save_obj(vis_mesh_out, smpl_x.face, osp.join(img_id + '_' + str(ann_id) + '.obj'))
+                # # save_obj(vis_mesh_gt, smpl_x.face, str(cur_sample_idx + n) + '_gt.obj')
+                img_path = out['img_path']
+                rel_img_path = img_path.split('..')[-1]
+                smplx_pred = {}
+                smplx_pred['global_orient'] = out['smplx_root_pose'].reshape(-1,3)
+                smplx_pred['body_pose'] = out['smplx_body_pose'].reshape(-1,3)
+                smplx_pred['left_hand_pose'] = out['smplx_lhand_pose'].reshape(-1,3)
+                smplx_pred['right_hand_pose'] = out['smplx_rhand_pose'].reshape(-1,3)
+                smplx_pred['jaw_pose'] = out['smplx_jaw_pose'].reshape(-1,3)
+                smplx_pred['leye_pose'] = np.zeros((1, 3))
+                smplx_pred['reye_pose'] = np.zeros((1, 3))
+                smplx_pred['betas'] = out['smplx_shape'].reshape(-1,10)
+                smplx_pred['expression'] = out['smplx_expr'].reshape(-1,10)
+                smplx_pred['transl'] = out['gt_smplx_transl'].reshape(-1,3)
+                smplx_pred['img_path'] = rel_img_path
 
+                npz_path = os.path.join(cfg.vis_dir, f'{self.save_idx}.npz')
+                np.savez(npz_path, **smplx_pred)
+
+                # save img path and error
+                new_line = [self.save_idx, rel_img_path, mpvpe_all, pa_mpvpe_all]
+                # Append the new line to the CSV file
+                writer.writerow(new_line)
+                self.save_idx += 1
+
+                # save_obj(out['smplx_mesh_cam'], smpl_x.face, str(cur_sample_idx + n) + '.obj')
+        
             # save results for the official evaluation codes/server
             save_name = annot['img_path'].split('/')[-1][:-4]
             if self.data_split == 'test' and self.test_set == 'test':
@@ -755,6 +793,9 @@ class AGORA(torch.utils.data.Dataset):
             img = vis_keypoints(img.copy(), joint_proj)
             cv2.imwrite(img_path.split('/')[-1], img)
             """
+        if getattr(cfg, 'vis', False):
+            file.close()
+
         return eval_result
 
     def print_eval_result(self, eval_result):
@@ -765,6 +806,7 @@ class AGORA(torch.utils.data.Dataset):
             return
 
         print('======AGORA-val======')
+        print(f'{cfg.vis_dir}')
         print('PA MPVPE (All): %.2f mm' % np.mean(eval_result['pa_mpvpe_all']))
         print('PA MPVPE (L-Hands): %.2f mm' % np.mean(eval_result['pa_mpvpe_l_hand']))
         print('PA MPVPE (R-Hands): %.2f mm' % np.mean(eval_result['pa_mpvpe_r_hand']))

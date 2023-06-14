@@ -7,7 +7,7 @@ exp_name = 'output/exp1/pre_analysis'
 
 # quick access
 save_epoch = 1
-lr = 2e-5
+lr = 1e-5
 end_epoch = 5
 train_batch_size = 32
 
@@ -17,19 +17,21 @@ bbox_ratio = 1.2
 # continue
 continue_train = False
 start_over = True
-# pretrained_model_path = '../output/train_exp111_20230602_184623/model_dump/snapshot_4.pth.tar'
+# pretrained_model_path = '../output/train_exp78_20230526_105124/model_dump/snapshot_4.pth.tar'
 
 # dataset setting
 agora_fix_betas = True
 agora_fix_global_orient_transl = True
 agora_valid_root_pose = True
 
-# top5
+# top20
 dataset_list = ['Human36M', 'MSCOCO', 'MPII', 'AGORA', 'EHF', 'SynBody', 'GTA_Human2', \
     'EgoBody_Egocentric', 'EgoBody_Kinect', 'UBody', 'PW3D', 'MuCo', 'PROX']
-trainset_3d = ['MSCOCO','AGORA']
-trainset_2d = []
-trainset_humandata = ['BEDLAM', 'SPEC', 'GTA_Human2']
+trainset_3d = ['MSCOCO','AGORA', 'UBody']
+trainset_2d = ['PW3D']
+trainset_humandata = ['BEDLAM', 'SPEC', 'GTA_Human2','SynBody','SynBody_Magic1', 'PoseTrack',
+                    'EgoBody_Egocentric',
+                    ]
 testset = 'EHF'
 
 use_cache = True
@@ -47,7 +49,7 @@ Talkshow_train_sample_interval = 10
 
 # strategy 
 data_strategy = 'balance' # 'balance' need to define total_data_len
-total_data_len = 750000
+total_data_len = 1500000
 
 # model
 smplx_loss_weight = 1.0 #2 for agora_model for smplx shape

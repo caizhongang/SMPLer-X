@@ -132,7 +132,7 @@ class Model(nn.Module):
         cam_trans = targets['smplx_cam_trans']
 
         # final output
-        joint_proj, joint_cam, mesh_cam = self.get_coord(root_pose, body_pose, lhand_pose, rhand_pose, jaw_pose, shape,
+        joint_proj, joint_cam, _, mesh_cam = self.get_coord(root_pose, body_pose, lhand_pose, rhand_pose, jaw_pose, shape,
                                                          expr, cam_trans, mode)
 
         return mesh_cam
@@ -438,7 +438,6 @@ class Model(nn.Module):
             # test output
             out = {}
             out['img'] = inputs['img']
-            out['img_path'] = meta_info['img_path']
             out['joint_img'] = joint_img
             out['smplx_joint_proj'] = joint_proj
             out['smplx_mesh_cam'] = mesh_cam
@@ -465,7 +464,9 @@ class Model(nn.Module):
                 out['smpl_mesh_cam_target'] = targets['smpl_mesh_cam']
             if 'bb2img_trans' in meta_info:
                 out['bb2img_trans'] = meta_info['bb2img_trans']
-            
+            if 'gt_smplx_transl' in meta_info:
+                out['gt_smplx_transl'] = meta_info['gt_smplx_transl']
+
             ### HARDCODE vis for debug
             # import numpy as np
             # np.save('./vis/val_0509_out.npy', out)
@@ -515,8 +516,8 @@ def get_model(mode):
             from vit_adapter_utils import apply_adapter
             encoder = apply_adapter(encoder, cfg.model_type)
             print(f"Apply adapter {adapter_name}.")
-        else:
-            raise NotImplementedError('Undefined adapter: {}'.format(adapter_name))
+        # else:
+        #     raise NotImplementedError('Undefined adapter: {}'.format(adapter_name))
 
     elif third_party_encoder == 'humanbench':
         # ref: https://github.com/OpenGVLab/HumanBench/blob/6478b659773de5de8ac6f2dd8e35d47cedc54877/PATH/core/models/backbones/vitdet_for_ladder_attention_share_pos_embed.py

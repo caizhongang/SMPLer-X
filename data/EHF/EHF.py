@@ -22,6 +22,7 @@ class EHF(torch.utils.data.Dataset):
         self.datalist = self.load_data()
         self.cam_param = {'R': [-2.98747896, 0.01172457, -0.05704687]}
         self.cam_param['R'], _ = cv2.Rodrigues(np.array(self.cam_param['R']))
+        self.save_idx = 0
 
     def load_data(self):
         datalist = []
@@ -135,7 +136,8 @@ class EHF(torch.utils.data.Dataset):
                    'lhand_bbox_size': lhand_bbox_size, 'rhand_bbox_size': rhand_bbox_size,
                    'face_bbox_size': face_bbox_size}
         meta_info = {'bb2img_trans': bb2img_trans, 'lhand_bbox_valid': float(True), 'rhand_bbox_valid': float(True),
-                     'face_bbox_valid': float(True)}
+                     'face_bbox_valid': float(True),
+                     'img_path': img_path}
         return inputs, targets, meta_info
 
     def evaluate(self, outs, cur_sample_idx):
@@ -144,6 +146,13 @@ class EHF(torch.utils.data.Dataset):
         eval_result = {'pa_mpvpe_all': [], 'pa_mpvpe_l_hand': [], 'pa_mpvpe_r_hand': [], 'pa_mpvpe_hand': [], 'pa_mpvpe_face': [], 
                        'mpvpe_all': [], 'mpvpe_l_hand': [], 'mpvpe_r_hand': [], 'mpvpe_hand': [], 'mpvpe_face': [], 
                        'pa_mpjpe_body': [], 'pa_mpjpe_l_hand': [], 'pa_mpjpe_r_hand': [], 'pa_mpjpe_hand': []}
+        
+        if getattr(cfg, 'vis', False):
+            import csv
+            csv_file = f'{cfg.vis_dir}/ehf_smplx_error.csv'
+            file = open(csv_file, 'a', newline='')
+            writer = csv.writer(file)
+
         for n in range(sample_num):
             annot = annots[cur_sample_idx + n]
             ann_id = annot['img_path'].split('/')[-1].split('_')[0]
@@ -159,11 +168,13 @@ class EHF(torch.utils.data.Dataset):
 
             # print(mesh_out.shape)
             mesh_out_align = rigid_align(mesh_out, mesh_gt)
-            eval_result['pa_mpvpe_all'].append(np.sqrt(np.sum((mesh_out_align - mesh_gt) ** 2, 1)).mean() * 1000)
+            pa_mpvpe_all = np.sqrt(np.sum((mesh_out_align - mesh_gt) ** 2, 1)).mean() * 1000
+            eval_result['pa_mpvpe_all'].append(pa_mpvpe_all)
             mesh_out_align = mesh_out - np.dot(smpl_x.J_regressor, mesh_out)[smpl_x.J_regressor_idx['pelvis'], None,
                                         :] + np.dot(smpl_x.J_regressor, mesh_gt)[smpl_x.J_regressor_idx['pelvis'], None,
                                              :]
-            eval_result['mpvpe_all'].append(np.sqrt(np.sum((mesh_out_align - mesh_gt) ** 2, 1)).mean() * 1000)
+            mpvpe_all = np.sqrt(np.sum((mesh_out_align - mesh_gt) ** 2, 1)).mean() * 1000
+            eval_result['mpvpe_all'].append(mpvpe_all)
 
             # MPVPE from hand vertices
             mesh_gt_lhand = mesh_gt[smpl_x.hand_vertex_idx['left_hand'], :]
@@ -231,28 +242,28 @@ class EHF(torch.utils.data.Dataset):
 
             vis = cfg.vis
             if vis:
-                save_folder = cfg.vis_dir
-                kpt_save_folder = os.path.join(save_folder, 'KPT')
-                os.makedirs(kpt_save_folder, exist_ok=True)
-                mesh_save_folder = os.path.join(save_folder, 'mesh_origin')
-                os.makedirs(mesh_save_folder, exist_ok=True)
-                # from utils.vis import vis_keypoints, render_mesh, save_obj
-                img = (out['img'].transpose(1, 2, 0)[:, :, ::-1] * 255).copy()
-                joint_img = out['joint_img'].copy()
-                joint_img[:, 0] = joint_img[:, 0] / cfg.output_hm_shape[2] * cfg.input_img_shape[1]
-                joint_img[:, 1] = joint_img[:, 1] / cfg.output_hm_shape[1] * cfg.input_img_shape[0]
-                for j in range(len(joint_img)):
-                    cv2.circle(img, (int(joint_img[j][0]), int(joint_img[j][1])), 3, (0, 0, 255), -1)
-                lhand_bbox = out['lhand_bbox'].reshape(2, 2).copy()
-                cv2.rectangle(img, (int(lhand_bbox[0][0]), int(lhand_bbox[0][1])),
-                              (int(lhand_bbox[1][0]), int(lhand_bbox[1][1])), (255, 0, 0), 3)
-                rhand_bbox = out['rhand_bbox'].reshape(2, 2).copy()
-                cv2.rectangle(img, (int(rhand_bbox[0][0]), int(rhand_bbox[0][1])),
-                              (int(rhand_bbox[1][0]), int(rhand_bbox[1][1])), (255, 0, 0), 3)
-                face_bbox = out['face_bbox'].reshape(2, 2).copy()
-                cv2.rectangle(img, (int(face_bbox[0][0]), int(face_bbox[0][1])),
-                              (int(face_bbox[1][0]), int(face_bbox[1][1])), (255, 0, 0), 3)
-                cv2.imwrite(os.path.join(kpt_save_folder, str(cur_sample_idx + n) + '.jpg'), img)
+                # save_folder = cfg.vis_dir
+                # kpt_save_folder = os.path.join(save_folder, 'KPT')
+                # os.makedirs(kpt_save_folder, exist_ok=True)
+                # mesh_save_folder = os.path.join(save_folder, 'mesh_origin')
+                # os.makedirs(mesh_save_folder, exist_ok=True)
+                # # from utils.vis import vis_keypoints, render_mesh, save_obj
+                # img = (out['img'].transpose(1, 2, 0)[:, :, ::-1] * 255).copy()
+                # joint_img = out['joint_img'].copy()
+                # joint_img[:, 0] = joint_img[:, 0] / cfg.output_hm_shape[2] * cfg.input_img_shape[1]
+                # joint_img[:, 1] = joint_img[:, 1] / cfg.output_hm_shape[1] * cfg.input_img_shape[0]
+                # for j in range(len(joint_img)):
+                #     cv2.circle(img, (int(joint_img[j][0]), int(joint_img[j][1])), 3, (0, 0, 255), -1)
+                # lhand_bbox = out['lhand_bbox'].reshape(2, 2).copy()
+                # cv2.rectangle(img, (int(lhand_bbox[0][0]), int(lhand_bbox[0][1])),
+                #               (int(lhand_bbox[1][0]), int(lhand_bbox[1][1])), (255, 0, 0), 3)
+                # rhand_bbox = out['rhand_bbox'].reshape(2, 2).copy()
+                # cv2.rectangle(img, (int(rhand_bbox[0][0]), int(rhand_bbox[0][1])),
+                #               (int(rhand_bbox[1][0]), int(rhand_bbox[1][1])), (255, 0, 0), 3)
+                # face_bbox = out['face_bbox'].reshape(2, 2).copy()
+                # cv2.rectangle(img, (int(face_bbox[0][0]), int(face_bbox[0][1])),
+                #               (int(face_bbox[1][0]), int(face_bbox[1][1])), (255, 0, 0), 3)
+                # cv2.imwrite(os.path.join(kpt_save_folder, str(cur_sample_idx + n) + '.jpg'), img)
 
                 # vis_img = img.copy()
                 # focal = [cfg.focal[0] / cfg.input_body_shape[1] * cfg.input_img_shape[1],
@@ -265,10 +276,38 @@ class EHF(torch.utils.data.Dataset):
                 # cv2.imwrite(os.path.join(mesh_save_folder, f'{ann_id}_render.jpg'), rendered_img)
                 # # cv2.imwrite(os.path.join(mesh_save_folder, f'{ann_id}_render_gt.jpg'), rendered_img_gt)
                 # cv2.imwrite(os.path.join(mesh_save_folder, f'{ann_id}.jpg'), vis_img)
-                np.save(os.path.join(mesh_save_folder, f'{ann_id}.npy'), mesh_out)
+                # np.save(os.path.join(mesh_save_folder, f'{ann_id}.npy'), mesh_out)
 
-            # save_obj(out['smplx_mesh_cam'], smpl_x.face, str(cur_sample_idx + n) + '.obj')
+                # save smplx param
+                smplx_pred = {}
+                smplx_pred['global_orient'] = out['smplx_root_pose'].reshape(-1,3)
+                smplx_pred['body_pose'] = out['smplx_body_pose'].reshape(-1,3)
+                smplx_pred['left_hand_pose'] = out['smplx_lhand_pose'].reshape(-1,3)
+                smplx_pred['right_hand_pose'] = out['smplx_rhand_pose'].reshape(-1,3)
+                smplx_pred['jaw_pose'] = out['smplx_jaw_pose'].reshape(-1,3)
+                smplx_pred['leye_pose'] = np.zeros((1, 3))
+                smplx_pred['reye_pose'] = np.zeros((1, 3))
+                smplx_pred['betas'] = out['smplx_shape'].reshape(-1,10)
+                smplx_pred['expression'] = out['smplx_expr'].reshape(-1,10)
+                smplx_pred['transl'] = out['cam_trans'].reshape(-1,3)
+                
+                # import pdb; pdb.set_trace()
+                np.savez(os.path.join(cfg.vis_dir, f'{self.save_idx}.npz'), **smplx_pred)
 
+                # save img path and error
+                img_path = out['img_path']
+                rel_img_path = img_path.split('..')[-1]
+                new_line = [self.save_idx, rel_img_path, mpvpe_all, pa_mpvpe_all]
+                # Append the new line to the CSV file
+                writer.writerow(new_line)
+                self.save_idx += 1
+
+                # save_obj(out['smplx_mesh_cam'], smpl_x.face, str(cur_sample_idx + n) + '.obj')
+        
+        if getattr(cfg, 'vis', False):
+            file.close()
+
+            
         return eval_result
 
     def print_eval_result(self, eval_result):

@@ -78,22 +78,21 @@ SRUN_ARGS=${SRUN_ARGS:-""}
 #         --testset SHAPY \
 #         --shapy_eval_split test
 
-PYTHONPATH="$(dirname $0)/..":$PYTHONPATH \
-srun -p ${PARTITION} \
-    --job-name=${JOB_NAME} \
-    --gres=gpu:${GPUS_PER_NODE} \
-    --ntasks-per-node=1 \
-    --cpus-per-task=${CPUS_PER_TASK} \
-    --kill-on-bad-exit=1 \
-    --exclusive \
-    ${SRUN_ARGS} \
-    python test.py \
-        --num_gpus ${GPUS_PER_NODE} \
-        --exp_name output/test_${JOB_NAME}_ep${CKPT}_ARCTIC \
-        --result_path ${RES_PATH} \
-        --ckpt_idx ${CKPT} \
-        --testset ARCTIC \
-        # --agora_benchmark agora_model_val
+# PYTHONPATH="$(dirname $0)/..":$PYTHONPATH \
+# srun -p ${PARTITION} \
+#     --job-name=${JOB_NAME} \
+#     --gres=gpu:${GPUS_PER_NODE} \
+#     --ntasks-per-node=1 \
+#     --cpus-per-task=${CPUS_PER_TASK} \
+#     --kill-on-bad-exit=1 \
+#     ${SRUN_ARGS} \
+#     python test.py \
+#         --num_gpus ${GPUS_PER_NODE} \
+#         --exp_name output/test_${JOB_NAME}_ep${CKPT}_ARCTIC \
+#         --result_path ${RES_PATH} \
+#         --ckpt_idx ${CKPT} \
+#         --testset ARCTIC \
+#         # --agora_benchmark agora_model_val
 
 # PYTHONPATH="$(dirname $0)/..":$PYTHONPATH \
 # srun -p ${PARTITION} \
@@ -111,21 +110,23 @@ srun -p ${PARTITION} \
 #         --testset RenBody_HiRes \
 #         # --agora_benchmark agora_model_val
 
-# PYTHONPATH="$(dirname $0)/..":$PYTHONPATH \
-# srun -p ${PARTITION} \
-#     --job-name=${JOB_NAME} \
-#     --gres=gpu:${GPUS_PER_NODE} \
-#     --ntasks-per-node=1 \
-#     --cpus-per-task=${CPUS_PER_TASK} \
-#     --kill-on-bad-exit=1 \
-#     ${SRUN_ARGS} \
-#     python test.py \
-#         --num_gpus ${GPUS_PER_NODE} \
-#         --exp_name output/test_${JOB_NAME}_ep${CKPT}_EHF \
-#         --result_path ${RES_PATH} \
-#         --ckpt_idx ${CKPT} \
-#         --testset EHF \
-#         # --agora_benchmark agora_model_val
+PYTHONPATH="$(dirname $0)/..":$PYTHONPATH \
+srun -p ${PARTITION} \
+    --job-name=${JOB_NAME} \
+    --gres=gpu:${GPUS_PER_NODE} \
+    --ntasks-per-node=1 \
+    --cpus-per-task=${CPUS_PER_TASK} \
+    --kill-on-bad-exit=1 \
+    ${SRUN_ARGS} \
+    python test.py \
+        --num_gpus ${GPUS_PER_NODE} \
+        --exp_name output/test_${JOB_NAME}_ep${CKPT}_EHF \
+        --result_path ${RES_PATH} \
+        --ckpt_idx ${CKPT} \
+        --testset EHF \
+        --vis \
+        --osx_original
+        # --agora_benchmark agora_model_val
 
 # PYTHONPATH="$(dirname $0)/..":$PYTHONPATH \
 # srun -p ${PARTITION} \

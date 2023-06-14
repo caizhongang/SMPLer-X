@@ -19,7 +19,6 @@ srun -p ${PARTITION} \
     --ntasks-per-node=${GPUS_PER_NODE} \
     --cpus-per-task=${CPUS_PER_TASK} \
     --quotatype=auto \
-    --exclusive \
     --kill-on-bad-exit=1 \
     ${SRUN_ARGS} \
     python train.py \

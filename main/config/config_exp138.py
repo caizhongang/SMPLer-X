@@ -7,17 +7,17 @@ exp_name = 'output/exp1/pre_analysis'
 
 # quick access
 save_epoch = 1
-lr = 2e-5
-end_epoch = 5
+lr = 1e-5
+end_epoch = 10
 train_batch_size = 32
 
 syncbn = True
 bbox_ratio = 1.2
 
 # continue
-continue_train = False
-start_over = True
-# pretrained_model_path = '../output/train_exp111_20230602_184623/model_dump/snapshot_4.pth.tar'
+continue_train = True
+start_over = False
+pretrained_model_path = '../output/train_exp111_20230602_184623/model_dump/snapshot_4.pth.tar'
 
 # dataset setting
 agora_fix_betas = True
@@ -27,9 +27,9 @@ agora_valid_root_pose = True
 # top5
 dataset_list = ['Human36M', 'MSCOCO', 'MPII', 'AGORA', 'EHF', 'SynBody', 'GTA_Human2', \
     'EgoBody_Egocentric', 'EgoBody_Kinect', 'UBody', 'PW3D', 'MuCo', 'PROX']
-trainset_3d = ['MSCOCO','AGORA']
+trainset_3d = ['MSCOCO']
 trainset_2d = []
-trainset_humandata = ['BEDLAM', 'SPEC', 'GTA_Human2']
+trainset_humandata = []
 testset = 'EHF'
 
 use_cache = True
@@ -59,20 +59,20 @@ net_kps_2d_weight = 1.0
 
 agora_benchmark = 'agora_model' # 'agora_model', 'test_only'
 
-# model_type = 'osx_s'
-# encoder_config_file = 'transformer_utils/configs/osx/encoder/body_encoder_small.py'
-# encoder_pretrained_model_path = '../pretrained_models/vitpose_small.pth'
-# feat_dim = 384
+model_type = 'osx_s'
+encoder_config_file = 'transformer_utils/configs/osx/encoder/body_encoder_small.py'
+encoder_pretrained_model_path = '../pretrained_models/vitpose_small.pth'
+feat_dim = 384
 
 # model_type = 'osx_b'
 # encoder_config_file = 'transformer_utils/configs/osx/encoder/body_encoder_base.py'
 # encoder_pretrained_model_path = '../pretrained_models/osx_vit_b.pth'
 # feat_dim = 768
 
-model_type = 'osx_l'
-encoder_config_file = 'transformer_utils/configs/osx/encoder/body_encoder_large.py'
-encoder_pretrained_model_path = '../pretrained_models/osx_vit_l.pth'
-feat_dim = 1024
+# model_type = 'osx_l'
+# encoder_config_file = 'transformer_utils/configs/osx/encoder/body_encoder_large.py'
+# encoder_pretrained_model_path = '../pretrained_models/osx_vit_l.pth'
+# feat_dim = 1024
 
 # model_type = 'osx_h'
 # encoder_config_file = 'transformer_utils/configs/osx/encoder/body_encoder_huge.py'
