@@ -36,10 +36,8 @@ SMPLer-X/
     ├── ARCTIC/      
     ├── BEDLAM/      
     ├── Behave/      
-    ├── cache/       
     ├── CHI3D/       
     ├── CrowdPose/   
-    ├── dataset.py/  
     ├── EgoBody/     
     ├── EHF/         
     ├── FIT3D/                
@@ -50,7 +48,6 @@ SMPLer-X/
     ├── LSPET/                
     ├── MPII/                 
     ├── MPI_INF_3DHP/         
-    ├── MPI_INF_3DHP_folder/  
     ├── MSCOCO/               
     ├── MTP/                    
     ├── MuCo/                   
@@ -60,7 +57,6 @@ SMPLer-X/
     ├── PW3D/                   
     ├── RenBody/
     ├── RICH/
-    ├── SHAPY/
     ├── SPEC/
     ├── SSP3D/
     ├── SynBody/
