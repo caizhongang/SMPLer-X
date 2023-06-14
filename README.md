@@ -1,5 +1,8 @@
 # SMPLer-X
 
+![Teaser](./assets/teaser.png)
+![Visualization](./assets/smpler_x_vis1.jpg)
+
 ## Install
 ```bash
 conda create -n smplerx python=3.8 -y
