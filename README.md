@@ -1,6 +1,6 @@
 # SMPLer-X
 
-![Teaser](./assets/teaser.png)
+![Teaser](./assets/teaser_complete.png)
 ![Visualization](./assets/smpler_x_vis1.jpg)
 
 ## News
