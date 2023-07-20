@@ -317,6 +317,17 @@ class Demoer(Base):
             self.test_epoch = int(test_epoch)
         super(Demoer, self).__init__(log_name='test_logs.txt')
 
+    def _make_batch_generator(self, demo_scene):
+        # data load and construct batch generator
+        self.logger.info("Creating dataset...")
+        from data.UBody.UBody import UBody
+        testset_loader = UBody(transforms.ToTensor(), "demo", demo_scene) # eval(demoset)(transforms.ToTensor(), "demo")
+        batch_generator = DataLoader(dataset=testset_loader, batch_size=cfg.num_gpus * cfg.test_batch_size,
+                                     shuffle=False, num_workers=cfg.num_thread, pin_memory=True)
+
+        self.testset = testset_loader
+        self.batch_generator = batch_generator
+
     def _make_model(self):
         self.logger.info('Load checkpoint from {}'.format(cfg.pretrained_model_path))
 
@@ -324,7 +335,7 @@ class Demoer(Base):
         self.logger.info("Creating graph...")
         model = get_model('test')
         model = DataParallel(model).cuda()
-        ckpt = torch.load(cfg.pretrained_model_path, map_location=torch.device('cpu'))
+        ckpt = torch.load(cfg.pretrained_model_path)
 
         from collections import OrderedDict
         new_state_dict = OrderedDict()
@@ -338,3 +349,8 @@ class Demoer(Base):
         model.eval()
 
         self.model = model
+
+    def _evaluate(self, outs, cur_sample_idx):
+        eval_result = self.testset.evaluate(outs, cur_sample_idx)
+        return eval_result
+

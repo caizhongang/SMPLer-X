@@ -50,7 +50,7 @@ class Config:
             os.system(f'cp -r {self.root_dir}/{file} {self.code_dir}')
 
     def update_test_config(self, testset, agora_benchmark, shapy_eval_split, pretrained_model_path, use_cache,
-                           eval_on_train, vis):
+                           eval_on_train=False, vis=False):
         self.testset = testset
         self.agora_benchmark = agora_benchmark
         self.pretrained_model_path = pretrained_model_path
