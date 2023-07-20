@@ -4,10 +4,10 @@ set -x
 PARTITION=Zoetrope
 
 INPUT_VIDEO=$1
-APPENDIX=$2
+FORMAT=$2
 FPS=$3
-RES_PATH=$4
-CKPT=$5
+CKPT=$4
+
 GPUS=1
 JOB_NAME=inference_${INPUT_VIDEO}
 
@@ -21,7 +21,7 @@ SAVE_DIR=../demo/results/${INPUT_VIDEO}
 # video to images
 mkdir $IMG_PATH
 mkdir $SAVE_DIR
-ffmpeg -i ../demo/videos/${INPUT_VIDEO}.${APPENDIX} -f image2 -vf fps=${FPS}/1 -qscale 0 ../demo/images/${INPUT_VIDEO}/%06d.jpg 
+ffmpeg -i ../demo/videos/${INPUT_VIDEO}.${FORMAT} -f image2 -vf fps=${FPS}/1 -qscale 0 ../demo/images/${INPUT_VIDEO}/%06d.jpg 
 
 end_count=$(find "$IMG_PATH" -type f | wc -l)
 echo $end_count
@@ -39,8 +39,7 @@ srun -p ${PARTITION} \
     python inference.py \
     --num_gpus ${GPUS_PER_NODE} \
     --exp_name output/demo_${JOB_NAME} \
-    --result_path ${RES_PATH} \
-    --ckpt_idx ${CKPT} \
+    --pretrained_model ${CKPT} \
     --agora_benchmark agora_model \
     --img_path ${IMG_PATH} \
     --start 1 \

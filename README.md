@@ -92,7 +92,18 @@ SMPLer-X/
 │               └──SMPLX_FEMALE.npz
 ├── data/
 ├── main/
-├── pretrained_models/  # pretrained ViT-Pose models
+├── demo/  
+│   ├── videos/       
+│   ├── images/      
+│   └── results/ 
+├── pretrained_models/  # pretrained ViT-Pose, SMPLer_X and mmdet models
+│   ├── mmdet/
+│   │   ├──faster_rcnn_r50_fpn_1x_coco_20200130-047c8118.pth
+│   │   └──mmdet_faster_rcnn_r50_fpn_coco.py
+│   ├── smpler_x_s32.pth.tar
+│   ├── smpler_x_b32.pth.tar
+│   ├── smpler_x_l32.pth.tar
+│   ├── smpler_x_h32.pth.tar
 │   ├── vitpose_small.pth
 │   ├── vitpose_base.pth
 │   ├── vitpose_large.pth
@@ -131,6 +142,21 @@ SMPLer-X/
     ├── UP3D/
     └── preprocessed_datasets/  # HumanData files
 ```
+## Inference 
+- Place the video to be inferenced under ROOT/demo/videos
+- Prepare the pretrained models to be used for inference under ROOT/pretrained_models 
+- Prepare the mmdet pretrained model and config under ROOT/pretrained_models 
+- Inference out put will be placed in ROOT/demo/results
+
+```bash
+cd main
+sh slurm_inference.sh {VIDEO_FILE} {FORMAT} {FPS} {PRETRAINED_CKPT} 
+
+# For inferencing test_video.mp4 (24FPS) with smpler_x_h32
+sh slurm_inference.sh test_video mp4 24 smpler_x_h32
+
+```
+
 
 ## Training
 ```bash
@@ -154,6 +180,7 @@ sh slurm_test.sh {JOB_NAME} {NUM_GPU} {TRAIN_OUTPUT_DIR} {CKPT_ID}
 ```
 - NUM_GPU = 1 is recommended for testing
 - Logs and results  will be saved to `../output/test_{JOB_NAME}_ep{CKPT_ID}_{TEST_DATSET}`
+
 
 ## References
 - [Hand4Whole](https://github.com/mks0601/Hand4Whole_RELEASE)

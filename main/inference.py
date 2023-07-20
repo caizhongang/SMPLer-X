@@ -21,8 +21,7 @@ def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--num_gpus', type=int, dest='num_gpus')
     parser.add_argument('--exp_name', type=str, default='output/test')
-    parser.add_argument('--result_path', type=str, default='output/test')
-    parser.add_argument('--ckpt_idx', type=int, default=0)
+    parser.add_argument('--pretrained_model', type=int, default=0)
     parser.add_argument('--testset', type=str, default='EHF')
     parser.add_argument('--agora_benchmark', type=str, default='na')
     parser.add_argument('--img_path', type=str, default='input.png')
@@ -43,8 +42,8 @@ def parse_args():
 def main():
 
     args = parse_args()
-    config_path = osp.join('../output',args.result_path, 'code', 'config_base.py')
-    ckpt_path = osp.join('../output', args.result_path, 'model_dump', f'snapshot_{int(args.ckpt_idx)}.pth.tar')
+    config_path = osp.join('./config', f'config_{args.pretrained_model}.py')
+    ckpt_path = osp.join('../pretrained_models', f'{args.pretrained_model}.pth.tar')
 
     cfg.get_config_fromfile(config_path)
     cfg.update_test_config(args.testset, args.agora_benchmark, shapy_eval_split=None, 
