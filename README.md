@@ -68,9 +68,10 @@ cd ../..
   - [UP3D](https://files.is.tuebingen.mpg.de/classner/up/)
 - process all datasets into [HumanData](https://github.com/open-mmlab/mmhuman3d/blob/main/docs/human_data.md) format, except the following:
   - AGORA, MSCOCO, MPII, Human3.6M, UBody. 
-  - Follow [OSX](https://github.com/IDEA-Research/OSX) in preparing these 5 datasets.
+  - follow [OSX](https://github.com/IDEA-Research/OSX) in preparing these 5 datasets.
 - follow [OSX](https://github.com/IDEA-Research/OSX) in preparing pretrained ViTPose models. Download the ViTPose pretrained weights for ViT-small and ViT-huge from [here](https://github.com/ViTAE-Transformer/ViTPose).
 - download [SMPL-X](https://smpl-x.is.tue.mpg.de/) and [SMPL](https://smpl.is.tue.mpg.de/) body models.
+- download mmdet pretrained [model](https://download.openmmlab.com/mmdetection/v2.0/faster_rcnn/faster_rcnn_r50_fpn_1x_coco/faster_rcnn_r50_fpn_1x_coco_20200130-047c8118.pth) and [config](https://github.com/openxrlab/xrmocap/blob/main/configs/modules/human_perception/mmdet_faster_rcnn_r50_fpn_coco.py) for inference.
 
 The file structure should be like:
 ```
@@ -143,10 +144,10 @@ SMPLer-X/
     └── preprocessed_datasets/  # HumanData files
 ```
 ## Inference 
-- Place the video to be inferenced under `ROOT/demo/videos`
-- Prepare the pretrained models to be used for inference under `ROOT/pretrained_models`
-- Prepare the mmdet pretrained model and config under `ROOT/pretrained_models`
-- Inference out put will be saved in `ROOT/demo/results`
+- Place the video to be inferenced under `SMPLer-X/demo/videos`
+- Prepare the pretrained models to be used for inference under `SMPLer-X/pretrained_models`
+- Prepare the mmdet pretrained model and config under `SMPLer-X/pretrained_models`
+- Inference out put will be saved in `SMPLer-X/demo/results`
 
 ```bash
 cd main
@@ -167,8 +168,8 @@ sh slurm_train.sh {JOB_NAME} {NUM_GPU} {CONFIG_FILE}
 sh slurm_train.sh smpler_x_h32 16 config_smpler_x_h32.py
 
 ```
-- CONFIG_FILE is the file name under `./config`, e.g. `./config/config_base.py`, more configs can be found under `./config`
-- Logs and checkpoints will be saved to `../output/train_{JOB_NAME}_{DATE_TIME}`
+- CONFIG_FILE is the file name under SMPLer-X/main/config
+- Logs and checkpoints will be saved to `SMPLer-X/output/train_{JOB_NAME}_{DATE_TIME}`
 
 
 ## Testing
@@ -179,7 +180,7 @@ cd main
 sh slurm_test.sh {JOB_NAME} {NUM_GPU} {TRAIN_OUTPUT_DIR} {CKPT_ID}
 ```
 - NUM_GPU = 1 is recommended for testing
-- Logs and results  will be saved to `../output/test_{JOB_NAME}_ep{CKPT_ID}_{TEST_DATSET}`
+- Logs and results  will be saved to `SMPLer-X/output/test_{JOB_NAME}_ep{CKPT_ID}_{TEST_DATSET}`
 
 
 ## References
