@@ -143,10 +143,10 @@ SMPLer-X/
     └── preprocessed_datasets/  # HumanData files
 ```
 ## Inference 
-- Place the video to be inferenced under ROOT/demo/videos
-- Prepare the pretrained models to be used for inference under ROOT/pretrained_models 
-- Prepare the mmdet pretrained model and config under ROOT/pretrained_models 
-- Inference out put will be placed in ROOT/demo/results
+- Place the video to be inferenced under `ROOT/demo/videos`
+- Prepare the pretrained models to be used for inference under `ROOT/pretrained_models`
+- Prepare the mmdet pretrained model and config under `ROOT/pretrained_models`
+- Inference out put will be saved in `ROOT/demo/results`
 
 ```bash
 cd main
@@ -163,8 +163,8 @@ sh slurm_inference.sh test_video mp4 24 smpler_x_h32
 cd main
 sh slurm_train.sh {JOB_NAME} {NUM_GPU} {CONFIG_FILE}
 
-# For training SMPLer-X-H32
-sh slurm_train.sh smpler-x-h32 16 config_smpler_x_h32.py
+# For training SMPLer-X-H32 with 16 GPUS
+sh slurm_train.sh smpler_x_h32 16 config_smpler_x_h32.py
 
 ```
 - CONFIG_FILE is the file name under `./config`, e.g. `./config/config_base.py`, more configs can be found under `./config`
