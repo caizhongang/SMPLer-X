@@ -26,3 +26,4 @@ pycocotools
 plyfile
 timm
 pyglet
+mmdet
