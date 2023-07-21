@@ -21,7 +21,7 @@ def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--num_gpus', type=int, dest='num_gpus')
     parser.add_argument('--exp_name', type=str, default='output/test')
-    parser.add_argument('--pretrained_model', type=int, default=0)
+    parser.add_argument('--pretrained_model', type=str, default=0)
     parser.add_argument('--testset', type=str, default='EHF')
     parser.add_argument('--agora_benchmark', type=str, default='na')
     parser.add_argument('--img_path', type=str, default='input.png')
