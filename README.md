@@ -168,7 +168,7 @@ sh slurm_train.sh {JOB_NAME} {NUM_GPU} {CONFIG_FILE}
 sh slurm_train.sh smpler_x_h32 16 config_smpler_x_h32.py
 
 ```
-- CONFIG_FILE is the file name under SMPLer-X/main/config
+- CONFIG_FILE is the file name under `SMPLer-X/main/config`
 - Logs and checkpoints will be saved to `SMPLer-X/output/train_{JOB_NAME}_{DATE_TIME}`
 
 
