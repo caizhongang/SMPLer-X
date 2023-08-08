@@ -564,7 +564,7 @@ class DetrTransformerDecoderLayer_grouped(BaseTransformerLayer):
         return query
 
 
-@TRANSFORMER_LAYER_SEQUENCE.register_module()
+@TRANSFORMER_LAYER_SEQUENCE.register_module(froce=True)
 class DeformableDetrTransformerDecoder(TransformerLayerSequence):
     """Implements the decoder in DETR transformer.
     Args:
