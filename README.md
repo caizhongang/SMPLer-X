@@ -1,11 +1,20 @@
 # SMPLer-X
 
 ![Teaser](./assets/teaser_complete.png)
-![Visualization](./assets/smpler_x_vis1.jpg)
 
+---
 ## News
 - [2023-07-19] Pretrained models are released.
 - [2023-06-15] Training and testing code is released.
+
+## Gallery
+| ![001.gif](./assets/005.gif) | ![001.gif](./assets/002.gif)  | ![001.gif](./assets/006.gif)  |  
+|:--------------------------------------:|:-----------------------------:|:-----------------------------:|
+|      ![001.gif](./assets/003.gif)      | ![001.gif](./assets/001.gif)  | ![001.gif](./assets/004.gif)  |
+
+![Visualization](./assets/smpler_x_vis1.jpg)
+
+
 
 ## Install
 ```bash
@@ -25,13 +34,14 @@ cd ../..
 
 
 ## Pretrained Models
-|    Model     | Backbone | #Datasets | #Inst. | #Params | MPE  | Download |
-|:------------:|:--------:|:---------:|:------:|:-------:|:----:|:--------:|
-| SMPLer-X-S32 |  ViT-S   |    32 |  4.5M  |   32M | 82.6 | [model](https://pjlab-my.sharepoint.cn/:u:/g/personal/openmmlab_pjlab_org_cn/EbkyKOS5PclHtDSxdZDmsu0BNviaTKUbF5QUPJ08hfKuKg?e=LQVvzs) |
-| SMPLer-X-B32 |  ViT-B   |    32 |  4.5M  |  103M | 74.3 | [model](https://pjlab-my.sharepoint.cn/:u:/g/personal/openmmlab_pjlab_org_cn/EVcRBwNOQl9OtWhnCU54l58BzJaYEPxcFIw7u_GnnlPZiA?e=nPqMjz) |
-| SMPLer-X-L32 |  ViT-L   |    32 |  4.5M  |  327M | 66.2 | [model](https://pjlab-my.sharepoint.cn/:u:/g/personal/openmmlab_pjlab_org_cn/EWypJXfmJ2dEhoC0pHFFd5MBoSs7LCZmWQjHjbcQJF72fQ?e=Gteus3) |
-| SMPLer-X-H32 |  ViT-H   |    32 |  4.5M  |  662M | 63.0 | [model](https://pjlab-my.sharepoint.cn/:u:/g/personal/openmmlab_pjlab_org_cn/Eco7AAc_ZmtBrhAat2e5Ti8BonrR3NVNx-tNSck45ixT4Q?e=nudXrR) |
+|    Model     | Backbone | #Datasets | #Inst. | #Params | MPE  | Download |  FPS  |
+|:------------:|:--------:|:---------:|:------:|:-------:|:----:|:--------:|:-----:|
+| SMPLer-X-S32 |  ViT-S   |    32 |  4.5M  |   32M | 82.6 | [model](https://pjlab-my.sharepoint.cn/:u:/g/personal/openmmlab_pjlab_org_cn/EbkyKOS5PclHtDSxdZDmsu0BNviaTKUbF5QUPJ08hfKuKg?e=LQVvzs) | 36.17 |
+| SMPLer-X-B32 |  ViT-B   |    32 |  4.5M  |  103M | 74.3 | [model](https://pjlab-my.sharepoint.cn/:u:/g/personal/openmmlab_pjlab_org_cn/EVcRBwNOQl9OtWhnCU54l58BzJaYEPxcFIw7u_GnnlPZiA?e=nPqMjz) | 33.09 |
+| SMPLer-X-L32 |  ViT-L   |    32 |  4.5M  |  327M | 66.2 | [model](https://pjlab-my.sharepoint.cn/:u:/g/personal/openmmlab_pjlab_org_cn/EWypJXfmJ2dEhoC0pHFFd5MBoSs7LCZmWQjHjbcQJF72fQ?e=Gteus3) | 24.44 |
+| SMPLer-X-H32 |  ViT-H   |    32 |  4.5M  |  662M | 63.0 | [model](https://pjlab-my.sharepoint.cn/:u:/g/personal/openmmlab_pjlab_org_cn/Eco7AAc_ZmtBrhAat2e5Ti8BonrR3NVNx-tNSck45ixT4Q?e=nudXrR) | 17.47 |
 * MPE (Mean Primary Error): the average of the primary errors on five benchmarks (AGORA, EgoBody, UBody, 3DPW, and EHF)
+* FPS (Frames Per Second): the average inference speed on a single Tesla V100 GPU, batch size = 1
 
 ## Preparation
 - download all datasets
