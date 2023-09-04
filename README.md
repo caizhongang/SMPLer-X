@@ -21,9 +21,7 @@
 conda create -n smplerx python=3.8 -y
 conda activate smplerx
 conda install pytorch==1.12.0 torchvision==0.13.0 torchaudio==0.12.0 cudatoolkit=11.3 -c pytorch -y
-wget http://download.openmmlab.sensetime.com/mmcv/dist/cu113/torch1.12.0/mmcv_full-1.7.1-cp38-cp38-manylinux1_x86_64.whl
-pip install mmcv_full-1.7.1-cp38-cp38-manylinux1_x86_64.whl
-rm mmcv_full-1.7.1-cp38-cp38-manylinux1_x86_64.whl
+pip install mmcv-full==1.7.1 -f https://download.openmmlab.com/mmcv/dist/cu113/torch1.12.0/index.html
 pip install -r requirements.txt
 
 # install mmpose

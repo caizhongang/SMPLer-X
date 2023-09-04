@@ -26,4 +26,4 @@ pycocotools
 plyfile
 timm
 pyglet
-mmdet
+mmdet==2.26.0
