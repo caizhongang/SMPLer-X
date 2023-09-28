@@ -2,25 +2,14 @@
 
 ![Teaser](./assets/teaser_complete.png)
 
-<!DOCTYPE html>
-<html>
-<head>
-    <style>
-        .button {
-            margin-right: 20px; /* Add space between buttons */
-            font-size: 18px; /* Increase font size */
-        }
-    </style>
-</head>
-<body>
-    <center>
-        <a href="https://caizhongang.github.io/projects/SMPLer-X/" class="button">[Homepage]</a>
-        <a href="https://youtu.be/DepTqbPpVzY" class="button">[Video]</a>
-    </center>
-</body>
-</html>
 
----
+## Useful links
+
+<div align="center">
+    <a href="https://caizhongang.github.io/projects/SMPLer-X/" class="button"><b>[Homepage]</b></a> &nbsp;&nbsp;&nbsp;&nbsp;
+    <a href="https://youtu.be/DepTqbPpVzY" class="button"><b>[Video]</b></a>
+</div>
+
 ## News
 - [2023-09-28] [Homepage](https://caizhongang.github.io/projects/SMPLer-X/) and [Video](https://youtu.be/DepTqbPpVzY) are online!
 - [2023-07-19] Pretrained models are released.
