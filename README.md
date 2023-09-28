@@ -1,9 +1,28 @@
-# SMPLer-X
+# SMPLer-X: Scaling Up Expressive Human Pose and Shape Estimation
 
 ![Teaser](./assets/teaser_complete.png)
 
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        .button {
+            margin-right: 20px; /* Add space between buttons */
+            font-size: 18px; /* Increase font size */
+        }
+    </style>
+</head>
+<body>
+    <center>
+        <a href="https://caizhongang.github.io/projects/SMPLer-X/" class="button">[Homepage]</a>
+        <a href="https://youtu.be/DepTqbPpVzY" class="button">[Video]</a>
+    </center>
+</body>
+</html>
+
 ---
 ## News
+- [2023-09-28] [Homepage](https://caizhongang.github.io/projects/SMPLer-X/) and [Video](https://youtu.be/DepTqbPpVzY) are online!
 - [2023-07-19] Pretrained models are released.
 - [2023-06-15] Training and testing code is released.
 
@@ -198,6 +217,10 @@ sh slurm_test.sh {JOB_NAME} {NUM_GPU} {TRAIN_OUTPUT_DIR} {CKPT_ID}
 - `KeyError: 'SinePositionalEncoding is already registered in position encoding'` or any other similar KeyErrors due to duplicate module registration.
 
   Maually add `force=True` to respective module registration under `main/transformer_utils/mmpose/models/utils`, e.g. `@POSITIONAL_ENCODING.register_module(force=True)` in [this file](main/transformer_utils/mmpose/models/utils/positional_encoding.py)
+
+- How do I animate my virtual characters with SMPLer-X output (like that in the demo video)? 
+  - We are working on that, please stay tuned!
+    Currently, this repo supports SMPL-X estimation and a simple visualization (overlay of SMPL-X vertices).
 
 ## References
 - [Hand4Whole](https://github.com/mks0601/Hand4Whole_RELEASE)
