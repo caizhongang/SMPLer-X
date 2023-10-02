@@ -15,6 +15,7 @@
 <body>
     <center>
         <a href="https://caizhongang.github.io/projects/SMPLer-X/" class="button">[Homepage]</a>
+        <a href="https://arxiv.org/abs/2309.17448" class="button">[arXiv]</a>
         <a href="https://youtu.be/DepTqbPpVzY" class="button">[Video]</a>
     </center>
 </body>
@@ -22,6 +23,7 @@
 
 ---
 ## News
+- [2023-10-02] [arXiv](https://arxiv.org/abs/2309.17448) preprint is online!
 - [2023-09-28] [Homepage](https://caizhongang.github.io/projects/SMPLer-X/) and [Video](https://youtu.be/DepTqbPpVzY) are online!
 - [2023-07-19] Pretrained models are released.
 - [2023-06-15] Training and testing code is released.
