@@ -213,6 +213,17 @@ sh slurm_test.sh {JOB_NAME} {NUM_GPU} {TRAIN_OUTPUT_DIR} {CKPT_ID}
   - We are working on that, please stay tuned!
     Currently, this repo supports SMPL-X estimation and a simple visualization (overlay of SMPL-X vertices).
 
+## Docker Support (Early Stage)
+```
+docker pull wcwcw/smplerx_inference:v0.2
+docker run  --gpus all -v <vid_input_folder>:/smplerx_inference/vid_input \
+        -v <vid_output_folder>:/smplerx_inference/vid_output \
+        wcwcw/smplerx_inference:v0.2 --vid <video_name>.mp4
+# Currently any customization need to be applied to /smplerx_inference/smplerx/inference_docker.py
+```
+- We recently developed a docker for inference at docker hub.
+- This docker image uses SMPLer-X-H32 as inference baseline and was tested at RTX3090 & WSL2.
+
 ## References
 - [Hand4Whole](https://github.com/mks0601/Hand4Whole_RELEASE)
 - [OSX](https://github.com/IDEA-Research/OSX)
