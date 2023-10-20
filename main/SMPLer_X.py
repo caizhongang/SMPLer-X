@@ -463,22 +463,6 @@ def get_model(mode):
 
     encoder = vit.backbone
 
-    # apply adapters
-    # currently, adapters have only been tested for ViTPose
-    adapter_name = getattr(cfg, 'adapter_name', None)
-    if adapter_name == 'lora':
-        from lora_utils import apply_adapter
-        encoder = apply_adapter(encoder)
-        print(f"Apply adapter {adapter_name}.")
-    elif adapter_name == 'vit_adapter':
-        from vit_adapter_utils import apply_adapter
-        encoder = apply_adapter(encoder, cfg.model_type)
-        print(f"Apply adapter {adapter_name}.")
-    elif adapter_name is not None:
-        raise NotImplementedError('Undefined adapter: {}'.format(adapter_name))
-    else:
-        print("No adapter used.")
-
     model = Model(encoder, body_position_net, body_rotation_net, box_net, hand_position_net, hand_roi_net, hand_rotation_net,
                   face_regressor)
     return model
