@@ -12,6 +12,7 @@
 </div>
 
 ## News
+- [2023-10-23] More tools: smplx mesh overlay script and inference docker are added ! 
 - [2023-10-02] [arXiv](https://arxiv.org/abs/2309.17448) preprint is online!
 - [2023-09-28] [Homepage](https://caizhongang.github.io/projects/SMPLer-X/) and [Video](https://youtu.be/DepTqbPpVzY) are online!
 - [2023-07-19] Pretrained models are released.
@@ -175,6 +176,20 @@ sh slurm_inference.sh {VIDEO_FILE} {FORMAT} {FPS} {PRETRAINED_CKPT}
 sh slurm_inference.sh test_video mp4 24 smpler_x_h32
 
 ```
+## 2D Smplx Overlay
+- We provide a light pyrender script for mesh overlay projection.
+- Overlay script uses result from above inference
+- Use ffmpeg to split video to images to support overlay
+```bash
+ffmpeg -i {VIDEO_FILE} -f image2 -vf fps=30 \
+        {SMPLERX INFERENCE DIR}/{VIDEO NAME (no extension)}/orig_img/%06d.jpg \
+        -hide_banner  -loglevel error
+
+cd main && python render.py \
+            --data_path {SMPLERX INFERENCE DIR} --seq {VIDEO NAME} \
+            --image_path {SMPLERX INFERENCE DIR}/{VIDEO NAME} \
+            --render_biggest_person False
+```
 
 
 ## Training
@@ -212,17 +227,6 @@ sh slurm_test.sh {JOB_NAME} {NUM_GPU} {TRAIN_OUTPUT_DIR} {CKPT_ID}
 - How do I animate my virtual characters with SMPLer-X output (like that in the demo video)? 
   - We are working on that, please stay tuned!
     Currently, this repo supports SMPL-X estimation and a simple visualization (overlay of SMPL-X vertices).
-
-## Docker Support (Early Stage)
-```
-docker pull wcwcw/smplerx_inference:v0.2
-docker run  --gpus all -v <vid_input_folder>:/smplerx_inference/vid_input \
-        -v <vid_output_folder>:/smplerx_inference/vid_output \
-        wcwcw/smplerx_inference:v0.2 --vid <video_name>.mp4
-# Currently any customization need to be applied to /smplerx_inference/smplerx/inference_docker.py
-```
-- We recently developed a docker for inference at docker hub.
-- This docker image uses SMPLer-X-H32 as inference baseline and was tested at RTX3090 & WSL2.
 
 ## References
 - [Hand4Whole](https://github.com/mks0601/Hand4Whole_RELEASE)
