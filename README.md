@@ -12,7 +12,7 @@
 </div>
 
 ## News
-- [2023-10-23] Support visualization through SMPL-X mesh overlay and inference docker added. 
+- [2023-10-23] Support visualization through SMPL-X mesh overlay and add inference docker. 
 - [2023-10-02] [arXiv](https://arxiv.org/abs/2309.17448) preprint is online!
 - [2023-09-28] [Homepage](https://caizhongang.github.io/projects/SMPLer-X/) and [Video](https://youtu.be/DepTqbPpVzY) are online!
 - [2023-07-19] Pretrained models are released.
@@ -174,10 +174,10 @@ SMPLer-X/
     └── preprocessed_datasets/  # HumanData files
 ```
 ## Inference 
-- Place the video to be inferenced under `SMPLer-X/demo/videos`
+- Place the video for inference under `SMPLer-X/demo/videos`
 - Prepare the pretrained models to be used for inference under `SMPLer-X/pretrained_models`
 - Prepare the mmdet pretrained model and config under `SMPLer-X/pretrained_models`
-- Inference out put will be saved in `SMPLer-X/demo/results`
+- Inference output will be saved in `SMPLer-X/demo/results`
 
 ```bash
 cd main
@@ -234,7 +234,7 @@ sh slurm_test.sh {JOB_NAME} {NUM_GPU} {TRAIN_OUTPUT_DIR} {CKPT_ID}
 
 - `KeyError: 'SinePositionalEncoding is already registered in position encoding'` or any other similar KeyErrors due to duplicate module registration.
 
-  Maually add `force=True` to respective module registration under `main/transformer_utils/mmpose/models/utils`, e.g. `@POSITIONAL_ENCODING.register_module(force=True)` in [this file](main/transformer_utils/mmpose/models/utils/positional_encoding.py)
+  Manually add `force=True` to respective module registration under `main/transformer_utils/mmpose/models/utils`, e.g. `@POSITIONAL_ENCODING.register_module(force=True)` in [this file](main/transformer_utils/mmpose/models/utils/positional_encoding.py)
 
 - How do I animate my virtual characters with SMPLer-X output (like that in the demo video)? 
   - We are working on that, please stay tuned!
