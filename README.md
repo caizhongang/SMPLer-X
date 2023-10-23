@@ -12,7 +12,7 @@
 </div>
 
 ## News
-- [2023-10-23] More tools: smplx mesh overlay script and inference docker are added ! 
+- [2023-10-23] Support visualization through SMPL-X mesh overlay and inference docker added. 
 - [2023-10-02] [arXiv](https://arxiv.org/abs/2309.17448) preprint is online!
 - [2023-09-28] [Homepage](https://caizhongang.github.io/projects/SMPLer-X/) and [Video](https://youtu.be/DepTqbPpVzY) are online!
 - [2023-07-19] Pretrained models are released.
@@ -40,6 +40,17 @@ cd main/transformer_utils
 pip install -v -e .
 cd ../..
 ```
+
+## Docker Support (Early Stage)
+```
+docker pull wcwcw/smplerx_inference:v0.2
+docker run  --gpus all -v <vid_input_folder>:/smplerx_inference/vid_input \
+        -v <vid_output_folder>:/smplerx_inference/vid_output \
+        wcwcw/smplerx_inference:v0.2 --vid <video_name>.mp4
+# Currently any customization need to be applied to /smplerx_inference/smplerx/inference_docker.py
+```
+- We recently developed a docker for inference at docker hub.
+- This docker image uses SMPLer-X-H32 as inference baseline and was tested at RTX3090 & WSL2 (Ubuntu 20.04).
 
 
 ## Pretrained Models
@@ -177,9 +188,9 @@ sh slurm_inference.sh test_video mp4 24 smpler_x_h32
 
 ```
 ## 2D Smplx Overlay
-- We provide a light pyrender script for mesh overlay projection.
-- Overlay script uses result from above inference
-- Use ffmpeg to split video to images to support overlay
+We provide a lightweight visualization script for mesh overlay based on pyrender.
+- Use ffmpeg to split video into images
+- The visualization script takes inference results (see above) as the input.
 ```bash
 ffmpeg -i {VIDEO_FILE} -f image2 -vf fps=30 \
         {SMPLERX INFERENCE DIR}/{VIDEO NAME (no extension)}/orig_img/%06d.jpg \
@@ -215,16 +226,6 @@ sh slurm_test.sh {JOB_NAME} {NUM_GPU} {TRAIN_OUTPUT_DIR} {CKPT_ID}
 - NUM_GPU = 1 is recommended for testing
 - Logs and results  will be saved to `SMPLer-X/output/test_{JOB_NAME}_ep{CKPT_ID}_{TEST_DATSET}`
 
-## Docker Support (Early Stage)
-```
-docker pull wcwcw/smplerx_inference:v0.2
-docker run  --gpus all -v <vid_input_folder>:/smplerx_inference/vid_input \
-        -v <vid_output_folder>:/smplerx_inference/vid_output \
-        wcwcw/smplerx_inference:v0.2 --vid <video_name>.mp4
-# Currently any customization need to be applied to /smplerx_inference/smplerx/inference_docker.py
-```
-- We recently developed a docker for inference at docker hub.
-- This docker image uses SMPLer-X-H32 as inference baseline and was tested at RTX3090 & WSL2.
 
 ## FAQ
 - `RuntimeError: Subtraction, the '-' operator, with a bool tensor is not supported. If you are trying to invert a mask, use the '~' or 'logical_not()' operator instead.`
