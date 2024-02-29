@@ -6,12 +6,14 @@
 
 <div align="center">
     <a href="https://caizhongang.github.io/projects/SMPLer-X/" class="button"><b>[Homepage]</b></a> &nbsp;&nbsp;&nbsp;&nbsp;
+    <a href="https://huggingface.co/spaces/caizhongang/SMPLer-X" class="button"><b>[HuggingFace]</b></a> &nbsp;&nbsp;&nbsp;&nbsp;   
     <a href="https://arxiv.org/abs/2309.17448" class="button"><b>[arXiv]</b></a> &nbsp;&nbsp;&nbsp;&nbsp;
     <a href="https://youtu.be/DepTqbPpVzY" class="button"><b>[Video]</b></a> &nbsp;&nbsp;&nbsp;&nbsp;
     <a href="https://github.com/open-mmlab/mmhuman3d" class="button"><b>[MMHuman3D]</b></a>
 </div>
 
 ## News
+- [2024-02-29] [HuggingFace](https://huggingface.co/spaces/caizhongang/SMPLer-X) demo is online!
 - [2023-10-02] [arXiv](https://arxiv.org/abs/2309.17448) preprint is online!
 - [2023-09-28] [Homepage](https://caizhongang.github.io/projects/SMPLer-X/) and [Video](https://youtu.be/DepTqbPpVzY) are online!
 - [2023-07-19] Pretrained models are released.
