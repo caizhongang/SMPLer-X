@@ -14,6 +14,7 @@
 
 ## News
 - [2024-02-29] [HuggingFace](https://huggingface.co/spaces/caizhongang/SMPLer-X) demo is online!
+- [2023-10-23] Support visualization through SMPL-X mesh overlay and add inference docker. 
 - [2023-10-02] [arXiv](https://arxiv.org/abs/2309.17448) preprint is online!
 - [2023-09-28] [Homepage](https://caizhongang.github.io/projects/SMPLer-X/) and [Video](https://youtu.be/DepTqbPpVzY) are online!
 - [2023-07-19] Pretrained models are released.
@@ -41,6 +42,17 @@ cd main/transformer_utils
 pip install -v -e .
 cd ../..
 ```
+
+## Docker Support (Early Stage)
+```
+docker pull wcwcw/smplerx_inference:v0.2
+docker run  --gpus all -v <vid_input_folder>:/smplerx_inference/vid_input \
+        -v <vid_output_folder>:/smplerx_inference/vid_output \
+        wcwcw/smplerx_inference:v0.2 --vid <video_name>.mp4
+# Currently any customization need to be applied to /smplerx_inference/smplerx/inference_docker.py
+```
+- We recently developed a docker for inference at docker hub.
+- This docker image uses SMPLer-X-H32 as inference baseline and was tested at RTX3090 & WSL2 (Ubuntu 20.04).
 
 
 ## Pretrained Models
@@ -164,10 +176,10 @@ SMPLer-X/
     └── preprocessed_datasets/  # HumanData files
 ```
 ## Inference 
-- Place the video to be inferenced under `SMPLer-X/demo/videos`
+- Place the video for inference under `SMPLer-X/demo/videos`
 - Prepare the pretrained models to be used for inference under `SMPLer-X/pretrained_models`
 - Prepare the mmdet pretrained model and config under `SMPLer-X/pretrained_models`
-- Inference out put will be saved in `SMPLer-X/demo/results`
+- Inference output will be saved in `SMPLer-X/demo/results`
 
 ```bash
 cd main
@@ -176,6 +188,20 @@ sh slurm_inference.sh {VIDEO_FILE} {FORMAT} {FPS} {PRETRAINED_CKPT}
 # For inferencing test_video.mp4 (24FPS) with smpler_x_h32
 sh slurm_inference.sh test_video mp4 24 smpler_x_h32
 
+```
+## 2D Smplx Overlay
+We provide a lightweight visualization script for mesh overlay based on pyrender.
+- Use ffmpeg to split video into images
+- The visualization script takes inference results (see above) as the input.
+```bash
+ffmpeg -i {VIDEO_FILE} -f image2 -vf fps=30 \
+        {SMPLERX INFERENCE DIR}/{VIDEO NAME (no extension)}/orig_img/%06d.jpg \
+        -hide_banner  -loglevel error
+
+cd main && python render.py \
+            --data_path {SMPLERX INFERENCE DIR} --seq {VIDEO NAME} \
+            --image_path {SMPLERX INFERENCE DIR}/{VIDEO NAME} \
+            --render_biggest_person False
 ```
 
 
@@ -202,6 +228,7 @@ sh slurm_test.sh {JOB_NAME} {NUM_GPU} {TRAIN_OUTPUT_DIR} {CKPT_ID}
 - NUM_GPU = 1 is recommended for testing
 - Logs and results  will be saved to `SMPLer-X/output/test_{JOB_NAME}_ep{CKPT_ID}_{TEST_DATSET}`
 
+
 ## FAQ
 - `RuntimeError: Subtraction, the '-' operator, with a bool tensor is not supported. If you are trying to invert a mask, use the '~' or 'logical_not()' operator instead.`
   
@@ -209,7 +236,7 @@ sh slurm_test.sh {JOB_NAME} {NUM_GPU} {TRAIN_OUTPUT_DIR} {CKPT_ID}
 
 - `KeyError: 'SinePositionalEncoding is already registered in position encoding'` or any other similar KeyErrors due to duplicate module registration.
 
-  Maually add `force=True` to respective module registration under `main/transformer_utils/mmpose/models/utils`, e.g. `@POSITIONAL_ENCODING.register_module(force=True)` in [this file](main/transformer_utils/mmpose/models/utils/positional_encoding.py)
+  Manually add `force=True` to respective module registration under `main/transformer_utils/mmpose/models/utils`, e.g. `@POSITIONAL_ENCODING.register_module(force=True)` in [this file](main/transformer_utils/mmpose/models/utils/positional_encoding.py)
 
 - How do I animate my virtual characters with SMPLer-X output (like that in the demo video)? 
   - We are working on that, please stay tuned!
