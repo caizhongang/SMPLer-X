@@ -1,10 +1,9 @@
 # Copyright (c) OpenMMLab. All rights reserved.
-from mmcv.cnn import MODELS as MMCV_MODELS
-from mmcv.cnn import build_model_from_cfg
-from mmcv.utils import Registry, build_from_cfg
+from mmengine.registry import MODELS as MMCV_MODELS
+from mmengine import Registry
+from mmengine.registry import build_from_cfg, build_model_from_cfg
 
-MODELS = Registry(
-    'models', build_func=build_model_from_cfg, parent=MMCV_MODELS)
+MODELS = Registry('models', parent=MMCV_MODELS, locations=['mmpose.models'])
 
 BACKBONES = MODELS
 NECKS = MODELS

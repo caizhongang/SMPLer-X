@@ -9,7 +9,7 @@ from config import cfg
 import math
 import copy
 from mmpose.models import build_posenet
-from mmcv import Config
+from mmengine.config import Config
 
 class Model(nn.Module):
     def __init__(self, encoder, body_position_net, body_rotation_net, box_net, hand_position_net, hand_roi_net,
@@ -30,7 +30,7 @@ class Model(nn.Module):
         # face
         self.face_regressor = face_regressor
 
-        self.smplx_layer = copy.deepcopy(smpl_x.layer['neutral']).cuda()
+        self.smplx_layer = copy.deepcopy(smpl_x.layer['neutral']).to(cfg.device)
         self.coord_loss = CoordLoss()
         self.param_loss = ParamLoss()
         self.ce_loss = CELoss()
@@ -70,14 +70,14 @@ class Model(nn.Module):
         t_xy = cam_param[:, :2]
         gamma = torch.sigmoid(cam_param[:, 2])  # apply sigmoid to make it positive
         k_value = torch.FloatTensor([math.sqrt(cfg.focal[0] * cfg.focal[1] * cfg.camera_3d_size * cfg.camera_3d_size / (
-                cfg.input_body_shape[0] * cfg.input_body_shape[1]))]).cuda().view(-1)
+                cfg.input_body_shape[0] * cfg.input_body_shape[1]))]).to(cfg.device).view(-1)
         t_z = k_value * gamma
         cam_trans = torch.cat((t_xy, t_z[:, None]), 1)
         return cam_trans
 
     def get_coord(self, root_pose, body_pose, lhand_pose, rhand_pose, jaw_pose, shape, expr, cam_trans, mode):
         batch_size = root_pose.shape[0]
-        zero_pose = torch.zeros((1, 3)).float().cuda().repeat(batch_size, 1)  # eye poses
+        zero_pose = torch.zeros((1, 3)).float().to(cfg.device).repeat(batch_size, 1)  # eye poses
         output = self.smplx_layer(betas=shape, body_pose=body_pose, global_orient=root_pose, right_hand_pose=rhand_pose,
                                   left_hand_pose=lhand_pose, jaw_pose=jaw_pose, leye_pose=zero_pose,
                                   reye_pose=zero_pose, expression=expr)
@@ -318,7 +318,7 @@ class Model(nn.Module):
                     for bid in range(coord.shape[0]):
                         mask = meta_info['joint_trunc'][bid, smpl_x.joint_part[part_name], 0] == 1
                         if torch.sum(mask) == 0:
-                            trans.append(torch.zeros((2)).float().cuda())
+                            trans.append(torch.zeros((2)).float().to(cfg.device))
                         else:
                             trans.append((-coord[bid, mask, :2] + targets['joint_img'][:, smpl_x.joint_part[part_name], :][
                                                                 bid, mask, :2]).mean(0))
@@ -334,7 +334,7 @@ class Model(nn.Module):
                 for bid in range(coord.shape[0]):
                     mask = meta_info['joint_trunc'][bid, smpl_x.joint_part['face'], 0] == 1
                     if torch.sum(mask) == 0:
-                        trans.append(torch.zeros((2)).float().cuda())
+                        trans.append(torch.zeros((2)).float().to(cfg.device))
                     else:
                         trans.append((-coord[bid, mask, :2] + targets['joint_img'][:, smpl_x.joint_part['face'], :][bid,
                                                             mask, :2]).mean(0))

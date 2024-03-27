@@ -1,6 +1,6 @@
 # Copyright (c) OpenMMLab. All rights reserved.
-from mmcv.runner import HOOKS, Hook
-
+from mmengine.registry import HOOKS
+from mmengine.hooks import Hook
 
 @HOOKS.register_module()
 class ModelSetEpochHook(Hook):

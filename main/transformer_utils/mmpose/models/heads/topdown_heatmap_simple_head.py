@@ -1,8 +1,8 @@
 # Copyright (c) OpenMMLab. All rights reserved.
 import torch
 import torch.nn as nn
-from mmcv.cnn import (build_conv_layer, build_norm_layer, build_upsample_layer,
-                      constant_init, normal_init)
+from mmengine.model import constant_init, normal_init
+from mmcv.cnn import (build_conv_layer, build_norm_layer, build_upsample_layer)
 
 from mmpose.core.evaluation import pose_pck_accuracy
 from mmpose.core.post_processing import flip_back

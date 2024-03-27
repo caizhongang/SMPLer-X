@@ -1,8 +1,8 @@
 # Copyright (c) OpenMMLab. All rights reserved.
 import json
 import warnings
-
-from mmcv.runner import DefaultOptimizerConstructor, get_dist_info
+from mmengine.dist import get_dist_info
+from mmcv.runner import DefaultOptimizerConstructor
 
 from mmpose.utils import get_root_logger
 from .builder import OPTIMIZER_BUILDERS

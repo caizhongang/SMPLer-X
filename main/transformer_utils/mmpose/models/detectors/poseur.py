@@ -12,12 +12,7 @@ from .base import BasePose
 import torch
 from config import cfg
 
-try:
-    from mmcv.runner import auto_fp16
-except ImportError:
-    warnings.warn('auto_fp16 from mmpose will be deprecated from v0.15.0'
-                  'Please install mmcv>=1.1.4')
-    from mmpose.core import auto_fp16
+from mmpose.core import auto_fp16
 
 from .top_down import TopDown
 

@@ -1,4 +1,0 @@
-pyrender>=0.1.23
-shapely
-trimesh>=2.37.6
-smplx

@@ -6,30 +6,32 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from mmcv.cnn import build_conv_layer, build_norm_layer
-from mmcv.runner.base_module import BaseModule
-from mmcv.utils import to_2tuple
+from mmengine.model import BaseModule, ModuleList
+from mmengine.utils import digit_version, to_2tuple
 from mmpose.models.builder import TRANSFORMER
 
 from easydict import EasyDict
 from einops import rearrange, repeat
-from mmcv.runner import force_fp32
+from mmpose.core import force_fp32
 from mmcv.cnn.bricks.transformer import (BaseTransformerLayer,
                                          TransformerLayerSequence,
                                          build_transformer_layer_sequence)
-from mmcv.cnn.bricks.registry import (TRANSFORMER_LAYER,
-                                      TRANSFORMER_LAYER_SEQUENCE)
+# from mmcv.cnn.bricks.registry import (TRANSFORMER_LAYER,
+#                                       TRANSFORMER_LAYER_SEQUENCE)
 import torch.distributions as distributions
 from mmcv.ops.multi_scale_deform_attn import MultiScaleDeformableAttention
 from torch.nn.init import normal_
 import copy
 import warnings
-from mmcv.cnn import build_activation_layer, build_norm_layer, xavier_init
-
+from mmcv.cnn import build_activation_layer, build_norm_layer
+from mmengine.model import xavier_init
 from utils.human_models import smpl_x
 
 from config import cfg
 
-
+from mmengine import Registry
+TRANSFORMER_LAYER = Registry('transformerLayer')
+TRANSFORMER_LAYER_SEQUENCE = Registry('transformer-layers sequence')
 def point_sample(input, point_coords, **kwargs):
     """
     A wrapper around :function:`torch.nn.functional.grid_sample` to support 3D point_coords tensors.

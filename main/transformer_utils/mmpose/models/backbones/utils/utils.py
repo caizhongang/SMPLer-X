@@ -1,7 +1,7 @@
 # Copyright (c) OpenMMLab. All rights reserved.
 from collections import OrderedDict
 
-from mmcv.runner.checkpoint import _load_checkpoint, load_state_dict
+from mmengine.runner import load_state_dict
 
 
 # Copyright (c) Open-MMLab. All rights reserved.
@@ -22,11 +22,11 @@ from torch.utils import model_zoo
 from torch.nn import functional as F
 
 import mmcv
-from mmcv.fileio import FileClient
-from mmcv.fileio import load as load_file
-from mmcv.parallel import is_module_wrapper
-from mmcv.utils import mkdir_or_exist
-from mmcv.runner import get_dist_info
+from mmengine.fileio import FileClient
+from mmengine.fileio import load as load_file
+# from mmengine.model.wrappers.utils import is_module_wrapper
+from mmengine.utils import mkdir_or_exist
+from mmengine.dist import get_dist_info
 
 from scipy import interpolate
 import numpy as np
@@ -75,8 +75,8 @@ def load_state_dict(module, state_dict, strict=False, logger=None):
     def load(module, prefix=''):
         # recursively check parallel module in case that the model has a
         # complicated structure, e.g., nn.Module(nn.Module(DDP))
-        if is_module_wrapper(module):
-            module = module.module
+        # if is_module_wrapper(module):
+        #     module = module.module
         local_metadata = {} if metadata is None else metadata.get(
             prefix[:-1], {})
         module._load_from_state_dict(state_dict, prefix, local_metadata, True,
@@ -445,8 +445,8 @@ def get_state_dict(module, destination=None, prefix='', keep_vars=False):
     """
     # recursively check parallel module in case that the model has a
     # complicated structure, e.g., nn.Module(nn.Module(DDP))
-    if is_module_wrapper(module):
-        module = module.module
+    # if is_module_wrapper(module):
+    #     module = module.module
 
     # below is the same as torch.nn.Module.state_dict()
     if destination is None:
@@ -482,8 +482,8 @@ def save_checkpoint(model, filename, optimizer=None, meta=None):
         raise TypeError(f'meta must be a dict or None, but got {type(meta)}')
     meta.update(mmcv_version=mmcv.__version__, time=time.asctime())
 
-    if is_module_wrapper(model):
-        model = model.module
+    # if is_module_wrapper(model):
+    #     model = model.module
 
     if hasattr(model, 'CLASSES') and model.CLASSES is not None:
         # save class name to the meta

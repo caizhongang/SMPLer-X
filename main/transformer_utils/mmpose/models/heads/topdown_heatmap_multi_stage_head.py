@@ -2,10 +2,10 @@
 import copy as cp
 
 import torch.nn as nn
+from mmengine.model import constant_init, normal_init, kaiming_init
 from mmcv.cnn import (ConvModule, DepthwiseSeparableConvModule, Linear,
                       build_activation_layer, build_conv_layer,
-                      build_norm_layer, build_upsample_layer, constant_init,
-                      kaiming_init, normal_init)
+                      build_norm_layer, build_upsample_layer)
 
 from mmpose.core.evaluation import pose_pck_accuracy
 from mmpose.core.post_processing import flip_back

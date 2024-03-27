@@ -7,7 +7,7 @@ import cv2
 import mmcv
 import numpy as np
 from matplotlib import pyplot as plt
-from mmcv.utils.misc import deprecated_api_warning
+from mmengine.utils import deprecated_api_warning
 from mmcv.visualization.color import color_val
 
 try:

@@ -12,13 +12,11 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch.utils.checkpoint as cp
 from .transformer_block import TransformerBlock
-
+from mmengine.model import constant_init, kaiming_init
 from mmcv.cnn import (
     build_conv_layer,
     build_norm_layer,
     build_plugin_layer,
-    constant_init,
-    kaiming_init,
 )
 
 

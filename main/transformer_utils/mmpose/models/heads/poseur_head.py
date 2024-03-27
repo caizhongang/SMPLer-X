@@ -4,9 +4,9 @@ import torch.nn as nn
 import copy
 import math
 import warnings
-from mmcv.cnn import build_upsample_layer, Linear, bias_init_with_prob, constant_init, normal_init
+from mmengine.model import constant_init, normal_init, bias_init_with_prob
+from mmcv.cnn import build_upsample_layer, Linear
 import torch.nn.functional as F
-from mmcv.cnn import normal_init
 
 from mmpose.core.evaluation import (keypoint_pck_accuracy,
                                     keypoints_from_regression)

@@ -3,7 +3,7 @@ from typing import Optional
 
 import numpy as np
 import torch
-from mmcv.runner import load_checkpoint
+from mmengine.runner import load_checkpoint
 from torch import Tensor, nn
 
 from .builder import FILTERS

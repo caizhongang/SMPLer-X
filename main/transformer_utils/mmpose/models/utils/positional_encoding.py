@@ -2,11 +2,11 @@ import math
 
 import torch
 import torch.nn as nn
-from mmcv.cnn.bricks.transformer import POSITIONAL_ENCODING
-from mmcv.runner import BaseModule
+# from mmcv.cnn.bricks.transformer import POSITIONAL_ENCODING
+from mmengine.model import BaseModule
 
 
-@POSITIONAL_ENCODING.register_module(force=True)
+# @POSITIONAL_ENCODING.register_module(force=True)
 class SinePositionalEncoding(BaseModule):
     """Position encoding with sine and cosine functions.
     See `End-to-End Object Detection with Transformers
@@ -98,7 +98,7 @@ class SinePositionalEncoding(BaseModule):
         return repr_str
 
 
-@POSITIONAL_ENCODING.register_module(force=True)
+# @POSITIONAL_ENCODING.register_module(force=True)
 class LearnedPositionalEncoding(BaseModule):
     """Position embedding with learnable embedding weights.
     Args:

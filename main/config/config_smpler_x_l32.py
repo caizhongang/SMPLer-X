@@ -64,8 +64,8 @@ net_kps_2d_weight = 1.0
 agora_benchmark = 'agora_model' # 'agora_model', 'test_only'
 
 model_type = 'smpler_x_l'
-encoder_config_file = 'transformer_utils/configs/smpler_x/encoder/body_encoder_large.py'
-encoder_pretrained_model_path = '../pretrained_models/vitpose_large.pth'
+encoder_config_file = 'main/transformer_utils/configs/smpler_x/encoder/body_encoder_large.py'
+encoder_pretrained_model_path = 'pretrained_models/vitpose_large.pth'
 feat_dim = 1024
 
 

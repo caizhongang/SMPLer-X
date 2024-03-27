@@ -4,7 +4,8 @@ import math
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from mmcv.cnn import build_norm_layer, trunc_normal_init
+from mmcv.cnn import build_norm_layer
+from mmengine.model import trunc_normal_init
 from mmcv.cnn.bricks.transformer import build_dropout
 
 try:

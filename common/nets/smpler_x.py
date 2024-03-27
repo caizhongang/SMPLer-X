@@ -147,9 +147,9 @@ class HandRoI(nn.Module):
             self.conv = make_conv_layers([feat_dim//8, feat_dim], kernel=1, stride=1, padding=0, bnrelu_final=False)
 
     def forward(self, img_feat, lhand_bbox, rhand_bbox):
-        lhand_bbox = torch.cat((torch.arange(lhand_bbox.shape[0]).float().cuda()[:, None], lhand_bbox),
+        lhand_bbox = torch.cat((torch.arange(lhand_bbox.shape[0]).float().to(cfg.device)[:, None], lhand_bbox),
                                1)  # batch_idx, xmin, ymin, xmax, ymax
-        rhand_bbox = torch.cat((torch.arange(rhand_bbox.shape[0]).float().cuda()[:, None], rhand_bbox),
+        rhand_bbox = torch.cat((torch.arange(rhand_bbox.shape[0]).float().to(cfg.device)[:, None], rhand_bbox),
                                1)  # batch_idx, xmin, ymin, xmax, ymax
         img_feat = self.deconv(img_feat)
         lhand_bbox_roi = lhand_bbox.clone()
