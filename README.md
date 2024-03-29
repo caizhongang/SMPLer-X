@@ -13,6 +13,7 @@
 </div>
 
 ## News
+- [2024-03-29] An updated version of SMPLer-X-H32 is released to fix camera estimation on 3DPW-like data.
 - [2024-02-29] [HuggingFace](https://huggingface.co/spaces/caizhongang/SMPLer-X) demo is online!
 - [2023-10-23] Support visualization through SMPL-X mesh overlay and add inference docker. 
 - [2023-10-02] [arXiv](https://arxiv.org/abs/2309.17448) preprint is online!
@@ -56,14 +57,16 @@ docker run  --gpus all -v <vid_input_folder>:/smplerx_inference/vid_input \
 
 
 ## Pretrained Models
-|    Model     | Backbone | #Datasets | #Inst. | #Params | MPE  | Download |  FPS  |
-|:------------:|:--------:|:---------:|:------:|:-------:|:----:|:--------:|:-----:|
-| SMPLer-X-S32 |  ViT-S   |    32 |  4.5M  |   32M | 82.6 | [model](https://pjlab-my.sharepoint.cn/:u:/g/personal/openmmlab_pjlab_org_cn/EbkyKOS5PclHtDSxdZDmsu0BNviaTKUbF5QUPJ08hfKuKg?e=LQVvzs) | 36.17 |
-| SMPLer-X-B32 |  ViT-B   |    32 |  4.5M  |  103M | 74.3 | [model](https://pjlab-my.sharepoint.cn/:u:/g/personal/openmmlab_pjlab_org_cn/EVcRBwNOQl9OtWhnCU54l58BzJaYEPxcFIw7u_GnnlPZiA?e=nPqMjz) | 33.09 |
-| SMPLer-X-L32 |  ViT-L   |    32 |  4.5M  |  327M | 66.2 | [model](https://pjlab-my.sharepoint.cn/:u:/g/personal/openmmlab_pjlab_org_cn/EWypJXfmJ2dEhoC0pHFFd5MBoSs7LCZmWQjHjbcQJF72fQ?e=Gteus3) | 24.44 |
-| SMPLer-X-H32 |  ViT-H   |    32 |  4.5M  |  662M | 63.0 | [model](https://pjlab-my.sharepoint.cn/:u:/g/personal/openmmlab_pjlab_org_cn/Eco7AAc_ZmtBrhAat2e5Ti8BonrR3NVNx-tNSck45ixT4Q?e=nudXrR) | 17.47 |
+|     Model     | Backbone | #Datasets | #Inst. | #Params | MPE  | Download |  FPS  |
+|:-------------:|:--------:|:---------:|:------:|:-------:|:----:|:--------:|:-----:|
+| SMPLer-X-S32  |  ViT-S   |    32 |  4.5M  |   32M | 82.6 | [model](https://pjlab-my.sharepoint.cn/:u:/g/personal/openmmlab_pjlab_org_cn/EbkyKOS5PclHtDSxdZDmsu0BNviaTKUbF5QUPJ08hfKuKg?e=LQVvzs) | 36.17 |
+| SMPLer-X-B32  |  ViT-B   |    32 |  4.5M  |  103M | 74.3 | [model](https://pjlab-my.sharepoint.cn/:u:/g/personal/openmmlab_pjlab_org_cn/EVcRBwNOQl9OtWhnCU54l58BzJaYEPxcFIw7u_GnnlPZiA?e=nPqMjz) | 33.09 |
+| SMPLer-X-L32  |  ViT-L   |    32 |  4.5M  |  327M | 66.2 | [model](https://pjlab-my.sharepoint.cn/:u:/g/personal/openmmlab_pjlab_org_cn/EWypJXfmJ2dEhoC0pHFFd5MBoSs7LCZmWQjHjbcQJF72fQ?e=Gteus3) | 24.44 |
+| SMPLer-X-H32  |  ViT-H   |    32 |  4.5M  |  662M | 63.0 | [model](https://pjlab-my.sharepoint.cn/:u:/g/personal/openmmlab_pjlab_org_cn/Eco7AAc_ZmtBrhAat2e5Ti8BonrR3NVNx-tNSck45ixT4Q?e=nudXrR) | 17.47 |
+| SMPLer-X-H32* |  ViT-H   |    32 |  4.5M  |  662M | 59.7 | [model](https://pjlab-my.sharepoint.cn/:u:/g/personal/openmmlab_pjlab_org_cn/EYdhbS9ZnctPgIs5PZNZBaIBVMJUr4LKBWCIUuBBVmbwAg?e=kLDj5P) | 17.47 |
 * MPE (Mean Primary Error): the average of the primary errors on five benchmarks (AGORA, EgoBody, UBody, 3DPW, and EHF)
 * FPS (Frames Per Second): the average inference speed on a single Tesla V100 GPU, batch size = 1
+* SMPLer-X-H32* is the updated version of SMPLer-X-H32, which fixes the camera estimation issue on 3DPW-like data.
 
 ## Preparation
 - download all datasets
