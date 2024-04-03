@@ -7,15 +7,26 @@ from mmengine.config import Config as MMConfig
 
 class Config:
     def get_config_fromfile(self, config_path):
+        cfg_base_path = osp.join(osp.dirname(config_path), 'model_path.py')
+        cfg_base = MMConfig.fromfile(cfg_base_path)
+        
         self.config_path = config_path
         cfg = MMConfig.fromfile(self.config_path)
+        cfg = MMConfig._merge_a_into_b(cfg_base, cfg)
+
         self.__dict__.update(dict(cfg))
 
         # update dir
         self.cur_dir = osp.dirname(os.path.abspath(__file__))
         self.root_dir = osp.join(self.cur_dir, '..')
         self.data_dir = osp.join(self.root_dir, 'dataset')
-        self.human_model_path = osp.join(self.root_dir, 'common', 'utils', 'human_model_files')
+        # self.human_model_path = osp.join(self.root_dir, 'common', 'utils', 'human_model_files')
+
+        # check if have attribute
+        if hasattr(cfg, 'human_model_path'):
+            self.human_model_path = cfg.human_model_path
+        else:
+            self.human_model_path = osp.join(self.root_dir, 'common', 'utils', 'human_model_files')
 
         ## add some paths to the system root dir
         sys.path.insert(0, osp.join(self.root_dir, 'common'))
