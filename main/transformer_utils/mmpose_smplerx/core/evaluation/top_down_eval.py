@@ -4,7 +4,7 @@ import warnings
 import cv2
 import numpy as np
 
-from mmpose.core.post_processing import transform_preds
+from mmpose_smplerx.core.post_processing import transform_preds
 
 
 def _calc_distances(preds, targets, mask, normalize):

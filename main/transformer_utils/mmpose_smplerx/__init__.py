@@ -1,6 +1,6 @@
 # Copyright (c) OpenMMLab. All rights reserved.
 import mmcv
-import mmpose.ops
+import mmpose_smplerx.ops
 from .version import __version__, short_version
 
 

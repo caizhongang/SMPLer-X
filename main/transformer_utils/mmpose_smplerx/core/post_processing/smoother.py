@@ -6,7 +6,7 @@ from typing import Dict, Union
 import numpy as np
 from mmengine.config import Config
 from mmengine.utils import is_seq_of
-from mmpose.core.post_processing.temporal_filters import build_filter
+from mmpose_smplerx.core.post_processing.temporal_filters import build_filter
 
 
 class Smoother():

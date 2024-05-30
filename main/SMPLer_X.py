@@ -8,7 +8,7 @@ from utils.transforms import rot6d_to_axis_angle, restore_bbox
 from config import cfg
 import math
 import copy
-from mmpose.models import build_posenet
+from mmposesmplerx.models import build_posenet
 from mmengine.config import Config
 
 class Model(nn.Module):

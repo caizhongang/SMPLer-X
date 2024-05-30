@@ -4,10 +4,10 @@ import torch.nn as nn
 from mmengine.model import constant_init, normal_init
 from mmcv.cnn import (build_conv_layer, build_norm_layer, build_upsample_layer)
 
-from mmpose.core.evaluation import pose_pck_accuracy
-from mmpose.core.post_processing import flip_back
-from mmpose.models.builder import build_loss
-from mmpose.models.utils.ops import resize
+from mmpose_smplerx.core.evaluation import pose_pck_accuracy
+from mmpose_smplerx.core.post_processing import flip_back
+from mmpose_smplerx.models.builder import build_loss
+from mmpose_smplerx.models.utils.ops import resize
 from ..builder import HEADS
 from .topdown_heatmap_base_head import TopdownHeatmapBaseHead
 

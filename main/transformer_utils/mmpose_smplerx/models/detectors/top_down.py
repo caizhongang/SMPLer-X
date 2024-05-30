@@ -7,12 +7,12 @@ from mmcv.image import imwrite
 from mmengine.utils import deprecated_api_warning
 from mmcv.visualization.image import imshow
 
-from mmpose.core import imshow_bboxes, imshow_keypoints
+from mmpose_smplerx.core import imshow_bboxes, imshow_keypoints
 from .. import builder
 from ..builder import POSENETS
 from .base import BasePose
 
-from mmpose.core import auto_fp16
+from mmpose_smplerx.core import auto_fp16
 
 
 @POSENETS.register_module()

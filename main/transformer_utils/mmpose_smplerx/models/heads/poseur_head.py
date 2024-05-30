@@ -8,20 +8,20 @@ from mmengine.model import constant_init, normal_init, bias_init_with_prob
 from mmcv.cnn import build_upsample_layer, Linear
 import torch.nn.functional as F
 
-from mmpose.core.evaluation import (keypoint_pck_accuracy,
+from mmpose_smplerx.core.evaluation import (keypoint_pck_accuracy,
                                     keypoints_from_regression)
-from mmpose.core.post_processing import fliplr_regression
-from mmpose.models.builder import build_loss, HEADS, build_transformer
-from mmpose.core.evaluation import pose_pck_accuracy
-from mmpose.models.utils.transformer import inverse_sigmoid
+from mmpose_smplerx.core.post_processing import fliplr_regression
+from mmpose_smplerx.models.builder import build_loss, HEADS, build_transformer
+from mmpose_smplerx.core.evaluation import pose_pck_accuracy
+from mmpose_smplerx.models.utils.transformer import inverse_sigmoid
 from mmcv.cnn import Conv2d, build_activation_layer
 from mmcv.cnn.bricks.transformer import Linear, FFN, build_positional_encoding
 from mmcv.cnn import ConvModule
 import torch.distributions as distributions
 from .rle_regression_head import nets, nett, RealNVP, nets3d, nett3d
 from easydict import EasyDict
-from mmpose.models.losses.regression_loss import L1Loss
-from mmpose.models.losses.rle_loss import RLELoss_poseur, RLEOHKMLoss
+from mmpose_smplerx.models.losses.regression_loss import L1Loss
+from mmpose_smplerx.models.losses.rle_loss import RLELoss_poseur, RLEOHKMLoss
 from config import cfg
 from utils.human_models import smpl_x
 from torch.distributions.utils import lazy_property

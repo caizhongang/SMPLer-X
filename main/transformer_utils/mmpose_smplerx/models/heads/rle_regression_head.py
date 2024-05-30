@@ -1,10 +1,10 @@
 import numpy as np
 import torch.nn as nn
 from mmengine.model import normal_init
-from mmpose.core.evaluation import (keypoint_pck_accuracy,
+from mmpose_smplerx.core.evaluation import (keypoint_pck_accuracy,
                                     keypoints_from_regression)
-from mmpose.core.post_processing import fliplr_regression
-from mmpose.models.builder import HEADS, build_loss
+from mmpose_smplerx.core.post_processing import fliplr_regression
+from mmpose_smplerx.models.builder import HEADS, build_loss
 
 import torch
 import torch.nn as nn

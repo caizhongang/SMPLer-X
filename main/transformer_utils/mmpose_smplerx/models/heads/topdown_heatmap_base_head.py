@@ -4,7 +4,7 @@ from abc import ABCMeta, abstractmethod
 import numpy as np
 import torch.nn as nn
 
-from mmpose.core.evaluation.top_down_eval import keypoints_from_heatmaps
+from mmpose_smplerx.core.evaluation.top_down_eval import keypoints_from_heatmaps
 
 
 class TopdownHeatmapBaseHead(nn.Module):

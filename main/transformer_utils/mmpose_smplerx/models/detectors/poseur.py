@@ -5,14 +5,14 @@ import numpy as np
 from mmcv.image import imwrite
 from mmcv.visualization.image import imshow
 
-from mmpose.core import imshow_keypoints
+from mmpose_smplerx.core import imshow_keypoints
 from .. import builder
 from ..builder import POSENETS
 from .base import BasePose
 import torch
 from config import cfg
 
-from mmpose.core import auto_fp16
+from mmpose_smplerx.core import auto_fp16
 
 from .top_down import TopDown
 

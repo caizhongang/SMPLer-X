@@ -19,11 +19,13 @@ from utils.inference_utils import process_mmdet_results, non_max_suppression
 
 class Inferer:
 
-    def __init__(self, pretrained_model, num_gpus, output_folder):
+    def __init__(self, pretrained_model, num_gpus, output_folder,
+                 ckpt_path=None, detect_ckpt_path=None, detect_cfg_path=None):
         self.output_folder = output_folder
         self.device = torch.device('cuda') if (num_gpus > 0) else torch.device('cpu')
         config_path = osp.join(CUR_DIR, './config', f'config_{pretrained_model}.py')
-        ckpt_path = osp.join(CUR_DIR, '../pretrained_models', f'{pretrained_model}.pth.tar')
+        if not ckpt_path:
+            ckpt_path = osp.join(CUR_DIR, '../pretrained_models', f'{pretrained_model}.pth.tar')
         cfg.get_config_fromfile(config_path)
         cfg.update_config(num_gpus, ckpt_path, output_folder, self.device)
         self.cfg = cfg
@@ -35,9 +37,11 @@ class Inferer:
         demoer._make_model()
         demoer.model.eval()
         self.demoer = demoer
-        checkpoint_file = osp.join(CUR_DIR, '../pretrained_models/mmdet/faster_rcnn_r50_fpn_1x_coco_20200130-047c8118.pth')
-        config_file= osp.join(CUR_DIR, '../pretrained_models/mmdet/mmdet_faster_rcnn_r50_fpn_coco.py')
-        model = init_detector(config_file, checkpoint_file, device=self.device)  # or device='cuda:0'
+        if detect_ckpt_path is None:
+            detect_ckpt_path = osp.join(CUR_DIR, '../pretrained_models/mmdet/faster_rcnn_r50_fpn_1x_coco_20200130-047c8118.pth')                                
+        if detect_cfg_path is None:
+            detect_cfg_path= osp.join(CUR_DIR, '../pretrained_models/mmdet/mmdet_faster_rcnn_r50_fpn_coco.py')
+        model = init_detector(detect_cfg_path, detect_ckpt_path, device=self.device)  # or device='cuda:0'
         self.model = model
 
     def infer(self, original_img, iou_thr, frame, multi_person=False, mesh_as_vertices=False):

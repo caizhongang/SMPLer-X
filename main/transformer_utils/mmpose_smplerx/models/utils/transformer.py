@@ -8,11 +8,11 @@ import torch.nn.functional as F
 from mmcv.cnn import build_conv_layer, build_norm_layer
 from mmengine.model import BaseModule, ModuleList
 from mmengine.utils import digit_version, to_2tuple
-from mmpose.models.builder import TRANSFORMER
+from mmpose_smplerx.models.builder import TRANSFORMER
 
 from easydict import EasyDict
 from einops import rearrange, repeat
-from mmpose.core import force_fp32
+from mmpose_smplerx.core import force_fp32
 from mmcv.cnn.bricks.transformer import (BaseTransformerLayer,
                                          TransformerLayerSequence,
                                          build_transformer_layer_sequence)

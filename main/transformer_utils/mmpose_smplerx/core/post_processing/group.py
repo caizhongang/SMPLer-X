@@ -7,7 +7,7 @@ import numpy as np
 import torch
 from munkres import Munkres
 
-from mmpose.core.evaluation import post_dark_udp
+from mmpose_smplerx.core.evaluation import post_dark_udp
 
 
 def _py_max_match(scores):

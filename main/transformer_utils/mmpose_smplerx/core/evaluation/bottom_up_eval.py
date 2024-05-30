@@ -2,7 +2,7 @@
 import numpy as np
 import torch
 
-from mmpose.core.post_processing import (get_warp_matrix, transform_preds,
+from mmpose_smplerx.core.post_processing import (get_warp_matrix, transform_preds,
                                          warp_affine_joints)
 
 
