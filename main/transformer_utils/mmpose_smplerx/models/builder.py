@@ -3,7 +3,7 @@ from mmengine.registry import MODELS as MMCV_MODELS
 from mmengine import Registry
 from mmengine.registry import build_from_cfg, build_model_from_cfg
 
-MODELS = Registry('models', parent=MMCV_MODELS, locations=['mmpose.models'])
+MODELS = Registry('models', parent=MMCV_MODELS, locations=['mmpose_smplerx.models'])
 
 BACKBONES = MODELS
 NECKS = MODELS
