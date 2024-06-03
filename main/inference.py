@@ -2,48 +2,62 @@ import os
 import sys
 import os.path as osp
 import argparse
+import json
+from tqdm import tqdm
+
+import cv2
 import numpy as np
-import torchvision.transforms as transforms
-import torch.backends.cudnn as cudnn
+
 import torch
+import torch.nn as nn
+import torch.backends.cudnn as cudnn
+import torchvision.transforms as transforms
+
 CUR_DIR = osp.dirname(os.path.abspath(__file__))
 sys.path.insert(0, osp.join(CUR_DIR, '..', 'main'))
 sys.path.insert(0, osp.join(CUR_DIR , '..', 'common'))
-from config import cfg
-import cv2
-from tqdm import tqdm
-import json
-from typing import Literal, Union
-from mmdet.apis import init_detector, inference_detector
-from utils.inference_utils import process_mmdet_results, non_max_suppression
+from config import cfg, model_path_dict
+# from common.utils.inference_utils import process_mmdet_results, non_max_suppression
+
+import pdb
+
+# import Demoner
+from ..common.base import Demoer
+
+# suppress warnings
+# import warnings
+# warnings.filterwarnings("ignore")
 
 class Inferer:
 
-    def __init__(self, pretrained_model, num_gpus, output_folder,
-                 ckpt_path=None, detect_ckpt_path=None, detect_cfg_path=None):
+    def __init__(self, pretrained_model, num_gpus, output_folder):
+
         self.output_folder = output_folder
         self.device = torch.device('cuda') if (num_gpus > 0) else torch.device('cpu')
-        config_path = osp.join(CUR_DIR, './config', f'config_{pretrained_model}.py')
-        if not ckpt_path:
-            ckpt_path = osp.join(CUR_DIR, '../pretrained_models', f'{pretrained_model}.pth.tar')
+
+        # load config and model path
+        ckpt_path = model_path_dict[pretrained_model]
+        config_path = osp.join(CUR_DIR, 'config', f'config_{pretrained_model}.py')
+
         cfg.get_config_fromfile(config_path)
         cfg.update_config(num_gpus, ckpt_path, output_folder, self.device)
         self.cfg = cfg
         cudnn.benchmark = True
-        
+
         # load model
-        from base import Demoer
         demoer = Demoer()
+        # if num_gpus > 1:
         demoer._make_model()
+        demoer.model = nn.DataParallel(demoer.model)
         demoer.model.eval()
         self.demoer = demoer
-        if detect_ckpt_path is None:
-            detect_ckpt_path = osp.join(CUR_DIR, '../pretrained_models/mmdet/faster_rcnn_r50_fpn_1x_coco_20200130-047c8118.pth')                                
-        if detect_cfg_path is None:
-            detect_cfg_path= osp.join(CUR_DIR, '../pretrained_models/mmdet/mmdet_faster_rcnn_r50_fpn_coco.py')
-        model = init_detector(detect_cfg_path, detect_ckpt_path, device=self.device)  # or device='cuda:0'
-        self.model = model
 
+        pdb.set_trace()
+
+
+
+
+'''
     def infer(self, original_img, iou_thr, frame, multi_person=False, mesh_as_vertices=False):
         from utils.preprocessing import process_bbox, generate_patch_image
         from utils.vis import render_mesh, save_obj
@@ -135,4 +149,4 @@ class Inferer:
                                   mesh_as_vertices=mesh_as_vertices)
             vis_img = vis_img.astype('uint8') 
         return vis_img, mesh_paths, smplx_paths
-
+'''

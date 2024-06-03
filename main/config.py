@@ -4,15 +4,32 @@ import sys
 import datetime
 from mmengine.config import Config as MMConfig
 
+import os
+import os.path as osp
+
+# write your path here
+
+encoder_config_file = '/home/weichen/sst/smplerx/main/transformer_utils/configs/smpler_x/encoder/body_encoder_huge.py'
+human_model_path = '/home/weichen/wc_workspace/models/human_model'
+
+# <configure your smplerx model path here>
+model_path_dict = {
+    'smpler_x_h32': '/home/weichen/wc_workspace/models/smplerx/smpler_x_h32_correct.pth.tar',
+    'smpler_x_l32': '',
+    'smpler_x_b32': '',
+    'smpler_x_s32': '',
+}
+
 
 class Config:
     def get_config_fromfile(self, config_path):
-        cfg_base_path = osp.join(osp.dirname(config_path), 'model_path.py')
-        cfg_base = MMConfig.fromfile(cfg_base_path)
-        
+
         self.config_path = config_path
         cfg = MMConfig.fromfile(self.config_path)
-        cfg = MMConfig._merge_a_into_b(cfg_base, cfg)
+
+        # update config
+        cfg.encoder_config_file = encoder_config_file
+        cfg.human_model_path = human_model_path
 
         self.__dict__.update(dict(cfg))
 
@@ -20,16 +37,11 @@ class Config:
         self.cur_dir = osp.dirname(os.path.abspath(__file__))
         self.root_dir = osp.join(self.cur_dir, '..')
         self.data_dir = osp.join(self.root_dir, 'dataset')
-        # self.human_model_path = osp.join(self.root_dir, 'common', 'utils', 'human_model_files')
-
-        # check if have attribute
-        if hasattr(cfg, 'human_model_path'):
-            self.human_model_path = cfg.human_model_path
-        else:
-            self.human_model_path = osp.join(self.root_dir, 'common', 'utils', 'human_model_files')
+        self.human_model_path = human_model_path
 
         ## add some paths to the system root dir
         sys.path.insert(0, osp.join(self.root_dir, 'common'))
+
                 
     def prepare_dirs(self, exp_name):
         time_str = datetime.datetime.now().strftime('%Y%m%d_%H%M%S')
@@ -75,3 +87,6 @@ class Config:
         cfg_save = MMConfig(self.__dict__)
 
 cfg = Config()
+cfg.human_model_path = human_model_path
+
+
