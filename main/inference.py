@@ -67,20 +67,31 @@ class Inferer:
         cfg.update_config(num_gpus, ckpt_path, output_folder, self.device)
         self.cfg = cfg
         cudnn.benchmark = True
-
         # load model
         demoer = Demoer()
         # if num_gpus > 1:
         demoer._make_model()
-        # if self.data_parallel:
-        #     demoer.model = nn.DataParallel(demoer.model)
+        if self.data_parallel:
+            demoer.model = nn.DataParallel(demoer.model)
         demoer.model.eval()
         self.demoer = demoer
 
 
+    def _get_focal(self, bbox):
+        focal = [self.cfg.focal[0] / self.cfg.input_body_shape[1] * bbox[2],
+                 self.cfg.focal[0] / self.cfg.input_body_shape[0] * bbox[3]]
+        return focal
+    
+
+    def _get_princpt(self, bbox):
+        princpt = [self.cfg.princpt[0] / self.cfg.input_body_shape[1] * bbox[2] + bbox[0],
+                   self.cfg.princpt[1] / self.cfg.input_body_shape[0] * bbox[3] + bbox[1]]
+        return princpt
+
+
     def batch_infer_given_bbox(self, img, bbox, return_mesh=False):
 
-        img = img.to(cfg.device)
+        batch_size = img.shape[0]
         inputs = {'img': img}
         targets = {}
         meta_info = {}
@@ -97,21 +108,21 @@ class Inferer:
 
         ## save single person param
         smplx_pred = {}
-        smplx_pred['global_orient'] = out['smplx_root_pose'].reshape(-1,3).cpu().numpy()
-        smplx_pred['body_pose'] = out['smplx_body_pose'].reshape(-1,3).cpu().numpy()
-        smplx_pred['left_hand_pose'] = out['smplx_lhand_pose'].reshape(-1,3).cpu().numpy()
-        smplx_pred['right_hand_pose'] = out['smplx_rhand_pose'].reshape(-1,3).cpu().numpy()
-        smplx_pred['jaw_pose'] = out['smplx_jaw_pose'].reshape(-1,3).cpu().numpy()
-        smplx_pred['leye_pose'] = np.zeros((1, 3))
-        smplx_pred['reye_pose'] = np.zeros((1, 3))
-        smplx_pred['betas'] = out['smplx_shape'].reshape(-1,10).cpu().numpy()
-        smplx_pred['expression'] = out['smplx_expr'].reshape(-1,10).cpu().numpy()
-        smplx_pred['transl'] =  out['cam_trans'].reshape(-1,3).cpu().numpy()
+        smplx_pred['global_orient'] = out['smplx_root_pose'].reshape(batch_size,-1,3).cpu().numpy()
+        smplx_pred['body_pose'] = out['smplx_body_pose'].reshape(batch_size,-1,3).cpu().numpy()
+        smplx_pred['left_hand_pose'] = out['smplx_lhand_pose'].reshape(batch_size,-1,3).cpu().numpy()
+        smplx_pred['right_hand_pose'] = out['smplx_rhand_pose'].reshape(batch_size,-1,3).cpu().numpy()
+        smplx_pred['jaw_pose'] = out['smplx_jaw_pose'].reshape(batch_size,-1,3).cpu().numpy()
+        smplx_pred['leye_pose'] = np.zeros((batch_size,1,3))
+        smplx_pred['reye_pose'] = np.zeros((batch_size,1,3))
+        smplx_pred['betas'] = out['smplx_shape'].reshape(batch_size,-1,10).cpu().numpy()
+        smplx_pred['expression'] = out['smplx_expr'].reshape(batch_size,-1,10).cpu().numpy()
+        smplx_pred['transl'] =  out['cam_trans'].reshape(batch_size,-1,3).cpu().numpy()
 
         ## save meta
         meta = {}
-        meta['focal'] = [self.cfg.focal[0] / self.cfg.input_body_shape[1] * bbox[2], self.cfg.focal[1] / self.cfg.input_body_shape[0] * bbox[3]]
-        meta['princpt'] = [self.cfg.princpt[0] / self.cfg.input_body_shape[1] * bbox[2] + bbox[0], self.cfg.princpt[1] / self.cfg.input_body_shape[0] * bbox[3] + bbox[1]]
+        meta['focal'] = [self._get_focal(box) for box in bbox]
+        meta['princpt'] = [self._get_princpt(box) for box in bbox]
         meta['bbox_xywh'] = bbox
 
         return smplx_pred, meta, mesh
