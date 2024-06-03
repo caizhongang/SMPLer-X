@@ -18,9 +18,9 @@ CUR_DIR = osp.dirname(os.path.abspath(__file__))
 sys.path.insert(0, osp.join(CUR_DIR, '..', 'main'))
 sys.path.insert(0, osp.join(CUR_DIR , '..', 'common'))
 from config import cfg, model_path_dict
-from ..common.base import Demoer
-from ..common.utils.preprocessing import process_bbox, generate_patch_image
-from ..common.utils.human_models import smpl_x
+from base import Demoer
+from utils.preprocessing import process_bbox, generate_patch_image
+from utils.human_models import smpl_x
 
 class SmplerxData(Dataset):
     def __init__(self, annotations):
@@ -39,7 +39,6 @@ class SmplerxData(Dataset):
 
         # prepare input image
         transform = transforms.ToTensor()
-        vis_img = image.copy()
         original_img_height, original_img_width = image.shape[:2]
         bbox = process_bbox(bbox, original_img_width, original_img_height)
         img, img2bb_trans, bb2img_trans = generate_patch_image(image, bbox, 1.0, 0.0, False, (512, 384))
