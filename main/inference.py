@@ -44,7 +44,7 @@ class SmplerxData(Dataset):
         img, img2bb_trans, bb2img_trans = generate_patch_image(image, bbox, 1.0, 0.0, False, (512, 384))
         img = transform(img.astype(np.float32))/255
         
-        sample = {'image': img, 'bbox': bbox, 'shape': img_shape}
+        sample = {'image': img, 'bbox': bbox, 'shape': img_shape, 'path': img_path}
         
         return sample
 
@@ -77,12 +77,14 @@ class Inferer:
 
 
     def _get_focal(self, bbox):
+        bbox = bbox.cpu().numpy()
         focal = [self.cfg.focal[0] / self.cfg.input_body_shape[1] * bbox[2],
                  self.cfg.focal[0] / self.cfg.input_body_shape[0] * bbox[3]]
         return focal
     
 
     def _get_princpt(self, bbox):
+        bbox = bbox.cpu().numpy()
         princpt = [self.cfg.princpt[0] / self.cfg.input_body_shape[1] * bbox[2] + bbox[0],
                    self.cfg.princpt[1] / self.cfg.input_body_shape[0] * bbox[3] + bbox[1]]
         return princpt
@@ -120,8 +122,7 @@ class Inferer:
 
         ## save meta
         meta = {}
-        meta['focal'] = [self._get_focal(box) for box in bbox]
-        meta['princpt'] = [self._get_princpt(box) for box in bbox]
-        meta['bbox_xywh'] = bbox
+        meta['focal_length'] = [(self._get_focal(box)) for box in bbox]
+        meta['principal_point'] = [(self._get_princpt(box)) for box in bbox]
 
         return smplx_pred, meta, mesh
