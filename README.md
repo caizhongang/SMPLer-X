@@ -249,3 +249,13 @@ sh slurm_test.sh {JOB_NAME} {NUM_GPU} {TRAIN_OUTPUT_DIR} {CKPT_ID}
 - [Hand4Whole](https://github.com/mks0601/Hand4Whole_RELEASE)
 - [OSX](https://github.com/IDEA-Research/OSX)
 - [MMHuman3D](https://github.com/open-mmlab/mmhuman3d)
+
+## Citation
+```text
+@inproceedings{cai2023smplerx,
+    title={{SMPLer-X}: Scaling up expressive human pose and shape estimation},
+    author={Cai, Zhongang and Yin, Wanqi and Zeng, Ailing and Wei, Chen and Sun, Qingping and Yanjun, Wang and Pang, Hui En and Mei, Haiyi and Zhang, Mingyuan and Zhang, Lei and Loy, Chen Change and Yang, Lei and Liu, Ziwei},
+    booktitle={Advances in Neural Information Processing Systems},
+    year={2023}
+}
+```
