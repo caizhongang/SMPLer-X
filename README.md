@@ -1,5 +1,8 @@
 # SMPLer-X: Scaling Up Expressive Human Pose and Shape Estimation
 
+## Check out [SMPLest-X](https://github.com/wqyin/SMPLest-X), an extension of SMPLer-X with stronger foundation models!
+
+
 ![Teaser](./assets/teaser_complete.png)
 
 ## Useful links
@@ -9,10 +12,15 @@
     <a href="https://huggingface.co/spaces/caizhongang/SMPLer-X" class="button"><b>[HuggingFace]</b></a> &nbsp;&nbsp;&nbsp;&nbsp;   
     <a href="https://arxiv.org/abs/2309.17448" class="button"><b>[arXiv]</b></a> &nbsp;&nbsp;&nbsp;&nbsp;
     <a href="https://youtu.be/DepTqbPpVzY" class="button"><b>[Video]</b></a> &nbsp;&nbsp;&nbsp;&nbsp;
+    <a href="https://github.com/wqyin/SMPLest-X" class="button"><b>[SMPLest-X]</b></a> &nbsp;&nbsp;&nbsp;&nbsp;
     <a href="https://github.com/open-mmlab/mmhuman3d" class="button"><b>[MMHuman3D]</b></a>
 </div>
 
 ## News
+- [2025-02-17] Pretrained models of [SMPLest-X](https://github.com/wqyin/SMPLest-X) available for download.
+- [2025-02-14] Brand new codebase of [SMPLest-X](https://github.com/wqyin/SMPLest-X) released for trainig, testing and inference.
+- [2025-01-20] [SMPLest-X](https://github.com/wqyin/SMPLest-X) released on [arXiv](https://arxiv.org/abs/2501.09782).
+- [2025-01-08] Project page of [SMPLest-X](https://github.com/wqyin/SMPLest-X) created.
 - [2024-03-29] An updated version of SMPLer-X-H32 is released to fix camera estimation on 3DPW-like data.
 - [2024-02-29] [HuggingFace](https://huggingface.co/spaces/caizhongang/SMPLer-X) demo is online!
 - [2023-10-23] Support visualization through SMPL-X mesh overlay and add inference docker. 
